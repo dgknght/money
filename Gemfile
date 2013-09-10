@@ -8,9 +8,10 @@ gem 'rails', '3.2.13'
 gem 'sqlite3'
 gem 'devise'
 
-group :test do
-	gem 'rspec'
-  gem 'cucumber-rails'
+group :test, :development do
+  gem 'rspec-rails'
+  gem 'cucumber-rails', :require => false
+  gem 'database_cleaner'
 end
 
 # Gems used only for assets and not required
