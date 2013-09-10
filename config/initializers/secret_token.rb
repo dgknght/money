@@ -1,0 +1,7 @@
+# Be sure to restart your server when you modify this file.
+
+# Your secret key for verifying the integrity of signed cookies.
+# If you change this key, all old signed cookies will become invalid!
+# Make sure the secret is at least 30 characters and all random,
+# no regular words or you'll be exposed to dictionary attacks.
+Money::Application.config.secret_token = '30193c58038ae406977a2f16a6ba4720ed1c6361630e67c1b7ccfd0708c6514e5db4f546729552f982d1186129fc010cff5e515953eb6580d866cbe97af872b5'
