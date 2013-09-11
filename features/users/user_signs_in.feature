@@ -1,9 +1,14 @@
 Feature: User sign-in
-  @wip
   Scenario: An existing user signs in 
     Given there is a user with email address "john@doe.com" and password "please01"
     And I am on the home page
+    Then I should see "Sign in"
+    
+    When I click "Sign in"
+    Then I should see "Sign in" within the page title
+    
     When I fill in "Email" with "john@doe.com"
-    And I fill in "Password" with "please"
-    And I click "Sign In"
-    Then I should see "You have been signed in successfully." within the flash success notification area
+    And I fill in "Password" with "please01"
+    And I click "Sign in"
+    Then I should see "Sign out"
+#    Then I should see "You have been signed in successfully." within the success notification area
