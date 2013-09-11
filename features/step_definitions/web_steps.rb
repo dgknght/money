@@ -1,10 +1,5 @@
 Given(/^I am on the (.*) page$/) do |page_identifier|
-  path = case page_identifier
-    when "not a real one" then "test"
-#    when "home" then "/"
-    else raise "unrecognized page identifier #{page_identifier}"
-  end
-  visit path
+  visit path_for(page_identifier)
 end
 
 Given(/^I fill in "([^"]+)" with "([^"]+)"$/) do |locator, value|
