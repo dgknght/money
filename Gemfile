@@ -7,6 +7,7 @@ gem 'rails', '3.2.13'
 
 gem 'sqlite3'
 gem 'devise'
+gem 'haml'
 
 group :test, :development do
   gem 'rspec-rails'
