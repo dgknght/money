@@ -13,6 +13,8 @@ group :test, :development do
   gem 'rspec-rails'
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
+  gem 'factory_girl_rails'
+  gem 'faker'
 end
 
 # Gems used only for assets and not required

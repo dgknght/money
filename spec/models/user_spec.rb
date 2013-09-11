@@ -17,8 +17,17 @@ describe User do
   
   describe 'email' do
     it 'should be required' do
-      user = User.new(attributes.reject {|k, v| k == :email})
+      user = User.new(attributes.without(:email))
       user.should_not be_valid
+    end
+  end
+  
+  describe 'accounts' do
+    let (:user) { FactoryGirl.create(:user) }
+    let!(:account1) { FactoryGirl.create(:account, :user => user) }
+    let!(:account2) { FactoryGirl.create(:account, :user => user) }
+    it 'should list the accounts that belong to the user' do
+      user.accounts.should == [account1, account2]
     end
   end
 end
