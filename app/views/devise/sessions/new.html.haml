@@ -1,5 +1,6 @@
 %h2#page_title Sign in
 = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
+  = render "shared/errors", :resource => resource
   %div
     = f.label :email
     %br/

@@ -11,14 +11,10 @@ module NavigationHelpers
     end
   end
   
-  def parse_table(table_elem)
-    rows = table_elem.all('tr')
-    rows.map { |r| r.all('th,td').map { |c| c.text.strip} }
-  end
-  
   def path_for(page_identifier)
     case page_identifier
       when "the home" then "/"
+      when "my home" then  "/home"
       else raise "unrecognized page identifier \"#{page_identifier}\""
     end
   end

@@ -2,6 +2,8 @@ Money::Application.routes.draw do
 
   devise_for :users
 
+  match 'home' => 'accounts#index'
+  
   root :to => 'pages#welcome'
   
   # The priority is based upon order of creation:

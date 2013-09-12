@@ -15,6 +15,7 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'faker'
+  gem 'launchy'
 end
 
 # Gems used only for assets and not required

@@ -21,8 +21,12 @@ When (/^(.*) within (.*)$/) do |step_content, section|
 end
 
 Then (/^I should see the following (.*) table$/) do |description, expected_table|
-  id = "#" + description_to_id(description)
+  id = "##{description_to_id(description)}_table"
   html_table = find(id)
   actual_table = parse_table(html_table)
-  table.diff!(actual_table)
+  expected_table.diff!(actual_table)
+end
+
+Then (/^show me the page$/) do
+  save_and_open_page
 end

@@ -1,0 +1,27 @@
+%h2#page_title Accounts
+
+%table#accounts_table{:cellspacing => 0, :cellpadding => 0}
+  %tr
+    %th Name
+    %th Balance
+  %tr
+    %td Assets
+    %td.number_column 0.00
+  -@accounts.assets.each do |account|
+    %tr
+      %td= account.name
+      %td.number_column 0.00
+  %tr
+    %td Liabilities
+    %td.number_column 0.00
+  -@accounts.liabilities.each do |account|
+    %tr
+      %td= account.name
+      %td.number_column 0.00
+  %tr
+    %td Equity
+    %td.number_column 0.00
+  -@accounts.equities.each do |account|
+    %tr
+      %td= account.name
+      %td.number_column 0.00
