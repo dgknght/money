@@ -6,7 +6,7 @@ Given (/^I fill in "([^"]+)" with "([^"]+)"$/) do |locator, value|
   fill_in locator, :with => value
 end
 
-When (/^I click "([^"]+)"$/) do |locator|
+When (/^I click (?:on )?"([^"]+)"$/) do |locator|
   click_on(locator)
 end
 

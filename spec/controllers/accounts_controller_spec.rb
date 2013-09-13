@@ -67,6 +67,36 @@ describe AccountsController do
           get :show, :id => checking, :format => :json
           response.body.should == checking.to_json
         end
+      end     
+    end
+    
+    describe 'get :edit' do
+      it 'should be successful' do
+        get :edit, :id => checking
+        response.should be_success
+      end
+    end
+    
+    describe 'put :update' do
+      it 'should redirect to the detail page for the specified account' do
+        put :update, :id => checking, :account => { :name => 'The new name' }
+        response.should redirect_to account_path(checking)
+      end
+      
+      it 'should update the account' do
+        lambda do
+          put :update, :id => checking, :account => { :name => 'The new name' }
+          checking.reload
+        end.should change(checking, :name).from('checking').to('The new name')
+      end
+      
+      context 'in json' do
+        it 'should update the account' do
+          lambda do
+            put :update, :id => checking, :account => { :name => 'The new name' }, :format => :json
+            checking.reload
+          end.should change(checking, :name).from('checking').to('The new name')
+        end
       end
     end
   end
@@ -123,6 +153,34 @@ describe AccountsController do
       context 'in json' do
         it 'should return "access denied"' do
           get :show, :id => checking, :format => :json
+          response.response_code.should == 401
+        end
+      end
+    end
+    
+    describe 'get :edit' do
+      it 'should redirect to the sign in page' do
+        get :edit, :id => checking
+        response.should redirect_to new_user_session_path
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          get :edit, :id => checking, :format => :json
+          response.response_code.should == 401
+        end
+      end
+    end
+    
+    describe 'put :update' do
+      it 'should redirect to the sign in page' do
+        put :update, :id => checking, :account => { name: 'The new name' }
+        response.should redirect_to new_user_session_path
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          put :update, :id => checking, :account => { name: 'The new name' }, :format => :json
           response.response_code.should == 401
         end
       end

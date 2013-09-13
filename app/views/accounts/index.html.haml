@@ -8,22 +8,16 @@
     %td Assets
     %td.number_column 0.00
   -@accounts.assets.each do |account|
-    %tr
-      %td= account.name
-      %td.number_column 0.00
+    =render "account_row", :account => account
   %tr
     %td Liabilities
     %td.number_column 0.00
   -@accounts.liabilities.each do |account|
-    %tr
-      %td= account.name
-      %td.number_column 0.00
+    =render "account_row", :account => account
   %tr
     %td Equity
     %td.number_column 0.00
   -@accounts.equities.each do |account|
-    %tr
-      %td= account.name
-      %td.number_column 0.00
+    =render "account_row", :account => account
 .actions
   =link_to 'Add', new_account_path

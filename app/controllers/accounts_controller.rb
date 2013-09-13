@@ -1,5 +1,6 @@
 class AccountsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :load_account, :only => [:show, :edit, :update]
   
   respond_to :html, :json
   
@@ -9,13 +10,11 @@ class AccountsController < ApplicationController
   end
 
   def show
-    @account = current_user.accounts.find(params[:id])
     respond_with @account
   end
 
   def new
     @account = current_user.accounts.new
-    respond_with @account
   end
 
   def create
@@ -28,5 +27,13 @@ class AccountsController < ApplicationController
   end
 
   def update
+    @account.update_attributes(params[:account])
+    flash[:notice] = "The account was successfully updated." if @account.save
+    respond_with @account
   end
+  
+  private
+    def load_account
+      @account = current_user.accounts.find(params[:id])
+    end
 end

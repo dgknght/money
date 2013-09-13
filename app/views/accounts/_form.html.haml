@@ -1,0 +1,12 @@
+=render "shared/errors", :resource => @account
+=form_for(account) do |f|  
+  %div
+    =f.label :account_type
+    %br
+    =f.select :account_type, options_for_select([:asset, :liability, :equity]), :autofocus => true
+  %div
+    =f.label :name
+    %br
+    =f.text_field :name
+  .actions
+    =f.submit "Save"

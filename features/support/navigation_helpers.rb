@@ -9,6 +9,7 @@ module NavigationHelpers
       when /the page title/ then "#page_title"
       when /the main content/ then "#content"
       when /the navigation/ then ".nav"
+      when /the (.*) table/ then "##{$1}_table"
       else raise "Unrecognized section \"#{section}\""
     end
   end
