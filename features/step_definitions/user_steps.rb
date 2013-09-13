@@ -6,6 +6,10 @@ Given(/^I am signed in as "([^\/]+)\/(.*)"$/) do |email, password|
   visit new_user_session_path
   fill_in 'Email', :with => email
   fill_in 'Password', :with => password
-  click_on 'Sign in'
-#  page.should have_content('Sign out')
+  within(:css, '#content') do
+    click_button 'Sign in'
+  end
+  within(:css, '.nav') do
+    page.should have_content('Sign out')
+  end
 end

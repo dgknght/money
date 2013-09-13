@@ -1,2 +1,9 @@
-<h1>Accounts#show</h1>
-<p>Find me in app/views/accounts/show.html.erb</p>
+%h2#page_title Account
+
+%table#account_table{:cellspacing => 0, :cellpadding => 0}
+  %tr
+    %th Account type
+    %td= @account.account_type
+  %tr
+    %th Name
+    %td= @account.name

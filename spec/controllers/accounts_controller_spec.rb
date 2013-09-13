@@ -13,7 +13,6 @@ describe AccountsController do
         get :index
         response.should be_success
       end
-    end
     
     context 'in json' do
       it 'should be successful' do
@@ -24,6 +23,50 @@ describe AccountsController do
       it 'should return the list of accounts' do
         get :index, :format => :json
         response.body.should == [checking, cash].to_json
+      end
+    end
+    end
+    
+    describe 'get :new' do
+      it 'should be successful' do
+        get :new
+        response.should be_success
+      end
+    end
+    
+    describe 'post :create' do
+      it 'should redirect to the detail page for the new account' do
+        post :create, :account => FactoryGirl.attributes_for(:account)
+        response.should redirect_to account_path(Account.last)
+      end
+      
+      context 'in json' do
+        it 'should create a new account' do
+          lambda do
+            post :create, :account => FactoryGirl.attributes_for(:account), :format => :json
+          end.should change(Account, :count).by(1)
+        end
+        
+        it 'should return the new account' do
+          attributes = FactoryGirl.attributes_for(:account)
+          post :create, :account => attributes, :format => :json
+          actual = JSON.parse(response.body)
+          attributes.each { |k, v| actual[k.to_s].to_s.should == v.to_s }
+        end
+      end
+    end
+
+    describe 'get :show' do
+      it 'should be successful' do
+        get :show, :id => checking
+        response.should be_success
+      end
+      
+      context 'in json' do
+        it 'should return the specified account' do
+          get :show, :id => checking, :format => :json
+          response.body.should == checking.to_json
+        end
       end
     end
   end
@@ -40,6 +83,48 @@ describe AccountsController do
       it 'should return "access denied"' do
         get :index, :format => :json
         response.response_code.should == 401
+      end
+    end
+    
+    describe 'get :new' do
+      it 'should be redirect to the sign in page' do
+        get :new
+        response.should redirect_to new_user_session_path
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          get :new, :format => :json
+          response.response_code.should == 401
+        end
+      end
+    end
+    
+    describe 'post :create' do
+      it 'should redirect to the sign in page' do
+        post :create, :account => FactoryGirl.attributes_for(:account)
+        response.should redirect_to new_user_session_path
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          post :create, :account => FactoryGirl.attributes_for(:account), :format => :json
+          response.response_code.should == 401
+        end
+      end
+    end
+    
+    describe 'get :show' do
+      it 'should redirect to the sign in page' do
+          get :show, :id => checking
+          response.should redirect_to new_user_session_path
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          get :show, :id => checking, :format => :json
+          response.response_code.should == 401
+        end
       end
     end
   end

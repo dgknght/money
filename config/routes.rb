@@ -2,6 +2,8 @@ Money::Application.routes.draw do
 
   devise_for :users
 
+  resources :accounts
+  
   match 'home' => 'accounts#index'
   
   root :to => 'pages#welcome'

@@ -5,8 +5,10 @@ module NavigationHelpers
   
   def locator_for(section)
     case section
-      when /the success notification area/ then "#success"
+      when /the notice area/ then ".notice"
       when /the page title/ then "#page_title"
+      when /the main content/ then "#content"
+      when /the navigation/ then ".nav"
       else raise "Unrecognized section \"#{section}\""
     end
   end
