@@ -4,19 +4,23 @@
   %tr
     %th Name
     %th Balance
+    %th
   %tr
     %td Assets
     %td.number_column 0.00
+    %td
   -@accounts.assets.each do |account|
     =render "account_row", :account => account
   %tr
     %td Liabilities
     %td.number_column 0.00
+    %td
   -@accounts.liabilities.each do |account|
     =render "account_row", :account => account
   %tr
     %td Equity
     %td.number_column 0.00
+    %td
   -@accounts.equities.each do |account|
     =render "account_row", :account => account
 .actions

@@ -1,8 +1,14 @@
 class AccountsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_account, :only => [:show, :edit, :update]
+  before_filter :load_account, :only => [:show, :edit, :update, :destroy]
   
   respond_to :html, :json
+  
+  def destroy
+    @account.destroy
+    flash[:notice] = "The account was successfully deleted."
+    respond_with @account
+  end
   
   def index
     @accounts = current_user.accounts

@@ -99,6 +99,27 @@ describe AccountsController do
         end
       end
     end
+  
+    describe 'delete :destroy' do
+      it 'should redirect to the account list page' do
+        delete :destroy, :id => checking
+        response.should redirect_to accounts_path
+      end
+      
+      it 'should delete the specified account' do
+        lambda do
+          delete :destroy, :id => checking
+        end.should change(Account, :count).by(-1)
+      end
+      
+      context 'in json' do
+        it 'should delete the specified account' do
+          lambda do
+            delete :destroy, :id => checking, :format => :json
+          end.should change(Account, :count).by(-1)
+        end
+      end
+    end
   end
   
   context 'for an unauthenticated user' do
@@ -182,6 +203,27 @@ describe AccountsController do
         it 'should return "access denied"' do
           put :update, :id => checking, :account => { name: 'The new name' }, :format => :json
           response.response_code.should == 401
+        end
+      end
+    end
+  
+    describe 'delete :destroy' do
+      it 'should redirect to sign in' do
+        delete :destroy, :id => checking
+        response.should redirect_to new_user_session_path
+      end
+      
+      it 'should not delete the specified account' do
+        lambda do
+          delete :destroy, :id => checking
+        end.should_not change(Account, :count)
+      end
+      
+      context 'in json' do
+        it 'should not delete the specified account' do
+          lambda do
+            delete :destroy, :id => checking, :format => :json
+          end.should_not change(Account, :count)
         end
       end
     end
