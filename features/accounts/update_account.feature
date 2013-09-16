@@ -12,7 +12,7 @@ Feature: Update an existing account
       | Liabilities | 0.00    |
       | Equity      | 0.00    |
       
-  When I click on "Checking" within the accounts table
+  When I click on "Edit" within the account row for "Checking"
   Then I should see "Edit account" within the page title
   
   When I fill in "Name" with "Savings"
