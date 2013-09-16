@@ -13,5 +13,13 @@ FactoryGirl.define do
     factory :liability_account do
       account_type :liability
     end
+    
+    factory :income_account do
+      account_type :income
+    end
+    
+    factory :expense_account do
+      account_type :expense
+    end
   end
 end

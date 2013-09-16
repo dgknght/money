@@ -11,6 +11,8 @@ Feature: Update an existing account
       | Checking    | 0.00    |
       | Liabilities | 0.00    |
       | Equity      | 0.00    |
+      | Income      | 0.00    |
+      | Expense     | 0.00    |
       
   When I click on "Edit" within the account row for "Checking"
   Then I should see "Edit account" within the page title

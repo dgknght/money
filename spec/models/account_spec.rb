@@ -11,6 +11,8 @@ describe Account do
   let!(:checking) { FactoryGirl.create(:asset_account, :name => 'checking') }
   let!(:credit_card) { FactoryGirl.create(:liability_account, :name => 'credit card') }
   let!(:earnings) { FactoryGirl.create(:equity_account, :name => 'earnings') }
+  let!(:salary) { FactoryGirl.create(:income_account, :name => 'salary') }
+  let!(:groceries) { FactoryGirl.create(:expense_account, :name => 'groceries') }
   
   it 'should be creatable from valid attributes' do
     account = Account.new(attributes)
@@ -44,6 +46,18 @@ describe Account do
   context 'equity scope' do
     it 'should return a list of equity accounts' do
       Account.equities.should == [earnings]
+    end
+  end
+  
+  context 'income scope' do
+    it 'should return a list of income accounts' do
+      Account.income.should == [salary]
+    end
+  end
+  
+  context 'expense scope' do
+    it 'should return a list of expense accounts' do
+      Account.expense.should == [groceries]
     end
   end
 end

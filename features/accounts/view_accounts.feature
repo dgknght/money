@@ -24,3 +24,5 @@ Feature: View accounts
       | Home Loan   | 0.00    |
       | Equity      | 0.00    |
       | Retained    | 0.00    |
+      | Income      | 0.00    |
+      | Expense     | 0.00    |
