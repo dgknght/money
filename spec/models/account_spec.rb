@@ -45,7 +45,7 @@ describe Account do
   
   context 'equity scope' do
     it 'should return a list of equity accounts' do
-      Account.equities.should == [earnings]
+      Account.equity.should == [earnings]
     end
   end
   

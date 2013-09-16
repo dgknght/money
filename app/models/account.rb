@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
   
   scope :assets, -> { where(account_type: :asset) }
   scope :liabilities, -> { where(account_type: :liability) }
-  scope :equities, -> { where(account_type: :equity) }
+  scope :equity, -> { where(account_type: :equity) }
   scope :income, -> { where(account_type: :income) }
   scope :expense, -> { where(account_type: :expense) }
   
