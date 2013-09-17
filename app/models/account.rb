@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  attr_accessible :name, :account_type
+  attr_accessible :name, :account_type, :balance
   belongs_to :user
   before_validation :symbolize_account_type
 

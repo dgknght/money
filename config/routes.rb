@@ -1,5 +1,13 @@
 Money::Application.routes.draw do
 
+  get "transactions/index"
+
+  get "transactions/create"
+
+  get "transactions/update"
+
+  get "transactions/show"
+
   devise_for :users
 
   resources :accounts

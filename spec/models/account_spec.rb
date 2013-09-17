@@ -4,7 +4,8 @@ describe Account do
   let(:attributes) do
     {
       :name => 'Cash',
-      :account_type => :asset
+      :account_type => :asset,
+      :balance => 12.21
     }
   end
   
@@ -31,31 +32,38 @@ describe Account do
     end
   end
   
-  context 'assets scope' do
+  describe 'balance' do
+    it 'should default to zero' do
+      account = Account.new(attributes.without(:balance))
+      account.balance.should == 0
+    end
+  end
+  
+  describe 'assets scope' do
     it 'should return a list of asset accounts' do
       Account.assets.should == [checking]
     end
   end
   
-  context 'liabilities scope' do
+  describe 'liabilities scope' do
     it 'should return a list of liability accounts' do
       Account.liabilities.should == [credit_card]
     end
   end
   
-  context 'equity scope' do
+  describe 'equity scope' do
     it 'should return a list of equity accounts' do
       Account.equity.should == [earnings]
     end
   end
   
-  context 'income scope' do
+  describe 'income scope' do
     it 'should return a list of income accounts' do
       Account.income.should == [salary]
     end
   end
   
-  context 'expense scope' do
+  describe 'expense scope' do
     it 'should return a list of expense accounts' do
       Account.expense.should == [groceries]
     end

@@ -1,6 +1,6 @@
 %tr{ :id => "account_#{account.id}" }
-  %td= link_to account.name, account_path(account)
-  %td 0.00
+  %td= link_to account.name, account_transactions_path(account)
+  %td= "%.2f" % account.balance
   %td.action_cell
     = link_to "Edit", edit_account_path(account)
     = render "shared/delete_form", :resource => account, :url => account_path(account)
