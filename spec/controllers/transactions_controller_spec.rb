@@ -3,7 +3,7 @@ require 'spec_helper'
 describe TransactionsController do
   let(:user) { FactoryGirl.create(:user) }
   let(:account) { FactoryGirl.create(:account, user: user) }
-  let(:transaction) { FactoryGirl.create(:transaction, user: user) }
+  let(:transaction) { FactoryGirl.create(:transaction, user: user, description: 'The payee') }
   let(:attributes) { FactoryGirl.attributes_for(:transaction, user: user) }
   
   context 'for an authenticated user' do
@@ -69,12 +69,36 @@ describe TransactionsController do
       end
 
       describe "put :update" do
-        it "should update the transaction"
-        it 'should redirect to the index page'
+        let(:updated_attributes) do
+          {
+            description: 'Some other payee'
+          }
+        end
+        it "should update the transaction" do
+          lambda do
+            put :update, id: transaction, account_id: account, transaction: updated_attributes
+            transaction.reload
+          end.should change(transaction, :description).from('The payee').to('Some other payee')
+        end
+        
+        it 'should redirect to the index page' do 
+          put :update, id: transaction, account_id: account, transaction: updated_attributes
+          response.should redirect_to account_transactions_path(account)
+        end
         
         context 'in json' do
-          it 'should update the transaction'
-          it 'should return the updated transaction'
+          it 'should update the transaction' do
+            lambda do
+              put :update, id: transaction, account_id: account, transaction: updated_attributes, format: :json
+              transaction.reload
+            end.should change(transaction, :description).from('The payee').to('Some other payee')
+          end
+          
+          it 'should not return any data' do
+            put :update, id: transaction, account_id: account, transaction: updated_attributes, format: :json
+            transaction.reload
+            response.body.should == " "
+          end
         end
       end
 
@@ -85,8 +109,15 @@ describe TransactionsController do
         end
         
         context 'in json' do
-          it 'should be successful'
-          it 'should return the transaction'
+          it 'should be successful' do
+            get :show, id: transaction, format: :json
+            response.should be_success
+          end
+          
+          it 'should return the transaction' do
+            get :show, id: transaction, format: :json
+            response.body.should == transaction.to_json
+          end
         end
       end
     end
@@ -97,34 +128,58 @@ describe TransactionsController do
       before(:each) { sign_in other_user }
       
       describe 'get :index' do
-        it 'should return "resource not found"'
+        it "should redirect to the user's home page" do
+          get :index, account_id: account
+          response.should redirect_to home_path
+        end
         
         context 'in json' do
-          it 'should return "resource not found"'
+          it 'should not return any records' do
+            get :index, account_id: account, format: :json            
+            JSON.parse(response.body).should == []
+          end
         end
       end
       
       describe 'post :create' do
-        it 'should return "resource not found"'
+        it "should redirect to the user's home page" do
+          post :create, account_id: account, transaction: attributes
+          response.should redirect_to home_path
+        end
         
         context 'in json' do
-          it 'should return "resource not found"'
+          it 'should return "resource not found"' do
+            post :create, account_id: account, transaction: attributes, format: :json
+            response.response_code.should == 404
+          end
         end
       end      
       
       describe 'put :update' do
-        it 'should return "resource not found"'
+        it "should redirect to the user's home page" do
+          put :update, id: transaction, account_id: account, transaction: attributes.merge(description: 'some new payee')
+          response.should redirect_to home_path
+        end
         
         context 'in json' do
-          it 'should return "resource not found"'
+          it 'should return "resource not found"' do
+            put :update, id: transaction, account_id: account, transaction: attributes.merge(description: 'some new payee'), format: :json
+            response.response_code.should == 404
+          end
         end
       end      
       
       describe 'get :show' do
-        it 'should return "resource not found"'
+        it "should redirect to the user's home page" do
+          get :show, id: transaction
+          response.should redirect_to home_path
+        end
         
         context 'in json' do
-          it 'should return "resource not found"'
+          it 'should return "resource not found"' do
+            get :show, id: transaction, format: :json
+            response.response_code.should == 404            
+          end
         end
       end      
     end
@@ -138,7 +193,10 @@ describe TransactionsController do
       end
       
       context 'in json' do
-        it 'should return "access denied"'
+        it 'should return "access denied"' do
+          get :index, account_id: account, format: :json
+          response.response_code.should == 401
+        end
       end
     end
     
@@ -149,23 +207,38 @@ describe TransactionsController do
       end
       
       context 'in json' do
-        it 'should return "access denied"'
+        it 'should return "access denied"' do
+          post :create, account_id: account, transaction: attributes, format: :json
+          response.response_code.should == 401
+        end
       end
     end
     
     describe 'put :update' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        put :update, id: transaction, account_id: account, transaction: attributes.merge(description: 'the new payee')
+        response.should redirect_to new_user_session_path
+      end
       
       context 'in json' do
-        it 'should return "access denied"'
+        it 'should return "access denied"' do
+          put :update, id: transaction, account_id: account, transaction: attributes.merge(description: 'the new payee'), format: :json
+          response.response_code.should == 401
+        end
       end
     end
     
     describe 'get :show' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :show, id: transaction
+        response.should redirect_to new_user_session_path
+      end
       
       context 'in json' do
-        it 'should return "access denied"'
+        it 'should return "access denied"' do
+          get :show, id: transaction, format: :json
+          response.response_code.should == 401
+        end
       end
     end
   end
