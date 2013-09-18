@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: transactions
+#
+#  id               :integer          not null, primary key
+#  transaction_date :date             not null
+#  description      :string(255)      not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
+
 class Transaction < ActiveRecord::Base
   attr_accessible :description, :transaction_date
   
@@ -7,6 +18,7 @@ class Transaction < ActiveRecord::Base
   before_validation :supply_defaults
   
   has_many :items, class_name: 'TransactionItem'
+  belongs_to :user
   
   def total_credits
     items.credits.reduce(0) { |total, item| total += item.amount }

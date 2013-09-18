@@ -4,5 +4,6 @@ FactoryGirl.define do
   factory :transaction do
     transaction_date "2013-09-17"
     description "The Payee"
+    user
   end
 end

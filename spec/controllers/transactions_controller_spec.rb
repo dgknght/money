@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 describe TransactionsController do
-  let(:account) { FactoryGirl.create(:account) }
-  let(:attributes) { FactoryGirl.attributes_for(:transaction) }
+  let(:user) { FactoryGirl.create(:user) }
+  let(:account) { FactoryGirl.create(:account, user: user) }
+  let(:transaction) { FactoryGirl.create(:transaction, user: user) }
+  let(:attributes) { FactoryGirl.attributes_for(:transaction, user: user) }
   
   context 'for an authenticated user' do
     context 'to which the account belongs' do
+      before(:each) { sign_in user }
+      
       describe "get :index" do
         it "should be successful" do
           get :index, account_id: account
@@ -13,16 +17,22 @@ describe TransactionsController do
         end
         
         context 'in json' do
+          let (:t1) { FactoryGirl.create(:transaction, user: user) }
+          let!(:i1) { FactoryGirl.create(:transaction_item, transaction: t1, account: account) }
+          let!(:i2) { FactoryGirl.create(:transaction_item, transaction: t1) }
+          let (:t2) { FactoryGirl.create(:transaction, user: user) }
+          let!(:i3) { FactoryGirl.create(:transaction_item, transaction: t2, account: account) }
+          let!(:i4) { FactoryGirl.create(:transaction_item, transaction: t2) }
+          let (:different_account) { FactoryGirl.create(:transaction, user: user) }
+          let!(:i5) { FactoryGirl.create(:transaction_item, transaction: t2) }
+          let!(:i6) { FactoryGirl.create(:transaction_item, transaction: t2) }
+          
           it 'should be successful' do
             get :index, account_id: account, format: :json
             response.should be_success
           end
           
           it 'should return the list of transactions' do
-            let!(:t1) { FactoryGirl.create(:transaction, account: account) }
-            let!(:t2) { FactoryGirl.create(:transaction, account: account) }
-            let!(:different_account) { FactoryGirl.create(:transaction) }
-            
             get :index, account_id: account, format: :json
             response.body.should == [t1, t2].to_json
           end
@@ -38,7 +48,7 @@ describe TransactionsController do
         
         it "should redirect to the index page" do
           post 'create', account_id: account, transaction: attributes
-          resopnse.should redirect_to account_transactions_path(account)
+          response.should redirect_to account_transactions_path(account)
         end
         
         context 'in json' do
@@ -52,7 +62,7 @@ describe TransactionsController do
             post 'create', account_id: account, transaction: attributes, format: :json
             returned = JSON.parse(response.body)
             attributes.each do |k, v|
-              returned[k].should == v
+              returned[k.to_s].should == v
             end
           end
         end
@@ -70,7 +80,7 @@ describe TransactionsController do
 
       describe "get :show" do
         it "should be successful" do
-          get 'show', account_id: account
+          get 'show', id: transaction
           response.should be_success
         end
         
@@ -82,6 +92,10 @@ describe TransactionsController do
     end
 
     context 'to which the account does not belong' do
+      let (:other_user) { FactoryGirl.create(:user) }
+      
+      before(:each) { sign_in other_user }
+      
       describe 'get :index' do
         it 'should return "resource not found"'
         
@@ -119,7 +133,7 @@ describe TransactionsController do
   context 'for an unauthenticated user' do
     describe 'get :index' do
       it 'should redirect to the sign in page' do
-        get :index, account: account
+        get :index, account_id: account
         response.should redirect_to new_user_session_path
       end
       
@@ -130,7 +144,7 @@ describe TransactionsController do
     
     describe 'post :create' do
       it 'should redirect to the sign in page' do
-        post :create, account: account, transaction: { description: 'Kroger' }
+        post :create, account_id: account, transaction: attributes
         response.should redirect_to new_user_session_path
       end
       

@@ -35,4 +35,12 @@ describe User do
       user.accounts.should == [checking, savings, credit_card, retained_earnings]
     end
   end
+  
+  describe 'transactions' do
+    let!(:t1) { FactoryGirl.create(:transaction, description: 'Kroger', user: user) }
+    
+    it 'should list the transactions that belong to the user' do
+      user.transactions.should == [t1]
+    end
+  end
 end
