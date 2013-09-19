@@ -10,15 +10,15 @@
 #
 
 class Transaction < ActiveRecord::Base
-  attr_accessible :description, :transaction_date
-  
+  has_many :items, class_name: 'TransactionItem', inverse_of: :transaction  
+  accepts_nested_attributes_for :items, allow_destroy: true
+  attr_accessible :description, :transaction_date, :items_attributes
+  belongs_to :user
+    
   validates_presence_of :description, :transaction_date
-  validate :credits_and_debits_are_in_balance
+  validate :items_are_present, :credits_and_debits_are_in_balance
   
   before_validation :supply_defaults
-  
-  has_many :items, class_name: 'TransactionItem'
-  belongs_to :user
   
   def total_credits
     items.credits.reduce(0) { |total, item| total += item.amount }
@@ -34,6 +34,10 @@ class Transaction < ActiveRecord::Base
       errors.add(:total_credits, 'must equal total_debits') unless total_credits == total_debits
     end
 
+    def items_are_present
+      errors.add(:items, 'cannot be empty') unless items.any?
+    end
+    
     def supply_defaults
       self.transaction_date ||= Date.today
     end

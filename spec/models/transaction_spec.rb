@@ -1,16 +1,23 @@
 require 'spec_helper'
 
 describe Transaction do
+  let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
+  let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries') }
   let(:attributes) do
     {
       transaction_date: Date.civil(2013, 1, 1),
-      description: 'Kroger'
+      description: 'Kroger',
+      items_attributes: [
+        { account: checking, action: :debit, amount: 34.43 },
+        { account: groceries, action: :credit, amount: 34.43 }
+      ]
     }
   end
   
   it 'should be creatable from valid attributes' do
     transaction = Transaction.new(attributes)
     transaction.should be_valid
+    transaction.should have(2).items
   end
   
   describe 'transaction_date' do
@@ -43,6 +50,11 @@ describe Transaction do
       
       transaction.items.create(account: groceries, action: :credit, amount: 56.65)
       transaction.should be_valid
+    end
+    
+    it 'should have content in order to be valid' do
+      transaction = Transaction.new(attributes.without(:items_attributes))
+      transaction.should_not be_valid
     end
   end
 end

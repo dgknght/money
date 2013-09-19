@@ -3,8 +3,18 @@ require 'spec_helper'
 describe TransactionsController do
   let(:user) { FactoryGirl.create(:user) }
   let(:account) { FactoryGirl.create(:account, user: user) }
+  let(:account2) { FactoryGirl.create(:account, user: user) }
   let(:transaction) { FactoryGirl.create(:transaction, user: user, description: 'The payee') }
-  let(:attributes) { FactoryGirl.attributes_for(:transaction, user: user) }
+  let(:attributes) do
+    {
+      transaction_date: '1/1/2013',
+      description: 'Kroger',
+      items_attributes: [
+        { account_id: account, action: :debit, amount: 23.32 },
+        { account_id: account2, action: :credit, amount: 23.32 }        
+      ]
+    }
+  end
   
   context 'for an authenticated user' do
     context 'to which the account belongs' do
@@ -44,6 +54,12 @@ describe TransactionsController do
           lambda do
             post 'create', account_id: account, transaction: attributes
           end.should change(Transaction, :count).by(1)
+        end
+        
+        it 'should create the transaction items' do
+          post 'create', account_id: account, transaction: attributes
+          transaction = Transaction.last
+          transaction.should have(2).items
         end
         
         it "should redirect to the index page" do

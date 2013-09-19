@@ -8,6 +8,10 @@ class TransactionsController < ApplicationController
   def index
     @transactions = TransactionPresenter.new(user: current_user, account: @account)
     @transaction = current_user.transactions.new(transaction_date: Date.today)
+    @items = [
+      @transaction.items.new(action: :credit, account: @account),
+      @transaction.items.new(action: :debit)
+    ]
     respond_with @transactions
   end
 

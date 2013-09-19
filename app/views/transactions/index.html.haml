@@ -8,15 +8,4 @@
     %tr
       %td= transaction.transaction_date
       %td= transaction.description
-
-=form_for(@transaction, url: account_transactions_path(@account)) do |f|
-  %div
-    =f.label :transaction_date
-    %br
-    =f.text_field :transaction_date, class: 'date_field'
-  %div
-    =f.label :description
-    %br
-    =f.text_field :description
-  .actions
-    =f.submit 'Submit'
+=render 'form', transaction: @transaction, items: @items

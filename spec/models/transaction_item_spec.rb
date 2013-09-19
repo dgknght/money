@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe TransactionItem do
-  let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
-  let(:transaction) { FactoryGirl.create(:transaction) }
-  let(:attributes) do
+  let (:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
+  let!(:transaction) { FactoryGirl.create(:transaction) }
+  let (:attributes) do
     {
       transaction: transaction,
       account: checking,
@@ -54,22 +54,14 @@ describe TransactionItem do
   end
   
   describe 'credits' do
-    let!(:credit1) { FactoryGirl.create(:transaction_item, transaction: transaction, action: :credit) }
-    let!(:credit2) { FactoryGirl.create(:transaction_item, transaction: transaction, action: :credit) }
-    let!(:debit) { FactoryGirl.create(:transaction_item, transaction: transaction, action: :debit) }
-    
     it 'should return the transaction items with the :credit action' do
-      TransactionItem.credits.should == [credit1, credit2]
+      TransactionItem.should have(1).credit # added by the factory
     end
   end
   
-  describe 'credits' do
-    let!(:credit1) { FactoryGirl.create(:transaction_item, transaction: transaction, action: :credit) }
-    let!(:debit1) { FactoryGirl.create(:transaction_item, transaction: transaction, action: :debit) }
-    let!(:debit2) { FactoryGirl.create(:transaction_item, transaction: transaction, action: :debit) }
-    
-    it 'should return the transaction items with the :credit action' do
-      TransactionItem.debits.should == [debit1, debit2]
+  describe 'debits' do
+    it 'should return the transaction items with the :debit action' do
+      TransactionItem.should have(1).debit # added by the factory
     end
   end
 end

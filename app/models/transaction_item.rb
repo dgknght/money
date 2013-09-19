@@ -16,7 +16,7 @@ class TransactionItem < ActiveRecord::Base
 
   ACTIONS = [:credit, :debit]
   
-  validates_presence_of :account_id, :action, :amount, :transaction_id
+  validates_presence_of :account_id, :action, :amount, :transaction
   validates :action, inclusion: { in: ACTIONS }
   
   belongs_to :account
