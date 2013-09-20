@@ -4,7 +4,7 @@ describe Account do
   let(:attributes) do
     {
       :name => 'Cash',
-      :account_type => :asset,
+      :account_type => Account.asset_type,
       :balance => 12.21
     }
   end
@@ -27,7 +27,7 @@ describe Account do
     end
     
     it 'should be either asset, equity, or liability' do
-      account = Account.new(attributes.merge({account_type: :invalid_account_type}))
+      account = Account.new(attributes.merge({account_type: 'invalid_account_type'}))
       account.should_not be_valid
     end
   end
@@ -39,15 +39,15 @@ describe Account do
     end
   end
   
-  describe 'assets scope' do
+  describe 'asset scope' do
     it 'should return a list of asset accounts' do
-      Account.assets.should == [checking]
+      Account.asset.should == [checking]
     end
   end
   
-  describe 'liabilities scope' do
+  describe 'liability scope' do
     it 'should return a list of liability accounts' do
-      Account.liabilities.should == [credit_card]
+      Account.liability.should == [credit_card]
     end
   end
   
@@ -67,5 +67,70 @@ describe Account do
     it 'should return a list of expense accounts' do
       Account.expense.should == [groceries]
     end
+  end
+  
+  describe 'debit' do
+    it 'should increase the value of an asset account' do
+      lambda do
+        checking.debit(1)
+      end.should change(checking, :balance).by(1)
+    end
+    
+    it 'should decrease the value of a liability account' do
+      lambda do
+        credit_card.debit(1)
+      end.should change(credit_card, :balance).by(-1)
+    end
+    
+    it 'should decrease the value of an equity account' do
+      lambda do
+        earnings.debit(1)
+      end.should change(earnings, :balance).by(-1)
+    end
+    
+    it 'should increase the value of an expense account' do
+      lambda do
+        groceries.debit(1)
+      end.should change(groceries, :balance).by(1)
+    end
+    
+    it 'should decrease the value of an income account' do
+      lambda do
+        salary.debit(1)
+      end.should change(salary, :balance).by(-1)
+    end
+    
+  end
+  
+  describe 'credit' do
+    it 'should decrease the value of an asset account' do
+      lambda do
+        checking.credit(1)
+      end.should change(checking, :balance).by(-1)
+    end
+    
+    it 'should increase the value of a liability account' do
+      lambda do
+        credit_card.credit(1)
+      end.should change(credit_card, :balance).by(1)
+    end
+    
+    it 'should increase the value of an equity account' do
+      lambda do
+        earnings.credit(1)
+      end.should change(earnings, :balance).by(1)
+    end
+    
+    it 'should decrease the value of an expense account' do
+      lambda do
+        groceries.credit(1)
+      end.should change(groceries, :balance).by(-1)
+    end
+    
+    it 'should increase the value of an income account' do
+      lambda do
+        salary.credit(1)
+      end.should change(salary, :balance).by(1)
+    end    
   end
 end

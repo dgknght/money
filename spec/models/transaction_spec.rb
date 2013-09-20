@@ -1,15 +1,17 @@
 require 'spec_helper'
 
 describe Transaction do
-  let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
-  let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries') }
+  let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking', balance: 100) }
+  let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries', balance: 0) }
+  let(:user) { FactoryGirl.create(:user) }
   let(:attributes) do
     {
       transaction_date: Date.civil(2013, 1, 1),
       description: 'Kroger',
+      user_id: user.id,
       items_attributes: [
-        { account: checking, action: TransactionItem.debit, amount: 34.43 },
-        { account: groceries, action: TransactionItem.credit, amount: 34.43 }
+        { account: checking, action: TransactionItem.credit, amount: 34.43 },
+        { account: groceries, action: TransactionItem.debit, amount: 34.43 }
       ]
     }
   end
@@ -19,7 +21,16 @@ describe Transaction do
     transaction.should be_valid
     transaction.should have(2).items
   end
-  
+
+  it 'should update the balance for all referenced accounts' do
+    checking.balance.should == 100
+    groceries.balance.should == 0
+    transaction = Transaction.create!(attributes)
+    
+    checking.balance.should == BigDecimal.new('65.57')
+    groceries.balance.should ==  BigDecimal.new('34.43')    
+  end
+
   describe 'transaction_date' do
     it "should default to today's date" do
       transaction = Transaction.new(attributes.without(:transaction_date))
@@ -31,6 +42,13 @@ describe Transaction do
   describe 'description' do
     it 'should be required' do
       transaction = Transaction.new(attributes.without(:description))
+      transaction.should_not be_valid
+    end
+  end
+  
+  describe 'user_id' do
+    it 'should be required' do
+      transaction = Transaction.new(attributes.without(:user_id))
       transaction.should_not be_valid
     end
   end

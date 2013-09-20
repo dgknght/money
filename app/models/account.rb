@@ -14,21 +14,47 @@
 class Account < ActiveRecord::Base
   attr_accessible :name, :account_type, :balance
   belongs_to :user
-  before_validation :symbolize_account_type
 
-  ACCOUNT_TYPES = [:asset, :liability, :equity, :income, :expense]
-
+  LEFT_SIDE = %w(asset expense)
+  RIGHT_SIDE = %w(liability equity income)
+  ACCOUNT_TYPES = LEFT_SIDE + RIGHT_SIDE
+  
+  class << self
+    ACCOUNT_TYPES.each do |type|
+      define_method "#{type}_type" do
+        type
+      end
+    end
+  end
+  
   validates :account_type, presence: true, 
                            inclusion: { in: ACCOUNT_TYPES }
   
-  scope :assets, -> { where(account_type: :asset) }
-  scope :liabilities, -> { where(account_type: :liability) }
-  scope :equity, -> { where(account_type: :equity) }
-  scope :income, -> { where(account_type: :income) }
-  scope :expense, -> { where(account_type: :expense) }
+  scope :asset, -> { where(account_type: Account.asset_type) }
+  scope :liability, -> { where(account_type: Account.liability_type) }
+  scope :equity, -> { where(account_type: Account.equity_type) }
+  scope :income, -> { where(account_type: Account.income_type) }
+  scope :expense, -> { where(account_type: Account.expense_type) }
   
-  private
-    def symbolize_account_type
-      self.account_type = account_type.to_sym unless self.account_type.nil? || self.account_type.class == Symbol
-    end
+  # Adjusts the balance of the account by the specified amount
+  def credit(amount)
+    amount = 0 - amount if LEFT_SIDE.include?(account_type)
+    self.balance += amount
+  end
+  
+  def credit!(amount)
+    credit(amount)
+    save!
+  end
+  
+  # Adjusts the balance of the account by the specified amount
+  def debit(amount)
+    amount = 0 - amount if RIGHT_SIDE.include?(account_type)
+    self.balance += amount
+  end
+  
+  def debit!(amount)
+    debit(amount)
+    save!
+  end
 end

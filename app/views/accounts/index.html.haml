@@ -9,13 +9,13 @@
     %td Assets
     %td.number_column 0.00
     %td
-  -@accounts.assets.each do |account|
+  -@accounts.asset.each do |account|
     =render "account_row", :account => account
   %tr
     %td Liabilities
     %td.number_column 0.00
     %td
-  -@accounts.liabilities.each do |account|
+  -@accounts.liability.each do |account|
     =render "account_row", :account => account
   %tr
     %td Equity

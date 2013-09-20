@@ -14,6 +14,8 @@
 class TransactionItem < ActiveRecord::Base
   attr_accessible :account_id, :action, :amount, :transaction_id, :account, :transaction
 
+  after_create :update_account_balance
+  
   ACTIONS = %w(debit credit)
   class << self
     ACTIONS.each do |action|
@@ -31,4 +33,10 @@ class TransactionItem < ActiveRecord::Base
   
   scope :credits, -> { where(action: :credit) }
   scope :debits, -> { where(action: :debit) }
+  
+  private
+    def update_account_balance
+      method_name = "#{action}!"
+      account.send(method_name, amount)
+    end
 end

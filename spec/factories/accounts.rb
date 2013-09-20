@@ -2,24 +2,24 @@
 
 FactoryGirl.define do
   factory :account, aliases: [:asset_account] do
-    name Faker::Commerce.department
-    account_type :asset
+    name { Faker::Commerce.department }
+    account_type Account.asset_type
     user
     
     factory :equity_account do
-      account_type :equity
+      account_type Account.equity_type
     end
     
     factory :liability_account do
-      account_type :liability
+      account_type Account.liability_type
     end
     
     factory :income_account do
-      account_type :income
+      account_type Account.income_type
     end
     
     factory :expense_account do
-      account_type :expense
+      account_type Account.expense_type
     end
   end
 end
