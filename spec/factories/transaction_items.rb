@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :transaction_item do
     transaction
     account
-    action :debit
+    action TransactionItem.debit
     amount 100
   end
 end

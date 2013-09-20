@@ -6,8 +6,8 @@ FactoryGirl.define do
     description "The Payee"
     user
     after(:build) do |transaction, evaluator|
-      transaction.items << TransactionItem.new(account: FactoryGirl.create(:account), amount: 100, action: :credit)
-      transaction.items << TransactionItem.new(account: FactoryGirl.create(:account), amount: 100, action: :debit)
+      transaction.items << TransactionItem.new(account: FactoryGirl.create(:account), amount: 100, action: TransactionItem.credit)
+      transaction.items << TransactionItem.new(account: FactoryGirl.create(:account), amount: 100, action: TransactionItem.debit)
     end
   end
 end

@@ -7,11 +7,11 @@ describe TransactionsController do
   let(:transaction) { FactoryGirl.create(:transaction, user: user, description: 'The payee') }
   let(:attributes) do
     {
-      transaction_date: '1/1/2013',
+      transaction_date: Date.new(2013, 1, 1),
       description: 'Kroger',
       items_attributes: [
-        { account_id: account, action: :debit, amount: 23.32 },
-        { account_id: account2, action: :credit, amount: 23.32 }        
+        { account_id: account.id, action: TransactionItem.debit, amount: 23.32 },
+        { account_id: account2.id, action: TransactionItem.credit, amount: 23.32 }
       ]
     }
   end
@@ -55,10 +55,11 @@ describe TransactionsController do
             post 'create', account_id: account, transaction: attributes
           end.should change(Transaction, :count).by(1)
         end
-        
+
         it 'should create the transaction items' do
           post 'create', account_id: account, transaction: attributes
           transaction = Transaction.last
+          transaction.should_not be_nil
           transaction.should have(2).items
         end
         
@@ -66,7 +67,7 @@ describe TransactionsController do
           post 'create', account_id: account, transaction: attributes
           response.should redirect_to account_transactions_path(account)
         end
-        
+
         context 'in json' do
           it 'should create a new transaction' do
             lambda do
@@ -77,10 +78,18 @@ describe TransactionsController do
           it 'should return the new transaction' do
             post 'create', account_id: account, transaction: attributes, format: :json
             returned = JSON.parse(response.body)
+
+            # TODO Need a one-line way to do these comparisons
             attributes.each do |k, v|
-              returned[k.to_s].should == v
+              if v.is_a?(Date)
+                Date.parse(returned[k.to_s]).should == v
+              elsif v.is_a?(Array)
+              else
+                returned[k.to_s].should == v
+              end
             end
-          end
+
+            end
         end
       end
 

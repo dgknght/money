@@ -14,7 +14,14 @@
 class TransactionItem < ActiveRecord::Base
   attr_accessible :account_id, :action, :amount, :transaction_id, :account, :transaction
 
-  ACTIONS = [:credit, :debit]
+  ACTIONS = %w(debit credit)
+  class << self
+    ACTIONS.each do |action|
+      define_method action do
+        action
+      end
+    end
+  end
   
   validates_presence_of :account_id, :action, :amount, :transaction
   validates :action, inclusion: { in: ACTIONS }

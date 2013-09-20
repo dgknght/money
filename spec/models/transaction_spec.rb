@@ -8,8 +8,8 @@ describe Transaction do
       transaction_date: Date.civil(2013, 1, 1),
       description: 'Kroger',
       items_attributes: [
-        { account: checking, action: :debit, amount: 34.43 },
-        { account: groceries, action: :credit, amount: 34.43 }
+        { account: checking, action: TransactionItem.debit, amount: 34.43 },
+        { account: groceries, action: TransactionItem.credit, amount: 34.43 }
       ]
     }
   end
@@ -45,10 +45,10 @@ describe Transaction do
     end
     
     it 'should have a sum of credits equal to the sum of debits' do
-      transaction.items.create(account: checking, action: :debit, amount: 56.65)
+      transaction.items.create(account: checking, action: TransactionItem.debit, amount: 56.65)
       transaction.should_not be_valid
       
-      transaction.items.create(account: groceries, action: :credit, amount: 56.65)
+      transaction.items.create(account: groceries, action: TransactionItem.credit, amount: 56.65)
       transaction.should be_valid
     end
     

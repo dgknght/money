@@ -7,7 +7,7 @@ describe TransactionItem do
     {
       transaction: transaction,
       account: checking,
-      action: :credit,
+      action: TransactionItem.credit,
       amount: 100.00
     }
   end
@@ -38,7 +38,7 @@ describe TransactionItem do
     end
     
     it 'should allow only :credit or :debit' do
-      item = TransactionItem.new(attributes.merge(action: :debit))
+      item = TransactionItem.new(attributes.merge(action: TransactionItem.debit))
       item.should be_valid
       
       item.action = :something_else
@@ -55,13 +55,13 @@ describe TransactionItem do
   
   describe 'credits' do
     it 'should return the transaction items with the :credit action' do
-      TransactionItem.should have(1).credit # added by the factory
+      TransactionItem.credits.where(action: TransactionItem.debit).should_not be_any
     end
   end
   
   describe 'debits' do
     it 'should return the transaction items with the :debit action' do
-      TransactionItem.should have(1).debit # added by the factory
+      TransactionItem.debits.where(action: TransactionItem.credit).should_not be_any
     end
   end
 end
