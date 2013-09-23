@@ -1,41 +1,108 @@
 require 'spec_helper'
 
 describe EntitiesController do
+  let (:user) { FactoryGirl.create(:user) }
+  let!(:entity) { FactoryGirl.create(:entity, user: user) }
+  let (:attributes) do
+    {
+      name: 'The new entity'
+    }
+  end
+  
   context 'for an authenticated user' do
+    before(:each) { sign_in user }
+    
     describe 'get :index' do
-      it 'should be successful'
+      it 'should be successful' do
+        get :index
+        response.should be_success
+      end
       
       context 'in json' do
-        it 'should be successful'
-        it 'should return the list of entities'
+        it 'should be successful' do
+          get :index, format: :json
+          response.should be_success
+        end
+        
+        it 'should return the list of entities' do
+          get :index, format: :json
+          response.body.should == [entity].to_json
+        end
       end
     end
+    
     describe 'get :new' do
-      it 'should be successful'
+      it 'should be successful' do
+        get :new
+        response.should be_success
+      end
     end
+    
     describe 'post :create' do
-      it 'should redirect to new entity detail page'
-      it 'should create a new entity'
+      it 'should redirect to new entity detail page' do
+        post :create, entity: attributes
+        response.should redirect_to entity_path(Entity.last)
+      end
+      
+      it 'should create a new entity' do
+        lambda do
+          post :create, entity: attributes
+        end.should change(Entity, :count).by(1)
+      end
       
       context 'in json' do
-        it 'should be successful'
-        it 'should return the newly created entity'
+        it 'should be successful' do
+          post :create, entity: attributes, format: :json
+          response.should be_success
+        end
+        
+        it 'should return the newly created entity' do
+          lambda do
+            post :create, entity: attributes, format: :json
+          end.should change(Entity, :count).by(1)
+        end
       end
     end
     
     context 'that owns the entity' do
       describe 'get :edit' do
-        it 'should be successful'
+        it 'should be successful' do
+          get :edit, id: entity
+          response.should be_success
+        end
       end
       
       describe 'put :update' do
-        it 'should redirect to the entity detail page'
-        it 'should update the entity'
+        it 'should redirect to the entity detail page' do
+          put :update, id: entity, entity: { name: 'the new name' }
+          response.should redirect_to entity_path(entity)
+        end
+        
+        it 'should update the entity' do
+          lambda do
+            put :update, id: entity, entity: { name: 'the new name' }
+            entity.reload
+          end.should change(entity, :name).to('the new name')
+        end
       
         context 'in json' do
-          it 'should be successful'
-          it 'should update the entity'
-          it 'should not return any data'
+          it 'should be successful' do
+            put :update, id: entity, entity: { name: 'the new name' }, format: :json
+            response.should be_success
+          end
+          
+          it 'should update the entity'do
+            lambda do
+              put :update, id: entity, entity: { name: 'the new name' }, format: :json
+              entity.reload
+            end.should change(entity, :name).to('the new name')
+            response.should be_success
+          end
+          
+          it 'should not return any data' do
+            put :update, id: entity, entity: { name: 'the new name' }, format: :json
+            response.body.should == " "
+          end
         end
       end
       

@@ -1,0 +1,8 @@
+%h2#page_title Entities
+
+%table{cellspacing: 0, cellpadding:0}
+  %tr
+    %th Name
+  -@entities.each do |entity|
+    %tr
+      %td= entity.name
