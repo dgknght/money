@@ -1,7 +1,7 @@
 class AccountsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_account, :only => [:show, :edit, :update, :destroy]
-  
+  before_filter :load_account, only: [:show, :edit, :update, :destroy]
+  before_filter :load_entity, only: [:index, :new, :create]
   respond_to :html, :json
   
   def destroy
@@ -41,5 +41,9 @@ class AccountsController < ApplicationController
   private
     def load_account
       @account = current_user.accounts.find(params[:id])
+    end
+    
+    def load_entity
+      @entity = current_user.entities.find(params[:entity_id])
     end
 end

@@ -36,4 +36,4 @@
   -@accounts.expense.each do |account|
     =render "account_row", :account => account
 .actions
-  =link_to 'Add', new_account_path
+  =link_to 'Add', new_entity_account_path(@entity)
