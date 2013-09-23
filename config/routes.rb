@@ -10,7 +10,7 @@ Money::Application.routes.draw do
   end
   resources :transactions, only: [:show, :update, :destroy]
   
-  match 'home' => 'accounts#index'
+  match 'home' => 'entities#index'
   
   root :to => 'pages#welcome'
   

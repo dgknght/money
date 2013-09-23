@@ -6,7 +6,7 @@ class TransactionPresenter
   # options contains two values, account and user
   def initialize(options = {})
     @account = options[:account]
-    @user = options[:user]
+    @entity = options[:entity]
   end
   
   def each(&block)
@@ -22,9 +22,9 @@ class TransactionPresenter
   private
   
     def filtered
-      return [] unless @user
+      return [] unless @entity
       
-      result = @user.transactions
+      result = @entity.transactions
       result = filter_by_account(result)
       filter_by_status(result)
     end

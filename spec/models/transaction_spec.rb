@@ -3,12 +3,12 @@ require 'spec_helper'
 describe Transaction do
   let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking', balance: 100) }
   let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries', balance: 0) }
-  let(:user) { FactoryGirl.create(:user) }
+  let(:entity) { FactoryGirl.create(:entity) }
   let(:attributes) do
     {
       transaction_date: Date.civil(2013, 1, 1),
       description: 'Kroger',
-      user_id: user.id,
+      entity_id: entity.id,
       items_attributes: [
         { account: checking, action: TransactionItem.credit, amount: 34.43 },
         { account: groceries, action: TransactionItem.debit, amount: 34.43 }
@@ -46,9 +46,9 @@ describe Transaction do
     end
   end
   
-  describe 'user_id' do
+  describe 'entity_id' do
     it 'should be required' do
-      transaction = Transaction.new(attributes.without(:user_id))
+      transaction = Transaction.new(attributes.without(:entity_id))
       transaction.should_not be_valid
     end
   end

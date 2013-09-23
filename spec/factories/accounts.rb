@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :account, aliases: [:asset_account] do
     name { Faker::Commerce.department }
     account_type Account.asset_type
-    user
+    entity
     
     factory :equity_account do
       account_type Account.equity_type

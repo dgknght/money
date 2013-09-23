@@ -16,7 +16,7 @@
       -items.each_with_index do |item, index|
         =f.fields_for :items, item do |item_form|
           %tr{id: "transaction_item_#{index}"}
-            %td= item_form.select :account_id, options_from_collection_for_select(transaction.user.accounts, "id", "name")
+            %td= item_form.select :account_id, options_from_collection_for_select(transaction.entity.accounts, "id", "name")
             %td= item_form.select :action, [:credit, :debit]
             %td= item_form.text_field :amount
 

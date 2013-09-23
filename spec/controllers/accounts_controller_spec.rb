@@ -1,27 +1,27 @@
 require 'spec_helper'
 
 describe AccountsController do
-  let (:user) { FactoryGirl.create(:user) }
-  let!(:checking) { FactoryGirl.create(:account, :user => user, :name => 'checking') }
-  let!(:cash) { FactoryGirl.create(:account, :user => user, :name => 'cash') }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let!(:checking) { FactoryGirl.create(:account, entity: entity, name: 'checking') }
+  let!(:cash) { FactoryGirl.create(:account, entity: entity, name: 'cash') }
   
   context 'for an authenticated user' do
-    before(:each) { sign_in user }
+    before(:each) { sign_in entity.user }
     
     describe 'get :index' do
       it 'should be successful' do
-        get :index
+        get :index, entity_id: entity
         response.should be_success
       end
     
     context 'in json' do
       it 'should be successful' do
-        get :index, :format => :json
+        get :index, entity_id: entity, format: :json
         response.should be_success
       end
       
       it 'should return the list of accounts' do
-        get :index, :format => :json
+        get :index, entity_id: entity, format: :json
         response.body.should == [checking, cash].to_json
       end
     end
@@ -29,27 +29,27 @@ describe AccountsController do
     
     describe 'get :new' do
       it 'should be successful' do
-        get :new
+        get :new, entity_id: entity
         response.should be_success
       end
     end
     
     describe 'post :create' do
       it 'should redirect to the detail page for the new account' do
-        post :create, :account => FactoryGirl.attributes_for(:account)
+        post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
         response.should redirect_to account_path(Account.last)
       end
       
       context 'in json' do
         it 'should create a new account' do
           lambda do
-            post :create, :account => FactoryGirl.attributes_for(:account), :format => :json
+            post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account), format: :json
           end.should change(Account, :count).by(1)
         end
         
         it 'should return the new account' do
           attributes = FactoryGirl.attributes_for(:account)
-          post :create, :account => attributes, :format => :json
+          post :create, entity_id: entity, account: attributes, format: :json
           actual = JSON.parse(response.body)
           attributes.each { |k, v| actual[k.to_s].to_s.should == v.to_s }
         end
@@ -64,7 +64,7 @@ describe AccountsController do
       
       context 'in json' do
         it 'should return the specified account' do
-          get :show, :id => checking, :format => :json
+          get :show, id: checking, format: :json
           response.body.should == checking.to_json
         end
       end     
@@ -72,20 +72,20 @@ describe AccountsController do
     
     describe 'get :edit' do
       it 'should be successful' do
-        get :edit, :id => checking
+        get :edit, id: checking
         response.should be_success
       end
     end
     
     describe 'put :update' do
       it 'should redirect to the detail page for the specified account' do
-        put :update, :id => checking, :account => { :name => 'The new name' }
+        put :update, id: checking, account: { name: 'The new name' }
         response.should redirect_to account_path(checking)
       end
       
       it 'should update the account' do
         lambda do
-          put :update, :id => checking, :account => { :name => 'The new name' }
+          put :update, id: checking, account: { name: 'The new name' }
           checking.reload
         end.should change(checking, :name).from('checking').to('The new name')
       end
@@ -93,7 +93,7 @@ describe AccountsController do
       context 'in json' do
         it 'should update the account' do
           lambda do
-            put :update, :id => checking, :account => { :name => 'The new name' }, :format => :json
+            put :update, id: checking, account: { name: 'The new name' }, format: :json
             checking.reload
           end.should change(checking, :name).from('checking').to('The new name')
         end
@@ -102,20 +102,25 @@ describe AccountsController do
   
     describe 'delete :destroy' do
       it 'should redirect to the account list page' do
-        delete :destroy, :id => checking
-        response.should redirect_to accounts_path
+        delete :destroy, id: checking
+        response.should redirect_to entity_accounts_path(entity)
       end
       
       it 'should delete the specified account' do
         lambda do
-          delete :destroy, :id => checking
+          delete :destroy, id: checking
         end.should change(Account, :count).by(-1)
       end
       
       context 'in json' do
+        it 'should be successful' do
+          delete :destroy, id: checking, format: :json
+          response.should be_success
+        end
+        
         it 'should delete the specified account' do
           lambda do
-            delete :destroy, :id => checking, :format => :json
+            delete :destroy, id: checking, format: :json
           end.should change(Account, :count).by(-1)
         end
       end
@@ -125,27 +130,27 @@ describe AccountsController do
   context 'for an unauthenticated user' do
     describe 'get :index' do
       it 'should redirect to the sign in page' do
-        get :index
+        get :index, entity_id: entity
         response.should redirect_to new_user_session_path
       end
     end
     
     context 'in json' do
       it 'should return "access denied"' do
-        get :index, :format => :json
+        get :index, entity_id: entity, format: :json
         response.response_code.should == 401
       end
     end
     
     describe 'get :new' do
       it 'should be redirect to the sign in page' do
-        get :new
+        get :new, entity_id: entity
         response.should redirect_to new_user_session_path
       end
       
       context 'in json' do
         it 'should return "access denied"' do
-          get :new, :format => :json
+          get :new, entity_id: entity, format: :json
           response.response_code.should == 401
         end
       end
@@ -153,13 +158,13 @@ describe AccountsController do
     
     describe 'post :create' do
       it 'should redirect to the sign in page' do
-        post :create, :account => FactoryGirl.attributes_for(:account)
+        post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
         response.should redirect_to new_user_session_path
       end
       
       context 'in json' do
         it 'should return "access denied"' do
-          post :create, :account => FactoryGirl.attributes_for(:account), :format => :json
+          post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account), format: :json
           response.response_code.should == 401
         end
       end
@@ -167,13 +172,13 @@ describe AccountsController do
     
     describe 'get :show' do
       it 'should redirect to the sign in page' do
-          get :show, :id => checking
+          get :show, id: checking
           response.should redirect_to new_user_session_path
       end
       
       context 'in json' do
         it 'should return "access denied"' do
-          get :show, :id => checking, :format => :json
+          get :show, id: checking, format: :json
           response.response_code.should == 401
         end
       end
@@ -181,13 +186,13 @@ describe AccountsController do
     
     describe 'get :edit' do
       it 'should redirect to the sign in page' do
-        get :edit, :id => checking
+        get :edit, id: checking
         response.should redirect_to new_user_session_path
       end
       
       context 'in json' do
         it 'should return "access denied"' do
-          get :edit, :id => checking, :format => :json
+          get :edit, id: checking, format: :json
           response.response_code.should == 401
         end
       end
@@ -195,13 +200,13 @@ describe AccountsController do
     
     describe 'put :update' do
       it 'should redirect to the sign in page' do
-        put :update, :id => checking, :account => { name: 'The new name' }
+        put :update, id: checking, account: { name: 'The new name' }
         response.should redirect_to new_user_session_path
       end
       
       context 'in json' do
         it 'should return "access denied"' do
-          put :update, :id => checking, :account => { name: 'The new name' }, :format => :json
+          put :update, id: checking, account: { name: 'The new name' }, format: :json
           response.response_code.should == 401
         end
       end
@@ -209,20 +214,20 @@ describe AccountsController do
   
     describe 'delete :destroy' do
       it 'should redirect to sign in' do
-        delete :destroy, :id => checking
+        delete :destroy, id: checking
         response.should redirect_to new_user_session_path
       end
       
       it 'should not delete the specified account' do
         lambda do
-          delete :destroy, :id => checking
+          delete :destroy, id: checking
         end.should_not change(Account, :count)
       end
       
       context 'in json' do
         it 'should not delete the specified account' do
           lambda do
-            delete :destroy, :id => checking, :format => :json
+            delete :destroy, id: checking, format: :json
           end.should_not change(Account, :count)
         end
       end

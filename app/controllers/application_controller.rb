@@ -14,4 +14,14 @@ class ApplicationController < ActionController::Base
       end
     end    
   end
+  
+  rescue_from CanCan::AccessDenied do |exception|
+    respond_with(nil) do |format|
+      format.json { render json: [].to_json, status: 404 } # returning 404 to avoid giving information to hackers
+      format.html do
+        flash[:error] = 'You do not have permission to perform the requested action.'
+        redirect_to home_path
+      end
+    end
+  end
 end

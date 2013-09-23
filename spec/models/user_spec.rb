@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe User do
   let (:user) { FactoryGirl.create(:user) }
-  let!(:checking) { FactoryGirl.create(:asset_account, :user => user, :name => 'checking') }
-  let!(:savings) { FactoryGirl.create(:asset_account, :user => user, :name => 'savings') }
-  let!(:credit_card) { FactoryGirl.create(:liability_account, :user => user, :name => 'credit card') }
-  let!(:retained_earnings) { FactoryGirl.create(:equity_account, :user => user, :name => 'retained earnings') }
 
   let!(:other_user) { FactoryGirl.create(:account) }
   
@@ -30,17 +26,12 @@ describe User do
     end
   end
   
-  describe 'accounts' do
-    it 'should list the accounts that belong to the user' do
-      user.accounts.should == [checking, savings, credit_card, retained_earnings]
-    end
-  end
-  
-  describe 'transactions' do
-    let!(:t1) { FactoryGirl.create(:transaction, description: 'Kroger', user: user) }
-    
-    it 'should list the transactions that belong to the user' do
-      user.transactions.should == [t1]
+  describe 'entities' do
+    let!(:entity1) { FactoryGirl.create(:entity, user: user) }
+    let!(:entity2) { FactoryGirl.create(:entity, user: user) }
+    let!(:someone_else) { FactoryGirl.create(:entity) }
+    it 'should list the entities that belong to the user' do
+      user.entities.should == [entity1, entity2]
     end
   end
 end

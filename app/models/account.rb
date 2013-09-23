@@ -13,7 +13,7 @@
 
 class Account < ActiveRecord::Base
   attr_accessible :name, :account_type, :balance
-  belongs_to :user
+  belongs_to :entity
 
   LEFT_SIDE = %w(asset expense)
   RIGHT_SIDE = %w(liability equity income)

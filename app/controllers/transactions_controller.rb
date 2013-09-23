@@ -6,8 +6,9 @@ class TransactionsController < ApplicationController
   respond_to :html, :json
 
   def index
-    @transactions = TransactionPresenter.new(user: current_user, account: @account)
-    @transaction = current_user.transactions.new(transaction_date: Date.today)
+    authorize! :show, @account.entity
+    @transactions = TransactionPresenter.new(entity: @account.entity, account: @account)
+    @transaction = @account.entity.transactions.new(transaction_date: Date.today)
     @items = [
       @transaction.items.new(action: :credit, account: @account),
       @transaction.items.new(action: :debit)
@@ -16,7 +17,8 @@ class TransactionsController < ApplicationController
   end
 
   def create
-    @transaction = current_user.transactions.new(params[:transaction])
+    authorize! :update, @account.entity
+    @transaction = @account.entity.transactions.new(params[:transaction])
     flash[:notice] = "The transaction was created successfully." if @transaction.save
     respond_with(@transaction) do |format|
       format.html { redirect_to account_transactions_path(@account) }
@@ -24,6 +26,7 @@ class TransactionsController < ApplicationController
   end
 
   def update
+    authorize! :update, @transaction
     @transaction.update_attributes(params[:transaction])
     flash[:notice] = "The transaction was updated successfully." if @transaction.save
     respond_with(@transaction) do |format|
@@ -32,16 +35,16 @@ class TransactionsController < ApplicationController
   end
 
   def show
+    authorize! :show, @transaction
     respond_with @transaction
   end
   
   private
-  
-    def load_account
-      @account = current_user.accounts.find(params[:account_id])
+    def load_account    
+      @account = Account.find(params[:account_id])
     end
     
     def load_transaction
-      @transaction = current_user.transactions.find(params[:id])
+      @transaction = Transaction.find(params[:id])
     end
 end
