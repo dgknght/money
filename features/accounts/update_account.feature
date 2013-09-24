@@ -1,10 +1,11 @@
 Feature: Update an existing account
   Scenario: A user updates an existing account
     Given there is a user with email address "john@doe.com" and password "please01"
-    And user "john@doe.com" has an asset account named "Checking"
+    And user "john@doe.com" has an entity named "Business"
+    And entity "Business" has an asset account named "Checking"
     And I am signed in as "john@doe.com/please01"
     
-    When I am on my home page
+    When I am on the "Business" entity page
     Then I should see the following accounts table
       | Name        | Balance |
       | Assets      | 0.00    |

@@ -24,6 +24,7 @@ module NavigationHelpers
     case page_identifier
       when "the home" then "/"
       when "my home" then  "/home"
+      when /the "([^"]+)" entity/ then entity_path(find_entity($1))
       else raise "unrecognized page identifier \"#{page_identifier}\""
     end
   end
@@ -36,9 +37,13 @@ module NavigationHelpers
     end
     
     def entity_id(name)
+      find_entity(name).id
+    end
+    
+    def find_entity(name)
       entity = Entity.find_by_name(name)
       raise "No entity found with name=#{name}" unless entity
-      entity.id
+      entity
     end
 end
 World(NavigationHelpers)

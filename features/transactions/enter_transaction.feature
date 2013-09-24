@@ -1,12 +1,14 @@
 Feature: Enter a transaction
   Scenario: A user enters a transaction:
     Given there is a user with email address "john@doe.com" and password "please01"
-    And user "john@doe.com" has an asset account named "Checking" with a balance of 100.00
-    And user "john@doe.com" has an expense account named "Groceries" with a balance of 0.00
-    And user "john@doe.com" has an equity account named "Retained" with a balance of 0.00
+    And user "john@doe.com" has an entity named "Personal"
+    
+    And entity "Personal" has an asset account named "Checking" with a balance of 100.00
+    And entity "Personal" has an expense account named "Groceries" with a balance of 0.00
+    And entity "Personal" has an equity account named "Retained" with a balance of 0.00
     And I am signed in as "john@doe.com/please01"
 
-    When I am on my home page
+    When I am on the "Personal" entity page
     Then I should see the following accounts table
       | Name        | Balance |
       | Assets      |   0.00  |
@@ -33,7 +35,7 @@ Feature: Enter a transaction
     And I click "Submit"
     Then I should see "The transaction was created successfully." within the notice area
 
-    When I click "Home" within the navigation
+    When I click "Back"
     Then I should see the following accounts table
       | Name        | Balance |
       | Assets      |   0.00  |

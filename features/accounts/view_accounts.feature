@@ -1,18 +1,19 @@
 Feature: View accounts
   Scenario: A user views their list of accounts
     Given there is a user with email address "john@doe.com" and password "please01"
-
-    And user "john@doe.com" has an asset account named "Checking"
-    And user "john@doe.com" has an asset account named "Savings"
-    And user "john@doe.com" has an asset account named "Home"
+    And user "john@doe.com" has an entity named "Business"
     
-    And user "john@doe.com" has a liability account named "Credit Card"
-    And user "john@doe.com" has a liability account named "Home Loan"
+    And entity "Business" has an asset account named "Checking"
+    And entity "Business" has an asset account named "Savings"
+    And entity "Business" has an asset account named "Home"
+    
+    And entity "Business" has a liability account named "Credit Card"
+    And entity "Business" has a liability account named "Home Loan"
 
-    And user "john@doe.com" has an equity account named "Retained"
+    And entity "Business" has an equity account named "Retained"
     
     And I am signed in as "john@doe.com/please01"
-    And I am on my home page
+    And I am on the "Business" entity page
     Then I should see the following accounts table
       | Name        | Balance |
       | Assets      | 0.00    |

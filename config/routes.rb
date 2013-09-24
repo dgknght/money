@@ -3,7 +3,7 @@ Money::Application.routes.draw do
   devise_for :users
 
   resources :entities do
-    resources :accounts, only: [:new, :create, :index]
+    resources :accounts, only: [:new, :create, :index, :update]
   end
   resources :accounts, only: [:show, :edit, :update, :destroy] do
     resources :transactions, only: [:create, :index]

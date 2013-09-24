@@ -9,3 +9,6 @@
       %td= transaction.transaction_date
       %td= transaction.description
 =render 'form', transaction: @transaction, items: @items
+
+.actions
+  =link_to 'Back', entity_path(@account.entity)
