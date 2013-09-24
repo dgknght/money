@@ -17,7 +17,7 @@ Feature: Add an entity
     And I should see the following entity attributes
       | Name     | Personal |
       
-    When I click on "Entities" in the navigation
+    When I click on "Entities" within the navigation
     Then I should see the following entities table
       | Name     |
       | Personal |
