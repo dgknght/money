@@ -1,0 +1,37 @@
+%table#accounts_table{:cellspacing => 0, :cellpadding => 0}
+  %tr
+    %th Name
+    %th Balance
+    %th
+  %tr
+    %td Assets
+    %td.number_column 0.00
+    %td
+  -accounts.asset.each do |account|
+    =render "accounts/account_row", :account => account
+  %tr
+    %td Liabilities
+    %td.number_column 0.00
+    %td
+  -accounts.liability.each do |account|
+    =render "accounts/account_row", :account => account
+  %tr
+    %td Equity
+    %td.number_column 0.00
+    %td
+  -accounts.equity.each do |account|
+    =render "accounts/account_row", :account => account
+  %tr
+    %td Income
+    %td.number_column 0.00
+    %td
+  -accounts.income.each do |account|
+    =render "accounts/account_row", :account => account
+  %tr
+    %td Expense
+    %td.number_column 0.00
+    %td
+  -accounts.expense.each do |account|
+    =render "accounts/account_row", :account => account
+.actions
+  =link_to 'Add', new_entity_account_path(@entity)

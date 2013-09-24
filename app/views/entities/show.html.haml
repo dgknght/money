@@ -4,3 +4,6 @@
   %tr
     %th Name
     %td= @entity.name
+
+%h3 Accounts
+=render 'accounts/accounts_table', accounts: @entity.accounts
