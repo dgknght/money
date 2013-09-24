@@ -11,6 +11,7 @@ module NavigationHelpers
       when /the navigation/ then ".nav"
       when /the (.*) table/ then "##{$1}_table"
       when /the account row for "([^"]+)"/ then "#account_#{account_id($1)}"
+      when /the entity row for "([^"]+)"/ then "#entity_#{entity_id($1)}"
       else raise "Unrecognized section \"#{section}\""
     end
   end
@@ -32,6 +33,12 @@ module NavigationHelpers
       account = Account.find_by_name(name)
       raise "No account found with name=#{name}" unless account
       account.id
+    end
+    
+    def entity_id(name)
+      entity = Entity.find_by_name(name)
+      raise "No entity found with name=#{name}" unless entity
+      entity.id
     end
 end
 World(NavigationHelpers)

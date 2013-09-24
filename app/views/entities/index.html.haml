@@ -3,8 +3,10 @@
 %table#entities_table{cellspacing: 0, cellpadding:0}
   %tr
     %th Name
+    %th
   -@entities.each do |entity|
-    %tr
+    %tr{id: "entity_#{entity.id}" }
       %td= link_to entity.name, edit_entity_path(entity)
+      %td= render "shared/delete_form", resource: entity, url: entity_url(entity)
 .actions
   =link_to 'Add', new_entity_path
