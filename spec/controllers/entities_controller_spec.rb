@@ -107,21 +107,47 @@ describe EntitiesController do
       end
       
       describe 'get :show' do
-        it 'should be successful'
+        it 'should be successful' do
+          get :show, id: entity
+          response.should be_success
+        end
       
         context 'in json' do
-          it 'should be successful'
-          it 'should return the specified entity'
+          it 'should be successful' do
+            get :show, id: entity, format: :json
+            response.should be_success
+          end
+      
+          it 'should return the specified entity' do
+            get :show, id: entity, format: :json
+            response.body.should == entity.to_json
+          end
         end
       end
       
       describe 'delete :destroy' do
-        it 'should redirect to the entity index page'
-        it 'should delete the entity'
+        it 'should redirect to the entity index page' do
+          delete :destroy, id: entity
+          response.should redirect_to entities_path
+        end
+        
+        it 'should delete the entity' do
+          lambda do
+            delete :destroy, id: entity
+          end.should change(Entity, :count).by(-1)
+        end
       
         context 'in json' do
-          it 'should be successful'
-          it 'should delete the specified entity'
+          it 'should be successful' do
+            delete :destroy, id: entity, format: :json
+            response.should be_success
+          end
+          
+          it 'should delete the specified entity' do
+            lambda do
+              delete :destroy, id: entity, format: :json
+            end.should change(Entity, :count).by(-1)
+          end
         end
       end
     end

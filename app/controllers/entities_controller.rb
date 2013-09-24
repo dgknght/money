@@ -7,6 +7,7 @@ class EntitiesController < ApplicationController
   end
 
   def show
+    respond_with @entity
   end
 
   def new
@@ -28,5 +29,8 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
+    @entity.destroy
+    flash[:notice] = 'The entity was removed successfully.'
+    respond_with @entity
   end
 end
