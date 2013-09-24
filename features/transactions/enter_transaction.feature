@@ -11,7 +11,7 @@ Feature: Enter a transaction
     When I am on the "Personal" entity page
     Then I should see the following accounts table
       | Name        | Balance |
-      | Assets      |   0.00  |
+      | Assets      | 100.00  |
       | Checking    | 100.00  |
       | Liabilities |   0.00  |
       | Equity      |   0.00  |
@@ -38,11 +38,11 @@ Feature: Enter a transaction
     When I click "Back"
     Then I should see the following accounts table
       | Name        | Balance |
-      | Assets      |   0.00  |
+      | Assets      |  43.35  |
       | Checking    |  43.35  |
       | Liabilities |   0.00  |
       | Equity      |   0.00  |
       | Retained    |   0.00  |
       | Income      |   0.00  |
-      | Expense     |   0.00  |
+      | Expense     |  56.65  |
       | Groceries   |  56.65  |

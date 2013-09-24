@@ -5,31 +5,31 @@
     %th
   %tr
     %td Assets
-    %td.number_column 0.00
+    %td.number_column= "%.2f" % accounts.asset.sum(:balance)
     %td
   -accounts.asset.each do |account|
     =render "accounts/account_row", :account => account
   %tr
     %td Liabilities
-    %td.number_column 0.00
+    %td.number_column= "%.2f" % accounts.liability.sum(:balance)
     %td
   -accounts.liability.each do |account|
     =render "accounts/account_row", :account => account
   %tr
     %td Equity
-    %td.number_column 0.00
+    %td.number_column= "%.2f" % accounts.equity.sum(:balance)
     %td
   -accounts.equity.each do |account|
     =render "accounts/account_row", :account => account
   %tr
     %td Income
-    %td.number_column 0.00
+    %td.number_column= "%.2f" % accounts.income.sum(:balance)
     %td
   -accounts.income.each do |account|
     =render "accounts/account_row", :account => account
   %tr
     %td Expense
-    %td.number_column 0.00
+    %td.number_column= "%.2f" % accounts.expense.sum(:balance)
     %td
   -accounts.expense.each do |account|
     =render "accounts/account_row", :account => account
