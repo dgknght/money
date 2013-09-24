@@ -153,42 +153,92 @@ describe EntitiesController do
     end
     
     context 'that does not own the entity' do
-      describe 'get :edit' do
-        it 'should redirect to entity index page'
+      let(:other_user) { FactoryGirl.create(:user) }
       
-        context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+      before(:each) { sign_in other_user }
+      
+      describe 'get :edit' do
+        it 'should redirect to user home page' do
+          get :edit, id: entity
+          response.should redirect_to home_path
         end
       end
       
       describe 'put :update' do
-        it 'should redirect to entity index page'
-        it 'should not update the entity'
+        it 'should redirect to the user home page' do
+          put :update, id: entity, entity: { name: 'some new name' }
+          response.should redirect_to home_path
+        end
+        
+        it 'should not update the entity' do
+          lambda do
+            put :update, id: entity, entity: { name: 'some new name' }
+            entity.reload
+          end.should_not change(entity, :name)
+        end
       
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
-          it 'should not update the entity'
+          it 'should return "resource not found"' do
+            put :update, id: entity, entity: { name: 'some new name' }, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            put :update, id: entity, entity: { name: 'some new name' }, format: :json
+            response.body.should == [].to_json
+          end
+          
+          it 'should not update the entity' do
+            lambda do
+              put :update, id: entity, entity: { name: 'some new name' }, format: :json
+              entity.reload
+            end.should_not change(entity, :name)
+          end
+          
         end
       end
       
       describe 'get :show' do
-        it 'should redirect to the entity index page'
+        it 'should redirect to the user home page' do
+          get :show, id: entity
+          response.should redirect_to home_path
+        end
       
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :show, id: entity, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :show, id: entity, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
       
       describe 'delete :destroy' do
-        it 'should redirect to the entity index page'
-        it 'should not delete the entity'
+        it 'should redirect to the user home page' do
+          delete :destroy, id: entity
+          response.should redirect_to home_path
+        end
+        
+        it 'should not delete the entity' do
+          lambda do
+            delete :destroy, id: entity
+          end.should_not change(Entity, :count)
+        end
       
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            delete :destroy, id: entity, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            delete :destroy, id: entity, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
     end
@@ -196,11 +246,21 @@ describe EntitiesController do
 
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :index, id: entity
+        response.should redirect_to new_user_session_path
+      end
       
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          get :index, id: entity, format: :json
+          response.response_code.should == 401          
+        end
+        
+        it 'should not return any data' do
+          get :index, id: entity, format: :json
+          response.body.should == { error: 'You need to sign in or sign up before continuing.' }.to_json
+        end
       end
     end
     
