@@ -5,10 +5,10 @@
 #  id           :integer          not null, primary key
 #  name         :string(255)      not null
 #  account_type :string(255)      not null
-#  user_id      :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  balance      :decimal(, )      default(0.0), not null
+#  entity_id    :integer          not null
 #
 
 class Account < ActiveRecord::Base
