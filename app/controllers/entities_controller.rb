@@ -1,6 +1,9 @@
 class EntitiesController < ApplicationController
+  include ApplicationHelper
+  
   before_filter :authenticate_user!
   load_and_authorize_resource
+  before_filter :set_current_entity
   respond_to :html, :json
   
   def index
@@ -34,4 +37,9 @@ class EntitiesController < ApplicationController
     flash[:notice] = 'The entity was removed successfully.'
     respond_with @entity
   end
+  
+  private
+    def set_current_entity
+      self.current_entity = @entity
+    end
 end

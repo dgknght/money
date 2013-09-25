@@ -1,7 +1,10 @@
 class AccountsController < ApplicationController
+  include ApplicationHelper
+  
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :new, :create]
   before_filter :load_account, only: [:show, :edit, :update, :destroy]
+  before_filter :set_current_entity
   respond_to :html, :json
   
   def destroy
@@ -53,5 +56,9 @@ class AccountsController < ApplicationController
     
     def load_entity
       @entity = current_user.entities.find(params[:entity_id])
+    end
+    
+    def set_current_entity
+      self.current_entity = @entity || @account.entity
     end
 end

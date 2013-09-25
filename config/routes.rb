@@ -4,6 +4,7 @@ Money::Application.routes.draw do
 
   resources :entities do
     resources :accounts, only: [:new, :create, :index, :update]
+    resources :transactions, only: :index
   end
   resources :accounts, only: [:show, :edit, :update, :destroy] do
     resources :transactions, only: [:create, :index]

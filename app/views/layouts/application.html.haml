@@ -15,6 +15,8 @@
             %li= link_to "Sign out", destroy_user_session_path, :method => :delete
           -else
             %li= link_to "Sign in", new_user_session_path
+      -if content_for? :secondary_nav
+        =yield :secondary_nav
     #content
       = render "shared/flash", :flash => flash
       = yield
