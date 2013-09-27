@@ -1,14 +1,16 @@
-%h2#page_subtitle= @account.name
+%h2#page_subtitle Transactions
 
 %table#transactions_table{cellspacing: 0, cellpadding:0}
   %tr
     %th Transaction Date
     %th Description
+    %th Amount
   -@transactions.each do |transaction|
     %tr
-      %td= transaction.transaction_date
+      %td= transaction.transaction_date.strftime("%-m/%-d/%Y")
       %td= transaction.description
+      %td= "%.2f" % transaction.total_credits.abs
 =render 'form', transaction: @transaction, items: @items
 
 .actions
-  =link_to 'Back', entity_path(@account.entity)
+  =link_to 'Back', entity_path(@entity)
