@@ -3,13 +3,11 @@ Money::Application.routes.draw do
   devise_for :users
 
   resources :entities do
-    resources :accounts, only: [:new, :create, :index, :update]
-    resources :transactions, only: :index
+    resources :accounts, only: [:new, :create, :index]
+    resources :transactions, only: [:index, :new, :create]
   end
-  resources :accounts, only: [:show, :edit, :update, :destroy] do
-    resources :transactions, only: [:create, :index]
-  end
-  resources :transactions, only: [:show, :update, :destroy]
+  resources :accounts, only: [:show, :edit, :update, :destroy]
+  resources :transactions, only: [:show, :edit, :update, :destroy]
   
   match 'home' => 'entities#index'
   

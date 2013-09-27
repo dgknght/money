@@ -7,8 +7,10 @@ module NavigationHelpers
     case section
       when /the notice area/ then ".notice"
       when /the page title/ then "#page_title"
+      when /the page subtitle/ then "#page_subtitle"
       when /the main content/ then "#content"
       when /the navigation/ then ".nav"
+      when /the secondary navigation/ then "#nav_2"
       when /the (.*) table/ then "##{$1}_table"
       when /the account row for "([^"]+)"/ then "#account_#{account_id($1)}"
       when /the entity row for "([^"]+)"/ then "#entity_#{entity_id($1)}"
