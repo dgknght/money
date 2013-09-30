@@ -7,16 +7,16 @@
     = csrf_meta_tags
   %body
     #header
-      .nav
-        %ul
+      %nav{role: "navigation"}
+        %ul#nav_1
           -if user_signed_in?
             %li= link_to "Home", home_path
             %li= link_to "Entities", entities_path
             %li= link_to "Sign out", destroy_user_session_path, :method => :delete
           -else
             %li= link_to "Sign in", new_user_session_path
-      -if content_for? :secondary_nav
-        =yield :secondary_nav
+        -if content_for? :secondary_nav
+          =yield :secondary_nav
     #content
       = render "shared/flash", :flash => flash
       = yield
