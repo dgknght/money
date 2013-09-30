@@ -1,3 +1,4 @@
+@wip
 Feature: Add an entity
   Scenario: A user adds a new entity
     Given there is a user with email address "john@doe.com" and password "please01"

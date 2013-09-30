@@ -1,3 +1,5 @@
 %h2#page_title New account
 
-=render "form", :account => @account
+=render "shared/errors", :resource => @account
+=form_for([@account.entity, @account]) do |f|  
+  =render "form_fields", account: @account, f: f
