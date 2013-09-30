@@ -9,7 +9,8 @@ Feature: Enter a transaction
     And I am signed in as "john@doe.com/please01"
 
     When I am on the "Personal" entity page
-    Then I should see the following accounts table
+    Then I should see "Transactions" within the secondary navigation
+    And I should see the following accounts table
       | Name        | Balance |
       | Assets      | 100.00  |
       | Checking    | 100.00  |
@@ -20,8 +21,8 @@ Feature: Enter a transaction
       | Expense     |   0.00  |
       | Groceries   |   0.00  |
 
-    When I click "Checking" within the account row for "Checking"
-    Then I should see "Checking" within the page title
+    When I click "Transactions" within the secondary navigation
+    Then I should see "Transactions" within the page subtitle
 
     When I fill in "Description" with "Kroger"
 

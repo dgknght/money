@@ -2,7 +2,7 @@ class EntitiesController < ApplicationController
   include ApplicationHelper
   
   before_filter :authenticate_user!
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:new, :create]
   before_filter :set_current_entity
   respond_to :html, :json
   
@@ -15,6 +15,7 @@ class EntitiesController < ApplicationController
   end
 
   def new
+    @entity = current_user.entities.new
   end
 
   def create
