@@ -1,7 +1,10 @@
 class TransactionsController < ApplicationController
+  include ApplicationHelper
+  
   before_filter :authenticate_user!
   before_filter :load_entity, only: [ :index, :create ]
   before_filter :load_transaction, only: [:update, :show]
+  before_filter :set_current_entity
   
   respond_to :html, :json
 
@@ -46,5 +49,9 @@ class TransactionsController < ApplicationController
     
     def load_transaction
       @transaction = Transaction.find(params[:id])
+    end
+    
+    def set_current_entity
+      self.current_entity = @entity || @transaction.entity
     end
 end
