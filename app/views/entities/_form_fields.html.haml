@@ -3,4 +3,5 @@
   %br
   =f.text_field :name
 .actions
-  =f.submit "Save"
+  =f.submit "Save", class: 'save_button', title: 'Click here to save the entity.'
+  =link_to "Back", entities_path, class: 'back_button', title: 'Click here to return the list of entities.'

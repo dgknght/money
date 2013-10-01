@@ -1,14 +1,8 @@
 =form_for([transaction.entity, transaction]) do |f|
-  %div
-    =f.label :transaction_date
-    %br
-    =f.text_field :transaction_date, class: 'date_field'
-  %div
-    =f.label :description
-    %br
-    =f.text_field :description
-  %div
-    %table{cellspacing: 0, cellpadding: 0}
+  =f.text_field :transaction_date, class: 'date_field transaction_date_field', autofocus: true
+  =f.text_field :description, class: 'transaction_description_field', placeholder: 'description'
+  .new_transaction_items_container
+    %table.list{cellspacing: 0, cellpadding: 0}
       %tr
         %th Account
         %th Action
@@ -20,5 +14,6 @@
             %td= item_form.select :action, [:credit, :debit]
             %td= item_form.text_field :amount
 
-            .actions
-    =f.submit 'Submit'
+  .actions
+    =f.submit 'Save', class: 'save_button', title: 'Click here to save the transaction.'
+    =link_to 'Back', entity_path(@entity), class: 'back_button', title: 'Click here to return to the list of entities.'

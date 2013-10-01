@@ -1,3 +1,61 @@
 // Place all the styles related to the Transactions controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+/* TODO: Need to figure out how to share these across files */
+$table-header-background-color: #333;
+$table-header-color: #CCC;
+$table-border-color: #333;
+
+table.transaction_list {
+  border-collapse: collapse;
+  th {
+    background-color: $table-header-background-color;
+    color: $table-header-color;
+    padding: 4px;
+    border: 1px solid $table-header-background-color;
+  }
+  td {
+    padding: 4px;
+    border: 1px solid $table-header-background-color;
+  }
+}
+
+.new_transaction_container {
+}
+
+.any_form_field {
+  padding: 4px;
+  border: 1px solid $table-border-color;
+}
+
+.transaction_date_column {
+  width: 10em;
+}
+.transaction_date_field {
+  margin: {
+    top: -1px;
+    left: 0px;
+    right: 0;
+    bottom: 0;
+  }
+  width: 9.75em;
+  @extend .any_form_field;
+}
+.transaction_description_column {
+  width: 10em;
+}
+.transaction_description_field {
+  margin: {
+    top: -1px;
+    left: -5px;
+    right: 0;
+    bottom: 0;
+  }
+  width: 9.75em;
+  @extend .any_form_field;
+}
+
+.new_transaction_items_container {
+  margin-left: 2em;
+}

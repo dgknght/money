@@ -1,11 +1,35 @@
 $shadow-color: #CCC;
 
+$table-header-background-color: #333;
+$table-header-color: #CCC;
+$table-border-color: #333;
+$alt-row-background-color: #CCC;
+
+$text-color: #000;
+
+@mixin hide-text {
+  text-indent: 150%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 body {
   margin: 0px;
   padding: 0px;
   font: {
     family: arial;
     size: small;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: $text-color;
+  &:hover {
+    text-decoration: underline;
+  }
+  &:visited {
+    color: $text-color;
   }
 }
 
@@ -24,12 +48,6 @@ nav[role="navigation"] ul {
     margin: 0px;
     display: inline-block;
     padding: 0px;
-  }
-  a {
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
   }
 }
 
@@ -71,5 +89,88 @@ nav[role="navigation"] ul {
   a {
     float: left;
     vertical-align: middle;
+  }
+}
+
+table.list {
+  border: 1px solid $table-border-color;
+  th {
+    padding: 2px;
+    border: 1px solid $table-border-color;
+    background-color: $table-header-background-color;
+    color: $table-header-color;
+    &.action_cell {
+      width: 60px;
+    }
+  }
+  td {
+    padding: 4px;
+  }
+}
+.alt_table_row {
+  background-color: $alt-row-background-color;
+}
+
+.number_column {
+  text-align: right;
+}
+
+table.attributes {
+  th {
+    text-align:left;
+    padding-right: 4px;
+    &:after {
+      content: ':'
+    }
+  }
+}
+
+.any_button {
+  @include hide-text;
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  margin: 2px;
+}
+
+.any_form_button {
+  @extend .any_button;
+  padding: 0;
+  background-color: #FFF;
+  border: 0px;
+  cursor: pointer;
+}
+
+.add_button {
+  @extend .any_button;
+  background-image: url(/assets/add.png)
+}
+
+.save_button {
+  @extend .any_form_button;
+  background-image: url(/assets/save.png)
+}
+
+.back_button {
+  @extend .any_button;
+  background-image: url(/assets/back.png)
+}
+
+.edit_button {
+  @extend .any_button;
+  background-image: url(/assets/edit.png)
+}
+
+.delete_button {
+  @extend .any_form_button;
+  background-image: url(/assets/delete.png)
+}
+
+.actions {
+  margin-top: 8px;
+  vertical-align: middle;
+  height: 30px;
+  * {
+    float: left;
   }
 }

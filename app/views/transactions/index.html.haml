@@ -1,16 +1,14 @@
 %h2#page_subtitle Transactions
 
-%table#transactions_table{cellspacing: 0, cellpadding:0}
+%table#transactions_table.transaction_list{cellspacing: 0, cellpadding:0}
   %tr
     %th Transaction Date
     %th Description
     %th Amount
-  -@transactions.each do |transaction|
-    %tr
-      %td= transaction.transaction_date.strftime("%-m/%-d/%Y")
-      %td= transaction.description
-      %td= "%.2f" % transaction.total_credits.abs
-=render 'form', transaction: @transaction, items: @items
-
-.actions
-  =link_to 'Back', entity_path(@entity)
+  -@transactions.each_with_index do |transaction, index|
+    %tr{class: index % 2 == 0 ? 'table_row' : 'alt_table_row'}
+      %td.transaction_date_column= transaction.transaction_date.strftime("%-m/%-d/%Y")
+      %td.transaction_description_column= transaction.description
+      %td.number_column= "%.2f" % transaction.total_credits.abs
+.new_transaction_container
+  =render 'form', transaction: @transaction, items: @items

@@ -1,8 +1,8 @@
-%table#accounts_table{:cellspacing => 0, :cellpadding => 0}
+%table#accounts_table.list{:cellspacing => 0, :cellpadding => 0}
   %tr
     %th Name
     %th Balance
-    %th
+    %th.action_cell &nbsp;
   %tr
     %td Assets
     %td.number_column= "%.2f" % accounts.asset.sum(:balance)
@@ -34,4 +34,4 @@
   -accounts.expense.each do |account|
     =render "accounts/account_row", :account => account
 .actions
-  =link_to 'Add', new_entity_account_path(@entity)
+  =link_to 'Add', new_entity_account_path(@entity), class: 'add_button', title: 'Click here to add an account.'

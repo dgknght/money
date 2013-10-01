@@ -7,4 +7,5 @@
   %br
   =f.text_field :name
 .actions
-  =f.submit "Save"
+  =f.submit "Save", class: 'save_button', title: 'Click here to save the account.'
+  =link_to 'Back', entity_accounts_path(account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'
