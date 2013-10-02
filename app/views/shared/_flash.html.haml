@@ -1,3 +1,9 @@
+:javascript
+  $(document).ready(function() {
+    $('.alerts').delay(5000).fadeOut(2000);
+  });
+  
 -if flash.any?
-  -flash.each do |name, message|
-    %div{:class => name}= message
+  .alerts
+    -flash.each do |name, message|
+      %div{:class => name}= message

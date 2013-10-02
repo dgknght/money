@@ -5,6 +5,10 @@ $dark-grey: #333;
 $medium-grey: #999;
 $light-grey: #CCC;
 
+$green: #00A000;
+$yellow: #A0A000;
+$red: #A00000;
+
 $black: #000;
 
 @mixin hide-text {
@@ -39,6 +43,10 @@ a {
   box-shadow: 0em .5em .2em $shadow-color;
 }
 
+/*
+ * Navigation
+ */
+ 
 nav[role="navigation"] ul {
   list-style-type: none;
   margin: 0px;
@@ -75,9 +83,42 @@ nav[role="navigation"] ul {
   }
 }
 
-#body {
-  margin: 0px;
-  padding-left: 8px;
+/*
+ * Notices
+ */
+.alerts {
+  display: block;
+  position: absolute;
+  top: 7em;
+  left: 40em;
+  color: $white;
+}
+
+.any_alert {
+  border-radius: .8em;
+  box-shadow: .2em .2em .2em 0 $dark-grey;
+  padding: .5em;
+  margin: {
+    top: 1em;
+  }
+}
+
+.notice {
+  @extend .any_alert;
+  background-color: $green;
+  border: 2px solid $green;
+}
+
+.warning {
+  @extend .any_alert;
+  background-color: $yellow;
+  border: 2px solid $yellow;
+}
+
+.error {
+  @extend .any_alert;
+  background-color: $red;
+  border: 2px solid $red;
 }
 
 #content {
