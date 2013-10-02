@@ -1,3 +1,12 @@
 // Place all the styles related to the Accounts controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.account_category {
+  font-weight: bold;
+  font-size: 110%;
+}
+
+.account_row td:first-child {
+  padding-left: 2em;
+}

@@ -3,31 +3,31 @@
     %th Name
     %th Balance
     %th.action_cell &nbsp;
-  %tr
+  %tr.account_category
     %td Assets
     %td.number_column= "%.2f" % accounts.asset.sum(:balance)
     %td
   -accounts.asset.each do |account|
     =render "accounts/account_row", :account => account
-  %tr
+  %tr.account_category
     %td Liabilities
     %td.number_column= "%.2f" % accounts.liability.sum(:balance)
     %td
   -accounts.liability.each do |account|
     =render "accounts/account_row", :account => account
-  %tr
+  %tr.account_category
     %td Equity
     %td.number_column= "%.2f" % accounts.equity.sum(:balance)
     %td
   -accounts.equity.each do |account|
     =render "accounts/account_row", :account => account
-  %tr
+  %tr.account_category
     %td Income
     %td.number_column= "%.2f" % accounts.income.sum(:balance)
     %td
   -accounts.income.each do |account|
     =render "accounts/account_row", :account => account
-  %tr
+  %tr.account_category
     %td Expense
     %td.number_column= "%.2f" % accounts.expense.sum(:balance)
     %td

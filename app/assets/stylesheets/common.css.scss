@@ -1,11 +1,11 @@
 $shadow-color: #CCC;
 
-$table-header-background-color: #333;
-$table-header-color: #CCC;
-$table-border-color: #333;
-$alt-row-background-color: #CCC;
+$white: #FFF;
+$dark-grey: #333;
+$medium-grey: #999;
+$light-grey: #CCC;
 
-$text-color: #000;
+$black: #000;
 
 @mixin hide-text {
   text-indent: 150%;
@@ -24,12 +24,12 @@ body {
 
 a {
   text-decoration: none;
-  color: $text-color;
+  color: $black;
   &:hover {
     text-decoration: underline;
   }
   &:visited {
-    color: $text-color;
+    color: $black;
   }
 }
 
@@ -93,12 +93,12 @@ nav[role="navigation"] ul {
 }
 
 table.list {
-  border: 1px solid $table-border-color;
+  border: 1px solid $dark-grey;
   th {
     padding: 2px;
-    border: 1px solid $table-border-color;
-    background-color: $table-header-background-color;
-    color: $table-header-color;
+    border: 1px solid $dark-grey;
+    background-color: $dark-grey;
+    color: $light-grey;
     &.action_cell {
       width: 60px;
     }
@@ -108,7 +108,7 @@ table.list {
   }
 }
 .alt_table_row {
-  background-color: $alt-row-background-color;
+  background-color: $light-grey;
 }
 
 .number_column {
@@ -166,11 +166,44 @@ table.attributes {
   background-image: url(/assets/delete.png)
 }
 
+.standard_button {
+  background-color: $white;
+  border: 3px solid $dark-grey;
+/*  border-radius: .5em; */
+  color: $black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .actions {
   margin-top: 8px;
   vertical-align: middle;
   height: 30px;
   * {
     float: left;
+  }
+}
+
+/*
+ * Devise styles....this should probably be in a different file somewhere
+ */
+ul.devise_actions {
+  margin: {
+    top: .5em;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  padding: 0;
+  list-style-type: none;
+  li {
+    display: inline-block;
+    margin: {
+      right: .5em;
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+    padding: 0;    
   }
 }

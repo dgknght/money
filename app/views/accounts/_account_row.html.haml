@@ -1,4 +1,4 @@
-%tr{ :id => "account_#{account.id}" }
+%tr.account_row{ :id => "account_#{account.id}" }
   %td= account.name
   %td.number_column= "%.2f" % account.balance
   %td.action_cell
