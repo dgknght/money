@@ -24,4 +24,6 @@ Feature: Update an existing account
   Then I should see "The account was successfully updated" within the notice area
   And I should see the following account attributes
     | Account type | asset   |
+    | Parent       |         |
     | Name         | Savings |
+    | Path         | Savings |

@@ -39,6 +39,73 @@ describe Account do
     end
   end
   
+  describe 'balance_with_children' do
+    let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 11) }
+    let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 12) }
+    
+    it 'should be the balance of the account plus the sum of the balances of the child accounts' do
+      groceries.balance_with_children.should == 23
+    end
+  end
+  
+  describe 'parent' do
+    let(:parent) { FactoryGirl.create(:asset_account) }
+    
+    it 'should refer to another account' do
+      account = Account.new(attributes.merge(parent_id: parent.id))
+      account.parent.should_not be_nil
+      account.parent.should == parent
+    end
+    
+    it 'must be the same type of account' do
+      account = Account.new(attributes.merge(parent_id: parent.id, account_type: Account.liability_type))
+      account.should_not be_valid
+    end
+  end
+  
+  describe 'parent_name' do
+    let(:parent) { FactoryGirl.create(:asset_account, name: 'Parent Account') }
+    
+    it 'should get the name of the parent if a parent is specified' do
+      account = parent.children.new(name: 'Child')
+      account.parent_name.should == 'Parent Account'
+    end
+    
+    it 'should be nil if the parent is not specified' do
+      account = Account.new(attributes)
+      account.parent_name.should be_nil
+    end
+  end
+  
+  describe 'path' do
+    let(:parent) { FactoryGirl.create(:asset_account, name: 'Parent Account') }
+    
+    it 'should get the name of account prefixed with any parent names' do
+      account = parent.children.new(name: 'Child')
+      account.path.should == 'Parent Account/Child'
+    end
+  end
+  
+  describe 'children' do
+    let (:parent) { FactoryGirl.create(:asset_account) }
+    let!(:child1) { FactoryGirl.create(:asset_account, parent_id: parent.id) }
+    let!(:child2) { FactoryGirl.create(:asset_account, parent_id: parent.id) }
+    
+    it 'should contain the child accounts' do
+      parent.children.should == [child1, child2]
+    end
+  end
+  
+  describe 'depth' do
+    let (:parent) { FactoryGirl.create(:asset_account) }
+    let!(:child1) { FactoryGirl.create(:asset_account, parent_id: parent.id) }
+    
+    it 'should return the number of parents in the parent-child chain' do
+        parent.depth.should == 0
+        child1.depth.should == 1
+    end
+  end
+  
   describe 'asset scope' do
     it 'should return a list of asset accounts' do
       Account.asset.should == [checking]

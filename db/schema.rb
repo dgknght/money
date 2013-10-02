@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130923153050) do
+ActiveRecord::Schema.define(:version => 20131002180121) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name",                          :null => false
@@ -20,7 +20,10 @@ ActiveRecord::Schema.define(:version => 20130923153050) do
     t.datetime "updated_at",                    :null => false
     t.decimal  "balance",      :default => 0.0, :null => false
     t.integer  "entity_id",                     :null => false
+    t.integer  "parent_id"
   end
+
+  add_index "accounts", ["parent_id"], :name => "index_accounts_on_parent_id"
 
   create_table "entities", :force => true do |t|
     t.integer  "user_id",                   :null => false

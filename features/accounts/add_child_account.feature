@@ -1,4 +1,3 @@
-@wip
 Feature: Add a child account
   As a user
   In order to organize my accounts
@@ -29,11 +28,11 @@ Feature: Add a child account
     And I fill in "Name" with "Food"
     And I select "Groceries" from the "Parent" list
     And I click "Save"    
-    Then I should see "The account was created successfully." within the notice area
+    Then I should see "The account was successfully created." within the notice area
     And I should see the following account attributes
       | Account type | expense        |
-      | Name         | Food           |
       | Parent       | Groceries      | 
+      | Name         | Food           |
       | Path         | Groceries/Food |
       
     When I click "Back"
@@ -48,7 +47,7 @@ Feature: Add a child account
       | Groceries   |    0.00 |
       | Food        |    0.00 |
     
-    When I enter a transaction called "Kroger" on 1/1/2013 crediting "Checking" $15 and debiting "Food" $15
+    When I enter a transaction for entity "Personal" called "Kroger" on 1/1/2013 crediting "Checking" $15 and debiting "Food" $15
     And I click "Back"
     Then I should see the following accounts table
       | Name        | Balance |

@@ -5,7 +5,13 @@
     %th Account type
     %td= @account.account_type
   %tr
+    %th Parent
+    %td= @account.parent_name
+  %tr
     %th Name
     %td= @account.name
+  %tr
+    %th Path
+    %td= @account.path
 .actions
   =link_to 'Back', entity_path(@account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'

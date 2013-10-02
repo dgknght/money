@@ -7,6 +7,12 @@
   font-size: 110%;
 }
 
-.account_row td:first-child {
+.account_depth_0 {
   padding-left: 2em;
+}
+.account_depth_1 {
+  padding-left: 4em;
+}
+.account_depth_2 {
+  padding-left: 6em;
 }

@@ -27,11 +27,11 @@ Given(/^(#{ENTITY}) has a transaction "([^"]+)" on (#{DATE_VALUE}) (#{CREDIT_ACC
   transaction = entity.transactions.create!(description: description, transaction_date: date, items_attributes: items)
 end
 
-When(/^I enter a transaction called "([^"]+)" on (#{DATE_VALUE}) (#{CREDIT_ACCOUNT}) (#{DOLLAR_AMOUNT}) and (#{DEBIT_ACCOUNT}) (#{DOLLAR_AMOUNT})$/) do |description, transaction_date, credit_account, credit_amount, debit_account|
+When(/^I enter a transaction for (#{ENTITY}) called "([^"]+)" on (#{DATE_VALUE}) (#{CREDIT_ACCOUNT}) (#{DOLLAR_AMOUNT}) and (#{DEBIT_ACCOUNT}) (#{DOLLAR_AMOUNT})$/) do |entity, description, transaction_date, credit_account, credit_amount, debit_account, debit_amount|
   items = [
     { account: credit_account, action: TransactionItem.credit, amount: credit_amount },
     { account: debit_account, action: TransactionItem.debit, amount: debit_amount }
   ]
   transaction = entity.transactions.create!(description: description, transaction_date: transaction_date, items_attributes: items)
-  visit transaction_path(transaction)
+  visit entity_transactions_path(entity)
 end

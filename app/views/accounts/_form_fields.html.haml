@@ -1,7 +1,11 @@
 %div
   =f.label :account_type
   %br
-  =f.select :account_type, options_for_select(%w(asset liability equity income expense)), :autofocus => true
+  =f.select :account_type, options_for_select(%w(asset liability equity income expense), account.account_type), :autofocus => true
+%div
+  =f.label :parent_id
+  %br
+  =f.collection_select :parent_id, available_parent_accounts(account), :id, :name, include_blank: true
 %div
   =f.label :name
   %br

@@ -1,6 +1,7 @@
 %tr.account_row{ :id => "account_#{account.id}" }
-  %td= account.name
-  %td.number_column= "%.2f" % account.balance
+  %td
+    %div{class: "account_depth_#{account.depth}"}= account.name
+  %td.number_column= "%.2f" % account.balance_with_children
   %td.action_cell
     = link_to "Edit", edit_account_path(account), class: 'edit_button', title: 'Click here to edit this account.'
     = render "shared/delete_form", :resource => account, :url => account_path(account)
