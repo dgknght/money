@@ -15,6 +15,10 @@ When (/^I click (?:on )?"([^"]+)"$/) do |locator|
   click_on(locator)
 end
 
+When (/^I select "([^"]+)" from the "([^"]+)" list$/) do |value, locator|
+  select value, from: locator
+end
+
 When (/^I select "([^"]+)" from the (\d(?:st|nd|rd|th)) (\w+) (\w+) (\w+) list$/) do |value, ordinal, parent, child, description|
   locator = "#{parent}[#{child}_attributes][#{ordinal_to_index(ordinal)}][#{description}]"
   select value, from: locator
