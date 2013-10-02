@@ -1,6 +1,6 @@
 %h2#page_title Account
 
-%table#account_table{:cellspacing => 0, :cellpadding => 0}
+%table#account_table.attributes{:cellspacing => 0, :cellpadding => 0}
   %tr
     %th Account type
     %td= @account.account_type
@@ -8,4 +8,4 @@
     %th Name
     %td= @account.name
 .actions
-  =link_to 'Back', entity_path(@account.entity)
+  =link_to 'Back', entity_path(@account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'

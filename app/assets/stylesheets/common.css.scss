@@ -118,7 +118,12 @@ table.list {
 table.attributes {
   th {
     text-align:left;
-    padding-right: 4px;
+    padding: {
+      right: .5em;
+      left: .2em;
+      top: .3em;
+      bottom: .3em;
+    }
     &:after {
       content: ':'
     }
