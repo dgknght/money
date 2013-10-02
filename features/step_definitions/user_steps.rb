@@ -9,7 +9,7 @@ Given(/^I am signed in as "([^\/]+)\/(.*)"$/) do |email, password|
   within(:css, '#content') do
     click_button 'Sign in'
   end
-  within(:css, '.nav') do
+  within(:css, 'nav') do
     page.should have_content('Sign out')
   end
 end

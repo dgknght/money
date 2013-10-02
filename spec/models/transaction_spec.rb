@@ -53,13 +53,6 @@ describe Transaction do
     end
   end
   
-  describe 'amount' do
-    it 'should be the sum of credits (or debits) for the transaction' do
-      transaction = Transaction.new(attributes)
-      transaction.amount.should = 34.43
-    end
-  end
-  
   describe 'items' do
     let(:transaction) { FactoryGirl.create(:transaction) }
     let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }

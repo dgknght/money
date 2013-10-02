@@ -24,7 +24,7 @@ Feature: Enter a transaction
     When I click "Transactions" within the secondary navigation
     Then I should see "Transactions" within the page subtitle
 
-    When I fill in "Description" with "Kroger"
+    When I fill in "description" with "Kroger"
 
     And I fill in the 1st transaction items amount field with "56.65"
     And I select "credit" from the 1st transaction items action list
@@ -33,7 +33,7 @@ Feature: Enter a transaction
     And I select "Groceries" from the 2nd transaction items account_id list
     And I select "debit" from the 2nd transaction items action list
 
-    And I click "Submit"
+    And I click "Save"
     Then I should see "The transaction was created successfully." within the notice area
 
     When I click "Back"
