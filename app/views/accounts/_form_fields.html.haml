@@ -1,7 +1,7 @@
 %div
   =f.label :account_type
   %br
-  =f.select :account_type, options_for_select([:asset, :liability, :equity]), :autofocus => true
+  =f.select :account_type, options_for_select(%w(asset liability equity income expense)), :autofocus => true
 %div
   =f.label :name
   %br
