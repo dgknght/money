@@ -88,11 +88,11 @@ describe Account do
   
   describe 'children' do
     let (:parent) { FactoryGirl.create(:asset_account) }
-    let!(:child1) { FactoryGirl.create(:asset_account, parent_id: parent.id) }
-    let!(:child2) { FactoryGirl.create(:asset_account, parent_id: parent.id) }
+    let!(:child1) { FactoryGirl.create(:asset_account, parent_id: parent.id, name: 'Z should be second') }
+    let!(:child2) { FactoryGirl.create(:asset_account, parent_id: parent.id, name: 'A should be first') }
     
-    it 'should contain the child accounts' do
-      parent.children.should == [child1, child2]
+    it 'should contain the child accounts in alphabetical order' do
+      parent.children.should == [child2, child1]
     end
   end
   

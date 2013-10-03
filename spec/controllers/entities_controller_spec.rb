@@ -101,7 +101,7 @@ describe EntitiesController do
           
           it 'should not return any data' do
             put :update, id: entity, entity: { name: 'the new name' }, format: :json
-            response.body.should == " "
+            response.body.should == ""
           end
         end
       end

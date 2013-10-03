@@ -32,7 +32,7 @@ class AccountsController < ApplicationController
 
   def create
     authorize! :update, @entity
-    @account = @entity.accounts.new(params[:account])
+    @account = @entity.accounts.new(account_params)
     flash[:notice] = "The account was successfully created." if @account.save
     respond_with @account
   end
@@ -43,7 +43,7 @@ class AccountsController < ApplicationController
 
   def update
     authorize! :update, @account
-    @account.update_attributes(params[:account])
+    @account.update_attributes(account_params)
     flash[:notice] = "The account was successfully updated." if @account.save
     respond_with @account
   end
@@ -60,5 +60,9 @@ class AccountsController < ApplicationController
     
     def set_current_entity
       self.current_entity = @entity || @account.entity
+    end
+    
+    def account_params
+      params.require(:account).permit(:name, :account_type, :entity_id, :parent_id)
     end
 end

@@ -13,7 +13,6 @@
 class Transaction < ActiveRecord::Base
   has_many :items, class_name: 'TransactionItem', inverse_of: :transaction  
   accepts_nested_attributes_for :items, allow_destroy: true
-  attr_accessible :description, :transaction_date, :items_attributes, :entity_id  
   belongs_to :entity
     
   validates_presence_of :description, :transaction_date, :entity_id

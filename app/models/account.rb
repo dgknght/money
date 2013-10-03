@@ -13,10 +13,9 @@
 #
 
 class Account < ActiveRecord::Base
-  attr_accessible :name, :account_type, :balance, :parent_id
   belongs_to :entity
   belongs_to :parent, class_name: 'Account', inverse_of: :children
-  has_many :children, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
+  has_many :children, -> { order :name }, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
 
   LEFT_SIDE = %w(asset expense)
   RIGHT_SIDE = %w(liability equity income)
@@ -34,7 +33,7 @@ class Account < ActiveRecord::Base
                            inclusion: { in: ACCOUNT_TYPES }
   validate :parent_must_have_same_type
   
-  scope :root, -> { where(parent_id: nil) }
+  scope :root, -> { where(parent_id: nil).order(:name) }
   scope :asset, -> { root.where(account_type: Account.asset_type) }
   scope :liability, -> { root.where(account_type: Account.liability_type) }
   scope :equity, -> { root.where(account_type: Account.equity_type) }

@@ -9,7 +9,7 @@ Money::Application.routes.draw do
   resources :accounts, only: [:show, :edit, :update, :destroy]
   resources :transactions, only: [:show, :edit, :update, :destroy]
   
-  match 'home' => 'entities#index'
+  get 'home' => 'entities#index'
   
   root :to => 'pages#welcome'
   

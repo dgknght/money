@@ -19,7 +19,7 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    @entity = current_user.entities.new(params[:entity])
+    @entity = current_user.entities.new(entity_params)
     flash[:notice] = 'The entity was created successfully.' if @entity.save
     respond_with @entity
   end
@@ -28,7 +28,7 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    @entity.update_attributes(params[:entity])
+    @entity.update_attributes(entity_params)
     flash[:notice] = 'The entity was updated successfully.' if @entity.save
     respond_with @entity
   end
@@ -42,5 +42,9 @@ class EntitiesController < ApplicationController
   private
     def set_current_entity
       self.current_entity = @entity
+    end
+    
+    def entity_params
+      params.require(:entity).permit(:name)
     end
 end

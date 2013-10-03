@@ -122,7 +122,7 @@ describe TransactionsController do
           it 'should not return any data' do
             put :update, id: transaction, transaction: updated_attributes, format: :json
             transaction.reload
-            response.body.should == " "
+            response.body.should == ""
           end
         end
       end
