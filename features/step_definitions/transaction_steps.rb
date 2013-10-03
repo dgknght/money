@@ -35,3 +35,6 @@ When(/^I enter a transaction for (#{ENTITY}) called "([^"]+)" on (#{DATE_VALUE})
   transaction = entity.transactions.create!(description: description, transaction_date: transaction_date, items_attributes: items)
   visit entity_transactions_path(entity)
 end
+
+Given(/^(#{ENTITY}) has the following transactions$/) do |entity, table|
+end
