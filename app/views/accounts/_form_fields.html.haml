@@ -5,7 +5,7 @@
 %div
   =f.label :parent_id
   %br
-  =f.collection_select :parent_id, available_parent_accounts(account), :id, :name, include_blank: true
+  =f.select :parent_id, grouped_options_for_select(available_parent_accounts(account), account.parent_id), include_blank: true
 %div
   =f.label :name
   %br

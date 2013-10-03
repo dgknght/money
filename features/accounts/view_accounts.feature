@@ -18,8 +18,8 @@ Feature: View accounts
       | Name        | Balance |
       | Assets      | 0.00    |
       | Checking    | 0.00    |
-      | Savings     | 0.00    |
       | Home        | 0.00    |
+      | Savings     | 0.00    |
       | Liabilities | 0.00    |
       | Credit Card | 0.00    |
       | Home Loan   | 0.00    |
