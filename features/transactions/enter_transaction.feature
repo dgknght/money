@@ -3,9 +3,9 @@ Feature: Enter a transaction
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
     
-    And entity "Personal" has an asset account named "Checking" with a balance of 100.00
-    And entity "Personal" has an expense account named "Groceries" with a balance of 0.00
-    And entity "Personal" has an equity account named "Retained" with a balance of 0.00
+    And entity "Personal" has an asset account named "Checking" with a balance of $100.00
+    And entity "Personal" has an expense account named "Groceries" with a balance of $0.00
+    And entity "Personal" has an equity account named "Retained" with a balance of $0.00
     And I am signed in as "john@doe.com/please01"
 
     When I am on the "Personal" entity page
