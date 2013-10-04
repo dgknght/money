@@ -1,0 +1,16 @@
+%h2#page_title Balance sheet
+
+.filter
+  =form_tag({ url: balance_sheet_entity_path(@entity) }, method: :get) do
+    =text_field_tag :as_of, @filter.as_of, class: 'date_field', placeholder: 'As of'
+    =submit_tag 'Show', class: 'show_button', title: 'Click here to view the report with these filter setttings.'
+    
+.report
+  %table{cellspacing: 0, cellpadding: 0}
+    %tr
+      %th Account
+      %th Balance
+    -@report.content.each do |r|
+      %tr{class: r[:depth] == 0 ? 'report_header' : 'report_data'}
+        %td{ class: "account_#{r[:depth]}" }= r[:account]
+        %td{ class: "number_column balance_#{r[:depth]}"}= r[:balance]

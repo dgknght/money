@@ -1,0 +1,48 @@
+$light-grey: #CCC;
+$dark-grey: #333;
+$white: #FFF;
+
+.filter {
+  border: 1px solid $light-grey;
+  padding: 1em;
+  margin: {
+    top: 1em;
+    bottom: 1em;
+  }
+}
+
+.report th, td {
+  font-size: 120%;
+  padding: {
+    top: .2em;
+    button: .2em;
+  }
+}
+
+.report th {
+  background-color: $dark-grey;
+  color: $white;
+}
+
+.report_header {
+  font-weight: bold;
+}
+
+.account_1 {
+  padding-left: 1em;
+}
+.account_2 {
+  padding-left: 2em;
+}
+.account_3 {
+  padding-left: 3em;
+}
+.balance_1 {
+  padding-right: 1em;
+}
+.balance_2 {
+  padding-right: 2em;
+}
+.balance_3 {
+  padding-right: 3em;
+}

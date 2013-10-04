@@ -6,4 +6,8 @@ module ApplicationHelper
   def current_entity=(entity)
     @current_entity = entity
   end
+  
+  def format_currency(value)
+    number_to_currency(value, unit: '')
+  end
 end

@@ -9,6 +9,6 @@
     %tr{class: index % 2 == 0 ? 'table_row' : 'alt_table_row'}
       %td.transaction_date_column= transaction.transaction_date.strftime("%-m/%-d/%Y")
       %td.transaction_description_column= transaction.description
-      %td.number_column= "%.2f" % transaction.total_credits.abs
+      %td.number_column= format_currency(transaction.total_credits.abs)
 .new_transaction_container
   =render 'form', transaction: @transaction, items: @items

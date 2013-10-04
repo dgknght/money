@@ -217,6 +217,11 @@ table.attributes {
   background-image: url(/assets/edit.png)
 }
 
+.show_button {
+  @extend .any_form_button;
+  background-image: url(/assets/show.png)
+}
+
 .delete_button {
   @extend .any_form_button;
   background-image: url(/assets/delete.png)

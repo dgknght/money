@@ -5,31 +5,31 @@
     %th.action_cell &nbsp;
   %tr.account_category
     %td Assets
-    %td.number_column= "%.2f" % sum(accounts.asset)
+    %td.number_column= format_currency(sum(accounts.asset))
     %td
   -accounts.asset.each do |account|
     =render "accounts/account_rows", account: account
   %tr.account_category
     %td Liabilities
-    %td.number_column= "%.2f" % sum(accounts.liability)
+    %td.number_column= format_currency(sum(accounts.liability))
     %td
   -accounts.liability.each do |account|
     =render "accounts/account_rows", account: account
   %tr.account_category
     %td Equity
-    %td.number_column= "%.2f" % sum(accounts.equity)
+    %td.number_column= format_currency(sum(accounts.equity))
     %td
   -accounts.equity.each do |account|
     =render "accounts/account_rows", account: account
   %tr.account_category
     %td Income
-    %td.number_column= "%.2f" % sum(accounts.income)
+    %td.number_column= format_currency(sum(accounts.income))
     %td
   -accounts.income.each do |account|
     =render "accounts/account_rows", account: account
   %tr.account_category
     %td Expense
-    %td.number_column= "%.2f" % sum(accounts.expense)
+    %td.number_column= format_currency(sum(accounts.expense))
     %td
   -accounts.expense.each do |account|
     =render "accounts/account_rows", account: account

@@ -1,0 +1,5 @@
+%h2#page_title Reports
+
+%ul
+  -@reports.each do |name, path|
+    %li= link_to name, path

@@ -43,14 +43,15 @@ Feature: Balance sheet report
     And I am signed in as "john@doe.com/please01"
 
     When I am on the "Personal" entity page
-    Then I should see "Reports" within the secondary nagivation
+    Then I should see "Reports" within the secondary navigation
 
-    When I click on "Reports" within the secondary nagivation
+    When I click on "Reports" within the secondary navigation
     Then I should see "Reports" within the page title
     And I should see "Balance Sheet" within the main content
 
     When I click on "Balance Sheet" within the main content
     And I fill in "As of" with "1/31/2013"
+    And I click "Show"
     Then I should see the following accounts table
       | Name                | Balance        |
       | Assets              |     251,350.00 |
