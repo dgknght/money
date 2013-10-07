@@ -1,14 +1,8 @@
 require 'spec_helper'
 
 describe BalanceSheetFilter do
-  let(:attributes) do
-    {
-      as_of: Date.civil(2013, 1, 1)
-    }
-  end
-  
   it 'should be creatable from valid attributes' do
-    filter = BalanceSheetFilter.new(attributes)
+    filter = BalanceSheetFilter.new(as_of: '2013-01-01')
     filter.as_of.should == Date.civil(2013, 1, 1)
   end
   
