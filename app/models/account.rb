@@ -40,8 +40,25 @@ class Account < ActiveRecord::Base
   scope :income, -> { root.where(account_type: Account.income_type) }
   scope :expense, -> { root.where(account_type: Account.expense_type) }
   
+  def balance_as_of(date)
+    date = Date.parse(date) if date.is_a?(String)
+    
+    sum_of_credits = sum_of credit_transaction_items date
+    sum_of_debits = sum_of debit_transaction_items date
+    
+    if LEFT_SIDE.include?(account_type)
+      sum_of_debits - sum_of_credits
+    else
+      sum_of_credits - sum_of_debits
+    end
+  end
+  
   def balance_with_children
     balance + children.sum(:balance)
+  end
+  
+  def balance_with_children_as_of(date)
+    children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_as_of(date) }
   end
   
   # Adjusts the balance of the account by the specified amount
@@ -80,11 +97,33 @@ class Account < ActiveRecord::Base
   end
   
   private
+    def credit_transaction_items(as_of = Date.today)
+      transaction_items TransactionItem.credit, to: as_of
+    end
+    
+    def debit_transaction_items(as_of = Date.today)
+      transaction_items TransactionItem.debit, to: as_of
+    end
+    
     def parent_is_same_type?
       parent_id.nil? || parent.account_type == self.account_type
     end
     
     def parent_must_have_same_type
       errors.add(:parent_id, 'must have the same account type') unless parent_is_same_type?
+    end
+    
+    def sum_of(items)
+      items.reduce(0) { |sum, item| sum += item.amount }
+    end
+    
+    def transaction_items(action, *values)
+      options = values.extract_options!
+      start_date = options[:from] || Date.civil(1900, 1, 1) #TODO Someday this should be set to a period closing date to reduce the cost of the search
+      end_date = options[:to] || Date.civil(3999, 12, 31)
+      
+      entity.transactions.includes(:items).where('transaction_date >= ? and transaction_date <= ?', start_date, end_date).map do |transaction|
+        transaction.items.where(account_id: id, action: action)
+      end.flatten
     end
 end

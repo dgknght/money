@@ -9,11 +9,12 @@ describe Account do
     }
   end
   
-  let!(:checking) { FactoryGirl.create(:asset_account, :name => 'checking') }
-  let!(:credit_card) { FactoryGirl.create(:liability_account, :name => 'credit card') }
-  let!(:earnings) { FactoryGirl.create(:equity_account, :name => 'earnings') }
-  let!(:salary) { FactoryGirl.create(:income_account, :name => 'salary') }
-  let!(:groceries) { FactoryGirl.create(:expense_account, :name => 'groceries') }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let!(:checking) { FactoryGirl.create(:asset_account, name: 'checking', entity_id: entity.id) }
+  let!(:credit_card) { FactoryGirl.create(:liability_account, name: 'credit card', entity_id: entity.id) }
+  let!(:earnings) { FactoryGirl.create(:equity_account, name: 'earnings', entity_id: entity.id) }
+  let!(:salary) { FactoryGirl.create(:income_account, name: 'salary', entity_id: entity.id) }
+  let!(:groceries) { FactoryGirl.create(:expense_account, name: 'groceries', entity_id: entity.id) }
   
   it 'should be creatable from valid attributes' do
     account = Account.new(attributes)
@@ -36,6 +37,33 @@ describe Account do
     it 'should default to zero' do
       account = Account.new(attributes.without(:balance))
       account.balance.should == 0
+    end
+  end
+  
+  describe 'balance_as_of' do
+    let!(:t1) do
+      entity.transactions.create!(transaction_date: '2013-01-02', 
+                                  description: 'Paycheck', 
+                                  items_attributes: [
+                                    {account_id: salary.id, action: 'credit', amount: 3000}, 
+                                    {account_id: checking.id, action: 'debit', amount: 3000}
+                                  ]
+                                  )
+    end
+    let!(:t2) do
+      entity.transactions.create!(transaction_date: '2013-01-03', 
+                                  description: 'Kroger', 
+                                  items_attributes: [
+                                    {account_id: checking.id, action: 'credit', amount: 50}, 
+                                    {account_id: groceries.id, action: 'debit', amount: 50}
+                                  ]
+                                  )
+    end
+    
+    it 'should calculate the balance as the the specified date' do
+      checking.balance_as_of('2013-01-01').should == BigDecimal.new(0)
+      checking.balance_as_of('2013-01-02').should == BigDecimal.new(3000)
+      checking.balance_as_of('2013-01-03').should == BigDecimal.new(2950)
     end
   end
   

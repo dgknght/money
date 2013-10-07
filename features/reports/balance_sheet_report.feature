@@ -1,4 +1,3 @@
-@wip
 Feature: Balance sheet report
   As a user
   In order to visualize my current balance sheet accounts
@@ -8,15 +7,15 @@ Feature: Balance sheet report
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
     
-    And entity "Personal" has an asset account named "Checking" with a balance of $2,000
-    And entity "Personal" has an asset account named "Savings/Car" with a balance of $10,000
-    And entity "Personal" has an asset account named "Savings/Reserve" with a balance of $30,000
-    And entity "Personal" has an asset account named "House" with a balance of $200,000
+    And entity "Personal" has an asset account named "Checking"
+    And entity "Personal" has an asset account named "Savings/Car"
+    And entity "Personal" has an asset account named "Savings/Reserve"
+    And entity "Personal" has an asset account named "House"
 
-    And entity "Personal" has a liability account named "Home Loan" with a balance of $175,000
-    And entity "Personal" has a liability account named "Credit Card" with a balance of $2,000
+    And entity "Personal" has a liability account named "Home Loan"
+    And entity "Personal" has a liability account named "Credit Card"
     
-    And entity "Personal" has an equity account named "Opening Balances" with a balance of $65,000
+    And entity "Personal" has an equity account named "Opening Balances"
     
     And entity "Personal" has an income account named "Salary"
     
@@ -24,21 +23,25 @@ Feature: Balance sheet report
     And entity "Personal" has an expense account named "Mortgage Interest"
 
     And entity "Personal" has the following transactions
-      | Transaction date | Description | Amount | Credit account | Debit account     |
-      | 01/01/2013       | Paycheck    |   5000 | Salary         | Checking          |
-      | 01/01/2013       | Bank        |    900 | Checking       | Mortgage Interest |
-      | 01/01/2013       | Bank        |    100 | Checking       | Home Loan         |
-      | 01/06/2013       | Kroger      |     80 | Credit Card    | Groceries         |
-      | 01/13/2013       | Kroger      |     80 | Credit Card    | Groceries         |
-      | 01/15/2013       | Paycheck    |   5000 | Salary         | Checking          |
-      | 01/20/2013       | Kroger      |     80 | Credit Card    | Groceries         |
-      | 01/27/2013       | Kroger      |     80 | Credit Card    | Groceries         |
-      | 01/31/2013       | Myself      |    350 | Checking       | Car               |
-      | 02/01/2013       | Paycheck    |   5000 | Salary         | Checking          |
-      | 02/01/2013       | Bank        |    895 | Checking       | Mortgage Interest |
-      | 02/01/2013       | Bank        |    105 | Checking       | Home Loan         |
-      | 02/03/2013       | Kroger      |     80 | Credit Card    | Groceries         |
-      | 02/07/2013       | Citibank    |    320 | Checking       | Credit Card       |
+      | Transaction date | Description | Amount   | Credit account    | Debit account     |
+      | 2012-12-31       | Open        |  200,000 | Opening Balances  | House             |
+      | 2012-12-31       | Open        |  175,000 | Home Loan         | Opening Balances  |
+      | 2012-12-31       | Open        |   10,000 | Opening Balances  | Car               |
+      | 2012-12-31       | Open        |   30,000 | Opening Balances  | Reserve           |
+      | 2013-01-01       | Paycheck    |    5,000 | Salary            | Checking          |
+      | 2013-01-01       | Bank        |      900 | Checking          | Mortgage Interest |
+      | 2013-01-01       | Bank        |      100 | Checking          | Home Loan         |
+      | 2013-01-06       | Kroger      |       80 | Credit Card       | Groceries         |
+      | 2013-01-13       | Kroger      |       80 | Credit Card       | Groceries         |
+      | 2013-01-15       | Paycheck    |    5,000 | Salary            | Checking          |
+      | 2013-01-20       | Kroger      |       80 | Credit Card       | Groceries         |
+      | 2013-01-27       | Kroger      |       80 | Credit Card       | Groceries         |
+      | 2013-01-31       | Myself      |      350 | Checking          | Car               |
+      | 2013-02-01       | Paycheck    |    5,000 | Salary            | Checking          |
+      | 2013-02-01       | Bank        |      895 | Checking          | Mortgage Interest |
+      | 2013-02-01       | Bank        |      105 | Checking          | Home Loan         |
+      | 2013-02-03       | Kroger      |       80 | Credit Card       | Groceries         |
+      | 2013-02-07       | Citibank    |      320 | Checking          | Credit Card       |
 
     And I am signed in as "john@doe.com/please01"
 
@@ -53,17 +56,17 @@ Feature: Balance sheet report
     And I fill in "As of" with "1/31/2013"
     And I click "Show"
     Then I should see the following accounts table
-      | Name                | Balance        |
-      | Assets              |     251,350.00 |
-      |   Checking          |    11,000.00   |
-      |   House             |   200,000.00   |
-      |   Savings           |    40,350.00   |
-      |     Car             |  10,350.00     |
-      |     Reserve         |  30,000.00     |
-      | Liabilities         |     177,000.00 |
-      |   Credit Card       |     2,000.00   |
-      |   Home Loan         |   175,000.00   |
-      | Equity              |           0.00 |
-      |   Opening Balances  |    65,000.00   |
-      |   Retained Earnings |     9,350.00   |
-      
+      | Account               | Balance        |
+      | Assets                |     249,000.00 |
+      |   Checking            |     8,650.00   |
+      |   House               |   200,000.00   |
+      |   Savings             |    40,350.00   |
+      |     Car               |  10,350.00     |
+      |     Reserve           |  30,000.00     |
+      | Liabilities           |     175,220.00 |
+      |   Credit Card         |       320.00   |
+      |   Home Loan           |   174,900.00   |
+      | Equity                |      73,780.00 |
+      |   Opening Balances    |    65,000.00   |
+      |   Retained Earnings   |     8,780.00   |
+      | Liabilities + Equity  |     249,000.00 |      

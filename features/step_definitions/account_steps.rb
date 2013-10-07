@@ -1,17 +1,8 @@
-DOLLAR_AMOUNT = Transform(/^\$([\d,]+(?:\.\d{2})?)$/) do |value|
-  BigDecimal.new(value)
-end
-
-ENTITY = Transform(/^entity "([^"]+)"$/) do |name|
-  find_entity(name)
-end
-
-USER = Transform(/^user "([^"]+)"$/) do |email|
-  find_user(email)
-end
-
-Given(/^(#{ENTITY}) has an? (liability|asset|equity|income|expense) account named "([^"]+)"(?: with a balance of (#{DOLLAR_AMOUNT}))?$/) do |entity, type, name, balance|
-  entity.accounts.find_by_name(name) || entity.accounts.create!(name: name, account_type: type, balance: balance || 0)
+Given(/^(#{ENTITY}) has an? (liability|asset|equity|income|expense) account named "([^"]+)"(?: with a balance of (#{DOLLAR_AMOUNT}))?$/) do |entity, type, path, balance|
+  names = path.split(/\//)
+  parent_chain = ensure_accounts(names.take(names.length - 1), type, entity)
+  parent_id = parent_chain.any? ? parent_chain.last.id : nil
+  entity.accounts.find_by_name(names.last) || entity.accounts.create!(name: names.last, account_type: type, parent_id: parent_id, balance: balance || 0)
 end
 
 Given(/^(#{USER}) has an? (liability|asset|equity|income|expense) account named "([^"]+)"(?: with a balance of (#{DOLLAR_AMOUNT}))?$/) do |user, type, name, balance|

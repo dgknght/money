@@ -7,24 +7,29 @@ class BalanceSheetReport
   end
   
   def content
+    # Assets
     assets = transform(@entity.accounts.asset);
     asset_total = sum(@entity.accounts.asset);
     
+    # Liabilities
     liabilities = transform(@entity.accounts.liability)
     liability_total = sum(@entity.accounts.liability)
     
+    # Equity
     equities = transform(@entity.accounts.equity)
     equity_total = sum(@entity.accounts.equity)
     
     retained_earnings = asset_total - (equity_total + liability_total)
     equities << { account: 'Retained Earnings', balance: format(retained_earnings), depth: 1 }
     
+    # Assemble the final result
     [ { account: 'Assets', balance: format(asset_total), depth: 0 } ] +
     assets +
     [ { account: 'Liabilities', balance: format(liability_total), depth: 0 } ] +
     liabilities +
     [ { account: 'Equity', balance: format(equity_total + retained_earnings), depth: 0 } ] +
-    equities
+    equities +
+    [ { account: 'Liabilities + Equity', balance: format((equity_total + retained_earnings) + liability_total), depth: 0 } ]    
   end
   
   private
@@ -32,7 +37,7 @@ class BalanceSheetReport
       flatten(accounts, 1).map do |record|
         {
           account: record[:account].name,
-          balance: format(record[:account].balance_with_children),
+          balance: format(record[:account].balance_with_children_as_of(@filter.as_of)),
           depth: record[:depth]
         }
       end
@@ -52,6 +57,6 @@ class BalanceSheetReport
     end
     
     def sum(accounts)
-      accounts.reduce(0) { |sum, account| sum += account.balance_with_children }
+      accounts.reduce(0) { |sum, account| sum += account.balance_with_children_as_of(@filter.as_of) }
     end
 end
