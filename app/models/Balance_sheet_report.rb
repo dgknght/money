@@ -8,36 +8,36 @@ class BalanceSheetReport
   
   def content
     # Assets
-    assets = transform(@entity.accounts.asset);
-    asset_total = sum(@entity.accounts.asset);
+    assets = flatten(@entity.accounts.asset, 1)
+    asset_total = sum(assets)
     
     # Liabilities
-    liabilities = transform(@entity.accounts.liability)
-    liability_total = sum(@entity.accounts.liability)
+    liabilities = flatten(@entity.accounts.liability, 1)
+    liability_total = sum(liabilities)
     
     # Equity
-    equities = transform(@entity.accounts.equity)
-    equity_total = sum(@entity.accounts.equity)
+    equities = flatten(@entity.accounts.equity, 1)
+    equity_total = sum(equities)
     
     retained_earnings = asset_total - (equity_total + liability_total)
-    equities << { account: 'Retained Earnings', balance: format(retained_earnings), depth: 1 }
     
     # Assemble the final result
     [ { account: 'Assets', balance: format(asset_total), depth: 0 } ] +
-    assets +
+    transform(assets) +
     [ { account: 'Liabilities', balance: format(liability_total), depth: 0 } ] +
-    liabilities +
+    transform(liabilities) +
     [ { account: 'Equity', balance: format(equity_total + retained_earnings), depth: 0 } ] +
-    equities +
+    transform(equities) +
+    [ { account: 'Retained Earnings', balance: format(retained_earnings), depth: 1 } ] +
     [ { account: 'Liabilities + Equity', balance: format((equity_total + retained_earnings) + liability_total), depth: 0 } ]    
   end
   
   private
-    def transform(accounts)
-      flatten(accounts, 1).map do |record|
+    def transform(records)
+      records.map do |record|
         {
           account: record[:account].name,
-          balance: format(record[:account].balance_with_children_as_of(@filter.as_of)),
+          balance: format(record[:balance]),
           depth: record[:depth]
         }
       end
@@ -46,7 +46,7 @@ class BalanceSheetReport
     def flatten(accounts, depth = 0)
       accounts.map do |account|
         [
-          { account: account, depth: depth },
+          { account: account, depth: depth, balance: account.balance_with_children_as_of(@filter.as_of) },
           flatten(account.children, depth + 1)
         ]
       end.flatten
@@ -56,7 +56,7 @@ class BalanceSheetReport
       number_to_currency(value, unit: '')
     end
     
-    def sum(accounts)
-      accounts.reduce(0) { |sum, account| sum += account.balance_with_children_as_of(@filter.as_of) }
+    def sum(rows)
+      rows.select{ |row| row[:depth] == 1 }.reduce(0) { |sum, row| sum += row[:balance]}
     end
 end
