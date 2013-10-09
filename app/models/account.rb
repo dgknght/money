@@ -41,10 +41,15 @@ class Account < ActiveRecord::Base
   scope :expense, -> { root.where(account_type: Account.expense_type) }
   
   def balance_as_of(date)
-    date = Date.parse(date) if date.is_a?(String)
+    balance_between nil, date
+  end
+  
+  def balance_between(start_date, end_date)
+    start_date = ensure_date(start_date)
+    end_date = ensure_date(end_date)
     
-    sum_of_credits = sum_of credit_transaction_items date
-    sum_of_debits = sum_of debit_transaction_items date
+    sum_of_credits = sum_of credit_transaction_items(from: start_date, to: end_date)
+    sum_of_debits = sum_of debit_transaction_items(from: start_date, to: end_date)
     
     if LEFT_SIDE.include?(account_type)
       sum_of_debits - sum_of_credits
@@ -59,6 +64,10 @@ class Account < ActiveRecord::Base
   
   def balance_with_children_as_of(date)
     children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_as_of(date) }
+  end
+  
+  def balance_with_children_between(start_date, end_date)
+    children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
   
   # Adjusts the balance of the account by the specified amount
@@ -97,12 +106,17 @@ class Account < ActiveRecord::Base
   end
   
   private
-    def credit_transaction_items(as_of = Date.today)
-      transaction_items TransactionItem.credit, to: as_of
+    def credit_transaction_items(options)
+      transaction_items TransactionItem.credit, options
     end
     
-    def debit_transaction_items(as_of = Date.today)
-      transaction_items TransactionItem.debit, to: as_of
+    def debit_transaction_items(options)
+      transaction_items TransactionItem.debit, options
+    end
+    
+    def ensure_date(date)
+      return Date.parse(date) if date.is_a?(String)
+      date
     end
     
     def parent_is_same_type?
@@ -117,8 +131,7 @@ class Account < ActiveRecord::Base
       items.reduce(0) { |sum, item| sum += item.amount }
     end
     
-    def transaction_items(action, *values)
-      options = values.extract_options!
+    def transaction_items(action, options)
       start_date = options[:from] || Date.civil(1900, 1, 1) #TODO Someday this should be set to a period closing date to reduce the cost of the search
       end_date = options[:to] || Date.civil(3999, 12, 31)
       

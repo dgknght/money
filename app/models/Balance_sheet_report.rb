@@ -8,15 +8,15 @@ class BalanceSheetReport
   
   def content
     # Assets
-    assets = flatten(@entity.accounts.asset, 1)
+    assets = flatten(@entity.accounts.asset)
     asset_total = sum(assets)
     
     # Liabilities
-    liabilities = flatten(@entity.accounts.liability, 1)
+    liabilities = flatten(@entity.accounts.liability)
     liability_total = sum(liabilities)
     
     # Equity
-    equities = flatten(@entity.accounts.equity, 1)
+    equities = flatten(@entity.accounts.equity)
     equity_total = sum(equities)
     
     retained_earnings = asset_total - (equity_total + liability_total)
@@ -43,7 +43,7 @@ class BalanceSheetReport
       end
     end
     
-    def flatten(accounts, depth = 0)
+    def flatten(accounts, depth = 1)
       accounts.map do |account|
         [
           { account: account, depth: depth, balance: account.balance_with_children_as_of(@filter.as_of) },

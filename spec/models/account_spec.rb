@@ -67,6 +67,31 @@ describe Account do
     end
   end
   
+  describe 'balance_between' do
+    let!(:t1) do
+      entity.transactions.create!(transaction_date: '2013-01-02', 
+                                  description: 'Paycheck', 
+                                  items_attributes: [
+                                    {account_id: salary.id, action: 'credit', amount: 3000}, 
+                                    {account_id: checking.id, action: 'debit', amount: 3000}
+                                  ]
+                                  )
+    end
+    let!(:t2) do
+      entity.transactions.create!(transaction_date: '2013-01-03', 
+                                  description: 'Kroger', 
+                                  items_attributes: [
+                                    {account_id: checking.id, action: 'credit', amount: 50}, 
+                                    {account_id: groceries.id, action: 'debit', amount: 50}
+                                  ]
+                                  )
+    end
+    
+    it 'should calculate the balance between the specified dates' do
+      checking.balance_between('2013-01-03', '2013-01-04').should == BigDecimal.new(-50)
+    end
+  end
+  
   describe 'balance_with_children' do
     let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 11) }
     let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 12) }

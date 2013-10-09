@@ -1,4 +1,3 @@
-@wip
 Feature: Income statement report
   As a user
   In order to visualize my cash flow for a given period of time
@@ -60,9 +59,11 @@ Feature: Income statement report
     And I click "Show"
     
     Then I should see the following accounts table
-      | Account           | Value     |
-      | Income            |      0.00 |
+      | Account           | Balance   |
+      | Income            | 10,000.00 |
+      | Gifts             |      0.00 |
       | Salary            | 10,000.00 |
-      | Expenses          |      0.00 |
+      | Expense           |  1,220.00 |
       | Groceries         |    320.00 |
       | Mortgage Interest |    900.00 |
+      | Net               |  8,780.00 |

@@ -1,4 +1,6 @@
 class ReportsController < ApplicationController
+  include ApplicationHelper
+  
   before_filter :authenticate_user!, :load_entity
   respond_to :html
   
@@ -8,6 +10,8 @@ class ReportsController < ApplicationController
   end
 
   def income_statement
+    @filter = IncomeStatementFilter.new(params)
+    @report = IncomeStatementReport.new(@entity, @filter)
   end
   
   def index    
@@ -20,6 +24,7 @@ class ReportsController < ApplicationController
   private
     def load_entity
       @entity = Entity.find(params[:id])
+      self.current_entity = @entity
       redirect_to entities_path unless @entity
       authorize! :show, @entity
     end

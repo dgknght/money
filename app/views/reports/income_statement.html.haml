@@ -1,2 +1,12 @@
 %h2#page_title Income statement
 
+.filter
+  =form_tag(income_statement_entity_path(@entity), method: :get) do
+    =label_tag :from
+    =text_field_tag :from, @filter.from, placeholder: 'From'
+    =label_tag :to
+    =text_field_tag :to, @filter.to, placeholder: 'To'
+    =submit_tag 'Show'
+    
+.report
+  =render 'table', report: @report

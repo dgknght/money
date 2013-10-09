@@ -1,0 +1,8 @@
+%table#accounts_table{cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Account
+    %th Balance
+  -report.content.each do |r|
+    %tr{class: r[:depth] == 0 ? 'report_header' : 'report_data'}
+      %td{ class: "account_#{r[:depth]}" }= r[:account]
+      %td{ class: "number_column balance_#{r[:depth]}"}= r[:balance]
