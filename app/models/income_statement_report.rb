@@ -1,13 +1,12 @@
-class IncomeStatementReport
-  include ActionView::Helpers::NumberHelper
+class IncomeStatementReport < Report
   
   def content
     # Income
-    income = flatten(@entity.accounts.income)
+    income = _flatten(@entity.accounts.income)
     income_total = sum(income)
     
     # Expense
-    expense = flatten(@entity.accounts.expense)
+    expense = _flatten(@entity.accounts.expense)
     expense_total = sum(expense)
     
     # Assemble the final result
@@ -24,33 +23,16 @@ class IncomeStatementReport
   end
   
   private
-    def flatten(accounts, depth = 1)
+    def _flatten(accounts)
+      flatten accounts, 1, :balance_with_children_between, @filter.from, @filter.to
+    end
+    
+    def f(accounts, depth = 1)
       accounts.map do |account|
         [
           { account: account, depth: depth, balance: account.balance_with_children_between(@filter.from, @filter.to) },
-          flatten(account.children, depth + 1)
+          f(account.children, depth + 1)
         ]
       end.flatten
-    end
-    
-    # This is duplicated between this class and BalanceSheetReport.....need to move it to a shared location
-    def format(value)
-      number_to_currency(value, unit: '')
-    end    
-    
-    # This is duplicated between this class and BalanceSheetReport.....need to move it to a shared location
-    def sum(rows)
-      rows.select{ |row| row[:depth] == 1 }.reduce(0) { |sum, row| sum += row[:balance]}
-    end
-    
-    # This is duplicated between this class and BalanceSheetReport.....need to move it to a shared location
-    def transform(records)
-      records.map do |record|
-        {
-          account: record[:account].name,
-          balance: format(record[:balance]),
-          depth: record[:depth]
-        }
-      end
     end
 end

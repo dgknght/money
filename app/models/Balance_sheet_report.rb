@@ -1,6 +1,4 @@
-class BalanceSheetReport
-  include ActionView::Helpers::NumberHelper
-  
+class BalanceSheetReport < Report
   def initialize(entity, filter)
     @entity = entity
     @filter = filter
@@ -8,15 +6,15 @@ class BalanceSheetReport
   
   def content
     # Assets
-    assets = flatten(@entity.accounts.asset)
+    assets = _flatten(@entity.accounts.asset)
     asset_total = sum(assets)
     
     # Liabilities
-    liabilities = flatten(@entity.accounts.liability)
+    liabilities = _flatten(@entity.accounts.liability)
     liability_total = sum(liabilities)
     
     # Equity
-    equities = flatten(@entity.accounts.equity)
+    equities = _flatten(@entity.accounts.equity)
     equity_total = sum(equities)
     
     retained_earnings = asset_total - (equity_total + liability_total)
@@ -33,30 +31,7 @@ class BalanceSheetReport
   end
   
   private
-    def transform(records)
-      records.map do |record|
-        {
-          account: record[:account].name,
-          balance: format(record[:balance]),
-          depth: record[:depth]
-        }
-      end
-    end
-    
-    def flatten(accounts, depth = 1)
-      accounts.map do |account|
-        [
-          { account: account, depth: depth, balance: account.balance_with_children_as_of(@filter.as_of) },
-          flatten(account.children, depth + 1)
-        ]
-      end.flatten
-    end
-    
-    def format(value)
-      number_to_currency(value, unit: '')
-    end
-    
-    def sum(rows)
-      rows.select{ |row| row[:depth] == 1 }.reduce(0) { |sum, row| sum += row[:balance]}
+    def _flatten(accounts)
+      flatten accounts, 1, :balance_with_children_as_of, @filter.as_of
     end
 end
