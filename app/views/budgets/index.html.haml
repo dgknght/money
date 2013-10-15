@@ -1,2 +1,12 @@
-<h1>Budgets#index</h1>
-<p>Find me in app/views/budgets/index.html.erb</p>
+%h2#page_title Budgets
+
+%table#budgets_table{cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Name
+    %th Start date
+    %th End date
+  -@budgets.each do |budget|
+    %tr
+      %td= budget.name
+      %td= budget.start_date
+      %td= budget.end_date
