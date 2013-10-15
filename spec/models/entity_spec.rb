@@ -37,7 +37,7 @@ describe Entity do
   end
   
   describe 'accounts' do
-    it 'should list the accounts that belong to the user' do
+    it 'should list the accounts that belong to the entity' do
       entity.accounts.should == [checking, savings, credit_card, retained_earnings]
     end
   end
@@ -45,8 +45,16 @@ describe Entity do
   describe 'transactions' do
     let!(:t1) { FactoryGirl.create(:transaction, description: 'Kroger', entity: entity) }
     
-    it 'should list the transactions that belong to the user' do
+    it 'should list the transactions that belong to the entity' do
       entity.transactions.should == [t1]
+    end
+  end
+  
+  describe 'budgets' do
+    let!(:budget) { FactoryGirl.create(:budget, entity: entity) }
+    
+    it 'should list the budgets that belong to the entity' do
+      entity.budgets.should == [budget]
     end
   end
 end

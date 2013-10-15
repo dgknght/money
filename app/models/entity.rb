@@ -15,4 +15,5 @@ class Entity < ActiveRecord::Base
   belongs_to :user
   has_many :accounts
   has_many :transactions
+  has_many :budgets
 end

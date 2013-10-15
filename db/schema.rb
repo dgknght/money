@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131002180121) do
+ActiveRecord::Schema.define(version: 20131015134057) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                       null: false
@@ -24,6 +24,19 @@ ActiveRecord::Schema.define(version: 20131002180121) do
   end
 
   add_index "accounts", ["parent_id"], name: "index_accounts_on_parent_id"
+
+  create_table "budgets", force: true do |t|
+    t.integer  "entity_id",  null: false
+    t.string   "name",       null: false
+    t.date     "start_date", null: false
+    t.date     "end_date",   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "budgets", ["entity_id"], name: "index_budgets_on_entity_id"
+  add_index "budgets", ["name"], name: "index_budgets_on_name", unique: true
+  add_index "budgets", ["start_date"], name: "index_budgets_on_start_date"
 
   create_table "entities", force: true do |t|
     t.integer  "user_id",                null: false
