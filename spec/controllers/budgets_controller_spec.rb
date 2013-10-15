@@ -3,11 +3,25 @@ require 'spec_helper'
 describe BudgetsController do
   let (:entity) { FactoryGirl.create(:entity) }
   
+  let!(:budget) { FactoryGirl.create(:budget, entity_id: entity.id) }
+
   context 'for an authenticated user' do
     describe "get :index" do
       it "should be successful" do
         get :index, entity_id: entity
         response.should be_success
+      end
+
+      context 'in json' do
+        it 'should be successful' do
+          get :index, entity_id: entity, format: :json
+          response.should be_success
+        end
+
+        it 'should return the list of budgets for the entity' do
+          get :index, entity_id: entity, format: :json
+          response.body.should == [budget].to_json
+        end
       end
     end
 
