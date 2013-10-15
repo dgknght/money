@@ -2,8 +2,8 @@ class BudgetsController < ApplicationController
   include ApplicationHelper
   
   before_filter :authenticate_user!
-  before_filter :load_entity, only: [:index, :new, :create]
-  before_filter :load_budget, only: [:show]
+  before_filter :load_budget, only: [:show, :edit, :update]
+  before_filter :load_entity, only: [:index, :new, :create, :udpate]
   before_filter :set_current_entity
   
   respond_to :html, :json
@@ -17,12 +17,18 @@ class BudgetsController < ApplicationController
   end
 
   def create
+    @budget = @entity.budgets.new(budget_params)
+    flash[:notice] = "The budget was created successfully." if @budget.save
+    respond_with @budget
   end
 
   def edit
   end
 
   def update
+    @budget.update_attributes(budget_params)
+    flash[:notice] = "The budget was updated successfully." if @budget.save
+    respond_with @budget
   end
 
   def delete
@@ -40,6 +46,10 @@ class BudgetsController < ApplicationController
     
     def load_entity
       @entity = current_user.entities.find(params[:entity_id])
+    end
+    
+    def budget_params
+      params.require(:budget).permit(:name, :start_date, :end_date)
     end
     
     def set_current_entity

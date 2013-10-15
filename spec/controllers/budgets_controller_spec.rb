@@ -4,6 +4,14 @@ describe BudgetsController do
   let (:entity) { FactoryGirl.create(:entity) }
   
   let!(:budget) { FactoryGirl.create(:budget, entity_id: entity.id) }
+  
+  let (:attributes) do
+    {
+      name: 'The new budget',
+      start_date: '2015-01-01',
+      end_date: '2015-12-31'
+    }
+  end
 
   context 'for an authenticated user' do
     context 'to which the entity belongs' do
@@ -48,25 +56,59 @@ describe BudgetsController do
       end
 
       describe "get :new" do
-        it 'should be successful'
+        it 'should be successful' do
+          get :new, entity_id: entity
+          response.should be_success
+        end
       end
 
       describe "post :create" do
-        it 'should create a new budget'
-        it 'should redirect to the budget detail page'
+        it 'should create a new budget' do
+          lambda do
+            post :create, entity_id: entity, budget: attributes
+          end.should change(Budget, :count).by(1)
+        end
+        
+        it 'should redirect to the budget detail page' do
+          post :create, entity_id: entity, budget: attributes
+          response.should redirect_to budget_path(Budget.last)
+        end
+        
         context 'in json' do
-          it 'should create the new budget'
-          it 'should return the new budget record'
+          it 'should create the new budget' do
+            lambda do
+              post :create, entity_id: entity, budget: attributes, format: :json
+            end.should change(Budget, :count).by(1)
+          end
+          
+          it 'should return the new budget record' do
+            post :create, entity_id: entity, budget: attributes, format: :json
+            result = JSON.parse(response.body)            
+            attributes.each { |k, v| result[k.to_s].should == v}
+          end
         end
       end
 
       describe "get :edit" do
-        it 'should be successful'
+        it 'should be successful' do
+          get :edit, id: budget
+          response.should be_success
+        end
       end
 
       describe "put :update" do
-        it 'should update the budget'
-        it 'should redirect to the budget detail page'
+        it 'should update the budget' do
+          lambda do
+            put :update, id: budget, budget: attributes
+            budget.reload
+          end.should change(budget, :name).to('The new budget')          
+        end
+        
+        it 'should redirect to the budget detail page' do
+          put :update, id: budget, budget: attributes
+          response.should redirect_to budget_path(budget)
+        end
+        
         context 'in json' do
           it 'should be successful'
           it 'should update the budget'
