@@ -11,6 +11,9 @@ class Ability
     can :manage, Transaction do |transaction|
       user.entities.include? transaction.entity
     end
+    can :manage, Budget do |budget|
+      user.entities.include? budget.entity
+    end
     
     # Define abilities for the passed in user here. For example:
     #

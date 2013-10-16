@@ -167,58 +167,170 @@ describe BudgetsController do
       before(:each) { sign_in other_user }
       
       describe 'get :index' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :index, entity_id: entity
+          response.should redirect_to home_path
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :index, entity_id: entity, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :index, entity_id: entity, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
       describe 'get :show' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :show, id: budget
+          response.should redirect_to home_path
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :show, id: budget, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :show, id: budget, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
       describe 'get :new' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :new, entity_id: entity
+          response.should redirect_to home_path
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :new, entity_id: entity, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :new, entity_id: entity, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
       describe 'post :create' do
-        it 'should redirect to the user home page'
-        it 'should not create a budget'
+        it 'should redirect to the user home page' do
+          post :create, entity_id: entity, budget: attributes
+          response.should redirect_to home_path
+        end
+        
+        it 'should not create a budget' do
+          lambda do
+            post :create, entity_id: entity, budget: attributes
+          end.should_not change(Budget, :count)
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
-          it 'should not create a budget'
+          it 'should return "resource not found"' do
+            post :create, entity_id: entity, budget: attributes, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            post :create, entity_id: entity, budget: attributes, format: :json
+            response.body.should == [].to_json
+          end
+          
+          it 'should not create a budget' do
+            lambda do
+              post :create, entity_id: entity, budget: attributes, format: :json
+            end.should_not change(Budget, :count)
+          end
         end
       end
+      
       describe 'get :edit' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :edit, id: budget
+          response.should redirect_to home_path
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :edit, id: budget, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :edit, id: budget, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
+      
       describe 'put :update' do
-        it 'should redirect to the user home page'
-        it 'should not update the budget'
+        it 'should redirect to the user home page' do
+          put :update, id: budget, budget: attributes
+          response.should redirect_to home_path
+        end
+        
+        it 'should not update the budget' do
+          lambda do
+            put :update, id: budget, budget: attributes
+            budget.reload
+          end.should_not change(budget, :name)
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
-          it 'should not update the budget'
+          it 'should return "resource not found"' do
+            put :update, id: budget, budget: attributes, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            put :update, id: budget, budget: attributes, format: :json
+            response.body.should == [].to_json
+          end
+          
+          it 'should not update the budget' do
+            lambda do
+              put :update, id: budget, budget: attributes, format: :json
+              budget.reload
+            end.should_not change(budget, :name)
+          end
         end
       end
+      
       describe 'delete :destroy' do
-        it 'should redirect to the user home page'
-        it 'should not delete the budget'
+        it 'should redirect to the user home page' do
+          delete :destroy, id: budget
+          response.should redirect_to home_path
+        end
+        
+        it 'should not delete the budget' do
+          lambda do
+            delete :destroy, id: budget
+          end.should_not change(Budget, :count)
+        end
+        
         describe 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
-          it 'should not delete the budget'
+          it 'should return "resource not found"' do
+            delete :destroy, id: budget, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            delete :destroy, id: budget, format: :json
+            response.body.should == [].to_json
+          end
+          
+          it 'should not delete the budget' do
+            lambda do
+              delete :destroy, id: budget, format: :json
+            end.should_not change(Budget, :count)
+          end
         end
       end
     end
@@ -226,48 +338,147 @@ describe BudgetsController do
   
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :index, entity_id: entity
+        response.should redirect_to new_user_session_path
+      end
+      
       describe 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          get :index, entity_id: entity, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error message' do
+          get :index, entity_id: entity, format: :json
+          result = JSON.parse(response.body)
+          result.should have(1).item
+          result.should include 'error'
+        end
       end
     end
+    
     describe 'get :new' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :new, entity_id: entity
+        response.should redirect_to new_user_session_path
+      end
+      
       describe 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          get :new, entity_id: entity, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error message' do
+          get :new, entity_id: entity, format: :json
+          result = JSON.parse(response.body)
+          result.should have(1).item
+          result.should include 'error'
+        end
       end
     end
+    
     describe 'post :create' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        post :create, entity_id: entity, budget: attributes
+        response.should redirect_to new_user_session_path
+      end
+      
       describe 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
-        it 'should not create a budget'
+        it 'should return "access denied"' do
+          post :create, entity_id: entity, budget: attributes, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error message' do
+          post :create, entity_id: entity, budget: attributes, format: :json
+          result = JSON.parse(response.body)
+          result.should have(1).item
+          result.should include 'error'
+        end
+        
+        it 'should not create a budget' do
+          lambda do
+            post :create, entity_id: entity, budget: attributes, format: :json
+          end.should_not change(Budget, :count)
+        end
       end
     end
+    
     describe 'get :edit' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :edit, id: budget
+        response.should redirect_to new_user_session_path
+      end
+      
       describe 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          get :edit, id: budget, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error message' do
+          get :edit, id: budget, format: :json
+          result = JSON.parse(response.body)
+          result.should have(1).item
+          result.should include 'error'
+        end
       end
     end
+    
     describe 'put :update' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        put :update, id: budget, budget: attributes
+        response.should redirect_to new_user_session_path
+      end
+      
       describe 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
-        it 'should not update the budget'
+        it 'should return "access denied"' do
+          put :update, id: budget, budget: attributes, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error message' do
+          put :update, id: budget, budget: attributes, format: :json
+          result = JSON.parse(response.body)
+          result.should have(1).item
+          result.should include 'error'
+        end
+        
+        it 'should not update the budget' do
+          lambda do
+            put :update, id: budget, budget: attributes, format: :json
+            budget.reload
+          end.should_not change(budget, :name)
+        end
       end
     end
+    
     describe 'delete :destroy' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        delete :destroy, id: budget
+        response.should redirect_to new_user_session_path
+      end
+      
       describe 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
-        it 'should not delete the budget'
+        it 'should return "access denied"' do
+          delete :destroy, id: budget, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error message' do
+          delete :destroy, id: budget, format: :json
+          result = JSON.parse(response.body)
+          result.should have(1).item
+          result.should include 'error'
+        end
+        
+        it 'should not delete the budget' do
+          lambda do
+            delete :destroy, id: budget, format: :json
+          end.should_not change(Budget, :count)
+        end
       end
     end
   end

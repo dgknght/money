@@ -9,6 +9,7 @@ class BudgetsController < ApplicationController
   respond_to :html, :json
   
   def index
+    authorize! :show, @entity
     @budgets = @entity.budgets
     respond_with @budgets
   end
@@ -23,21 +24,25 @@ class BudgetsController < ApplicationController
   end
 
   def edit
+    authorize! :update, @budget
   end
 
   def update
+    authorize! :update, @budget
     @budget.update_attributes(budget_params)
     flash[:notice] = "The budget was updated successfully." if @budget.save
     respond_with @budget
   end
 
   def destroy
+    authorize! :destroy, @budget
     @budget.destroy
     flash[:notice] = "The budget was removed successfuly."
     respond_with @budget.entity, @budget
   end
   
   def show
+    authorize! :show, @budget
     respond_with @budget
   end
   
