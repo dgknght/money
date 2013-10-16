@@ -110,19 +110,53 @@ describe BudgetsController do
         end
         
         context 'in json' do
-          it 'should be successful'
-          it 'should update the budget'
-          it 'should not return any data'
+          it 'should be successful' do
+            put :update, id: budget, budget: attributes, format: :json
+            response.should be_success
+          end
+          
+          it 'should update the budget' do
+            lambda do
+              put :update, id: budget, budget: attributes, format: :json
+              budget.reload
+            end.should change(budget, :name).to('The new budget')
+          end
+          
+          it 'should not return any data' do
+            put :update, id: budget, budget: attributes, format: :json
+            response.body.should == ""
+          end
         end
       end
 
       describe "delete :destroy" do
-        it 'should redirect to the budget index page'
-        it 'should remove the budget'
+        it 'should redirect to the budget index page' do
+          delete :destroy, id: budget
+          response.should redirect_to entity_budgets_path(entity)
+        end
+        
+        it 'should remove the budget' do
+          lambda do
+            delete :destroy, id: budget
+          end.should change(Budget, :count).by(-1)
+        end
+        
         context 'in json' do
-          it 'should be successful'
-          it 'should remove the budget'
-          it 'should not return any data'
+          it 'should be successful' do
+            delete :destroy, id: budget, format: :json
+            response.should be_success
+          end
+          
+          it 'should remove the budget' do
+            lambda do
+              delete :destroy, id: budget, format: :json
+            end.should change(Budget, :count).by(-1)
+          end
+          
+          it 'should not return any data' do
+            delete :destroy, id: budget, format: :json
+            response.body.should == ""
+          end
         end
       end
     end

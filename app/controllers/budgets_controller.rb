@@ -2,7 +2,7 @@ class BudgetsController < ApplicationController
   include ApplicationHelper
   
   before_filter :authenticate_user!
-  before_filter :load_budget, only: [:show, :edit, :update]
+  before_filter :load_budget, only: [:show, :edit, :update, :destroy]
   before_filter :load_entity, only: [:index, :new, :create, :udpate]
   before_filter :set_current_entity
   
@@ -31,7 +31,10 @@ class BudgetsController < ApplicationController
     respond_with @budget
   end
 
-  def delete
+  def destroy
+    @budget.destroy
+    flash[:notice] = "The budget was removed successfuly."
+    respond_with @budget.entity, @budget
   end
   
   def show
