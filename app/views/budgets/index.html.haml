@@ -1,6 +1,6 @@
 %h2#page_title Budgets
 
-%table#budgets_table{cellspacing: 0, cellpadding: 0}
+%table#budgets_table.list{cellspacing: 0, cellpadding: 0}
   %tr
     %th Name
     %th Start date
@@ -8,5 +8,7 @@
   -@budgets.each do |budget|
     %tr
       %td= budget.name
-      %td= budget.start_date
-      %td= budget.end_date
+      %td= format_date(budget.start_date)
+      %td= format_date(budget.end_date)
+.actions
+  =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget'

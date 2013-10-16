@@ -1,1 +1,14 @@
 %h2#page_title Budget
+
+%table#budget_table.attributes{ cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Name
+    %td= @budget.name
+  %tr
+    %th Start date
+    %td= format_date(@budget.start_date)
+  %tr
+    %th End date
+    %td= format_date(@budget.end_date)
+.actions
+  =link_to 'Back', entity_budgets_path(@budget.entity), class: 'back_button', title: 'Click here to return to the list of budgets.'

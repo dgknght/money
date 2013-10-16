@@ -1,0 +1,15 @@
+%div
+  =f.label :name
+  %br
+  =f.text_field :name
+%div
+  =f.label :start_date
+  %br
+  =f.text_field :start_date
+%div
+  =f.label :end_date
+  %br
+  =f.text_field :end_date
+.actions
+  =f.submit "Save", class: 'save_button', title: 'Click here to save the budget.'
+  =link_to "Back", entity_budgets_path(@entity), class: 'back_button', title: 'Click here to return the list of budgets.'

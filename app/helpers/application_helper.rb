@@ -10,4 +10,8 @@ module ApplicationHelper
   def format_currency(value)
     number_to_currency(value, unit: '')
   end
+  
+  def format_date(value)
+    value.strftime '%-m/%-d/%Y'
+  end
 end
