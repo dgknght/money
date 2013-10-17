@@ -5,10 +5,13 @@
     %th Name
     %th Start date
     %th End date
+    %th
   -@budgets.each do |budget|
-    %tr
+    %tr{id: "budget_#{budget.id}" }
       %td= budget.name
       %td= format_date(budget.start_date)
       %td= format_date(budget.end_date)
+      %td.action_cell
+        =link_to "Edit", edit_budget_path(budget), class: 'edit_button', title: 'Click here to edit the budget.'
 .actions
-  =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget'
+  =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget.'

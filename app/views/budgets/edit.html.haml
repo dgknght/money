@@ -1,2 +1,6 @@
-<h1>Budgets#edit</h1>
-<p>Find me in app/views/budgets/edit.html.erb</p>
+%h2#page_title Edit budget
+
+=render "shared/errors", :resource => @budget
+=form_for(@budget) do |f|  
+  =render "form_fields", budget: @budget, f: f
+  
