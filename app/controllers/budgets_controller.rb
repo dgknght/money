@@ -39,7 +39,7 @@ class BudgetsController < ApplicationController
   def destroy
     authorize! :destroy, @budget
     @budget.destroy
-    flash[:notice] = "The budget was removed successfuly."
+    flash[:notice] = "The budget was removed successfully."
     respond_with @budget.entity, @budget
   end
   
