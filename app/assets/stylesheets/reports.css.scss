@@ -11,11 +11,13 @@ $white: #FFF;
   }
 }
 
-.report th, td {
-  font-size: 120%;
-  padding: {
-    top: .2em;
-    button: .2em;
+.report {
+  td, th {
+    font-size: 120%;
+    padding: {
+      top: .2em;
+      button: .2em;
+    }
   }
 }
 

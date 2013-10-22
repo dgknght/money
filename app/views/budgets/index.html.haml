@@ -5,7 +5,7 @@
     %th Name
     %th Start date
     %th End date
-    %th
+    %th.action_cell &nbsp;
   -@budgets.each do |budget|
     %tr{id: "budget_#{budget.id}" }
       %td= budget.name
