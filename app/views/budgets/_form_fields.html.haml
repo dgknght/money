@@ -12,4 +12,4 @@
   =f.text_field :end_date
 .actions
   =f.submit "Save", class: 'save_button', title: 'Click here to save the budget.'
-  =link_to "Back", entity_budgets_path(@entity), class: 'back_button', title: 'Click here to return the list of budgets.'
+  =link_to "Back", entity_budgets_path(budget.entity), class: 'back_button', title: 'Click here to return the list of budgets.'
