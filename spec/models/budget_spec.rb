@@ -48,4 +48,13 @@ describe Budget do
       budget.should_not be_valid
     end
   end
+  
+  describe 'items' do
+    let(:budget) { FactoryGirl.create(:budget) }
+    let(:item1) { FactoryGirl.create(:budget_item, budget: budget) }
+    let(:item2) { FactoryGirl.create(:budget_item, budget: budget) }
+    it 'should contain the items that belong to the budget' do
+      budget.items.should == [item1, item2]
+    end
+  end
 end

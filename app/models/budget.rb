@@ -13,6 +13,7 @@
 
 class Budget < ActiveRecord::Base
   belongs_to :entity
+  has_many :items, class_name: 'BudgetItem'
   
   validates_presence_of :name, :start_date, :end_date
   validates_uniqueness_of :name
