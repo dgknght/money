@@ -14,7 +14,9 @@ Money::Application.routes.draw do
   end
   resources :accounts, only: [:show, :edit, :update, :destroy]
   resources :transactions, only: [:show, :edit, :update, :destroy]
-  resources :budgets, only: [:show, :edit, :update, :destroy]
+  resources :budgets, only: [:show, :edit, :update, :destroy] do
+    resources :budget_items, only: [:index], path: 'items'
+  end
   
   get 'home' => 'entities#index'
   

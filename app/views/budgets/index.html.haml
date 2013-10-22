@@ -8,7 +8,7 @@
     %th.action_cell &nbsp;
   -@budgets.each do |budget|
     %tr{id: "budget_#{budget.id}" }
-      %td= link_to budget.name, budget_line_items_path(budget)
+      %td= link_to budget.name, budget_budget_items_path(budget)
       %td= format_date(budget.start_date)
       %td= format_date(budget.end_date)
       %td.action_cell
