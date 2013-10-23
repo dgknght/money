@@ -14,6 +14,9 @@ class Ability
     can :manage, Budget do |budget|
       user.entities.include? budget.entity
     end
+    can :manage, BudgetItem do |budget_item|
+      user.entities.include? budget_item.budget.entity
+    end
     
     # Define abilities for the passed in user here. For example:
     #
