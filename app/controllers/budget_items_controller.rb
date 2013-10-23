@@ -17,6 +17,7 @@ class BudgetItemsController < ApplicationController
 
   def new
     authorize! :update, @budget
+    @budget_item = @budget.items.new
   end
 
   def create

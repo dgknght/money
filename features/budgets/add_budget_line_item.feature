@@ -21,12 +21,13 @@ Feature: Add a budget line item
       | 2014 | 1/1/2014   | 12/31/2014 |
     
     When I click "2014" within the budget row for "2014"
-    Then I should see "Budget Line Items" within the page title
+    Then I should see "Budget items" within the page title
     
     When I click "Add"
-    Then I should see "New budget line item" within the page title
+    Then I should see "New budget item" within the page title
     
     When I select "Monthly average" from the "Method" list
+    And I select "Groceries" from the "Account" list
     And I fill in "Amount" with "350"
     And I click "Save"
     
