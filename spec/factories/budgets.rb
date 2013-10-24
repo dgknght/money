@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :budget do
     entity
     name { Faker::Commerce.department }
-    start_date { Date.today }
-    end_date { (start_date >> 12) - 1 }
+    start_date { '2014-01-01' }
+    end_date { '2014-12-31' }
   end
 end

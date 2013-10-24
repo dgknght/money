@@ -12,15 +12,24 @@ describe BudgetItemPresenter do
     }
   end
   
-  it 'should be creatable from valid attributes' do
-    presenter = BudgetItemPresenter.new(attributes)
+  it 'should be creatable with an existing budget and valid attributes' do
+    presenter = BudgetItemPresenter.new(budget, attributes)
     presenter.should be_valid
   end
   
   describe 'method' do
     it 'should be required' do
-      presenter = BudgetItemPresenter.new(attributes.without(:method))
+      presenter = BudgetItemPresenter.new(budget, attributes.without(:method))
       presenter.should_not be_valid
+    end
+  end
+  
+  describe 'average method' do
+    it 'should fill each period within the budget with the specified value' do
+      presenter = BudgetItemPresenter.new(budget, attributes)
+      budget_item = presenter.budget_item
+      budget_item.should_not be_nil
+      budget_item.periods.map { |period| period.budget_amount }.should == 1..12.map { |index| 350 }
     end
   end
 end
