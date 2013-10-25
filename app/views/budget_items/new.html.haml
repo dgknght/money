@@ -3,3 +3,5 @@
 =render "shared/errors", :resource => @budget_item
 =form_for([@budget, @budget_item]) do |f|
   =render 'form_fields', f: f
+  .actions
+    =f.submit 'Save', class: 'save_button', title: 'Click here to save the budget item.'

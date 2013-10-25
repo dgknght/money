@@ -1,23 +1,28 @@
 class BudgetItemDistributor
-  def self.distribute(budget_item, method, *args)
+  def self.methods
+    %w(average direct total)
+  end
+  
+  def self.distribute(budget_item, method, options)
     full_method_name = "distribute_#{method}"
     raise "unrecognized method '#{method}'" unless respond_to?(full_method_name)
-    send full_method_name, budget_item, *args
+    send full_method_name, budget_item, options
   end
   
   private
-    def self.distribute_average(budget_item, amount)
-      budget_item.periods.each { |p| p.budget_amount = amount }      
+    def self.distribute_average(budget_item, options)
+      budget_item.periods.each { |p| p.budget_amount = options[:amount] }      
     end
     
-    def self.distribute_direct(budget_item, amounts)
+    def self.distribute_direct(budget_item, options)
+      amounts = options[:amounts]
       validate_amounts budget_item, amounts
       
       amounts.each_with_index { |a, i| budget_item.periods[i].budget_amount = a }
     end
     
-    def self.distribute_total(budget_item, total)
-      amount = total / budget_item.periods.length
+    def self.distribute_total(budget_item, options)
+      amount = options[:total] / budget_item.periods.length
       budget_item.periods.each { |p| p.budget_amount = amount }
     end
     

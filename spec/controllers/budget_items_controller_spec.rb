@@ -8,7 +8,15 @@ describe BudgetItemsController do
   let (:attributes) do
     {
       budget_id: budget.id,
-      account_id: account.id
+      account_id: account.id      
+    }
+  end
+  let (:distributor) do
+    {
+      method: :average,
+      args: {
+        amount: 100
+      }
     }
   end
   
@@ -63,30 +71,35 @@ describe BudgetItemsController do
 
       describe "post :create" do
         it "should redirect to the budget item detail page" do
-          post :create, budget_id: budget, budget_item: attributes
+          post :create, budget_id: budget, budget_item: attributes, distributor: distributor
           response.should redirect_to budget_item_path(BudgetItem.last)
         end
         
         it 'should create a new budget item' do
           lambda do
-            post :create, budget_id: budget, budget_item: attributes
+            post :create, budget_id: budget, budget_item: attributes, distributor: distributor
           end.should change(BudgetItem, :count).by(1)
+        end
+        
+        it 'should create the correct budget amounts for each period' do
+          post :create, budget_id: budget, budget_item: attributes, distributor: distributor
+          BudgetItem.last.periods.map{ |p| p.budget_amount }.should == (1..12).map{ |i| 100}
         end
         
         context 'in json' do
           it 'should be successful' do
-            post :create, budget_id: budget, budget_item: attributes, format: :json
+            post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
             response.should be_success
           end
           
           it 'should create a new budget item' do
             lambda do
-              post :create, budget_id: budget, budget_item: attributes, format: :json
+              post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
             end.should change(BudgetItem, :count).by(1)
           end
           
           it 'should return the new budget item' do
-            post :create, budget_id: budget, budget_item: attributes, format: :json
+            post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
             result = JSON.parse(response.body)
             attributes.each { |k, v| result[k.to_s].should == v }
           end

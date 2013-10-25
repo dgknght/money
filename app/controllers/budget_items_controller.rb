@@ -23,7 +23,10 @@ class BudgetItemsController < ApplicationController
   def create
     @budget_item = @budget.items.new(budget_item_params)
     authorize! :create, @budget_item
-    flash[:notice] = "The budget item was created successfully." if @budget_item.save
+    if @budget_item.save
+      flash[:notice] = "The budget item was created successfully."
+      BudgetItemDistributor.distribute(*distributor_params)
+    end
     respond_with @budget_item
   end
 
@@ -47,6 +50,11 @@ class BudgetItemsController < ApplicationController
   private
     def budget_item_params
       params.require(:budget_item).permit(:account_id)
+    end
+    
+    def distributor_params
+      result = params.require(:distributor).permit(:method, args: [:amount])
+      [@budget_item, result[:method], result[:args]]
     end
     
     def load_budget

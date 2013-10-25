@@ -26,13 +26,31 @@ Feature: Add a budget line item
     When I click "Add"
     Then I should see "New budget item" within the page title
     
-    When I select "Monthly average" from the "Method" list
+    When I select "average" from the "Method" list
     And I select "Groceries" from the "Account" list
     And I fill in "Amount" with "350"
     And I click "Save"
     
-    Then I should see "The line item was created successfully." within the notice area
-    And I should see the following line item table
+    Then I should see "The budget item was created successfully." within the notice area
+    And I should see the following budget item attributes
+      | Account | Groceries |
+    And I should see the following budget item periods table
+      | Start date | Budget amount |
+      | 1/1/2014   |        350.00 |
+      | 1/2/2014   |        350.00 |
+      | 1/3/2014   |        350.00 |
+      | 1/4/2014   |        350.00 |
+      | 1/5/2014   |        350.00 |
+      | 1/6/2014   |        350.00 |
+      | 1/7/2014   |        350.00 |
+      | 1/8/2014   |        350.00 |
+      | 1/9/2014   |        350.00 |
+      | 1/10/2014  |        350.00 |
+      | 1/11/2014  |        350.00 |
+      | 1/12/2014  |        350.00 |
+     
+    When I click 'Back'
+    Then  I should see the following budget item table
       | Account   | Jan 2014 | Feb 2014 | Mar 2014 | Apr 2014 | May 2014 | Jun 2014 | Jul 2014 | Aug 2014 | Sep 2014 | Oct 2014 | Nov 2014 | Dec 2014 |    Total |
       | Income    |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |
       | Expense   |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 | 4,200.00 |

@@ -1,2 +1,18 @@
-<h1>BudgetItems#show</h1>
-<p>Find me in app/views/budget_items/show.html.erb</p>
+%h2#page_title Budget item
+
+%table.attributes#budget_item_table{ cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Account
+    %td= @budget_item.account.name
+
+%h3 Periods
+%table.list#budget_item_periods_table{ cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Start date
+    %th Budget amount
+  -@budget_item.periods.each do |period|
+    %tr
+      %td= format_date(period.start_date)
+      %td.number_column= format_currency(period.budget_amount)
+.actions
+  =link_to 'Back', budget_budget_items_path(@budget_item.budget), class: 'back_button', title: 'Click here to return to the list of budget items.'
