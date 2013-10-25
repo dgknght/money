@@ -24,6 +24,13 @@ describe BudgetItemPresenter do
     end
   end
   
+  describe 'account_id' do
+    it 'should be required' do
+      presenter = BudgetItemPresenter.new(budget, attributes.without(:account_id))
+      presenter.should_not be_valid
+    end
+  end
+  
   describe 'average method' do
     it 'should fill each period within the budget with the specified value' do
       presenter = BudgetItemPresenter.new(budget, attributes)

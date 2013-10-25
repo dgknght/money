@@ -21,14 +21,14 @@ describe BudgetItemPeriod do
       period.should_not be_valid
     end
   end  
-  
+ 
   describe 'start_date' do
     it 'should be required' do
       period = BudgetItemPeriod.new(attributes.without(:start_date))
       period.should_not be_valid
     end
   end  
-  
+ 
   describe 'budget_amount' do
     it 'should be required' do
       period = BudgetItemPeriod.new(attributes.without(:budget_amount))

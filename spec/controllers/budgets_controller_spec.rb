@@ -9,7 +9,8 @@ describe BudgetsController do
     {
       name: 'The new budget',
       start_date: '2015-01-01',
-      end_date: '2015-12-31'
+      period: Budget.month,
+      period_count: 12
     }
   end
 

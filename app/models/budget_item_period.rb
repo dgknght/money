@@ -14,4 +14,11 @@ class BudgetItemPeriod < ActiveRecord::Base
   belongs_to :budget_item
   
   validates_presence_of :budget_item_id, :start_date, :budget_amount
+  
+  default_scope { order(:start_date) }
+  
+  def end_date
+    next_period = budget_item.periods.select{ |p| p.start_date > start_date}.first
+    next_period ? next_period.start_date - 1 : budget_item.budget.end_date
+  end
 end

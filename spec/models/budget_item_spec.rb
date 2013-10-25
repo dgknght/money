@@ -53,10 +53,10 @@ describe BudgetItem do
   
   describe 'periods' do
     it 'should contain a list of the periods within the budget' do
-      item = budget.items.new(attributes)
+      item = budget.items.create(attributes)
       item.periods.should_not be_nil
       item.should have(12).periods
-      item.periods.map { |p| p.start_date }.should == 1..12.map { |month| Date.civil(2014, month, 1) }
+      item.periods.map { |p| p.start_date }.should == (1..12).map { |month| Date.civil(2014, month, 1) }
     end
   end
 end
