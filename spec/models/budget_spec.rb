@@ -62,9 +62,6 @@ describe Budget do
   describe 'end_date' do
     it 'should be the end of the last period' do
       budget = Budget.new(attributes)
-      
-      puts "#{budget.periods.map{|p| p.start_date }.inspect}"
-      
       budget.end_date.should == Date.parse('2014-12-31')      
     end
   end
