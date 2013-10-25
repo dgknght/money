@@ -19,17 +19,16 @@ class BudgetItem < ActiveRecord::Base
   
   before_validation :sync_periods
   
-  private
-    def sync_periods
-      return unless budget
-      
-      budget.periods.each_with_index do |p, i|
-        if periods.length <= i
-          period = periods.build(start_date: p.start_date, budget_amount: 0)
-        else
-          period = periods[i]
-          period.start_date = p.start_date
-        end
+  def sync_periods
+    return unless budget
+    
+    budget.periods.each_with_index do |p, i|
+      if periods.length <= i
+        period = periods.build(start_date: p.start_date, budget_amount: 0)
+      else
+        period = periods[i]
+        period.start_date = p.start_date
       end
     end
+  end
 end

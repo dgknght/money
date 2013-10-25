@@ -59,7 +59,7 @@ class BudgetsController < ApplicationController
     end
     
     def budget_params
-      params.require(:budget).permit(:name, :start_date, :end_date)
+      params.require(:budget).permit(:name, :start_date, :period, :period_count)
     end
     
     def set_current_entity

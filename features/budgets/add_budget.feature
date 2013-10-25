@@ -18,13 +18,16 @@ Feature: Add a budget
 
     When I fill in "Name" with "2014"
     And I fill in "Start" with "1/1/2014"
-    And I fill in "End" with "12/31/2014"
+    And I fill in "Period count" with "12"
+    And I select "month" from the "Period" list
     And I click "Save"
     Then I should see "Budget" within the page title
     And I should see the following budget attributes
-      | Name       | 2014       |
-      | Start date | 1/1/2014   |
-      | End date   | 12/31/2014 |
+      | Name         | 2014       |
+      | Period       | month      |
+      | Period count | 12         |
+      | Start date   | 1/1/2014   |
+      | End date     | 12/31/2014 |
       
     When I click "Back"
     Then I should see the following budgets table

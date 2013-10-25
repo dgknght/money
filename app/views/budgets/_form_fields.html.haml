@@ -7,9 +7,13 @@
   %br
   =f.text_field :start_date
 %div
-  =f.label :end_date
+  =f.label :period
   %br
-  =f.text_field :end_date
+  =f.select :period, Budget.all_periods
+%div
+  =f.label :period_count
+  %br
+  =f.text_field :period_count, type: :number
 .actions
   =f.submit "Save", class: 'save_button', title: 'Click here to save the budget.'
   =link_to "Back", entity_budgets_path(budget.entity), class: 'back_button', title: 'Click here to return the list of budgets.'

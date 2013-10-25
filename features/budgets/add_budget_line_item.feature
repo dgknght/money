@@ -8,7 +8,7 @@ Feature: Add a budget line item
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
     And entity "Personal" has an expense account named "Groceries"
-    And entity "Personal" has a budget named "2014" starting on 1/1/2014 and ending on 12/31/2014
+    And entity "Personal" has a 12-month budget named "2014" starting on 1/1/2014
     
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page

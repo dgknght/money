@@ -20,6 +20,10 @@ class Budget < ActiveRecord::Base
         period
       end
     end
+    
+    def all_periods
+      PERIODS
+    end
   end
   
   belongs_to :entity
@@ -28,6 +32,8 @@ class Budget < ActiveRecord::Base
   validates_presence_of :name, :start_date, :period, :period_count
   validates_uniqueness_of :name
   validates_inclusion_of :period, :in => PERIODS
+  
+  after_update :sync_budget_item_periods
   
   def end_date
     end_date_at(period_count-1)
@@ -42,13 +48,19 @@ class Budget < ActiveRecord::Base
   
   private
     def end_date_at(index)
+      return nil if start_date.nil?
       return start_date_at(index+1) - 1
     end
     
     def start_date_at(index)
+      return nil if start_date.nil?
       return start_date >> index if period == Budget.month
       return start_date + (index*7) if period == Budget.week
       return start_date >> (index*12) if period == Budget.year
       raise "Unrecognized budget periods #{period}"
+    end
+    
+    def sync_budget_item_periods
+      items.each { |item| item.sync_periods }
     end
 end

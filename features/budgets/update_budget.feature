@@ -6,7 +6,7 @@ Feature: Update a budget
   Scenario: A user successfully updates a budget
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
-    And entity "Personal" has a budget named "2014" starting on 1/1/2014 and ending on 11/30/2014
+    And entity "Personal" has a 11-month budget named "2014" starting on 1/1/2014
     
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
@@ -21,13 +21,15 @@ Feature: Update a budget
     When I click "Edit" within the budget row for "2014"
     Then I should see "Edit budget" within the page title
     
-    When I fill in "End date" with "2014-12-31"
+    When I fill in "Period count" with "12"
     And I click "Save"
     Then I should see "The budget was updated successfully." within the notice area
     And I should see the following budget attributes
-      | Name       | 2014       |
-      | Start date | 1/1/2014   |
-      | End date   | 12/31/2014 |
+      | Name         | 2014       |
+      | Period       | month      |
+      | Period count | 12         |
+      | Start date   | 1/1/2014   |
+      | End date     | 12/31/2014 |
      
     When I click "Back"
     Then I should see the following budgets table
