@@ -8,7 +8,8 @@ describe Budget do
       entity_id: entity.id,
       name: '2014 budget',
       start_date: '2014-01-01',
-      end_date: '2014-12-31'
+      period: Budget.month,
+      period_count: 12
     }
   end
   
@@ -37,15 +38,55 @@ describe Budget do
     end
   end
   
-  describe 'end_date' do
-    it 'should be required' do
-      budget = Budget.new(attributes.without(:end_date))
-      budget.should_not be_valid
+  describe 'period' do
+    it 'should default to "month"' do
+      budget = Budget.new(attributes.without(:period))
+      budget.should be_valid
+      budget.period.should == Budget.month
     end
     
-    it 'should be after the start date' do
-      budget = Budget.new(attributes.merge(end_date: '2013-12-31'))
+    it 'should be either "year", "month", or "week"' do
+      budget = Budget.new(attributes.merge(period: 'notavalidperiod'))
       budget.should_not be_valid
+    end
+  end
+  
+  describe 'period_count' do
+    it 'should default to 12' do
+      budget = Budget.new(attributes.without(:period_count))
+      budget.should be_valid
+      budget.period_count.should == 12
+    end
+  end
+  
+  describe 'end_date' do
+    it 'should be the end of the last period' do
+      budget = Budget.new(attributes)
+      
+      puts "#{budget.periods.map{|p| p.start_date }.inspect}"
+      
+      budget.end_date.should == Date.parse('2014-12-31')      
+    end
+  end
+  
+  describe 'periods' do
+    it 'should list the periods in the budget' do
+      budget = Budget.new(attributes)
+      budget.should have(12).periods
+      budget.periods.map{ |p| "#{p.start_date} - #{p.end_date}" }.should == [
+        '2014-01-01 - 2014-01-31',
+        '2014-02-01 - 2014-02-28',
+        '2014-03-01 - 2014-03-31',
+        '2014-04-01 - 2014-04-30',
+        '2014-05-01 - 2014-05-31',
+        '2014-06-01 - 2014-06-30',
+        '2014-07-01 - 2014-07-31',
+        '2014-08-01 - 2014-08-31',
+        '2014-09-01 - 2014-09-30',
+        '2014-10-01 - 2014-10-31',
+        '2014-11-01 - 2014-11-30',
+        '2014-12-01 - 2014-12-31'
+      ]
     end
   end
   

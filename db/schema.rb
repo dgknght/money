@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131024210727) do
+ActiveRecord::Schema.define(version: 20131025132829) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                       null: false
@@ -45,12 +45,13 @@ ActiveRecord::Schema.define(version: 20131024210727) do
   add_index "budget_items", ["budget_id", "account_id"], name: "index_budget_items_on_budget_id_and_account_id", unique: true
 
   create_table "budgets", force: true do |t|
-    t.integer  "entity_id",  null: false
-    t.string   "name",       null: false
-    t.date     "start_date", null: false
-    t.date     "end_date",   null: false
+    t.integer  "entity_id",                                 null: false
+    t.string   "name",                                      null: false
+    t.date     "start_date",                                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "period",       limit: 20, default: "month", null: false
+    t.integer  "period_count",            default: 12,      null: false
   end
 
   add_index "budgets", ["entity_id"], name: "index_budgets_on_entity_id"

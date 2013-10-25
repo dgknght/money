@@ -17,7 +17,7 @@ class BudgetItem < ActiveRecord::Base
   validates_presence_of :budget_id, :account_id
   validates_uniqueness_of :account_id, scope: :budget_id
   
-  before_validation :add_periods
+#  before_validation :add_periods
 #  before_validation_on_update :update_periods
   
   private
