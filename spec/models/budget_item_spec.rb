@@ -3,11 +3,12 @@ require 'spec_helper'
 describe BudgetItem do
   let(:entity) { FactoryGirl.create(:entity) }
   let(:budget) { FactoryGirl.create(:budget, entity: entity) }
-  let(:account) { FactoryGirl.create(:account, entity: entity) }
+  let(:salary) { FactoryGirl.create(:income_account, entity: entity) }
+  let(:groceries) { FactoryGirl.create(:expense_account, entity: entity) }
   let(:attributes) do
     {
       budget_id: budget.id,
-      account_id: account.id      
+      account_id: groceries.id      
     }
   end
   
@@ -47,7 +48,7 @@ describe BudgetItem do
   describe 'account' do
     it 'should reference the account for which amounts are specified' do
       item = BudgetItem.new(attributes)
-      item.account.should == account
+      item.account.should == groceries
     end
   end
   
@@ -57,6 +58,23 @@ describe BudgetItem do
       item.periods.should_not be_nil
       item.should have(12).periods
       item.periods.map { |p| p.start_date }.should == (1..12).map { |month| Date.civil(2014, month, 1) }
+    end
+  end
+  
+  describe 'scope' do
+    let!(:salary_item) { FactoryGirl.create(:budget_item, budget: budget, account: salary) }
+    let!(:groceries_item) { FactoryGirl.create(:budget_item, budget: budget, account: groceries) }
+    
+    describe 'income' do
+      it 'should return budget items for income accounts' do
+        budget.items.income.should == [salary_item]
+      end
+    end
+    
+    describe 'expense' do
+      it 'should return budget items for expense accounts' do
+        budget.items.expense.should == [groceries_item]
+      end
     end
   end
 end

@@ -19,6 +19,8 @@ class BudgetItem < ActiveRecord::Base
   
   before_validation :sync_periods
   
+  scope :income, -> { joins(:account).where('accounts.account_type=?', Account.income_type) }
+  scope :expense, -> { joins(:account).where('accounts.account_type=?', Account.expense_type) }
   def sync_periods
     return unless budget
     
