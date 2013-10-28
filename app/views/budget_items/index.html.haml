@@ -1,4 +1,18 @@
 %h2#page_title Budget items
 
+%table.list#budget_items_table{ cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Account
+    -@budget.periods.each do |period|
+      %th.number_column= period.start_date.strftime('%b %Y')
+    %th.action_cell &nbsp;
+    -@budget.items.each do |item|
+      %tr
+        %td= item.account.name
+        -item.periods.each do |period|
+          %td.number_column= format_currency(period.budget_amount)
+        %td.action_cell
+          =link_to 'Edit', edit_budget_item_path(item), class: 'edit_button', title: 'Click here to edit this budget item.'
+          =render 'shared/delete_form', resource: item, url: budget_item_url(item)
 .actions
   =link_to 'Add', new_budget_budget_item_path(@budget), class: 'add_button', title: 'Click here to add a new item to the budget.'
