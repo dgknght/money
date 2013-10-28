@@ -1,0 +1,8 @@
+%tr.section_header
+  %td= summary.header
+  -summary.periods.each do |period|
+    %td.number_column= format_currency(period)
+  %td.number_column= format_currency(summary.total)
+  %td.action_cell &nbsp;
+-items.each do |item|
+  =render 'row', item: item

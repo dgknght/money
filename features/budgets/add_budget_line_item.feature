@@ -49,8 +49,8 @@ Feature: Add a budget line item
       | 11/1/2014  |        350.00 |
       | 12/1/2014  |        350.00 |
      
-    When I click 'Back'
-    Then  I should see the following budget item table
+    When I click "Back"
+    Then  I should see the following budget items table
       | Account   | Jan 2014 | Feb 2014 | Mar 2014 | Apr 2014 | May 2014 | Jun 2014 | Jul 2014 | Aug 2014 | Sep 2014 | Oct 2014 | Nov 2014 | Dec 2014 |    Total |
       | Income    |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |     0.00 |
       | Expense   |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 |   350.00 | 4,200.00 |
