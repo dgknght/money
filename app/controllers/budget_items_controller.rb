@@ -1,7 +1,11 @@
 class BudgetItemsController < ApplicationController
+  include ApplicationHelper
+  
   before_filter :authenticate_user!
   before_filter :load_budget, only: [:index, :create, :new]
   before_filter :load_budget_item, only: [:show, :update, :destroy, :edit]
+  before_filter :set_current_entity
+  
   respond_to :html, :json
   
   def index
@@ -23,10 +27,8 @@ class BudgetItemsController < ApplicationController
   def create
     @budget_item = @budget.items.new(budget_item_params)
     authorize! :create, @budget_item
-    if @budget_item.save
-      flash[:notice] = "The budget item was created successfully."
-      BudgetItemDistributor.distribute(*distributor_params)
-    end
+    BudgetItemDistributor.distribute(*distributor_params)
+    flash[:notice] = "The budget item was created successfully." if @budget_item.save
     respond_with @budget_item
   end
 
@@ -63,5 +65,9 @@ class BudgetItemsController < ApplicationController
     
     def load_budget_item
       @budget_item = BudgetItem.find(params[:id])
+    end
+    
+    def set_current_entity
+      self.current_entity = @budget ? @budget.entity : @budget_item.budget.entity
     end
 end

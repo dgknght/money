@@ -83,7 +83,8 @@ describe BudgetItemsController do
         
         it 'should create the correct budget amounts for each period' do
           post :create, budget_id: budget, budget_item: attributes, distributor: distributor
-          BudgetItem.last.periods.map{ |p| p.budget_amount }.should == (1..12).map{ |i| 100}
+          budget_item = BudgetItem.last
+          budget_item.periods.map{ |p| p.budget_amount }.should == (1..12).map{ |i| 100}
         end
         
         context 'in json' do
