@@ -56,7 +56,7 @@ class BudgetItemsController < ApplicationController
     end
     
     def distributor_params
-      result = params.require(:distributor).permit(:method, args: [:amount])
+      result = params.require(:distributor).permit(:method, args: [:amount, :total])
       [@budget_item, result[:method], result[:args]]
     end
     

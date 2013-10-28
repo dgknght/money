@@ -23,7 +23,9 @@ class BudgetItemDistributor
     end
     
     def self.distribute_total(budget_item, options)
-      amount = options[:total] / budget_item.periods.length
+      raise 'The total option must be specified' unless options.include?(:total)
+      total = get_number(options[:total])
+      amount = total / budget_item.periods.length
       budget_item.periods.each { |p| p.budget_amount = amount }
     end
     

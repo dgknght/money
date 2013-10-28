@@ -1,3 +1,24 @@
+:javascript
+  $(function() {
+    $("#distributor_method").on("change", function() {
+      showSelectedMethod();
+    });
+    showSelectedMethod();
+  });
+  
+  function showSelectedMethod() {
+    $("#distributor_method option").each(function() {
+      showMethod(this.value, this.selected);
+    });
+  }
+  
+  function showMethod(method, visible) {
+    if (visible) {
+      $("div.method_" + method).show();
+    } else {
+      $("div.method_" + method).hide();
+    }
+  }
 %div
   =f.label :account_id
   %br
@@ -8,7 +29,5 @@
     %br
     =distributor_fields.select :method, options_for_select(BudgetItemDistributor.methods)
   =distributor_fields.fields_for(:args) do |args_fields|
-    %div
-      =args_fields.label :amount, 'Amount'
-      %br
-      =args_fields.number_field :amount
+    =render 'average_fields', form: args_fields
+    =render 'total_fields', form: args_fields
