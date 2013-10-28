@@ -1,4 +1,3 @@
-@wip
 Feature: Add a budget line item
   As a user
   In order to specify how much money should be spent or received for a given account in a budget time period
