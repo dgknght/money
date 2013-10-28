@@ -10,6 +10,7 @@ class BudgetItemsController < ApplicationController
   
   def index
     authorize! :show, @budget
+    @budget_summary = BudgetSummary.new(@budget)
     @budget_items = @budget.items
     respond_with @budget_items
   end

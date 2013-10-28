@@ -1,8 +1,9 @@
-%tr
-  %td= item.account.name
-  -item.periods.each do |period|
-    %td.number_column= format_currency(period.budget_amount)
-  %td.number_column= format_currency(item.periods.sum(:budget_amount))
+%tr{class: record.item ? '' : 'section_header'}
+  %td= record.header
+  -record.columns.each do |column|
+    %td.number_column= format_currency(column)
+  %td.number_column= format_currency(record.total)
   %td.action_cell
-    =link_to 'Edit', edit_budget_item_path(item), class: 'edit_button', title: 'Click here to edit this budget item.'
-    =render 'shared/delete_form', resource: item, url: budget_item_url(item)
+    -if record.item
+      =link_to 'Edit', edit_budget_item_path(record.item), class: 'edit_button', title: 'Click here to edit this budget item.'
+      =render 'shared/delete_form', resource: record.item, url: budget_item_url(record.item)

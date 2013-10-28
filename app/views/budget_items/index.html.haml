@@ -7,7 +7,6 @@
       %th.number_column= period.start_date.strftime('%b %Y')
     %th.number_column Total
     %th.action_cell &nbsp;
-    =render 'table_section', items: @budget.items.income, summary: summary(@budget_items.income, @budget, 'Income')
-    =render 'table_section', items: @budget.items.expense, summary: summary(@budget_items.expense, @budget, 'Expense')
-.actions
-  =link_to 'Add', new_budget_budget_item_path(@budget), class: 'add_button', title: 'Click here to add a new item to the budget.'
+  -@budget_summary.records.each do |record|
+    =render 'row', record: record
+=link_to 'Add', new_budget_budget_item_path(@budget), class: 'add_button', title: 'Click here to add a new item to the budget.'

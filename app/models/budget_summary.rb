@@ -11,30 +11,32 @@ class BudgetSummary
   end
   
   def initialize(budget)
-    @budget = budget
-    
-    income_items = rows(budget.items.income, 1)
-    income_total = total('Income', income_items)
-    
-    expense_items = rows(budget.items.expense, -1)
-    expense_total = total('Expense', expense_items)
-    
-    final_total = total('Total', [income_total, expense_total])
-    
-    @records = [income_total] + income_items + [expense_total] + expense_items + [final_total]
+    @budget = budget    
   end
   
   def records
-    @records
+    @records ||= create_records
   end
 
   private
+    def create_records
+      income_items = rows(@budget.items.income, 1)
+      income_total = total('Income', income_items)
+      
+      expense_items = rows(@budget.items.expense, -1)
+      expense_total = total('Expense', expense_items)
+      
+      final_total = total('Total', [income_total, expense_total])
+      
+      [income_total] + income_items + [expense_total] + expense_items + [final_total]
+    end
+    
     def row(item, polarity)
       result = OpenStruct.new
       result.header = item.account.name
       result.columns = item.periods.map { |p| p.budget_amount * polarity }
       result.total = sum(result.columns)
-      result.summary = false
+      result.item = item
       result
     end
     
@@ -55,7 +57,6 @@ class BudgetSummary
         result.columns = @budget.periods.map{ |p| 0 }
       end
       result.total = sum(result.columns)
-      result.summary = true
       result
     end
 end
