@@ -28,7 +28,9 @@ class BudgetItemsController < ApplicationController
   def create
     @budget_item = @budget.items.new(budget_item_params)
     authorize! :create, @budget_item
-    BudgetItemDistributor.distribute(*distributor_params)
+    @distributor = BudgetItemDistributor.new(@budget_item)
+    @distributor.apply_attributes(distributor_params)
+    @distributor.distribute
     flash[:notice] = "The budget item was created successfully." if @budget_item.save
     respond_with @budget_item
   end
@@ -57,9 +59,8 @@ class BudgetItemsController < ApplicationController
     
     def distributor_params
       result = params.require(:distributor).permit(:method).tap do |allowed|
-        allowed[:args] = params[:distributor][:args]
+        allowed[:options] = params[:distributor][:options]
       end
-      [@budget_item, result[:method], result[:args]]
     end
     
     def load_budget

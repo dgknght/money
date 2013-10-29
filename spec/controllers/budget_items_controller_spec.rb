@@ -13,8 +13,8 @@ describe BudgetItemsController do
   end
   let (:distributor) do
     {
-      method: :average,
-      args: {
+      method: BudgetItemDistributor.average,
+      options: {
         amount: 100
       }
     }
