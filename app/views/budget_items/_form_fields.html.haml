@@ -31,3 +31,4 @@
   =distributor_fields.fields_for(:args) do |args_fields|
     =render 'average_fields', form: args_fields
     =render 'total_fields', form: args_fields
+    =render 'direct_fields', form: args_fields, budget: @budget

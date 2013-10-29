@@ -16,9 +16,7 @@ class BudgetItemDistributor
     end
     
     def self.distribute_direct(budget_item, options)
-      amounts = options[:amounts]
-      validate_amounts budget_item, amounts
-      
+      amounts = validate_amounts(budget_item, options[:amounts])
       amounts.each_with_index { |a, i| budget_item.periods[i].budget_amount = a }
     end
     
@@ -35,9 +33,13 @@ class BudgetItemDistributor
     end
     
     def self.validate_amounts(budget_item, amounts)
+      raise "amounts must be specified" unless amounts
       raise "amounts must be an array" unless amounts.respond_to?('length')
       unless budget_item.periods.length == amounts.length
         raise "incorrect number of elements. expected #{budget_item.periods.length}, received #{amounts.length}"
       end
+      
+      return amounts.values if amounts.respond_to?(:values)
+      amounts
     end
 end

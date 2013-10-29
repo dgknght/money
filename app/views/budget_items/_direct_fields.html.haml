@@ -1,0 +1,5 @@
+-budget.periods.each_with_index do |period, index|
+  %div.method_direct
+    =form.label "amounts[#{index}]", period.start_date.strftime('%b %Y')
+    %br
+    =form.number_field "amounts[#{index}]", class: 'method_total'
