@@ -10,3 +10,4 @@
   -@budget_summary.records.each do |record|
     =render 'row', record: record
 =link_to 'Add', new_budget_budget_item_path(@budget), class: 'add_button', title: 'Click here to add a new item to the budget.'
+=link_to 'Back', entity_budgets_path(@budget.entity), class: 'back_button', title: 'Click here to return to the list of budgets.'

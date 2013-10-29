@@ -27,7 +27,7 @@ class Budget < ActiveRecord::Base
   end
   
   belongs_to :entity
-  has_many :items, class_name: 'BudgetItem'
+  has_many :items, class_name: 'BudgetItem', dependent: :destroy
   
   validates_presence_of :name, :start_date, :period, :period_count
   validates_uniqueness_of :name
