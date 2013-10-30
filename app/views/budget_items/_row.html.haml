@@ -1,4 +1,4 @@
-%tr{class: record.item ? '' : 'section_header'}
+%tr{class: record.item ? '' : 'section_header', id: record.item ? "budget_item_#{record.item.id}" : '' }
   %td= record.header
   -record.columns.each do |column|
     %td.number_column= format_currency(column)

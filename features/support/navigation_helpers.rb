@@ -15,6 +15,7 @@ module NavigationHelpers
       when /the account row for "([^"]+)"/ then "#account_#{account_id($1)}"
       when /the entity row for "([^"]+)"/ then "#entity_#{entity_id($1)}"
       when /the budget row for "([^"]+)"/ then "#budget_#{budget_id($1)}"
+      when /the budget item row for "([^"]+)"/ then "#budget_item_#{budget_item_id($1)}"
       else raise "Unrecognized section \"#{section}\""
     end
   end
@@ -43,6 +44,14 @@ module NavigationHelpers
       budget = Budget.find_by_name(name)
       raise "No budget found with name=#{name}" unless budget
       budget.id
+    end
+    
+    def budget_item_id(account_name)
+      account = Account.find_by_name(account_name)
+      raise "No account found with name=#{account_name}" unless account
+      budget_item = BudgetItem.find_by_account_id(account.id)
+      raise "No budget item found for account #{account.name}" unless budget_item
+      budget_item.id
     end
     
     def entity_id(name)

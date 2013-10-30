@@ -116,32 +116,32 @@ describe BudgetItemsController do
 
       describe "put :update" do
         it "should redirect to the budget item detail page" do
-          put :update, id: budget_item, budget_item: attributes
+          put :update, id: budget_item, budget_item: attributes, distributor: distributor
           response.should redirect_to budget_item_path(budget_item)
         end
         
         it 'should update the budget item' do
           lambda do
-            put :update, id: budget_item, budget_item: attributes
+            put :update, id: budget_item, budget_item: attributes, distributor: distributor
             budget_item.reload
           end.should change(budget_item, :account_id).to(account.id)
         end
         
         context 'in json' do
           it 'should be successful' do
-            put :update, id: budget_item, budget_item: attributes, format: :json
+            put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
             response.should be_success
           end
           
           it 'should update the specified budget item' do
             lambda do
-              put :update, id: budget_item, budget_item: attributes, format: :json
+              put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
               budget_item.reload
             end.should change(budget_item, :account_id).to(account.id)
           end
           
           it 'should not return any data' do
-            put :update, id: budget_item, budget_item: attributes, format: :json
+            put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
             response.body.should == ""
           end
         end

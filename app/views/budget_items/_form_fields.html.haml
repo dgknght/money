@@ -22,13 +22,13 @@
 %div
   =f.label :account_id
   %br
-  =f.select :account_id, account_options(@budget_item)
-=fields_for(:distributor) do |distributor_fields|
+  =f.select :account_id, account_options(budget_item)
+=fields_for(:distributor, @distributor) do |distributor_fields|
   %div
     =distributor_fields.label :method, 'Method'
     %br
     =distributor_fields.select :method, options_for_select(BudgetItemDistributor.methods)
   =distributor_fields.fields_for(:options) do |args_fields|
-    =render 'average_fields', form: args_fields
-    =render 'total_fields', form: args_fields
-    =render 'direct_fields', form: args_fields, budget: @budget
+    =render 'average_fields', form: args_fields, budget_item: @budget_item
+    =render 'total_fields', form: args_fields, budget_item: @budget_item
+    =render 'direct_fields', form: args_fields, budget: budget_item.budget
