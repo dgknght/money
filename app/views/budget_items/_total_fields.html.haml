@@ -1,4 +1,4 @@
 %div.method_total
   =form.label :total, 'Total'
   %br
-  =form.number_field :total, class: 'method_total'
+  =number_field_tag 'distributor[options][total]', distributor.total, class: 'method_total', id: 'distributor_options_total'

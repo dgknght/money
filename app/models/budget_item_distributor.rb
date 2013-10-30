@@ -14,11 +14,30 @@ class BudgetItemDistributor
   
   attr_accessor :method, :options
   
+  # The amount to be applied to each budget
+  # period by the 'average' method
+  def amount
+    return amounts.length == 0 ? nil : total / amounts.length
+  end
+
+  # The individual amounts that have been applied
+  # to each period in the budget by the 'direct' method
+  def amounts
+    @budget_item.periods.map { |p| p.budget_amount }
+  end
+
+  # Sets the values that are to be applied
+  # to the budget periods.
+  #
+  # These are specified to each method of
+  # distributing the amounts
   def apply_attributes(attributes = {})
     self.method = attributes[:method]
     self.options = attributes[:options]
   end
   
+  # Applies amounts to each period in the budget
+  # item according the options specified in apply_attributes
   def distribute
     raise "method must be set before calling distribute" unless method
     raise "options must be set before calling distribute" unless options
@@ -30,6 +49,12 @@ class BudgetItemDistributor
   
   def initialize(budget_item)
     @budget_item = budget_item
+  end
+
+  # Gets the total amount of money applied to the budget item
+  def total
+    return nil if amounts.none?
+    return amounts.reduce(0) { |s, a| s += a}
   end
   
   private
