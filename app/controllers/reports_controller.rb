@@ -9,6 +9,11 @@ class ReportsController < ApplicationController
     @report = BalanceSheetReport.new(@entity, @filter)
   end
 
+  def budget
+    @filter = BudgetFilter.new(params)
+    @report = BudgetReport.new(@entity, @filter)
+  end
+
   def income_statement
     @filter = IncomeStatementFilter.new(params)
     @report = IncomeStatementReport.new(@entity, @filter)
@@ -17,7 +22,8 @@ class ReportsController < ApplicationController
   def index    
     @reports = {
       'Balance Sheet' => balance_sheet_entity_path(@entity),
-      'Income Statement' => income_statement_entity_path(@entity)
+      'Income Statement' => income_statement_entity_path(@entity),
+      'Budget' => budget_entity_path(@entity)
     }
   end
   
