@@ -17,6 +17,10 @@ class BudgetItemPeriod < ActiveRecord::Base
   
   default_scope { order(:start_date) }
   
+  def actual_amount
+    budget_item.account.balance_with_children_between(start_date, end_date)
+  end
+
   def end_date
     next_period = budget_item.periods.select{ |p| p.start_date > start_date}.first
     next_period ? next_period.start_date - 1 : budget_item.budget.end_date

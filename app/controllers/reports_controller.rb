@@ -11,7 +11,10 @@ class ReportsController < ApplicationController
 
   def budget
     @filter = BudgetFilter.new(params)
-    @report = BudgetReport.new(@entity, @filter)
+    if @filter.valid?
+      budget = @entity.budgets.find(@filter.budget_id)
+      @report = BudgetReport.new(budget, @filter)
+    end
   end
 
   def income_statement

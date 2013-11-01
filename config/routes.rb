@@ -10,6 +10,7 @@ Money::Application.routes.draw do
       get :reports, to: 'reports#index'
       get :balance_sheet, to: 'reports#balance_sheet'
       get :income_statement, to: 'reports#income_statement'
+      get :budget, to: 'reports#budget'
     end
   end
   resources :accounts, only: [:show, :edit, :update, :destroy]
