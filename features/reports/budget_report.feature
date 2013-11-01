@@ -27,7 +27,7 @@ Feature: View a budget report
     And I am on the "Personal" entity page
     Then I should see "Reports" within the navigation
 
-    When I click "Reports" in the navigation
+    When I click "Reports" within the navigation
     Then I should see "Budget Report" within the main content
 
     When I click "Budget Report" within the main content
