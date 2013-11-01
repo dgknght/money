@@ -28,10 +28,10 @@ Feature: View a budget report
     Then I should see "Reports" within the navigation
 
     When I click "Reports" within the navigation
-    Then I should see "Budget Report" within the main content
+    Then I should see "Budget" within the main content
 
     When I click "Budget Report" within the main content
-    Then I should see "Budget Report" within the page title
+    Then I should see "Budget" within the page title
 
     When I fill in "Start" with "2013-01-01"
     And I fill in "End" with "2013-02-28"
