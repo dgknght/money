@@ -11,6 +11,7 @@ class ReportsController < ApplicationController
 
   def budget
     @filter = BudgetFilter.new(params)
+    @filter.budget_id ||= active_budget_id
     if @filter.valid?
       budget = @entity.budgets.find(@filter.budget_id)
       @report = BudgetReport.new(budget, @filter)
@@ -31,6 +32,11 @@ class ReportsController < ApplicationController
   end
   
   private
+    def active_budget_id
+      budget = @entity.budgets.select{ |b| b.start_date <= Date.today && b.end_date >= Date.today}.first
+      budget.nil? ? nil : budget.id
+    end
+    
     def load_entity
       @entity = Entity.find(params[:id])
       self.current_entity = @entity

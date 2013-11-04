@@ -18,7 +18,7 @@
         %th.number_column % Diff.
         %th.number_column Actual/Mo.
       -@report.content.each do |row|
-        %tr
+        %tr{ class: [row.evaluation, row.row_type] }
           %td.number_column= row.account
           %td.number_column= row.budget_amount
           %td.number_column= row.actual_amount

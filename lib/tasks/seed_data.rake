@@ -9,8 +9,12 @@ namespace :seed_data do
   desc 'Loads the database with sample users'
   task :users => :environment do
     email = ENV['email'] || 'john@doe.com'
-    user = User.create!(email: email, password: 'please01', password_confirmation: 'please01')
-    LOGGER.info "created user #{user.email}"
+    if User.find_by_email(email)
+      LOGGER.info "user with email #{email} already exists"
+    else
+      user = User.create!(email: email, password: 'please01', password_confirmation: 'please01')
+      LOGGER.info "created user #{user.email}"
+    end
   end
   
   # --------
@@ -20,8 +24,12 @@ namespace :seed_data do
   desc 'Loads the database with sample entities'
   task :entities => :users  do
     user = User.first
-    entity = FactoryGirl.create(:entity, user_id: user.id, name: 'Personal')
-    LOGGER.info "created entity #{entity.name}"
+    if user.entities.find_by_name('Personal')
+      LOGGER.info "entity 'Personal' already exists"
+    else
+      entity = FactoryGirl.create(:entity, user_id: user.id, name: 'Personal')
+      LOGGER.info "created entity #{entity.name}"
+    end
   end
 
   # --------
@@ -31,7 +39,9 @@ namespace :seed_data do
   AccountDef = Struct.new(:name, :type, :children)
   
   def create_account(entity, account_def, parent = nil)
-    account = FactoryGirl.create( :account, 
+    return if entity.accounts.find_by_name(account_def.name)
+    
+    account = FactoryGirl.create( :account,
                                   entity_id: entity.id, 
                                   name: account_def.name, 
                                   account_type: account_def.type, 
@@ -66,9 +76,38 @@ namespace :seed_data do
     account_defs.each { |a| create_account(entity, a) }
   end
 
-  # --------
-  # Accounts
-  # --------
+  # ------
+  # Budget
+  # ------
+  
+  def create_budget_item(budget, account_name, amount_per_month)
+    account = budget.entity.accounts.find_by_name(account_name)
+    budget_item = budget.items.new(account_id: account.id)
+    distributor = BudgetItemDistributor.new(budget_item)
+    distributor.apply_attributes(method: BudgetItemDistributor.average, options: { amount: amount_per_month })
+    distributor.distribute
+    budget_item.save!
+    LOGGER.info "created budget item for account #{account.name}"
+  end
+  
+  desc 'Creates a sample budget'
+  task :budget => :accounts do
+    entity = Entity.first
+
+    if entity.budgets.find_by_name('2013')
+      LOGGER.info "Budget 2013 already exists"
+    else
+      budget = entity.budgets.create!(name: '2013', start_date: '2013-01-01', period: Budget.month, period_count: 12)
+      create_budget_item(budget, 'Salary', 10_000)
+      create_budget_item(budget, 'Groceries', 320)
+      create_budget_item(budget, 'Gasoline', 120)
+      create_budget_item(budget, 'Mortgage Interest', 899)
+    end
+  end
+  
+  # ------------
+  # Transactions
+  # ------------
 
   TransactionDef = Struct.new(:date, :description, :items)
   

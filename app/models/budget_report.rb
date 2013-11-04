@@ -41,7 +41,9 @@ class BudgetReport
         actual_amount: format_currency(item.actual_amount),
         difference: format_currency(item.difference),
         percent_difference: format_percent(item.percent_difference),
-        actual_per_month: format_currency(item.actual_per_month)
+        actual_per_month: format_currency(item.actual_per_month),
+        evaluation: item.evaluation,
+        row_type: item.row_type
       )
     end
     
@@ -53,7 +55,7 @@ class BudgetReport
       number_to_percentage(value, precision: 1)
     end
     
-    def new_row(header, budget_amount, actual_amount, period_count)
+    def new_row(header, budget_amount, actual_amount, period_count, row_type)
       period_count = 1 if period_count == 0
       difference = actual_amount - budget_amount
       percent_difference = budget_amount != 0 ? ((difference / budget_amount.abs) * 100) : nil
@@ -64,7 +66,9 @@ class BudgetReport
         actual_amount: actual_amount,
         difference: difference,
         percent_difference: percent_difference,
-        actual_per_month: actual_per_month
+        actual_per_month: actual_per_month,
+        evaluation: (difference < 0) ? 'negative' : 'positive',
+        row_type: row_type
       )
     end
     
@@ -76,12 +80,12 @@ class BudgetReport
       periods = filter_periods(item.periods)
       budget_amount = sum(periods, :budget_amount) * polarity
       actual_amount = sum(periods, :actual_amount) * polarity
-      new_row(item.account.name, budget_amount, actual_amount, periods.length)
+      new_row(item.account.name, budget_amount, actual_amount, periods.length, nil)
     end
     
     def total(items, header, period_count)
       budget_amount = items.reduce(0) { |s, item| s += item.budget_amount }
       actual_amount = items.reduce(0) { |s, item| s += item.actual_amount }
-      new_row(header, budget_amount, actual_amount, period_count)
+      new_row(header, budget_amount, actual_amount, period_count, 'report_header')
     end
 end

@@ -52,11 +52,11 @@ describe BudgetReport do
     it 'should have the correct report rows' do
       report = BudgetReport.new(budget, filter)
       expected = [
-        OpenStruct.new(account: 'Income' , budget_amount: '10,000.00', actual_amount:  '9,900.00', difference: '-100.00', percent_difference: '-1.0%', actual_per_month:  '9,900.00'),
-        OpenStruct.new(account: 'Salary' , budget_amount: '10,000.00', actual_amount:  '9,900.00', difference: '-100.00', percent_difference: '-1.0%', actual_per_month:  '9,900.00'),
-        OpenStruct.new(account: 'Expense', budget_amount: '-1,100.00', actual_amount: '-1,200.00', difference: '-100.00', percent_difference: '-9.1%', actual_per_month: '-1,200.00'),
-        OpenStruct.new(account: 'Rent'   , budget_amount: '-1,100.00', actual_amount: '-1,200.00', difference: '-100.00', percent_difference: '-9.1%', actual_per_month: '-1,200.00'),
-        OpenStruct.new(account: 'Net'    , budget_amount: '8,900.00' , actual_amount:  '8,700.00', difference: '-200.00', percent_difference: '-2.2%', actual_per_month:  '8,700.00')
+        OpenStruct.new(account: 'Income' , budget_amount: '10,000.00', actual_amount:  '9,900.00', difference: '-100.00', percent_difference: '-1.0%', actual_per_month:  '9,900.00', evaluation: 'negative', row_type: 'report_header'),
+        OpenStruct.new(account: 'Salary' , budget_amount: '10,000.00', actual_amount:  '9,900.00', difference: '-100.00', percent_difference: '-1.0%', actual_per_month:  '9,900.00', evaluation: 'negative', row_type: nil),
+        OpenStruct.new(account: 'Expense', budget_amount: '-1,100.00', actual_amount: '-1,200.00', difference: '-100.00', percent_difference: '-9.1%', actual_per_month: '-1,200.00', evaluation: 'negative', row_type: 'report_header'),
+        OpenStruct.new(account: 'Rent'   , budget_amount: '-1,100.00', actual_amount: '-1,200.00', difference: '-100.00', percent_difference: '-9.1%', actual_per_month: '-1,200.00', evaluation: 'negative', row_type: nil),
+        OpenStruct.new(account: 'Net'    , budget_amount: '8,900.00' , actual_amount:  '8,700.00', difference: '-200.00', percent_difference: '-2.2%', actual_per_month:  '8,700.00', evaluation: 'negative', row_type: 'report_header')
       ]
       report.content.should have(5).items
       report.content[0].should == expected[0]

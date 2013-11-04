@@ -1,6 +1,7 @@
 $light-grey: #CCC;
 $dark-grey: #333;
 $white: #FFF;
+$red_highlight: #FF9999;
 
 .filter {
   border: 1px solid $light-grey;
@@ -14,10 +15,7 @@ $white: #FFF;
 .report {
   td, th {
     font-size: 120%;
-    padding: {
-      top: .2em;
-      button: .2em;
-    }
+    padding: .2em;
   }
 }
 
@@ -47,4 +45,8 @@ $white: #FFF;
 }
 .balance_3 {
   padding-right: 6em;
+}
+
+.report .negative {
+  background-color: $red_highlight;
 }
