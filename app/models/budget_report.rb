@@ -5,18 +5,20 @@ class BudgetReport
   include ActionView::Helpers::NumberHelper
   
   def content
+    period_count = filter_periods(@budget.items[0].periods).length
+    
     income_items = @budget.items.income.map { |i| to_report_row(i, 1) }
-    income_total = total(income_items, 'Income', 1)
+    income_total = total(income_items, 'Income', period_count)
     expense_items = @budget.items.expense.map { |i| to_report_row(i, -1) }
-    expense_total = total(expense_items, 'Expense', 1)
-    net_total = total([income_total, expense_total], 'Net', 1)
+    expense_total = total(expense_items, 'Expense', period_count)
+    net_total = total([income_total, expense_total], 'Net', period_count)
     
     all_items = [income_total] + income_items + [expense_total] + expense_items + [net_total]
     format_items(all_items)
   end
 
   def initialize(budget, filter)
-    raise 'An budget must be specified' unless budget
+    raise 'A budget must be specified' unless budget
     @budget = budget
     
     raise 'A filter must be specified' unless filter

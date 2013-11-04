@@ -33,14 +33,14 @@ Feature: View a budget report
     When I click "Budget" within the main content
     Then I should see "Budget Report" within the page title
 
-    When I fill in "Start" with "2013-01-01"
-    And I fill in "End" with "2013-02-28"
+    When I fill in "start_date" with "2013-01-01"
+    And I fill in "end_date" with "2013-02-28"
     And I click "Show"
     Then I should see the following budget report table
-      | Account    |    Budget |   Actual  | Difference | % Diff. |    Act/Mo |
-      | Income     | 10,000.00 | 7,500.00  |     -2,500 |  -25.0% |  3,750.00 |
-      | Salary     | 10,000.00 | 7,500.00  |     -2,500 |  -25.0% |  3,750.00 |
-      | Expense    | -2,400.00 | -2,700.00 |    -300.00 |  -12.5% | -1,350.00 |
-      | Rent       | -2,400.00 | -2,700.00 |    -300.00 |  -12.5% | -1,350.00 |
-      | Net Income | 7,600.00  |  4,800.00 |  -2,800.00 |  -36.8% |  2,400.00 |
+      | Account |    Budget |   Actual  | Difference | % Diff. | Actual/Mo. |
+      | Income  | 10,000.00 | 7,500.00  |  -2,500.00 |  -25.0% |  3,750.00  |
+      | Salary  | 10,000.00 | 7,500.00  |  -2,500.00 |  -25.0% |  3,750.00  |
+      | Expense | -2,400.00 | -2,700.00 |    -300.00 |  -12.5% | -1,350.00  |
+      | Rent    | -2,400.00 | -2,700.00 |    -300.00 |  -12.5% | -1,350.00  |
+      | Net     | 7,600.00  |  4,800.00 |  -2,800.00 |  -36.8% |  2,400.00  |
 

@@ -9,19 +9,19 @@
 
 -if @report
   .report
-    %table{cellspacing: 0, cellpadding: 0}
+    %table#budget_report_table{cellspacing: 0, cellpadding: 0}
       %tr
-        %th Account
-        %th Budget
-        %th Actual
-        %th Difference
-        %th % Diff.
-        %th Actual/Mo.
+        %th.number_column Account
+        %th.number_column Budget
+        %th.number_column Actual
+        %th.number_column Difference
+        %th.number_column % Diff.
+        %th.number_column Actual/Mo.
       -@report.content.each do |row|
         %tr
-          %td= row.account
-          %td= row.budget_amount
-          %td= row.actual_amount
-          %td= row.difference
-          %td= row.percent_difference
-          %td= row.actual_per_month
+          %td.number_column= row.account
+          %td.number_column= row.budget_amount
+          %td.number_column= row.actual_amount
+          %td.number_column= row.difference
+          %td.number_column= row.percent_difference
+          %td.number_column= row.actual_per_month
