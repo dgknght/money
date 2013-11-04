@@ -1,4 +1,3 @@
-@wip
 Feature: View a budget report
   As a user
   In order to compare my actual cash flow with my planned cash flow
