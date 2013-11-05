@@ -13,6 +13,8 @@
 
 class TransactionItem < ActiveRecord::Base
   after_create :update_account_balance
+  after_update :rollback_account_balance, :update_account_balance
+  after_destroy :rollback_account_balance
   
   ACTIONS = %w(debit credit)
   class << self
@@ -33,6 +35,11 @@ class TransactionItem < ActiveRecord::Base
   scope :debits, -> { where(action: :debit) }
   
   private
+    def rollback_account_balance
+      method_name = "#{action}!"
+      account.send(method_name, amount_was * -1)
+    end
+    
     def update_account_balance
       method_name = "#{action}!"
       account.send(method_name, amount)

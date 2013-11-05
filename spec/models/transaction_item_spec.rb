@@ -1,8 +1,11 @@
 require 'spec_helper'
 
 describe TransactionItem do
-  let (:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
-  let!(:transaction) { FactoryGirl.create(:transaction) }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:checking) { FactoryGirl.create(:asset_account, entity: entity, name: 'Checking') }
+  let (:groceries) { FactoryGirl.create(:expense_account, entity: entity, name: 'Groceries') }
+  let (:gasoline) { FactoryGirl.create(:expense_account, entity: entity, name: 'Gasoline') }
+  let (:transaction) { FactoryGirl.create(:transaction, entity: entity) }
   let (:attributes) do
     {
       transaction: transaction,
@@ -62,6 +65,61 @@ describe TransactionItem do
   describe 'debits' do
     it 'should return the transaction items with the :debit action' do
       TransactionItem.debits.where(action: TransactionItem.credit).should_not be_any
+    end
+  end
+  
+  describe 'after create' do    
+    it 'should update the balance on the referenced account' do
+      transaction = entity.transactions.new(description: 'Kroger')
+      transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
+      transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
+      transaction.save!
+      
+      checking.balance.to_i.should == -100
+      groceries.balance.to_i.should == 100
+    end
+  end
+  
+  describe 'after update' do
+    it 'should adjust the balance of the referenced account' do
+      transaction = entity.transactions.new(description: 'Kroger')
+      transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
+      transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
+      transaction.save!
+      
+      checking.balance.to_i.should == -100
+      groceries.balance.to_i.should == 100
+      
+      transaction.items.each { |i| i.amount = 101 }
+      transaction.save!
+      
+      checking.balance.to_i.should == -101
+      groceries.balance.to_i.should == 101
+    end
+  end
+  
+  describe 'after destroy', new: true do
+    it 'should adjust the balance of the referenced account' do
+      transaction = entity.transactions.new(description: 'Kroger')
+      transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
+      transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
+
+      puts "total item count = #{transaction.items.length}"
+      
+      transaction.save!
+      
+      checking.balance.to_i.should == -100
+      groceries.balance.to_i.should == 100
+
+      groceries_item = transaction.items.select{ |item| item.account.id == groceries.id }.first
+      groceries_item.destroy
+      transaction.items.build(account: gasoline, action: TransactionItem.debit, amount: 100)
+      transaction.should be_valid
+      transaction.save!
+      
+      checking.balance.to_i.should == -100
+      groceries.balance.to_i.should == 0
+      gasoline.balance.to_i.should == 100
     end
   end
 end

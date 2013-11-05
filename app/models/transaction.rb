@@ -17,15 +17,14 @@ class Transaction < ActiveRecord::Base
     
   validates_presence_of :description, :transaction_date, :entity_id
   validate :items_are_present, :credits_and_debits_are_in_balance
-  
   before_validation :supply_defaults
   
   def total_credits
-    items.credits.reduce(0) { |total, item| total += item.amount }
+    sum_items(TransactionItem.credit)
   end
   
   def total_debits
-    items.debits.reduce(0) { |total, item| total += item.amount }
+    sum_items(TransactionItem.debit)
   end
   
   private
@@ -36,6 +35,14 @@ class Transaction < ActiveRecord::Base
 
     def items_are_present
       errors.add(:items, 'cannot be empty') unless items.any?
+    end
+    
+    def sum_items(action)
+      items.select do |item|
+        item.action == action && !item.destroyed?
+      end.reduce(0) do |total, item|
+        total += item.amount
+      end
     end
     
     def supply_defaults
