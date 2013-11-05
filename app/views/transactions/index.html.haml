@@ -8,7 +8,8 @@
   -@transactions.each_with_index do |transaction, index|
     %tr{class: index % 2 == 0 ? 'table_row' : 'alt_table_row'}
       %td.transaction_date_column= transaction.transaction_date.strftime("%-m/%-d/%Y")
-      %td.transaction_description_column= transaction.description
+      %td.transaction_description_column= link_to(transaction.description, transaction_path(transaction))
       %td.number_column= format_currency(transaction.total_credits.abs)
 .new_transaction_container
-  =render 'form', transaction: @transaction, items: @items
+  =form_for([@transaction.entity, @transaction]) do |f|
+    =render 'form_fields', f: f, transaction: @transaction, items: @items

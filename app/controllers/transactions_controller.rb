@@ -30,7 +30,7 @@ class TransactionsController < ApplicationController
 
   def update
     authorize! :update, @transaction
-    @transaction.update_attributes(transaction_params)
+    @transaction.attributes = transaction_params
     flash[:notice] = "The transaction was updated successfully." if @transaction.save
     respond_with(@transaction) do |format|
       format.html { redirect_to entity_transactions_path(@transaction.entity) }
@@ -56,6 +56,6 @@ class TransactionsController < ApplicationController
     end
     
     def transaction_params
-      params.require(:transaction).permit(:transaction_date, :description, :items_attributes => [ :account_id, :amount, :action ])
+      params.require(:transaction).permit(:transaction_date, :description, :items_attributes => [ :id, :_destroy, :account_id, :amount, :action ])
     end
 end

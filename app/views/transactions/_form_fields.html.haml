@@ -1,0 +1,29 @@
+:javascript
+  function removeTransactionItem(index) {
+    $("#transaction_item_" + index).hide();
+    $("#transaction_items_attributes_" + index + "__destroy").val('1');
+  }
+  
+=f.text_field :transaction_date, class: 'date_field transaction_date_field', autofocus: true
+=f.text_field :description, class: 'transaction_description_field', placeholder: 'description'
+.new_transaction_items_container
+  %table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
+    %tr
+      %th Account
+      %th Action
+      %th Amount
+      %th &nbsp;
+    -items.each_with_index do |item, index|
+      =f.fields_for :items, item do |item_form|
+        %tr{ id: "transaction_item_#{index}" }
+          %td
+            =item_form.hidden_field :id
+            =hidden_field_tag "transaction[items_attributes][#{index}][_destroy]"
+            =item_form.select :account_id, grouped_options_for_select(available_accounts(transaction.entity), item.account_id)
+          %td= item_form.select :action, [:credit, :debit]
+          %td= item_form.text_field :amount
+          %td
+            =button_tag('Delete', type: 'button', class: 'delete_button', onclick: "removeTransactionItem(#{index});")
+.actions
+  =f.submit 'Save', class: 'save_button', title: 'Click here to save the transaction.'
+  =link_to 'Back', entity_path(@entity), class: 'back_button', title: 'Click here to return to the list of entities.'
