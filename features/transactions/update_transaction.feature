@@ -1,4 +1,3 @@
-@wip
 Feature: Update a transaction
   As a user,
   In order to correct a transaction with an error,
