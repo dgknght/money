@@ -3,11 +3,17 @@ class TransactionsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_entity, only: [ :index, :create ]
-  before_filter :load_transaction, only: [:update, :show]
+  before_filter :load_transaction, only: [:update, :show, :destroy]
   before_filter :set_current_entity
   
   respond_to :html, :json
 
+  def destroy
+    authorize! :destroy, @transaction
+    flash[:notice] = "The transaction was remove successfully." if @transaction.destroy
+    respond_with @transaction.entity, @transaction
+  end
+  
   def index
     authorize! :show, @entity
     @transactions = TransactionPresenter.new(entity: @entity)

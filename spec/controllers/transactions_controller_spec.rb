@@ -145,6 +145,24 @@ describe TransactionsController do
           end
         end
       end
+      
+      describe 'delete :destroy' do
+        it 'should delete the transaction' do
+          lambda do
+            delete :destroy, id: transaction
+          end.should change(Transaction, :count).by(-1)
+        end
+        
+        it 'should redirect to the transaction index page' do
+          delete :destroy, id: transaction
+          response.should redirect_to entity_transactions_path(entity)
+        end
+        
+        context 'in json' do
+          it 'should be successful'
+          it 'should delete the transaction'
+        end
+      end
     end
 
     context 'to which the account does not belong' do
@@ -206,7 +224,17 @@ describe TransactionsController do
             response.response_code.should == 404            
           end
         end
-      end      
+      end
+      
+      describe 'delete :destroy' do
+        it "should redirect to the entity's home page"
+        it 'should not delete the transaction'
+        
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not delete the transaction'
+        end
+      end
     end
   end
   
@@ -264,6 +292,16 @@ describe TransactionsController do
           get :show, id: transaction, format: :json
           response.response_code.should == 401
         end
+      end
+    end
+      
+    describe 'delete :destroy' do
+      it "should redirect to the sign in page"
+      it 'should not delete the transaction'
+      
+      context 'in json' do
+        it 'should return "access denied"'
+        it 'should not delete the transaction'
       end
     end
   end
