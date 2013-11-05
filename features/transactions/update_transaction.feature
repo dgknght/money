@@ -22,7 +22,7 @@ Feature: Update a transaction
       | 1/1/2013         | Kroger      | 100.00 |
       
     When I click on "Kroger" within the 1st transaction row
-    And I select "Gasoline" from the "Accounts" list within the 1st transaction item row
+    And I select "Gasoline" from the "transaction_items_attributes_1_account_id" list within the 2nd transaction item row
     And I click "Save"
     Then I should see "The transaction was updated successfully." within the notice area
     
