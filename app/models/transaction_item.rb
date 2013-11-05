@@ -37,11 +37,13 @@ class TransactionItem < ActiveRecord::Base
   private
     def rollback_account_balance
       method_name = "#{action}!"
-      account.send(method_name, amount_was * -1)
+      previous_account = Account.find(account_id_was)
+      previous_account.send(method_name, amount_was * -1)
     end
     
     def update_account_balance
       method_name = "#{action}!"
+      account.reload
       account.send(method_name, amount)
     end
 end

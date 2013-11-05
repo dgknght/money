@@ -93,19 +93,40 @@ describe TransactionItem do
       transaction.items.each { |i| i.amount = 101 }
       transaction.save!
       
+      checking.reload
+      groceries.reload
+      
       checking.balance.to_i.should == -101
       groceries.balance.to_i.should == 101
     end
   end
   
-  describe 'after destroy', new: true do
+  describe 'after update with account changed' do
+    it 'should adjust the balance of the referenced account' do
+      transaction = entity.transactions.new(description: 'Kroger')
+      checking_item = transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
+      groceries_item = transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
+      transaction.save!
+      
+      checking.balance.to_i.should == -100
+      groceries.balance.to_i.should == 100
+
+      groceries_item.account = gasoline
+      transaction.save!
+      groceries.reload
+      gasoline.reload
+      
+      checking.balance.to_i.should == -100
+      groceries.balance.to_i.should == 0
+      gasoline.balance.to_i.should == 100
+    end
+  end
+  
+  describe 'after destroy' do
     it 'should adjust the balance of the referenced account' do
       transaction = entity.transactions.new(description: 'Kroger')
       transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
       transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
-
-      puts "total item count = #{transaction.items.length}"
-      
       transaction.save!
       
       checking.balance.to_i.should == -100
@@ -116,6 +137,7 @@ describe TransactionItem do
       transaction.items.build(account: gasoline, action: TransactionItem.debit, amount: 100)
       transaction.should be_valid
       transaction.save!
+      groceries.reload
       
       checking.balance.to_i.should == -100
       groceries.balance.to_i.should == 0
