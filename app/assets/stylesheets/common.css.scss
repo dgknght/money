@@ -151,7 +151,7 @@ table.list {
     background-color: $dark-grey;
     color: $light-grey;
     &.action_cell {
-      width: 60px;
+      width: 90px;
     }
   }
   td {
@@ -225,6 +225,11 @@ table.attributes {
 .delete_button {
   @extend .any_form_button;
   background-image: url(/assets/delete.png)
+}
+
+.reconcile_button {
+  @extend .any_button;
+  background-image: url(/assets/wrench.png)
 }
 
 .standard_button {

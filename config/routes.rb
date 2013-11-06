@@ -13,7 +13,9 @@ Money::Application.routes.draw do
       get :budget, to: 'reports#budget'
     end
   end
-  resources :accounts, only: [:show, :edit, :update, :destroy]
+  resources :accounts, only: [:show, :edit, :update, :destroy] do
+    resources :reconciliations, only: [:new]
+  end
   resources :transactions, only: [:show, :edit, :update, :destroy]
   resources :budgets, only: [:show, :edit, :update, :destroy] do
     resources :budget_items, only: [:index, :new, :create], path: 'items'

@@ -4,4 +4,5 @@
   %td.number_column= format_currency(account.balance_with_children)
   %td.action_cell
     = link_to "Edit", edit_account_path(account), class: 'edit_button', title: 'Click here to edit this account.'
+    = link_to "Reconcile", new_account_reconciliation_path(account), class: 'reconcile_button', title: 'Click here to reconcile this account with a bank statement.'
     = render "shared/delete_form", :resource => account, :url => account_path(account)
