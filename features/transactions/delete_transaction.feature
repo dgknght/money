@@ -1,4 +1,3 @@
-@wip
 Feature: Delete a transaction
   As a user, 
   In order to discard a transaction created in error
