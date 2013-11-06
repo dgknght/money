@@ -38,7 +38,7 @@ Feature: Reconcile an account
     | Groceries   |    200.00 |
   
   When I click "Reconcile" within the account row for "Checking"
-  Then I should see "Reconcile" within the page title
+  Then I should see "Reconciliation" within the page title
   And I should see the following transactions table
     | Transaction date | Description |   Amount |
     | 1/1/2013         | My Employer | 5,000.00 |
