@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe TransactionsController do
-  let(:entity) { FactoryGirl.create(:entity) }
-  let(:account) { FactoryGirl.create(:account, entity: entity) }
-  let(:account2) { FactoryGirl.create(:account, entity: entity) }
-  let(:transaction) { FactoryGirl.create(:transaction, entity: entity, description: 'The payee') }
-  let(:attributes) do
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:account) { FactoryGirl.create(:account, entity: entity) }
+  let (:account2) { FactoryGirl.create(:account, entity: entity) }
+  let!(:transaction) { FactoryGirl.create(:transaction, entity: entity, description: 'The payee') }
+  let (:attributes) do
     {
       transaction_date: Date.new(2013, 1, 1),
       description: 'Kroger',
@@ -44,7 +44,7 @@ describe TransactionsController do
           
           it 'should return the list of transactions' do
             get :index, entity_id: entity, format: :json
-            response.body.should == [t1, t2].to_json
+            response.body.should == [transaction, t1, t2].to_json
           end
         end
       end
@@ -159,8 +159,16 @@ describe TransactionsController do
         end
         
         context 'in json' do
-          it 'should be successful'
-          it 'should delete the transaction'
+          it 'should be successful' do
+            delete :destroy, id: transaction, format: :json
+            response.should be_success
+          end
+          
+          it 'should delete the transaction' do
+            lambda do
+              delete :destroy, id: transaction, format: :json
+            end.should change(Transaction, :count).by(-1)
+          end
         end
       end
     end
@@ -227,12 +235,28 @@ describe TransactionsController do
       end
       
       describe 'delete :destroy' do
-        it "should redirect to the entity's home page"
-        it 'should not delete the transaction'
+        it "should redirect to the entity's home page" do
+          delete :destroy, id: transaction
+          response.should redirect_to home_path
+        end
+        
+        it 'should not delete the transaction' do
+          lambda do
+            delete :destroy, id: transaction          
+          end.should_not change(Transaction, :count)
+        end
         
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not delete the transaction'
+          it 'should return "resource not found"' do
+            delete :destroy, id: transaction, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not delete the transaction' do
+            lambda do
+              delete :destroy, id: transaction, format: :json
+            end.should_not change(Transaction, :count)
+          end
         end
       end
     end
@@ -296,12 +320,28 @@ describe TransactionsController do
     end
       
     describe 'delete :destroy' do
-      it "should redirect to the sign in page"
-      it 'should not delete the transaction'
+      it "should redirect to the sign in page" do
+        delete :destroy, id: transaction
+        response.should redirect_to new_user_session_path
+      end
+      
+      it 'should not delete the transaction' do
+        lambda do
+          delete :destroy, id: transaction
+        end.should_not change(Transaction, :count)
+      end
       
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not delete the transaction'
+        it 'should return "access denied"' do
+          delete :destroy, id: transaction, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should not delete the transaction' do
+          lambda do
+            delete :destroy, id: transaction, format: :json
+          end.should_not change(Transaction, :count)
+        end
       end
     end
   end
