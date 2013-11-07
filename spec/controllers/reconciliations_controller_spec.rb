@@ -15,7 +15,7 @@ describe ReconciliationsController do
       account_id: checking.id,
       reconciliation_date: '2013-01-31',
       closing_balance: 1_000,
-      transactions: [transaction]
+      transactions_items: [ { transaction_id: transaction.id } ]
     }
   end
   context 'for an authenticated user' do
@@ -69,11 +69,28 @@ describe ReconciliationsController do
       end
 
       describe "post :create" do
-        it "should redirect to the user's home page"
-        it 'should not create the reconciliation'
+        it "should redirect to the user's home page" do
+          post :create, account_id: checking, reconciliation: attributes
+          response.should redirect_to home_path
+        end
+        
+        it 'should not create the reconciliation' do
+          lambda do
+            post :create, account_id: checking, reconciliation: attributes
+          end.should_not change(Reconciliation, :count)
+        end
+        
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not create the reconciliation'
+          it 'should return "resource not found"' do
+            post :create, account_id: checking, reconciliation: attributes, format: :json
+            response.response_code.should == 404
+          end
+        
+          it 'should not create the reconciliation' do
+            lambda do
+              post :create, account_id: checking, reconciliation: attributes
+            end.should_not change(Reconciliation, :count)
+          end
         end
       end
     end
@@ -88,11 +105,28 @@ describe ReconciliationsController do
     end
 
     describe "post :create" do
-      it 'should redirect to the sign in page'
-      it 'should not create a reconciliation'
+      it 'should redirect to the sign in page' do
+        post :create, account_id: checking, reconciliation: attributes
+        response.should redirect_to new_user_session_path
+      end
+      
+      it 'should not create a reconciliation' do
+        lambda do
+          post :create, account_id: checking, reconciliation: attributes
+        end.should_not change(Reconciliation, :count)
+      end
+      
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not create the reconciliation'
+        it 'should return "access denied"' do
+          post :create, account_id: checking, reconciliation: attributes, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should not create the reconciliation' do
+          lambda do
+            post :create, account_id: checking, reconciliation: attributes, format: :json
+          end.should_not change(Reconciliation, :count)
+        end
       end
     end
   end

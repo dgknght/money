@@ -1,1 +1,16 @@
 %h2#page_title Reconciliation
+
+=form_for([@reconciliation.account, @reconciliation]) do |f|
+  %div
+    =f.label :reconciliation_date
+    %br
+    =f.text_field :reconciliation_date
+    
+  %div
+    =f.label :closing_balance
+    %br
+    =f.text_field :closing_balance
+  
+  .actions
+    =f.submit 'Save', class: 'save_button', title: 'Click here to complete the reconciliation.'
+    =link_to 'Back', entity_accounts_path(@reconciliation.account.entity), class: 'back_button', title: 'Click here to return to the account list.'

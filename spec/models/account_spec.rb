@@ -42,28 +42,28 @@ describe Account do
   
   describe 'balance_as_of' do
     let!(:t1) do
-      entity.transactions.create!(transaction_date: '2013-01-02', 
-                                  description: 'Paycheck', 
-                                  items_attributes: [
-                                    {account_id: salary.id, action: 'credit', amount: 3000}, 
-                                    {account_id: checking.id, action: 'debit', amount: 3000}
-                                  ]
-                                  )
+      FactoryGirl.create(:transaction,  entity: entity,
+                                        transaction_date: '2013-01-02', 
+                                        description: 'Paycheck', 
+                                        credit_account: salary,
+                                        debit_account: checking,
+                                        amount: 3000
+                                        )
     end
     let!(:t2) do
-      entity.transactions.create!(transaction_date: '2013-01-03', 
-                                  description: 'Kroger', 
-                                  items_attributes: [
-                                    {account_id: checking.id, action: 'credit', amount: 50}, 
-                                    {account_id: groceries.id, action: 'debit', amount: 50}
-                                  ]
-                                  )
+      FactoryGirl.create(:transaction,  entity: entity,
+                                        transaction_date: '2013-01-03', 
+                                        description: 'Kroger',
+                                        credit_account: checking,
+                                        debit_account: groceries,
+                                        amount: 50
+                                        )
     end
     
     it 'should calculate the balance as the the specified date' do
-      checking.balance_as_of('2013-01-01').should == BigDecimal.new(0)
-      checking.balance_as_of('2013-01-02').should == BigDecimal.new(3000)
-      checking.balance_as_of('2013-01-03').should == BigDecimal.new(2950)
+      checking.balance_as_of('2013-01-01').to_i.should == 0
+      checking.balance_as_of('2013-01-02').to_i.should == 3000
+      checking.balance_as_of('2013-01-03').to_i.should == 2950
     end
   end
   
@@ -252,5 +252,24 @@ describe Account do
         salary.credit(1)
       end.should change(salary, :balance).by(1)
     end    
+  end
+  
+  describe 'reconciliations' do
+    let!(:reconciliation) { FactoryGirl.create(:reconciliation, account: checking) }
+    it 'should contain a list of reconciliations for the account' do
+      checking.reconciliations.should == [reconciliation]
+    end
+  end
+  
+  describe 'transaction_items' do
+    let!(:t1) { FactoryGirl.create(:transaction, credit_account: checking, debit_account: groceries, amount: 100) }
+    it 'should contain a list of transaction items for the account' do
+      checking.transaction_items.should == t1.items.where(account_id: checking.id)
+      groceries.transaction_items.should == t1.items.where(account_id: groceries)
+    end
+  end
+  
+  describe 'uncleared_transaction_items' do
+    it 'should contain a list of uncleared transaction items for the account'
   end
 end

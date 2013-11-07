@@ -16,6 +16,8 @@ class Account < ActiveRecord::Base
   belongs_to :entity
   belongs_to :parent, class_name: 'Account', inverse_of: :children
   has_many :children, -> { order :name }, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
+  has_many :reconciliations, -> { order :reconciliation_date }, inverse_of: :account, autosave: true
+  has_many :transaction_items
 
   LEFT_SIDE = %w(asset expense)
   RIGHT_SIDE = %w(liability equity income)
@@ -41,15 +43,15 @@ class Account < ActiveRecord::Base
   scope :expense, -> { root.where(account_type: Account.expense_type) }
   
   def balance_as_of(date)
-    balance_between nil, date
+    balance_between Date.civil(1000, 1, 1), date
   end
   
   def balance_between(start_date, end_date)
     start_date = ensure_date(start_date)
     end_date = ensure_date(end_date)
     
-    sum_of_credits = sum_of credit_transaction_items(from: start_date, to: end_date)
-    sum_of_debits = sum_of debit_transaction_items(from: start_date, to: end_date)
+    sum_of_credits = sum_of credit_transaction_items(start_date, end_date)
+    sum_of_debits = sum_of debit_transaction_items(start_date, end_date)
     
     if LEFT_SIDE.include?(account_type)
       sum_of_debits - sum_of_credits
@@ -106,12 +108,12 @@ class Account < ActiveRecord::Base
   end
   
   private
-    def credit_transaction_items(options)
-      transaction_items TransactionItem.credit, options
+    def credit_transaction_items(start_date, end_date)
+      result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date)
     end
     
-    def debit_transaction_items(options)
-      transaction_items TransactionItem.debit, options
+    def debit_transaction_items(start_date, end_date)
+      result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.debit, start_date, end_date)
     end
     
     def ensure_date(date)
@@ -129,14 +131,5 @@ class Account < ActiveRecord::Base
     
     def sum_of(items)
       items.reduce(0) { |sum, item| sum += item.amount }
-    end
-    
-    def transaction_items(action, options)
-      start_date = options[:from] || Date.civil(1900, 1, 1) #TODO Someday this should be set to a period closing date to reduce the cost of the search
-      end_date = options[:to] || Date.civil(3999, 12, 31)
-      
-      entity.transactions.includes(:items).where('transaction_date >= ? and transaction_date <= ?', start_date, end_date).map do |transaction|
-        transaction.items.where(account_id: id, action: action)
-      end.flatten
-    end
+    end    
 end

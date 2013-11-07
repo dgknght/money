@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131025132829) do
+ActiveRecord::Schema.define(version: 20131107143459) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                       null: false
@@ -64,6 +64,16 @@ ActiveRecord::Schema.define(version: 20131025132829) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "reconciliations", force: true do |t|
+    t.integer  "account_id",          null: false
+    t.date     "reconciliation_date", null: false
+    t.decimal  "closing_balance",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "reconciliations", ["account_id", "reconciliation_date"], name: "index_reconciliations_on_account_id_and_reconciliation_date"
 
   create_table "transaction_items", force: true do |t|
     t.integer  "transaction_id", null: false

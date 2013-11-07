@@ -6,9 +6,13 @@ class ReconciliationsController < ApplicationController
   respond_to :html, :json
   
   def new
+    @reconciliation = @account.reconciliations.new
   end
 
   def create
+    @reconciliation = @account.reconciliations.new(reconciliation_params)
+    flash[:notice] = "The account was reconciled successfully." if @reconciliation.save
+    respond_with @reconciliation
   end
   
   private
@@ -16,5 +20,9 @@ class ReconciliationsController < ApplicationController
       @account = Account.find(params[:account_id])
       authorize! :update, @account
       self.current_entity = @account.entity
+    end
+    
+    def reconciliation_params
+      params.require(:reconciliation).permit(:account_id, :reconciliation_date, :closing_balance)
     end
 end
