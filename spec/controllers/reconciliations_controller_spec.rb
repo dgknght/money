@@ -3,7 +3,21 @@ require 'spec_helper'
 describe ReconciliationsController do
   let (:entity) { FactoryGirl.create(:entity) }
   let (:checking) { FactoryGirl.create(:asset_account, entity: entity, name: 'Checking') }
-
+  let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Salary') }
+  let (:transaction) do
+    entity.transactions.create!(transaction_date: '2013-01-01', description: 'My job', items_attributes: [
+      { account_id: salary.id, action: TransactionItem.credit, amount: 1_000 },
+      { account_id: checking.id, action: TransactionItem.debit, amount: 1_000 }
+    ]);
+  end
+  let (:attributes) do
+    {
+      account_id: checking.id,
+      reconciliation_date: '2013-01-31',
+      closing_balance: 1_000,
+      transactions: [transaction]
+    }
+  end
   context 'for an authenticated user' do
     
     context 'to which the entity belongs' do
@@ -17,11 +31,28 @@ describe ReconciliationsController do
       end
 
       describe "post :create" do
-        it 'should create the reconciliation'
-        it 'should redirect to the reconciliation detail page'
+        it 'should create the reconciliation' do
+          lambda do
+            post :create, account_id: checking, reconciliation: attributes
+          end.should change(Reconciliation, :count).by(1)
+        end
+        
+        it 'should redirect to the reconciliation detail page' do
+          post :create, account_id: checking, reconciliation: attributes
+          response.should redirect_to reconciliation_path(Reconciliation.last)
+        end
+        
         context 'in json' do
-          it 'should be successful'
-          it 'should create the reconciliation'
+          it 'should be successful' do
+            post :create, account_id: checking, reconciliation: attributes, format: :json
+            response.should be_success
+          end
+          
+          it 'should create the reconciliation' do
+            lambda do
+              post :create, account_id: checking, reconciliation: attributes, format: :json
+            end.should change(Reconciliation, :count).by(1)
+          end
         end
       end
     end
