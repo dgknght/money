@@ -34,7 +34,15 @@ class TransactionItem < ActiveRecord::Base
   scope :credits, -> { where(action: :credit) }
   scope :debits, -> { where(action: :debit) }
   
+  def polarized_amount
+    amount * polarity
+  end
+  
   private
+    def polarity
+      account.polarity(action)
+    end
+    
     def rollback_account_balance
       method_name = "#{action}!"
       previous_account = Account.find(account_id_was)

@@ -272,4 +272,59 @@ describe Account do
   describe 'uncleared_transaction_items' do
     it 'should contain a list of uncleared transaction items for the account'
   end
+  
+# |               | Debit    | Credit   |
+# |Asset          | Increase | Decrease |
+# |Liability      | Decrease | Increase |
+# |Income/Revenue | Decrease | Increase |
+# |Expense        | Increase | Decrease |
+# |Equity/Capital | Decrease | Increase |
+
+  describe 'polarity' do
+    context 'for a credit action' do
+      let(:action) { TransactionItem.credit }
+      it 'should be negative for an asset account' do
+        FactoryGirl.create(:asset_account).polarity(action).should == -1
+      end
+      
+      it 'should be positive for an liability account' do
+        FactoryGirl.create(:liability_account).polarity(action).should == 1
+      end
+      
+      it 'should be positive for an income account' do
+        FactoryGirl.create(:income_account).polarity(action).should == 1
+      end
+      
+      it 'should be negative for an expense account' do
+        FactoryGirl.create(:expense_account).polarity(action).should == -1
+      end
+      
+      it 'should be positive for an equity account' do
+        FactoryGirl.create(:equity_account).polarity(action).should == 1
+      end
+    end
+    
+    context 'for a debit action' do
+      let(:action) { TransactionItem.debit }
+      it 'should be positive for an asset account' do
+        FactoryGirl.create(:asset_account).polarity(action).should == 1
+      end
+      
+      it 'should be negative for an liability account' do
+        FactoryGirl.create(:liability_account).polarity(action).should == -1
+      end
+      
+      it 'should be negative for an income account' do
+        FactoryGirl.create(:income_account).polarity(action).should == -1
+      end
+      
+      it 'should be positive for an expense account' do
+        FactoryGirl.create(:expense_account).polarity(action).should == 1
+      end
+      
+      it 'should be negative for an equity account' do
+        FactoryGirl.create(:equity_account).polarity(action).should == -1
+      end
+    end
+  end
 end

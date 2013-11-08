@@ -56,6 +56,67 @@ describe TransactionItem do
     end
   end
   
+  describe 'polarized_amount' do
+    let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Credit card') }
+    let (:credit_card) { FactoryGirl.create(:liability_account, entity: entity, name: 'Credit card') }
+    let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Credit card') }
+    context 'with a credit action' do
+      let (:action) { TransactionItem.credit }
+      it 'should return a negative value for an asset account' do
+        item = TransactionItem.new(attributes.merge(account: checking, action: action))
+        item.polarized_amount.to_i.should == -100
+      end
+      
+      it 'should return a positive value for a liability account' do
+        item = TransactionItem.new(attributes.merge(account: credit_card, action: action))
+        item.polarized_amount.to_i.should == 100
+      end
+      
+      it 'should return a positive value for an equity account' do
+        item = TransactionItem.new(attributes.merge(account: opening_balances, action: action))
+        item.polarized_amount.to_i.should == 100
+      end
+      
+      it 'should return a positive value for an income account' do
+        item = TransactionItem.new(attributes.merge(account: salary, action: action))
+        item.polarized_amount.to_i.should == 100
+      end      
+      
+      it 'should return a negative value for an expense account' do
+        item = TransactionItem.new(attributes.merge(account: groceries, action: action))
+        item.polarized_amount.to_i.should == -100
+      end      
+    end
+    
+    context 'with a debit action' do
+      let (:action) { TransactionItem.debit }
+      it 'should return a positive value for an asset account' do
+        item = TransactionItem.new(attributes.merge(account: checking, action: action))
+        item.polarized_amount.to_i.should == 100
+      end
+      
+      it 'should return a negative value for a liability account' do
+        item = TransactionItem.new(attributes.merge(account: credit_card, action: action))
+        item.polarized_amount.to_i.should == -100
+      end
+      
+      it 'should return a negative value for an equity account' do
+        item = TransactionItem.new(attributes.merge(account: opening_balances, action: action))
+        item.polarized_amount.to_i.should == -100
+      end
+      
+      it 'should return a negative value for an income account' do
+        item = TransactionItem.new(attributes.merge(account: salary, action: action))
+        item.polarized_amount.to_i.should == -100
+      end      
+      
+      it 'should return a positive value for an expense account' do
+        item = TransactionItem.new(attributes.merge(account: groceries, action: action))
+        item.polarized_amount.to_i.should == 100
+      end      
+    end
+  end
+  
   describe 'credits' do
     it 'should return the transaction items with the :credit action' do
       TransactionItem.credits.where(action: TransactionItem.debit).should_not be_any

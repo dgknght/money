@@ -74,8 +74,7 @@ class Account < ActiveRecord::Base
   
   # Adjusts the balance of the account by the specified amount
   def credit(amount)
-    amount = 0 - amount if LEFT_SIDE.include?(account_type)
-    self.balance += amount
+    self.balance += (amount * polarity(TransactionItem.credit))
   end
   
   def credit!(amount)
@@ -85,8 +84,7 @@ class Account < ActiveRecord::Base
   
   # Adjusts the balance of the account by the specified amount
   def debit(amount)
-    amount = 0 - amount if RIGHT_SIDE.include?(account_type)
-    self.balance += amount
+    self.balance += (amount * polarity(TransactionItem.debit))
   end
   
   def debit!(amount)
@@ -107,6 +105,11 @@ class Account < ActiveRecord::Base
     parent ? "#{parent.path}/#{name}" : name
   end
   
+  def polarity(action)
+    return -1 if (action == TransactionItem.credit && left_side?) || (action == TransactionItem.debit && right_side?)
+    1
+  end
+  
   private
     def credit_transaction_items(start_date, end_date)
       result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date)
@@ -121,12 +124,20 @@ class Account < ActiveRecord::Base
       date
     end
     
+    def left_side?
+      LEFT_SIDE.include?(account_type)
+    end
+    
     def parent_is_same_type?
       parent_id.nil? || parent.account_type == self.account_type
     end
     
     def parent_must_have_same_type
       errors.add(:parent_id, 'must have the same account type') unless parent_is_same_type?
+    end
+    
+    def right_side?
+      RIGHT_SIDE.include?(account_type)
     end
     
     def sum_of(items)
