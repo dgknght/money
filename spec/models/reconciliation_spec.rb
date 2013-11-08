@@ -57,6 +57,13 @@ describe Reconciliation do
     end
   end
   
+  describe 'items' do
+    it 'should be empty by default' do
+      reconciliation = Reconciliation.new(attributes)
+      reconciliation.items.should be_empty
+    end
+  end
+  
   describe 'reconciled_balance' do
     let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Salary') }
     let!(:t1) { FactoryGirl.create(:transaction, entity: entity, description: 'Paycheck', transaction_date: '2013-01-01', amount: 1_000, credit_account: salary, debit_account: checking) }
@@ -65,7 +72,8 @@ describe Reconciliation do
       reconciliation = Reconciliation.new(attributes)
       reconciliation.reconciled_balance.should == 0
       
-      reconciliation.items_attributes = [ { transaction_item_id: t1.id } ]
+      checking_item = t1.items.select{ |i| i.account_id == checking.id}.first
+      reconciliation.items.new(transaction_item: checking_item )
       reconciliation.reconciled_balance.should == 1_000
     end
     

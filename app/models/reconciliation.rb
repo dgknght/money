@@ -12,6 +12,8 @@
 
 class Reconciliation < ActiveRecord::Base
   belongs_to :account
+  has_many :items, class_name: 'ReconciliationItem', autosave: true
+  
   validates_presence_of :account_id, :reconciliation_date, :closing_balance
   
   default_scope { order(:reconciliation_date) }
@@ -31,9 +33,6 @@ class Reconciliation < ActiveRecord::Base
   
   private
     def selected?(transaction_item)
-      item = items.select do |item|
-        item.transaction_item_id == transaction_item.id
-      end.first
-      first.nil? ? false : first.selected?
+      items.select { |i| i.transaction_item_id == transaction_item.id }.any?
     end
 end
