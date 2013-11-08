@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :reconciliation_item do
-    reconciliation
     transaction_item
+    reconciliation { FactoryGirl.create(:reconciliation, closing_balance: transaction_item.amount) }
   end
 end

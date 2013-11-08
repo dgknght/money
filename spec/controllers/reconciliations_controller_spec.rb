@@ -4,18 +4,15 @@ describe ReconciliationsController do
   let (:entity) { FactoryGirl.create(:entity) }
   let (:checking) { FactoryGirl.create(:asset_account, entity: entity, name: 'Checking') }
   let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Salary') }
-  let (:transaction) do
-    entity.transactions.create!(transaction_date: '2013-01-01', description: 'My job', items_attributes: [
-      { account_id: salary.id, action: TransactionItem.credit, amount: 1_000 },
-      { account_id: checking.id, action: TransactionItem.debit, amount: 1_000 }
-    ]);
-  end
+  let (:transaction) { FactoryGirl.create(:transaction, entity: entity, credit_account: salary, debit_account: checking, amount: 1_000) }
   let (:attributes) do
     {
       account_id: checking.id,
       reconciliation_date: '2013-01-31',
       closing_balance: 1_000,
-      transactions_items: [ { transaction_id: transaction.id } ]
+      items_attributes: [ 
+        { transaction_item_id: transaction.items.select{ |i| i.account.id == checking.id }.first.id }
+      ]
     }
   end
   context 'for an authenticated user' do

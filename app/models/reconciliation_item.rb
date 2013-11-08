@@ -10,8 +10,22 @@
 #
 
 class ReconciliationItem < ActiveRecord::Base
-  belongs_to :reconciliation
+  belongs_to :reconciliation, inverse_of: :items
   belongs_to :transaction_item
   
-  validates_presence_of :reconciliation_id, :transaction_item_id
+  validates_presence_of :reconciliation, :transaction_item_id
+  validate :transaction_item_belongs_to_account
+  
+  private
+    def accounts_match
+      return false unless reconciliation
+      return false unless reconciliation.account
+      return false unless transaction_item
+      return false unless transaction_item.account
+      reconciliation.account.id == transaction_item.account.id
+    end
+    
+    def transaction_item_belongs_to_account
+      errors.add(:transaction_item, "must belong to the account being reconciled") unless accounts_match
+    end
 end

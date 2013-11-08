@@ -23,6 +23,6 @@ class ReconciliationsController < ApplicationController
     end
     
     def reconciliation_params
-      params.require(:reconciliation).permit(:account_id, :reconciliation_date, :closing_balance)
+      params.require(:reconciliation).permit(:account_id, :reconciliation_date, :closing_balance, :items_attributes => [:transaction_item_id])
     end
 end
