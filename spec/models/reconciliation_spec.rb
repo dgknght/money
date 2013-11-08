@@ -61,7 +61,14 @@ describe Reconciliation do
     let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Salary') }
     let!(:t1) { FactoryGirl.create(:transaction, entity: entity, description: 'Paycheck', transaction_date: '2013-01-01', amount: 1_000, credit_account: salary, debit_account: checking) }
     
-    it 'should be the previous_balance plus any selected transaction items'
+    it 'should be the previous_balance plus any selected transaction items' do
+      reconciliation = Reconciliation.new(attributes)
+      reconciliation.reconciled_balance.should == 0
+      
+      reconciliation.items_attributes = [ { transaction_item_id: t1.id } ]
+      reconciliation.reconciled_balance.should == 1_000
+    end
+    
     it 'must be the same as closing_balance in order for the reconciliation to save'
   end
 end
