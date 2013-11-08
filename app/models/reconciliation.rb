@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: reconciliations
+#
+#  id                  :integer          not null, primary key
+#  account_id          :integer          not null
+#  reconciliation_date :date             not null
+#  closing_balance     :decimal(, )      not null
+#  created_at          :datetime
+#  updated_at          :datetime
+#
+
 class Reconciliation < ActiveRecord::Base
   belongs_to :account
   validates_presence_of :account_id, :reconciliation_date, :closing_balance
@@ -10,10 +22,18 @@ class Reconciliation < ActiveRecord::Base
   end
   
   def reconciled_balance
-    account.unreconciled_transaction_items.select do |item|
-      is_selected(item)
+    account.transaction_items.unreconciled.select do |item|
+      selected?(item)
     end.reduce(previous_balance) do |sum, item|
       sum += item.polarized_amount
     end
   end
+  
+  private
+    def selected?(transaction_item)
+      item = items.select do |item|
+        item.transaction_item_id == transaction_item.id
+      end.first
+      first.nil? ? false : first.selected?
+    end
 end
