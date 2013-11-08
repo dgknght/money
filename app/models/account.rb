@@ -5,8 +5,8 @@
 #  id           :integer          not null, primary key
 #  name         :string(255)      not null
 #  account_type :string(255)      not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  created_at   :datetime
+#  updated_at   :datetime
 #  balance      :decimal(, )      default(0.0), not null
 #  entity_id    :integer          not null
 #  parent_id    :integer
