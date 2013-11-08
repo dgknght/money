@@ -6,5 +6,6 @@ FactoryGirl.define do
     account
     action TransactionItem.debit
     amount 100
+    reconciled false
   end
 end

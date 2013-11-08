@@ -205,4 +205,31 @@ describe TransactionItem do
       gasoline.balance.to_i.should == 100
     end
   end
+  
+  describe 'reconciled?' do
+    it 'should default to false' do
+      item = TransactionItem.new(attributes)
+      item.should_not be_reconciled
+    end
+  end
+  
+  describe 'unreconciled scope' do
+    let!(:unreconciled) { FactoryGirl.create(:transaction_item) }
+    let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
+    
+    it 'should return the unreconciled transaction items' do
+      TransactionItem.unreconciled.should_not include(reconciled)
+      TransactionItem.unreconciled.should include(unreconciled)
+    end
+  end
+  
+  describe 'reconciled scope' do
+    let!(:unreconciled) { FactoryGirl.create(:transaction_item) }
+    let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
+    
+    it 'should return the reconciled transaction items' do
+      TransactionItem.reconciled.should include(reconciled)
+      TransactionItem.reconciled.should_not include(unreconciled)
+    end
+  end
 end

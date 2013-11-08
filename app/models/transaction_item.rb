@@ -7,8 +7,9 @@
 #  account_id     :integer          not null
 #  action         :string(255)      not null
 #  amount         :decimal(, )      not null
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  reconciled     :boolean          default(FALSE), not null
 #
 
 class TransactionItem < ActiveRecord::Base
@@ -31,11 +32,18 @@ class TransactionItem < ActiveRecord::Base
   belongs_to :account
   belongs_to :transaction
   
-  scope :credits, -> { where(action: :credit) }
-  scope :debits, -> { where(action: :debit) }
+  scope :credits, -> { where(action: TransactionItem.credit) }
+  scope :debits, -> { where(action: TransactionItem.debit) }
+  
+  scope :reconciled, -> { where(reconciled: true) }
+  scope :unreconciled, -> { where(reconciled: false) }
   
   def polarized_amount
     amount * polarity
+  end
+  
+  def reconciled?
+    reconciled
   end
   
   private
