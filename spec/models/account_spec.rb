@@ -269,10 +269,6 @@ describe Account do
     end
   end
   
-  describe 'uncleared_transaction_items' do
-    it 'should contain a list of uncleared transaction items for the account'
-  end
-  
 # |               | Debit    | Credit   |
 # |Asset          | Increase | Decrease |
 # |Liability      | Decrease | Increase |
