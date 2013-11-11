@@ -25,6 +25,11 @@ describe TransactionItem do
       item = TransactionItem.new(attributes.without(:transaction))
       item.should_not be_valid
     end
+    
+    it 'should refer to the transaction to which the item belongs' do
+      item = TransactionItem.new(attributes)
+      item.transaction.should == transaction
+    end
   end
   
   describe 'account' do

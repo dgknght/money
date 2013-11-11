@@ -30,7 +30,7 @@ class TransactionItem < ActiveRecord::Base
   validates :action, inclusion: { in: ACTIONS }
   
   belongs_to :account
-  belongs_to :transaction
+  belongs_to :transaction, inverse_of: :items
   
   scope :credits, -> { where(action: TransactionItem.credit) }
   scope :debits, -> { where(action: TransactionItem.debit) }

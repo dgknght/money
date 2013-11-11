@@ -49,8 +49,8 @@ Feature: Reconcile an account
     | 1/27/2013        | Kroger      |    40.00 |
     | 2/3/2013         | Kroger      |    40.00 |
 
-  When I fill in "Closing date" with "2013-01-31"
-  And I fill in "New balance" with "9840"
+  When I fill in "reconciliation_reconciliation_date" with "2013-01-31"
+  And I fill in "reconciliation_closing_balance" with "9840"
   And I check the box within the 1st transaction row
   And I check the box within the 2nd transaction row
   And I check the box within the 3rd transaction row

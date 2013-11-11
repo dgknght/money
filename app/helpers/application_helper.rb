@@ -12,6 +12,6 @@ module ApplicationHelper
   end
   
   def format_date(value)
-    value.strftime '%-m/%-d/%Y'
+    value.nil? ? '' : value.strftime('%-m/%-d/%Y')
   end
 end

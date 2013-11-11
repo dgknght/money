@@ -1,3 +1,16 @@
-// Place all the styles related to the Reconciliations controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.reconciliation_information {
+  margin-bottom: 2em;
+}
+
+.reconciliation_table {
+  tr {
+    height: 1.6em;
+  }
+  input {
+    width: 7em;
+    text-align:right;
+  }
+  .display_cell {
+    padding-right: .3em;
+  }
+}

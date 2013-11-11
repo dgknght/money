@@ -24,8 +24,11 @@ class Reconciliation < ActiveRecord::Base
   end
   
   def previous_balance
-    previous = account.reconciliations.where('reconciliation_date < ?', reconciliation_date).last
-    previous.nil? ? 0 : previous.closing_balance
+    previous_reconciliation.nil? ? 0 : previous_reconciliation.closing_balance
+  end
+  
+  def previous_reconciliation_date
+    previous_reconciliation.nil? ? nil : previous_reconciliation.reconciliation_date
   end
   
   def reconciled_balance
@@ -41,7 +44,11 @@ class Reconciliation < ActiveRecord::Base
     items.new(transaction_item: transaction_item)
   end
   
-  private    
+  private
+    def previous_reconciliation
+      @previous_reconciliation ||= account.reconciliations.where('reconciliation_date < ?', reconciliation_date).last
+    end
+    
     def selected?(transaction_item)
       items.select { |i| i.transaction_item_id == transaction_item.id }.any?
     end
