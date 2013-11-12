@@ -26,6 +26,11 @@ class Reconciliation < ActiveRecord::Base
     (closing_balance || 0) - reconciled_balance
   end
   
+  def default_reconciliation_date
+    return Date.today unless previous_reconciliation_date
+    previous_reconciliation_date >> 1
+  end
+    
   def previous_balance
     previous_reconciliation.nil? ? 0 : previous_reconciliation.closing_balance
   end
@@ -50,13 +55,9 @@ class Reconciliation < ActiveRecord::Base
   end
   
   private
-    def calculate_reconciliation_date
-      return Date.today unless previous_reconciliation_date
-      previous_reconciliation_date >> 1
-    end
     
     def ensure_defaults
-      self.reconciliation_date ||= calculate_reconciliation_date
+      self.reconciliation_date ||= default_reconciliation_date
     end
     
     def must_be_in_balance

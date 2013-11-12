@@ -7,6 +7,7 @@ class ReconciliationsController < ApplicationController
   
   def new
     @reconciliation = @account.reconciliations.new
+    @reconciliation.reconciliation_date = @reconciliation.default_reconciliation_date
   end
 
   def create
