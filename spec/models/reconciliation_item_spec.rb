@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ReconciliationItem do
   let (:account) { FactoryGirl.create(:account) }
-  let (:transaction_item) { FactoryGirl.create(:transaction_item, account: account) }
+  let (:transaction_item) { FactoryGirl.create(:transaction_item, account: account, amount: 1_000) }
   let (:reconciliation) { FactoryGirl.create(:reconciliation, account: account) }
   let (:attributes) do
     {
@@ -14,6 +14,15 @@ describe ReconciliationItem do
   it 'should be creatable from valid attributes' do
     item = ReconciliationItem.new(attributes)
     item.should be_valid
+  end
+  
+  it 'should mark the transaction item as reconciled on save' do
+    transaction_item.should_not be_reconciled
+    
+    reconciliation << transaction_item
+    reconciliation.save!
+    
+    transaction_item.should be_reconciled
   end
   
   describe 'transaction_item_id' do

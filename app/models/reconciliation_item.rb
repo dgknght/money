@@ -16,6 +16,8 @@ class ReconciliationItem < ActiveRecord::Base
   validates_presence_of :reconciliation, :transaction_item_id
   validate :transaction_item_belongs_to_account
   
+  after_create :mark_transaction_item
+  
   private
     def accounts_match
       return false unless reconciliation
@@ -23,6 +25,11 @@ class ReconciliationItem < ActiveRecord::Base
       return false unless transaction_item
       return false unless transaction_item.account
       reconciliation.account.id == transaction_item.account.id
+    end
+    
+    def mark_transaction_item
+      transaction_item.reconciled = true
+      transaction_item.save!
     end
     
     def transaction_item_belongs_to_account
