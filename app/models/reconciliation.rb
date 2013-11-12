@@ -17,6 +17,9 @@ class Reconciliation < ActiveRecord::Base
   
   validates_presence_of :account_id, :reconciliation_date, :closing_balance
   validates_numericality_of :balance_difference, equal_to: 0
+  
+  before_validation :ensure_defaults
+  
   default_scope { order(:reconciliation_date) }
   
   def balance_difference
@@ -33,6 +36,8 @@ class Reconciliation < ActiveRecord::Base
   
   def reconciled_balance
     return 0 unless account
+    return 0 if account.transaction_items.unreconciled.length == 0
+    
     account.transaction_items.unreconciled.select do |item|
       selected?(item)
     end.reduce(previous_balance) do |sum, item|
@@ -45,7 +50,22 @@ class Reconciliation < ActiveRecord::Base
   end
   
   private
+    def calculate_reconciliation_date
+      return Date.today unless previous_reconciliation_date
+      previous_reconciliation_date >> 1
+    end
+    
+    def ensure_defaults
+      self.reconciliation_date ||= calculate_reconciliation_date
+    end
+    
+    def must_be_in_balance
+      errors.add(:balance_difference, "must be equal to zero.") unless balance_difference == 0
+    end
+    
     def previous_reconciliation
+      return nil unless account
+      return account.reconciliations.last unless reconciliation_date
       @previous_reconciliation ||= account.reconciliations.where('reconciliation_date < ?', reconciliation_date).last
     end
     

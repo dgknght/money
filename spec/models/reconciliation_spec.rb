@@ -29,9 +29,18 @@ describe Reconciliation do
   end
   
   describe 'reconciliation_date' do
-    it 'should be required' do
+    it 'should default to one month after the previous close, if available' do
+      r1 = Reconciliation.create!(attributes)
+      
+      r2 = Reconciliation.new(attributes.without(:reconciliation_date).merge(closing_balance: 0, items_attributes: []))            
+      r2.should be_valid
+      r2.reconciliation_date.should == Date.civil(2013, 3, 28)
+    end
+    
+    it 'should default to today if no previous close is available' do
       reconciliation = Reconciliation.new(attributes.without(:reconciliation_date))
-      reconciliation.should have(1).error_on(:reconciliation_date)
+      reconciliation.should be_valid
+      reconciliation.reconciliation_date.should == Date.today
     end
   end
   
