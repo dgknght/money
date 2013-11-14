@@ -1,5 +1,6 @@
 %h2#page_title Reconciliation
 
+=render "shared/errors", :resource => @reconciliation
 =form_for([@reconciliation.account, @reconciliation]) do |f|
   .reconciliation_information
     %table#reconciliation_table{ cellspacing: 0, cellpadding: 0}
@@ -19,12 +20,12 @@
         %td Cleared
         %td &nbsp;
         %td.number_column.display_cell
-          %span#cleared_balance 0.00
+          %span#cleared_balance= @reconciliation.reconciled_balance
       %tr
         %td Difference
         %td &nbsp;
         %td.number_column.display_cell
-          %span#balance_difference 0.00
+          %span#balance_difference= @reconciliation.balance_difference
       
   %table#transactions_table.list{ cellspacing: 0, cellpadding: 0}
     %tr
@@ -38,7 +39,7 @@
         %td= item.transaction.description
         %td.number_column= format_currency(item.amount)
         %td.check_column
-          =check_box_tag "reconciliation[items_attributes][][transaction_item_id]", item.id
+          =check_box_tag "reconciliation[items_attributes][][transaction_item_id]", item.id, is_selected(item, @reconciliation)
   .actions
     =f.submit 'Save', class: 'save_button', title: 'Click here to complete the reconciliation.'
     =link_to 'Back', entity_accounts_path(@reconciliation.account.entity), class: 'back_button', title: 'Click here to return to the account list.'
