@@ -1,4 +1,3 @@
-@wip
 Feature: Reconcile an account
   As a user,
   In order to ensure my account records are in agreement with the bank's
@@ -57,15 +56,18 @@ Feature: Reconcile an account
   And I check the box within the 4th transaction row
   And I check the box within the 5th transaction row
   And I check the box within the 6th transaction row
-  And I click "Finish"
+  And I click "Save"
   Then I should see "The account was reconciled successfully." within the notice area
   And I should see "Accounts" within the page title
   
   When I click "Reconcile" within the account row for "Checking"
-  Then I should see "Reconcile" within the page title
+  Then I should see "Reconciliation" within the page title
   And I should see the following reconciliation attributes
-    | Last reconciled | 1/1/2013 |
-    | Last balance    | 9,840.00 |
+    |            | Date      |  Balance |
+    | Previous   | 1/31/2013 | 9,840.00 |
+    | Current    |           |          |
+    | Cleared    |           |     0.00 |
+    | Difference |           |     0.00 |
     
   And I should see the following transactions table
     | Transaction date | Description |   Amount |

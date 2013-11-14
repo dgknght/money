@@ -15,6 +15,11 @@ When (/^I click (?:on )?"([^"]+)"$/) do |locator|
   click_on(locator)
 end
 
+When (/^I check the box$/) do
+  checkbox = find('input[type=checkbox]')
+  checkbox.set(true)
+end
+
 When (/^I select "([^"]+)" from the "([^"]+)" list$/) do |value, locator|
   select value, from: locator
 end

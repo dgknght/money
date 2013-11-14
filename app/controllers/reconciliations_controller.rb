@@ -13,7 +13,9 @@ class ReconciliationsController < ApplicationController
   def create
     @reconciliation = @account.reconciliations.new(reconciliation_params)
     flash[:notice] = "The account was reconciled successfully." if @reconciliation.save
-    respond_with @reconciliation
+    respond_with @reconciliation do |format|
+      format.html { redirect_to entity_accounts_path(@account.entity) }
+    end
   end
   
   private

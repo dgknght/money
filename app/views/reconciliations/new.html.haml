@@ -2,7 +2,7 @@
 
 =form_for([@reconciliation.account, @reconciliation]) do |f|
   .reconciliation_information
-    %table.reconciliation_table{ cellspacing: 0, cellpadding: 0}
+    %table#reconciliation_table{ cellspacing: 0, cellpadding: 0}
       %tr
         %th &nbsp;
         %th.number_column Date
@@ -38,7 +38,7 @@
         %td= item.transaction.description
         %td.number_column= format_currency(item.amount)
         %td.check_column
-          =check_box_tag "reconciliation[items_attributes][transaction_item_id]", item.id
+          =check_box_tag "reconciliation[items_attributes][][transaction_item_id]", item.id
   .actions
     =f.submit 'Save', class: 'save_button', title: 'Click here to complete the reconciliation.'
     =link_to 'Back', entity_accounts_path(@reconciliation.account.entity), class: 'back_button', title: 'Click here to return to the account list.'
