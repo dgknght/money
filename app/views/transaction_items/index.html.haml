@@ -1,0 +1,21 @@
+%h2#page_title Transaction items
+
+%table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Transaction date
+    %th Description
+    %th Account
+    %th Reconciled
+    %th.number_column Amount
+    %th.number_column Balance
+    %th &nbsp;
+  -@transaction_items.each_with_index do |item, index|
+    %tr{ class: ((index % 2) == 0) ? '' : 'alt_table_row' }
+      %td= format_date(item.transaction.transaction_date)
+      %td= item.transaction.description
+      %td= other_account(item)
+      %td.check_column= item.reconciled? ? 'X' : ''
+      %td.number_column= format_currency(item.polarized_amount)
+      %td.number_column= format_currency(@balance += item.polarized_amount)
+      %td.actions
+        =render 'shared/delete_form', resource: item.transaction, url: transaction_url(item.transaction)

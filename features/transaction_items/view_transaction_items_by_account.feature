@@ -1,4 +1,3 @@
-@wip
 Feature: View transaction items by account
   As a user,
   In order to understand the state of an account
@@ -27,4 +26,4 @@ Feature: View transaction items by account
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Reconciled | Amount   |  Balance |
       | 1/1/2013         | Paycheck    | Salary    |            | 5,000.00 | 5,000.00 |
-      | 1/2/2013         | Kroger      | Groceries |            |    45.00 | 4,955.00 |
+      | 1/2/2013         | Kroger      | Groceries |            |   -45.00 | 4,955.00 |
