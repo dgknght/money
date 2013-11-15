@@ -19,3 +19,6 @@
       %td.number_column= format_currency(@balance += item.polarized_amount)
       %td.actions
         =render 'shared/delete_form', resource: item.transaction, url: transaction_url(item.transaction)
+.actions
+  =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button'
+  =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button'

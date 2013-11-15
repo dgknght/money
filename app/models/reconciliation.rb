@@ -23,7 +23,7 @@ class Reconciliation < ActiveRecord::Base
   default_scope { order(:reconciliation_date) }
   
   def balance_difference
-    (closing_balance || 0) - reconciled_balance
+    (closing_balance || previous_balance) - reconciled_balance
   end
   
   def default_reconciliation_date
@@ -39,6 +39,10 @@ class Reconciliation < ActiveRecord::Base
     previous_reconciliation.nil? ? nil : previous_reconciliation.reconciliation_date
   end
   
+  # Returns the sum of the amounts for the transactionitems
+  # that are part of this reconciliation. This includes items
+  # that are not currently marked reconciled, as long as this item
+  # has not been saved
   def reconciled_balance
     return 0 unless account
     return 0 if account.transaction_items.unreconciled.length == 0

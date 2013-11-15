@@ -20,12 +20,12 @@
         %td Cleared
         %td &nbsp;
         %td.number_column.display_cell
-          %span#cleared_balance= @reconciliation.reconciled_balance
+          %span#cleared_balance= format_currency(@reconciliation.reconciled_balance)
       %tr
         %td Difference
         %td &nbsp;
         %td.number_column.display_cell
-          %span#balance_difference= @reconciliation.balance_difference
+          %span#balance_difference= format_currency(@reconciliation.balance_difference)
       
   %table#transactions_table.list{ cellspacing: 0, cellpadding: 0}
     %tr
@@ -37,7 +37,7 @@
       %tr
         %td= format_date(item.transaction.transaction_date)
         %td= item.transaction.description
-        %td.number_column= format_currency(item.amount)
+        %td.number_column= format_currency(item.polarized_amount)
         %td.check_column
           =check_box_tag "reconciliation[items_attributes][][transaction_item_id]", item.id, is_selected(item, @reconciliation)
   .actions

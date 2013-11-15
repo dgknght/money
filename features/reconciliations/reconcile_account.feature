@@ -1,4 +1,3 @@
-@wip
 Feature: Reconcile an account
   As a user,
   In order to ensure my account records are in agreement with the bank's
@@ -42,12 +41,12 @@ Feature: Reconcile an account
   And I should see the following transactions table
     | Transaction date | Description |   Amount |
     | 1/1/2013         | My Employer | 5,000.00 |
-    | 1/6/2013         | Kroger      |    40.00 |
-    | 1/13/2013        | Kroger      |    40.00 |
+    | 1/6/2013         | Kroger      |   -40.00 |
+    | 1/13/2013        | Kroger      |   -40.00 |
     | 1/15/2013        | My Employer | 5,000.00 |
-    | 1/20/2013        | Kroger      |    40.00 |
-    | 1/27/2013        | Kroger      |    40.00 |
-    | 2/3/2013         | Kroger      |    40.00 |
+    | 1/20/2013        | Kroger      |   -40.00 |
+    | 1/27/2013        | Kroger      |   -40.00 |
+    | 2/3/2013         | Kroger      |   -40.00 |
 
   When I fill in "reconciliation_reconciliation_date" with "2013-01-31"
   And I fill in "reconciliation_closing_balance" with "9840"
@@ -67,10 +66,10 @@ Feature: Reconcile an account
     |            | Date      |  Balance |
     | Previous   | 1/31/2013 | 9,840.00 |
     | Current    |           |          |
-    | Cleared    |           |     0.00 |
+    | Cleared    |           | 9,840.00 |
     | Difference |           |     0.00 |
     
   And I should see the following transactions table
     | Transaction date | Description |   Amount |
-    | 2/3/2013         | Kroger      |    40.00 |
+    | 2/3/2013         | Kroger      |   -40.00 |
   

@@ -36,7 +36,7 @@ describe ReconciliationsController do
         
         it 'should redirect to the reconciliation detail page' do
           post :create, account_id: checking, reconciliation: attributes
-          response.should redirect_to reconciliation_path(Reconciliation.last)
+          response.should redirect_to entity_accounts_path(entity)
         end
         
         context 'in json' do
