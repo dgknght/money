@@ -2,6 +2,7 @@ class TransactionsController < ApplicationController
   include ApplicationHelper
   
   before_filter :authenticate_user!
+  before_filter :load_account, only: [ :index, :create ]
   before_filter :load_entity, only: [ :index, :create ]
   before_filter :load_transaction, only: [:update, :show, :destroy]
   before_filter :set_current_entity
@@ -16,7 +17,7 @@ class TransactionsController < ApplicationController
   
   def index
     authorize! :show, @entity
-    @transactions = TransactionPresenter.new(entity: @entity)
+    @transactions = TransactionPresenter.new(entity: @entity, account: @account)
     @transaction = @entity.transactions.new(transaction_date: Date.today)
     @items = [
       @transaction.items.new(action: :credit),
@@ -30,7 +31,7 @@ class TransactionsController < ApplicationController
     @transaction = @entity.transactions.new(transaction_params)
     flash[:notice] = "The transaction was created successfully." if @transaction.save
     respond_with(@transaction) do |format|
-      format.html { redirect_to entity_transactions_path(@entity) }
+      format.html { redirect_to create_redirect_path }
     end
   end
 
@@ -49,8 +50,21 @@ class TransactionsController < ApplicationController
   end
   
   private
+    def create_redirect_path
+      return account_transactions_path(@account) if @account
+      entity_transactions_path(@entity)
+    end
+    
+    def load_account
+      @account = Account.find(params[:account_id]) if params[:account_id]
+    end
+    
     def load_entity
-      @entity = Entity.find(params[:entity_id])
+      if @account
+        @entity = @account.entity
+      else
+        @entity = Entity.find(params[:entity_id])
+      end
     end
     
     def load_transaction

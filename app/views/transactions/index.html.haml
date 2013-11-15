@@ -13,5 +13,5 @@
       %td.number_column= format_currency(transaction.total_credits.abs)
       %td= render 'shared/delete_form', resource: transaction, url: transaction_path(transaction)
 .new_transaction_container
-  =form_for([@transaction.entity, @transaction]) do |f|
+  =form_for([@account || @entity, @transaction]) do |f|
     =render 'form_fields', f: f, transaction: @transaction, items: @items
