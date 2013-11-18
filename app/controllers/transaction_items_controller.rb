@@ -13,10 +13,7 @@ class TransactionItemsController < ApplicationController
       end
     rescue Money::CannotDeleteError => e
       flash[:error] = e.message
-      @balance = 0
-      @account = @transaction_item.account
-      @transaction_items = @account.transaction_items
-      render :index
+      redirect_to :back
     end
   end
   
