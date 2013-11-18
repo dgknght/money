@@ -58,9 +58,9 @@ Feature: Reconcile an account
   And I check the box within the 6th transaction row
   And I click "Save"
   Then I should see "The account was reconciled successfully." within the notice area
-  And I should see "Accounts" within the page title
+  And I should see "Transaction items" within the page title
   
-  When I click "Reconcile" within the account row for "Checking"
+  When I click "Reconcile"
   Then I should see "Reconciliation" within the page title
   And I should see the following reconciliation attributes
     |            | Date      |  Balance |

@@ -17,7 +17,7 @@ class ReconciliationsController < ApplicationController
     respond_with @reconciliation do |format|
       format.html do
         if succeeded
-          redirect_to entity_accounts_path(@account.entity)
+          redirect_to account_transaction_items_path(@account)
         else
           render :new
         end

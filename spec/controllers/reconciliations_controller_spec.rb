@@ -34,9 +34,9 @@ describe ReconciliationsController do
           end.should change(Reconciliation, :count).by(1)
         end
         
-        it 'should redirect to the reconciliation detail page' do
+        it 'should redirect to the account transaction item index page' do
           post :create, account_id: checking, reconciliation: attributes
-          response.should redirect_to entity_accounts_path(entity)
+          response.should redirect_to account_transaction_items_path(entity)
         end
         
         context 'in json' do
