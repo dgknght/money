@@ -11,6 +11,9 @@ class Ability
     can :manage, Transaction do |transaction|
       user.entities.include? transaction.entity
     end
+    can :manage, TransactionItem do |transaction_item|
+      user.entities.include? transaction_item.transaction.entity
+    end
     can :manage, Budget do |budget|
       user.entities.include? budget.entity
     end

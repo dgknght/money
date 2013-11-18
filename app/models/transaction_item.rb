@@ -15,6 +15,7 @@
 class TransactionItem < ActiveRecord::Base
   after_create :update_account_balance
   after_update :rollback_account_balance, :update_account_balance
+  before_destroy :ensure_not_reconciled
   after_destroy :rollback_account_balance
   
   ACTIONS = %w(debit credit)
@@ -47,6 +48,12 @@ class TransactionItem < ActiveRecord::Base
   end
   
   private
+    def ensure_not_reconciled
+      if reconciled?
+        raise Money::CannotDeleteError, "The transaction item has already been reconciled. Undo the reconciliation, then delete the item."
+      end
+    end
+    
     def polarity
       account.polarity(action)
     end

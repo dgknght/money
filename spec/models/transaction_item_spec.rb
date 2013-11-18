@@ -215,6 +215,13 @@ describe TransactionItem do
     it 'should default to false' do
       item = TransactionItem.new(attributes)
       item.should_not be_reconciled
+    end    
+  end
+  
+  context 'when reconciled' do
+    let (:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
+    it 'cannot be deleted' do
+      expect { reconciled.destroy }.to raise_error(Money::CannotDeleteError)
     end
   end
   

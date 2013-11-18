@@ -11,8 +11,8 @@ FactoryGirl.define do
       debit_account { FactoryGirl.create(:account, entity: entity) }
     end
     after(:build) do |transaction, evaluator|
-      transaction.items << TransactionItem.new(account: evaluator.credit_account, amount: evaluator.amount, action: TransactionItem.credit)
-      transaction.items << TransactionItem.new(account: evaluator.debit_account, amount: evaluator.amount, action: TransactionItem.debit)
+      transaction.items.build(account: evaluator.credit_account, amount: evaluator.amount, action: TransactionItem.credit)
+      transaction.items.build(account: evaluator.debit_account, amount: evaluator.amount, action: TransactionItem.debit)
     end
   end
 end

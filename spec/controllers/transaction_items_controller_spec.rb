@@ -2,16 +2,70 @@ require 'spec_helper'
 
 describe TransactionItemsController do
 
-  let (:account) { FactoryGirl.create(:asset_account) }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:checking) { FactoryGirl.create(:asset_account, entity: entity, name: 'Checking') }
+  let (:groceries) { FactoryGirl.create(:expense_account, entity: entity, name: 'Groceries') }
+  let (:transaction) { FactoryGirl.create(:transaction, entity: entity, credit_account: checking, debit_account: groceries) }
+  let!(:transaction_item) { transaction.items.select{ |i| i.account_id == checking.id}.first }
   
   context 'for an authenticated user' do
-    before(:each) { sign_in account.entity.user }
+    before(:each) { sign_in entity.user }
     
     context 'that owns the entity' do
       describe "get :index" do
         it 'should be successful' do
-          get :index, account_id: account
+          get :index, account_id: checking
           response.should be_success
+        end
+        
+        context 'in json' do
+          it 'should be successful' do
+            get :index, account_id: checking, format: :json
+            response.should be_success
+          end
+          
+          it 'should return the transactions for the account' do
+            get :index, account_id: checking, format: :json
+            response.body.should == [transaction_item].to_json
+          end
+        end
+      end
+      
+      describe 'delete :destroy' do
+        it 'should delete the entire transation' do
+          lambda do
+            delete :destroy, id: transaction_item
+          end.should change(Transaction, :count).by(-1)
+        end
+        
+        it 'should delete the transation item' do
+          lambda do
+            delete :destroy, id: transaction_item
+          end.should change(TransactionItem, :count).by(-2)
+        end
+        
+        it 'should redirect to the account transaction items index page' do
+          delete :destroy, id: transaction_item
+          response.should redirect_to account_transaction_items_path(checking)
+        end
+        
+        context 'in json' do
+          it 'should delete the entire transaction' do
+            lambda do
+              delete :destroy, id: transaction_item, format: :json
+            end.should change(Transaction, :count).by(-1)
+          end
+        
+          it 'should delete the transaction item' do
+            lambda do
+              delete :destroy, id: transaction_item, format: :json
+            end.should change(TransactionItem, :count).by(-2)
+          end
+          
+          it 'should not return any data' do
+            delete :destroy, id: transaction_item, format: :json
+            response.body.should == ''
+          end
         end
       end
     end
@@ -23,8 +77,51 @@ describe TransactionItemsController do
       
       describe "get :index" do
         it "should redirect to the user's home page" do
-          get :index, account_id: account
+          get :index, account_id: checking
           response.should redirect_to home_path
+        end
+        
+        context 'in json' do
+          it 'should return 404' do
+            get :index, account_id: checking, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :index, account_id: checking, format: :json
+            response.body.should == [].to_json
+          end
+        end
+      end
+      
+      describe 'delete :destroy' do
+        it 'should not delete the transaction' do
+          lambda do
+            delete :destroy, id: transaction_item
+          end.should_not change(Transaction, :count)
+        end
+        
+        it 'should not delete the transaction item' do
+          lambda do
+            delete :destroy, id: transaction_item
+          end.should_not change(TransactionItem, :count)
+        end
+        
+        it 'should redirect to the entity home page' do
+          delete :destroy, id: transaction_item
+          response.should redirect_to home_path
+        end
+        
+        context 'in json' do
+          it 'should return 404' do
+            get :index, account_id: checking, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not return any data' do
+            get :index, account_id: checking, format: :json
+            response.body.should == [].to_json
+          end
         end
       end
     end
@@ -33,8 +130,54 @@ describe TransactionItemsController do
   context 'for an unauthenticated user' do
     describe "get :index" do
       it "should redirect to the sign in page" do
-        get :index, account_id: account
+        get :index, account_id: checking
         response.should redirect_to new_user_session_path
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          get :index, account_id: checking, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should return an error' do
+          get :index, account_id: checking, format: :json
+          result = JSON.parse(response.body)
+          result.should have_key('error')
+        end
+      end
+    end
+      
+    describe 'delete :destroy' do
+      it 'should not delete the transaction' do
+        lambda do
+          delete :destroy, id: transaction_item
+        end.should_not change(Transaction, :count)
+      end
+      
+      it 'should not delete the transaction item' do
+        lambda do
+          delete :destroy, id: transaction_item
+        end.should_not change(TransactionItem, :count)
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          delete :destroy, id: transaction_item, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should not delete the transaction item' do
+          lambda do
+            delete :destroy, id: transaction_item, format: :json
+          end.should_not change(TransactionItem, :count)
+        end
+      
+        it 'should not delete the transaction' do
+          lambda do
+            delete :destroy, id: transaction_item, format: :json
+          end.should_not change(Transaction, :count)
+        end
       end
     end
   end
