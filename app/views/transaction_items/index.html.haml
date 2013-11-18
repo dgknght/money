@@ -19,6 +19,15 @@
       %td.number_column= format_currency(@balance += item.polarized_amount)
       %td.actions
         =render 'shared/delete_form', resource: item, url: transaction_item_url(item)
+  =form_form(@transaction_item_creator) do |f|
+    %tr
+      %td= f.text_field :transaction_date
+      %td= f.text_field :description
+      %td= f.select :other_account
+      %td &nbsp;
+      %td= f.number_field :amount
+      %td &nbsp;
+      %td &nbsp;
 .actions
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button'
   =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button'
