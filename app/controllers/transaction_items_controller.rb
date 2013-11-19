@@ -21,6 +21,7 @@ class TransactionItemsController < ApplicationController
     authorize! :show, @account
     @balance = 0 # TODO Probably want to encapsulate this better
     @transaction_items = @account.transaction_items
+    @transaction_item_creator = TransactionItemCreator.new(@account)
     respond_with @transaction_items
   end
   
