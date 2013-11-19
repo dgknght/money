@@ -146,7 +146,7 @@ nav[role="navigation"] ul {
 table.list {
   border: 1px solid $dark-grey;
   th {
-    padding: 2px;
+    padding: .15em;
     border: 1px solid $dark-grey;
     background-color: $dark-grey;
     color: $light-grey;
@@ -155,8 +155,12 @@ table.list {
     }
   }
   td {
-    padding: 4px;
+    padding: .3em;
   }
+}
+table.list_form {
+  margin-top: -1px;
+  border: 1px solid $dark-grey;
 }
 .alt_table_row {
   background-color: $light-grey;

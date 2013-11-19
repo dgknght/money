@@ -2,32 +2,33 @@
 
 %table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
   %tr
-    %th Transaction date
-    %th Description
-    %th Account
-    %th Reconciled
-    %th.number_column Amount
-    %th.number_column Balance
-    %th &nbsp;
+    %th.transaction_date_cell Transaction date
+    %th.description_cell Description
+    %th.account_cell Account
+    %th.reconciled_cell Rec.
+    %th.amount_cell.number_column Amount
+    %th.balance_cell.number_column Balance
+    %th.actions &nbsp;
   -@transaction_items.each_with_index do |item, index|
     %tr{ class: ((index % 2) == 0) ? '' : 'alt_table_row' }
-      %td= format_date(item.transaction.transaction_date)
-      %td= item.transaction.description
-      %td= other_account(item)
-      %td.check_column= item.reconciled? ? 'X' : ''
-      %td.number_column= format_currency(item.polarized_amount)
-      %td.number_column= format_currency(@balance += item.polarized_amount)
+      %td.transaction_date_cell= format_date(item.transaction.transaction_date)
+      %td.description_cell= item.transaction.description
+      %td.account_cell= other_account(item)
+      %td.reconciled_cell.check_column= item.reconciled? ? 'X' : ''
+      %td.amount_cell.number_column= format_currency(item.polarized_amount)
+      %td.balance_cell.number_column= format_currency(@balance += item.polarized_amount)
       %td.actions
         =render 'shared/delete_form', resource: item, url: transaction_item_url(item)
-  =form_form(@transaction_item_creator) do |f|
+=form_tag(account_transaction_items_path(@account)) do
+  %table.list_form{cellspacing: 0, cellpadding: 0}
     %tr
-      %td= f.text_field :transaction_date
-      %td= f.text_field :description
-      %td= f.select :other_account
-      %td &nbsp;
-      %td= f.number_field :amount
-      %td &nbsp;
-      %td &nbsp;
+      %td.transaction_date_cell= text_field_tag :transaction_date, format_date(@transaction_item_creator.transaction_date)
+      %td.description_cell= text_field_tag :description, @transaction_item_creator.description
+      %td.account_cell= select_tag :other_account_id, grouped_options_for_select(available_accounts(@account.entity), @transaction_item_creator.other_account_id)
+      %td.reconciled_cell &nbsp;
+      %td.amount_cell= number_field_tag :amount, @transaction_item_creator.amount
+      %td.balance_cell &nbsp;
+      %td.actions &nbsp;
 .actions
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button'
   =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button'

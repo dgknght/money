@@ -1,3 +1,59 @@
-// Place all the styles related to the TransactionItems controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.list {
+  .transaction_date_cell {
+    width: 10em;
+  }
+  .description_cell {
+    width: 10em;
+  }
+  .account_cell {
+    width: 10em;
+  }
+  .amount_cell {
+    width: 10em;
+  }
+  .reconciled_cell {
+    width: 2em;
+  }
+  .balance_cell {
+    width: 10em;
+  }
+}
+.list_form {
+  td {
+    padding: 0;
+  }
+  .transaction_date_cell {
+    input[type=text] {
+      width: 10em;
+      margin:0;
+      padding:0;
+    }
+  }
+  .description_cell {
+    input[type=text] {
+      width: 10em;
+      margin:0;
+      padding:0;
+    }
+  }
+  .account_cell {
+    select {
+      width: 10em;
+      margin:0;
+      padding:0;
+    }
+  }
+  .amount_cell {
+    input[type=number] {
+      width: 10em;
+      margin:0;
+      padding:0;
+    }
+  }
+  .reconciled_cell {
+    width: 4em;
+  }
+  .balance_cell {
+    width: 11.4em;
+  }
+}
