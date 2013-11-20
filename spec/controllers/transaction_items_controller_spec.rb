@@ -7,7 +7,14 @@ describe TransactionItemsController do
   let (:groceries) { FactoryGirl.create(:expense_account, entity: entity, name: 'Groceries') }
   let (:transaction) { FactoryGirl.create(:transaction, entity: entity, credit_account: checking, debit_account: groceries) }
   let!(:transaction_item) { transaction.items.select{ |i| i.account_id == checking.id}.first }
-  
+  let (:creator_attributes) do
+    {
+      other_account_id: groceries.id,
+      transaction_date: '2013-02-27',
+      description: 'Market Street',
+      amount: 46
+    }
+  end
   context 'for an authenticated user' do
     before(:each) { sign_in entity.user }
     
@@ -68,6 +75,44 @@ describe TransactionItemsController do
           end
         end
       end
+
+      describe 'post :create' do
+        it 'should redirect to the transaction item index page' do
+          post :create, account_id: checking, transaction_item_creator: creator_attributes
+          response.should redirect_to account_transaction_items_path(checking)
+        end
+        
+        it 'should create a transaction' do
+          expect do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes
+          end.to change(Transaction, :count).by(1)
+        end
+        
+        it 'should create two transasction items' do
+          expect do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes
+          end.to change(TransactionItem, :count).by(2)
+        end
+        
+        context 'in json' do
+          it 'should be successful' do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+            response.should be_success
+          end
+          
+          it 'should create a transaction' do
+            expect do
+              post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+            end.to change(Transaction, :count).by(1)
+          end
+          
+          it 'should create two transasction items' do
+            expect do
+              post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+            end.to change(TransactionItem, :count).by(2)
+          end
+        end
+      end
     end
     
     context 'that does not own the entity' do
@@ -124,6 +169,44 @@ describe TransactionItemsController do
           end
         end
       end
+
+      describe 'post :create' do
+        it 'should redirect to the home page' do
+          post :create, account_id: checking, transaction_item_creator: creator_attributes
+          response.should redirect_to home_path
+        end
+        
+        it 'should not create a transaction' do
+          expect do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes
+          end.not_to change(Transaction, :count)
+        end
+        
+        it 'should not create any transasction items' do
+          expect do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes
+          end.not_to change(TransactionItem, :count)
+        end
+        
+        context 'in json' do
+          it 'should return "resource not found"' do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+            response.response_code.should == 404
+          end
+          
+          it 'should not create a transaction' do
+            expect do
+              post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+            end.not_to change(TransactionItem, :count)
+          end
+        
+          it 'should not create any transasction items' do
+            expect do
+              post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+            end.not_to change(TransactionItem, :count)
+          end
+        end
+      end
     end
   end
   
@@ -177,6 +260,44 @@ describe TransactionItemsController do
           lambda do
             delete :destroy, id: transaction_item, format: :json
           end.should_not change(Transaction, :count)
+        end
+      end
+    end
+
+    describe 'post :create' do
+      it 'should redirect to the sign in page' do
+        post :create, account_id: checking, transaction_item_creator: creator_attributes
+        response.should redirect_to new_user_session_path
+      end
+      
+      it 'should not create a transaction' do
+        expect do
+          post :create, account_id: checking, transaction_item_creator: creator_attributes
+        end.not_to change(Transaction, :count)
+      end
+      
+      it 'should not create any transasction items' do
+        expect do
+          post :create, account_id: checking, transaction_item_creator: creator_attributes
+        end.not_to change(TransactionItem, :count)
+      end
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+          response.response_code.should == 401
+        end
+        
+        it 'should not create a transaction' do
+          expect do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+          end.not_to change(Transaction, :count)
+        end
+        
+        it 'should not create any transasction items' do
+          expect do
+            post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
+          end.not_to change(TransactionItem, :count)
         end
       end
     end

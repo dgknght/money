@@ -5,18 +5,17 @@ class TransactionItemCreator
   
   attr_accessor :transaction_date, :description, :other_account, :amount, :other_account_id
   
-  validates_presence_of :transaction_date, :description, :other_account, :amount
+  validates_presence_of :transaction_date, :description, :other_account_id, :amount
   validate :other_account_belongs_to_right_entity
   
   def create
+    return nil unless valid?
+    create_transaction_item
+  end
+  
+  def create!
     raise Money::InvalidStateError unless valid?
-    
-    transaction = @account.entity.transactions.new( transaction_date: transaction_date,
-                                                    description: description)
-    result = transaction.items.new(account: @account, amount: amount, action: TransactionItem.credit)
-    transaction.items.new(account: other_account, amount: amount, action: TransactionItem.debit)
-    transaction.save!
-    result
+    create_transaction_item
   end
   
   def initialize(account, attributes = {})
@@ -24,7 +23,8 @@ class TransactionItemCreator
     @account = account
     self.transaction_date = as_date(attributes[:transaction_date])
     self.description = attributes[:description]
-    self.other_account = attributes[:other_account]
+    self.other_account_id = attributes[:other_account_id]
+    self.other_account = Account.find(other_account_id) if other_account_id
     self.amount = attributes[:amount]
   end
   
@@ -34,8 +34,17 @@ class TransactionItemCreator
       value
     end
     
+    def create_transaction_item
+      transaction = @account.entity.transactions.new( transaction_date: transaction_date,
+                                                      description: description)
+      result = transaction.items.new(account: @account, amount: amount, action: TransactionItem.credit)
+      transaction.items.new(account: other_account, amount: amount, action: TransactionItem.debit)
+      transaction.save!
+      result
+    end
+    
     def other_account_belongs_to_right_entity
       return unless other_account
-      errors.add(:other_account, 'must belong to the same entity as "account"') unless other_account.entity.id == @account.entity.id
+      errors.add(:other_account_id, 'must belong to the same entity as "account"') unless other_account.entity.id == @account.entity.id
     end
 end
