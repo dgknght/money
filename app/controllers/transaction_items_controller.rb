@@ -1,4 +1,6 @@
 class TransactionItemsController < ApplicationController
+  include ApplicationHelper
+  
   before_filter :authenticate_user!
   before_filter :load_account, only: [ :index, :create ]
   before_filter :load_transaction_item, only: [ :destroy ]
@@ -49,6 +51,7 @@ class TransactionItemsController < ApplicationController
     
     def load_account
       @account = Account.find(params[:account_id])
+      self.current_entity = @account.entity
     end
     
     def load_transaction_item
