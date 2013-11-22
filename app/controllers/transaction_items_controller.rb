@@ -37,7 +37,7 @@ class TransactionItemsController < ApplicationController
   def index
     authorize! :show, @account
     @balance = 0 # TODO Probably want to encapsulate this better
-    @transaction_items = @account.transaction_items
+    @transaction_items = @account.transaction_items.joins(:transaction).order('transactions.transaction_date')
     @transaction_item_creator = TransactionItemCreator.new(@account, transaction_date: Date.today)
     respond_with @transaction_items
   end
