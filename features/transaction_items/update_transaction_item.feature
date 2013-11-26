@@ -21,14 +21,16 @@ Feature: Update a transaction item
     
     When I click "Checking" within the main content
     Then I should see "Checking Transaction items" within the page title
+    And I should see the following transaction items table
      | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
      | 1/1/2013         | Paycheck    | Salary    |      | 1,000.00 | 1,000.00 |
-     | 1/2/2013         | Kroger      | Groceries |      |    50.00 |   950.00 |
+     | 1/2/2013         | Kroger      | Groceries |      |   -50.00 |   950.00 |
      
     When I click "50.00" within the main content
     And I fill in "Amount" with "55"
     And I click "Save"    
     Then I should see "The transaction item was saved successfully." within the notice area
+    And I should see the following transaction items table
      | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
      | 1/1/2013         | Paycheck    | Salary    |      | 1,000.00 | 1,000.00 |
-     | 1/2/2013         | Kroger      | Groceries |      |    55.00 |   945.00 |
+     | 1/2/2013         | Kroger      | Groceries |      |   -55.00 |   945.00 |
