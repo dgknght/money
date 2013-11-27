@@ -15,7 +15,7 @@
     width: 2em;
   }
   .balance_cell {
-    width: 10em;
+    width: 8em;
   }
 }
 .list_form {
@@ -51,9 +51,15 @@
     }
   }
   .reconciled_cell {
-    width: 4em;
+    width: 3em;
   }
   .balance_cell {
-    width: 11.4em;
+    width: 8.7em;
   }
+  .actions {
+    width: 2em;
+  }
+}
+#edit_form {
+  visibility: hidden;
 }
