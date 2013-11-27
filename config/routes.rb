@@ -19,7 +19,7 @@ Money::Application.routes.draw do
     resources :transaction_items, only: [ :index, :create ]
   end
   resources :transactions, only: [:show, :edit, :update, :destroy]
-  resources :transaction_items, only: [ :destroy ]
+  resources :transaction_items, only: [ :destroy, :edit ]
   resources :budgets, only: [:show, :edit, :update, :destroy] do
     resources :budget_items, only: [:index, :new, :create], path: 'items'
   end

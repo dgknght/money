@@ -113,6 +113,55 @@ describe TransactionItemsController do
           end
         end
       end
+      
+      describe 'get :edit' do
+        it 'should be successful' do
+          get :edit, id: transaction_item
+          response.should be_success
+        end
+      end
+      
+      describe 'put :update' do
+        it 'should update the specified transaction' do
+          expect do
+            put :edit, id: transaction_item, transaction_item_creator: creator_attributes
+            transaction.reload
+          end.to change(transaction, :description).to('Market Street')
+        end
+        
+        it 'should update the specified transaction item' do
+          expect do
+            put :edit, id: transaction_item, transaction_item_creator: creator_attributes
+            transaction_item.reload
+          end.to change(transaction_item, :amount).to(46)
+        end
+        
+        it 'should redirect to the transaction item index page for the account' do
+          put :edit, id: transaction_item, transaction_item_creator: creator_attributes
+          response.should redirect_to account_transaction_items_path(checking)
+        end
+        
+        context 'in json' do
+          it 'should be successful' do
+            put :edit, id: transaction_item, transaction_item_creator: creator_attributes, format: :json
+            response.should be_success
+          end
+        
+          it 'should update the specified transaction' do
+            expect do
+              put :edit, id: transaction_item, transaction_item_creator: creator_attributes, format: :json
+              transaction.reload
+            end.to change(transaction, :description).to('Market Street')
+          end
+          
+          it 'should update the specified transaction item' do
+            expect do
+              put :edit, id: transaction_item, transaction_item_creator: creator_attributes, format: :json
+              transaction_item.reload
+            end.to change(transaction_item, :amount).to(46)
+          end
+        end
+      end
     end
     
     context 'that does not own the entity' do
@@ -207,6 +256,20 @@ describe TransactionItemsController do
           end
         end
       end
+      
+      describe 'get :edit' do
+        it 'should redirect to the home page'
+      end
+      
+      describe 'put :update' do
+        it 'should not update the specified transaction'
+        it 'should redirect to the home page'
+        
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not update the specified transaction'
+        end
+      end
     end
   end
   
@@ -299,6 +362,20 @@ describe TransactionItemsController do
             post :create, account_id: checking, transaction_item_creator: creator_attributes, format: :json
           end.not_to change(TransactionItem, :count)
         end
+      end
+    end
+      
+    describe 'get :edit' do
+      it 'should redirect to the home page'
+    end
+    
+    describe 'put :update' do
+      it 'should not update the specified transaction'
+      it 'should redirect to the home page'
+      
+      context 'in json' do
+        it 'should return "resource not found"'
+        it 'should not update the specified transaction'
       end
     end
   end

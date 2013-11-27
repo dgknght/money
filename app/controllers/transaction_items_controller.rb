@@ -3,7 +3,7 @@ class TransactionItemsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_account, only: [ :index, :create ]
-  before_filter :load_transaction_item, only: [ :destroy ]
+  before_filter :load_transaction_item, only: [ :destroy, :update ]
   respond_to :json, :html
   
   def create
@@ -36,12 +36,21 @@ class TransactionItemsController < ApplicationController
     end
   end
   
+  def edit
+  end
+  
   def index
     authorize! :show, @account
     @balance = 0 # TODO Probably want to encapsulate this better
     @transaction_items = @account.transaction_items.joins(:transaction).order('transactions.transaction_date')
     @transaction_item_creator = TransactionItemCreator.new(@account, transaction_date: Date.today)
     respond_with @transaction_items
+  end
+  
+  def update
+    @transaction_item_creator = Transaction_item_create.new(@transaction_item, creator_params)
+    flash[:notice] = "The transaction was updated successfully." if @transaction_item_creator.update
+    respond_with(@transaction_item)
   end
   
   private

@@ -1,4 +1,4 @@
-%h2#page_title Transaction items
+%h2#page_title #{h @account.name} Transaction items
 
 %table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
   %tr
@@ -18,6 +18,7 @@
       %td.amount_cell.number_column= format_currency(item.polarized_amount)
       %td.balance_cell.number_column= format_currency(@balance += item.polarized_amount)
       %td.actions
+        =link_to 'Edit', edit_transaction_item_path(item), class: 'edit_button', title: 'Click here to edit the transaction.'
         =render 'shared/delete_form', resource: item, url: transaction_item_url(item)
 =form_tag(account_transaction_items_path(@account)) do
   %table.list_form{cellspacing: 0, cellpadding: 0}
@@ -26,7 +27,7 @@
       %td.description_cell= text_field_tag 'transaction_item_creator[description]', @transaction_item_creator.description
       %td.account_cell= select_tag 'transaction_item_creator[other_account_id]', grouped_options_for_select(available_accounts(@account.entity), @transaction_item_creator.other_account_id)
       %td.reconciled_cell &nbsp;
-      %td.amount_cell= number_field_tag 'transaction_item_creator[amount]', @transaction_item_creator.amount
+      %td.amount_cell= number_field_tag 'transaction_item_creator[amount]', @transaction_item_creator.amount, step: '.01'
       %td.balance_cell &nbsp;
       %td.actions &nbsp;
   =render "shared/errors", :resource => @transaction_item_creator

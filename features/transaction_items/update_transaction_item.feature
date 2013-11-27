@@ -26,8 +26,10 @@ Feature: Update a transaction item
      | 1/1/2013         | Paycheck    | Salary    |      | 1,000.00 | 1,000.00 |
      | 1/2/2013         | Kroger      | Groceries |      |   -50.00 |   950.00 |
      
-    When I click "50.00" within the main content
-    And I fill in "Amount" with "55"
+    When I click "Edit" within the 2nd transaction item row
+    Then I should see "Transaction item" within the page title
+    
+    When I fill in "Amount" with "55"
     And I click "Save"    
     Then I should see "The transaction item was saved successfully." within the notice area
     And I should see the following transaction items table
