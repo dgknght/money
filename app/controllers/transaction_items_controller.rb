@@ -38,6 +38,7 @@ class TransactionItemsController < ApplicationController
   
   def edit
     authorize! :edit, @transaction_item
+    @transaction_item_creator = TransactionItemCreator.new(@transaction_item)
   end
   
   def index
@@ -69,5 +70,6 @@ class TransactionItemsController < ApplicationController
     
     def load_transaction_item
       @transaction_item = TransactionItem.find(params[:id])
+      @account = @transaction_item.account
     end
 end

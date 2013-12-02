@@ -1,4 +1,3 @@
-@wip
 Feature: Update a transaction item
   As a user,
   In order to correct a mistake,
@@ -27,11 +26,11 @@ Feature: Update a transaction item
      | 1/2/2013         | Kroger      | Groceries |      |   -50.00 |   950.00 |
      
     When I click "Edit" within the 2nd transaction item row
-    Then I should see "Transaction item" within the page title
+    Then I should see "Edit transaction item" within the page title
     
     When I fill in "Amount" with "55"
     And I click "Save"    
-    Then I should see "The transaction item was saved successfully." within the notice area
+    Then I should see "The transaction was updated successfully." within the notice area
     And I should see the following transaction items table
      | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
      | 1/1/2013         | Paycheck    | Salary    |      | 1,000.00 | 1,000.00 |
