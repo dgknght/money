@@ -4,6 +4,8 @@ describe TransactionItemCreator do
   let (:entity) { FactoryGirl.create(:entity) }
   let (:checking) { FactoryGirl.create(:asset_account, entity: entity, name: 'Checking') }
   let (:groceries) { FactoryGirl.create(:expense_account, entity: entity, name: 'Groceries') }
+  let (:transaction) { FactoryGirl.create(:transaction, transaction_date: '2013-02-27', description: 'Kroger', debit_account: groceries, credit_account: checking, amount: 25) }
+  let (:transaction_item) { transaction.items.select{ |i| i.account_id == checking.id }.first }
   let (:attributes) do
     {
       transaction_date: '2013-01-01',
@@ -109,6 +111,37 @@ describe TransactionItemCreator do
     it 'should raise InvalidStateError with invalid attributes' do
       creator = TransactionItemCreator.new(checking, attributes.without(:description))
       expect { creator.create! }.to raise_error(Money::InvalidStateError)
+    end
+  end
+  
+  describe 'update' do
+    it 'should return true for success' do
+      creator = TransactionItemCreator.new(transaction_item, attributes)
+      creator.update.should be_true
+    end
+    
+    it 'should update the specified transaction with the specified description' do
+      creator = TransactionItemCreator.new(transaction_item, attributes)
+      expect do
+        creator.update
+        transaction.reload
+      end.to change(transaction, :description).from('Kroger').to('Market Street')
+    end
+    
+    it 'should update the specified transaction with the specified transaction date' do
+      creator = TransactionItemCreator.new(transaction_item, attributes)
+      expect do
+        creator.update
+        transaction.reload
+      end.to change(transaction, :transaction_date).from(Date.parse('2013-02-27')).to(Date.parse('2013-01-01'))
+    end
+    
+    it 'should update the specified transaction item with the specified amount' do
+      creator = TransactionItemCreator.new(transaction_item, attributes)
+      expect do
+        creator.update
+        transaction_item.reload
+      end.to change(transaction_item, :amount).from(BigDecimal.new(25)).to(BigDecimal.new(100))
     end
   end
 end

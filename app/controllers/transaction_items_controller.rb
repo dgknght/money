@@ -3,7 +3,7 @@ class TransactionItemsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_account, only: [ :index, :create ]
-  before_filter :load_transaction_item, only: [ :destroy, :update ]
+  before_filter :load_transaction_item, only: [ :destroy, :update, :edit ]
   respond_to :json, :html
   
   def create
@@ -37,6 +37,7 @@ class TransactionItemsController < ApplicationController
   end
   
   def edit
+    authorize! :edit, @transaction_item
   end
   
   def index
@@ -48,9 +49,12 @@ class TransactionItemsController < ApplicationController
   end
   
   def update
-    @transaction_item_creator = Transaction_item_create.new(@transaction_item, creator_params)
+    authorize! :update, @transaction_item
+    @transaction_item_creator = TransactionItemCreator.new(@transaction_item, creator_params)
     flash[:notice] = "The transaction was updated successfully." if @transaction_item_creator.update
-    respond_with(@transaction_item)
+    respond_with(@transaction_item) do |format|
+      format.html { redirect_to account_transaction_items_path(@transaction_item.account) }
+    end
   end
   
   private
