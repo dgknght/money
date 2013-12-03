@@ -10,6 +10,7 @@
       %nav{role: "navigation"}
         %ul#nav_1
           -if user_signed_in?
+            %li= link_to "Single-page", app_path
             %li= link_to "Home", home_path
             %li= link_to "Entities", entities_path
             %li= link_to "Sign out", destroy_user_session_path, :method => :delete
