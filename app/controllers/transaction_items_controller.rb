@@ -2,7 +2,7 @@ class TransactionItemsController < ApplicationController
   include ApplicationHelper
   
   before_filter :authenticate_user!
-  before_filter :load_account, only: [ :index, :create ]
+  before_filter :load_account, only: [ :index, :create, :new ]
   before_filter :load_transaction_item, only: [ :destroy, :update, :edit ]
   respond_to :json, :html
   
@@ -47,6 +47,11 @@ class TransactionItemsController < ApplicationController
     @transaction_items = @account.transaction_items.joins(:transaction).order('transactions.transaction_date')
     @transaction_item_creator = TransactionItemCreator.new(@account, transaction_date: Date.today)
     respond_with @transaction_items
+  end
+  
+  def new
+    authorize! :edit, @account
+    @transaction_item_creator = TransactionItemCreator.new(@account)
   end
   
   def update

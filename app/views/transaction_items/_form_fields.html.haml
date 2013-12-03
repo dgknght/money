@@ -1,0 +1,23 @@
+%div
+  =label_tag 'transaction_item_creator[transaction_date]', 'Transaction date'
+  %br
+  =text_field_tag 'transaction_item_creator[transaction_date]', format_date(transaction_item_creator.transaction_date), autofocus: true
+  
+%div
+  =label_tag 'transaction_item_creator[description]', 'Description'
+  %br
+  =text_field_tag 'transaction_item_creator[description]', transaction_item_creator.description
+
+%div
+  =label_tag 'transaction_item_creator[other_account_id]', 'Account'
+  %br
+  =select_tag 'transaction_item_creator[other_account_id]', grouped_options_for_select(available_accounts(account.entity), transaction_item_creator.other_account_id)
+  
+%div
+  =label_tag 'transaction_item_creator[amount]', 'Amount'
+  %br
+  =text_field_tag 'transaction_item_creator[amount]', transaction_item_creator.amount
+  
+.actions
+  =submit_tag 'Save', class: 'save_button'
+  =link_to 'Back', account_transaction_items_path(account), class: 'back_button'

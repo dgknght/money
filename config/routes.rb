@@ -16,7 +16,7 @@ Money::Application.routes.draw do
   resources :accounts, only: [:show, :edit, :update, :destroy] do
     resources :reconciliations, only: [:new, :create]
     resources :transactions, only: [:index, :create]
-    resources :transaction_items, only: [ :index, :create ]
+    resources :transaction_items, only: [ :index, :create, :new ]
   end
   resources :transactions, only: [:show, :edit, :update, :destroy]
   resources :transaction_items, only: [ :destroy, :edit, :update ]

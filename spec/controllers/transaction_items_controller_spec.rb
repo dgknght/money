@@ -76,6 +76,13 @@ describe TransactionItemsController do
         end
       end
 
+      describe 'get :new' do
+        it 'should be successful' do
+          get :new, account_id: checking
+          response.should be_success
+        end
+      end
+      
       describe 'post :create' do
         it 'should redirect to the transaction item index page' do
           post :create, account_id: checking, transaction_item_creator: creator_attributes
@@ -219,6 +226,13 @@ describe TransactionItemsController do
         end
       end
 
+      describe 'get :new' do
+        it 'should redirect to the home page' do
+          get :new, account_id: checking
+          response.should redirect_to home_path
+        end
+      end
+      
       describe 'post :create' do
         it 'should redirect to the home page' do
           post :create, account_id: checking, transaction_item_creator: creator_attributes
@@ -348,6 +362,13 @@ describe TransactionItemsController do
       end
     end
 
+    describe 'get :new' do
+      it 'should redirect to the sign in page' do
+        get :new, account_id: checking
+        response.should redirect_to new_user_session_path
+      end
+    end
+    
     describe 'post :create' do
       it 'should redirect to the sign in page' do
         post :create, account_id: checking, transaction_item_creator: creator_attributes

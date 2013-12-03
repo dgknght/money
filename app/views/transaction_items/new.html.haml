@@ -1,5 +1,5 @@
-%h2#page_title Edit transaction item
+%h2#page_title New Transaction item
 
 =render "shared/errors", :resource => @transaction_item_creator
-=form_tag(transaction_item_path(@transaction_item), method: :put) do
+=form_tag(account_transaction_items_path(@account), method: :post) do
   =render 'form_fields', transaction_item_creator: @transaction_item_creator, account: @account

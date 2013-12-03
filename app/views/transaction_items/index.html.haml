@@ -21,5 +21,6 @@
         =link_to 'Edit', edit_transaction_item_path(item), class: 'edit_button', title: 'Click here to edit the transaction.'
         =render 'shared/delete_form', resource: item, url: transaction_item_url(item)
 .actions
+  =link_to 'Add', new_account_transaction_item_path(@account), class: 'add_button', title: 'Click here to add a transaction.'
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button', title: 'Click here to return to the account list.'
   =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button'
