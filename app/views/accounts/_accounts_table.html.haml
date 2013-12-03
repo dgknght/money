@@ -33,5 +33,3 @@
     %td
   -accounts.expense.each do |account|
     =render "accounts/account_rows", account: account
-.actions
-  =link_to 'Add', new_entity_account_path(@entity), class: 'add_button', title: 'Click here to add an account.'

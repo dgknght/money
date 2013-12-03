@@ -7,3 +7,6 @@
 
 %h3 Accounts
 =render 'accounts/accounts_table', accounts: @entity.accounts
+.actions
+  =link_to 'Add', new_entity_account_path(@entity), class: 'add_button', title: 'Click here to add an account.'
+  =link_to 'Back', entities_path, class: 'back_button', title: 'Click here to return to the list of entities.'
