@@ -1,6 +1,15 @@
+:javascript  
+  $(function() {
+    app = new MoneyApp();
+    ko.applyBindings(app);
+  })
 #entity_container
-  Entities will be listed here
+  Entity: 
+  %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity, optionsCaption: 'Select an entity...'" } }
 #account_container
-  Accounts will be listed here
+  %table#account_list{ cellspacing: 0, cellpadding: 0 }
+    %tbody{ data: { bind: "foreach: accounts" } }
+      %tr
+        %td{ :data => { :bind => "text: name" }}
 #tab_container
   Tabs containing opened accounts will be here
