@@ -9,8 +9,12 @@
 #account_container
   %table#account_list.inner_list{ cellspacing: 0, cellpadding: 0 }
     %tbody{ data: { bind: "foreach: accounts" } }
-      %tr
+      %tr{ data: { bind: "click: window.showTransactions" }}
         %td{ data: { bind: "text: name, css: cssClass" }}
         %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
 #tab_container
-  Tabs containing opened accounts will be here
+  %ul#tab_navigation{ data: { bind: "foreach:displayedAccounts"}}
+    %li{ data: { bind: "text: name"}}
+  #tab_bodies{ data: { bind: "foreach: displayedAccounts" }}
+    .tab_body
+      %span{ data: { bind: "text: name"}}

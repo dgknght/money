@@ -121,6 +121,7 @@ MoneyApp.prototype = {
   entities: ko.observableArray(),
   selectedEntity: ko.observable(),
   accounts: ko.observableArray(),
+  displayedAccounts: ko.observableArray(),
   loadAccountList: function(allAccounts) {
     // Convert to view models
     var allViewModels = $.map(allAccounts, function(a, i){ return new AccountViewModel(a); });
@@ -160,4 +161,11 @@ MoneyApp.prototype = {
       this.entities.push(entities[i]);
     }
   }
+}
+
+/*
+ * Window functions
+ */
+function showTransactions(account) {
+  app.displayedAccounts.push(account);
 }

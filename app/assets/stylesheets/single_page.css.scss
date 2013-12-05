@@ -1,5 +1,12 @@
-#account_container {
+#account_container, #entity_container, #tab_container {
   display: inline-block;
+}
+
+#account_container, #entity_container {
+  float: left;
+}
+
+#account_container {
   padding: 1em;
   margin: {
     top: 1em;
@@ -10,8 +17,25 @@
   min-width: 10em;  
 }
 
+#tab_container {
+  margin: {
+    top: 1em;
+    left: 2em;
+  }
+  min-height: 20em;
+  min-width: 60em;
+  border: 1px solid black;
+  border-radius: 1em;
+}
+
+.tab_body {
+  position: absolute;
+  border: 1px solid blue;
+}
+
 table.inner_list td {
   padding: {
     right: .5em;
-  }
+    }
+  cursor: pointer;
 }
