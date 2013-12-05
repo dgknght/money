@@ -42,6 +42,10 @@ class Account < ActiveRecord::Base
   scope :income, -> { root.where(account_type: Account.income_type) }
   scope :expense, -> { root.where(account_type: Account.expense_type) }
   
+  def as_json(options)
+    super({ methods: :depth })
+  end
+  
   def balance_as_of(date)
     balance_between Date.civil(1000, 1, 1), date
   end

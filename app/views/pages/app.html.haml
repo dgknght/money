@@ -10,6 +10,7 @@
   %table#account_list{ cellspacing: 0, cellpadding: 0 }
     %tbody{ data: { bind: "foreach: accounts" } }
       %tr
-        %td{ :data => { :bind => "text: name" }}
+        %td{ data: { bind: "text: name, css: cssClass" }}
+        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
 #tab_container
   Tabs containing opened accounts will be here
