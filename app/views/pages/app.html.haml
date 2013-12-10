@@ -6,10 +6,9 @@
     
     // Initialize the tab panel and refresh when new tabs are added
     var tabs = $('#tab_container').tabs();
-    app.displayedAccounts.subscribe(function() {
+    app.selectedAccountIndex.subscribe(function(index) {
       tabs.tabs('refresh');
-      var length = $('#tab_container div').length
-      tabs.tabs('option', 'active', length - 1);
+      tabs.tabs('option', 'active', index);
     });
   })
 #entity_and_account

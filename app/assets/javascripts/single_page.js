@@ -166,6 +166,7 @@ MoneyApp.prototype = {
   selectedEntity: ko.observable(),
   accounts: ko.observableArray(),
   displayedAccounts: ko.observableArray(),
+  selectedAccountIndex: ko.observable(),
   loadAccountList: function(allAccounts) {
     // Convert to view models
     var allViewModels = $.map(allAccounts, function(a, i){ return new AccountViewModel(a); });
@@ -211,5 +212,20 @@ MoneyApp.prototype = {
  * Window functions
  */
 function showTransactions(account) {
-  app.displayedAccounts.push(account);
+  var index = firstIndexOf(app.displayedAccounts(), function(a) {
+    return a.id == account.id;
+  });
+  if (index == -1) {
+    app.displayedAccounts.push(account);
+    app.selectedAccountIndex(app.displayedAccounts().length - 1);
+  } else {
+    app.selectedAccountIndex(index);
+  }
+}
+
+function firstIndexOf(array, predicate) {
+  for (var i = 0; i < array.length; i++) {
+    if (predicate(array[i])) return i;
+  }
+  return -1;
 }
