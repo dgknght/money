@@ -27,5 +27,20 @@
       %a{ data: { bind: "text: name, attr: {'href': '#' + element_id}"}}
   <!-- ko foreach: displayedAccounts -->
   %div{ data: { bind: "attr: {'id': element_id}"}}
-    %p{ data: { bind: "text: name"}}
+    %table.transaction_item_table
+      %tr
+        -#%th Date
+        -#%th Description
+        -#%th Account
+        -#%th Rec.
+        %th.number_column Amount
+        %th.number_column Balance
+      %tbody{ data: { bind: "foreach: transaction_items" }}
+        %tr
+          -#%td{ data: { bind: "text: formattedTransactionDate" }}
+          -#%td{ data: { bind: "text: description" }}
+          -#%td{ data: { bind: "text: account" }}
+          -#%td{ data: { bind: "text: formattedReconciled" }}
+          %td.number_column{ data: { bind: "text: formattedAmount" }}
+          %td.number_column{ data: { bind: "text: formattedBalance" }}
   <!-- /ko -->

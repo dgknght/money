@@ -66,10 +66,12 @@ Array.prototype.where = function(predicate) {
   return result;
 };
 
+
 /*
  * Account view model
  */
 function AccountViewModel(account) {
+  var self = this;
   this.id = account.id;
   this.parent_id = account.parent_id;
   this.element_id = "account_" + this.id;
@@ -78,6 +80,8 @@ function AccountViewModel(account) {
   this.balance = ko.observable(new Number(account.balance));
   this.cssClass = "account_list_item account_depth_" + account.depth;
   this.children = ko.observableArray();
+  this.transaction_items = ko.observableArray();
+  
   this.balanceWithChildren = ko.computed(function() {
     var result = this.balance();
     $.each(this.children(), function(index, child){ result += child.balanceWithChildren(); });
@@ -86,12 +90,28 @@ function AccountViewModel(account) {
   this.formattedBalanceWithChildren = ko.computed(function() {
     return accounting.formatMoney(this.balanceWithChildren());
   }, this);
+  
+  this._transactionItemsLoaded = false;
+  this.ensureTransactionItemsLoaded = function() {
+    if (self._transactionItemsLoaded) return;
+
+    $.getJSON("accounts/" + self.id + "/transaction_items", function(transaction_items) {
+      var previous = null;
+      $.each(transaction_items, function(index, transaction_item) {
+        var viewModel = new TransactionItemViewModel(transaction_item, previous);
+        self.transaction_items.push(viewModel);
+        previous = viewModel;
+      });
+    });
+    self._transactionItemsLoaded = true;
+  };
 }
 
 function AccountCategoryViewModel(type, accountViewModels) {
   this.name = type;
   this.cssClass = "account_category";
   this.accountViewModels = ko.observableArray(accountViewModels);
+  
   this.balanceWithChildren = ko.computed(function() {
     var result = 0;
     $.each(this.accountViewModels(), function(index, account){ result += account.balanceWithChildren(); });
@@ -102,6 +122,22 @@ function AccountCategoryViewModel(type, accountViewModels) {
   }, this);
 }
 
+function TransactionItemViewModel(transaction_item, previous_item) {
+  this.amount = ko.observable(parseFloat(transaction_item.amount));
+  this.previous_item = ko.observable(previous_item);
+
+  this.formattedAmount = ko.computed(function() {
+    return accounting.formatNumber(this.amount(), 2);
+  }, this);
+  this.balance = ko.computed(function() {
+    var previousBalance = this.previous_item() == null ? 0 : this.previous_item().balance();
+    return previousBalance + this.amount();
+  }, this);
+  this.formattedBalance = ko.computed(function() {
+    return accounting.formatNumber(this.balance(), 2);
+  }, this);
+}
+
 /*
  * Constructor for the client-side application
  */
@@ -109,6 +145,9 @@ function MoneyApp() {
   var _self = this;
   this.selectedEntity.subscribe(function(entity) {
     _self.loadAccounts(entity);
+  });
+  this.displayedAccounts.subscribe(function(accounts) {
+    $.each(accounts, function(i, account) { account.ensureTransactionItemsLoaded(); });
   });
   $.getJSON("entities.json", function(entities) {
     _self.loadEntities(entities); 
