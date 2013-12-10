@@ -124,8 +124,9 @@ function AccountCategoryViewModel(type, accountViewModels) {
 
 function TransactionItemViewModel(transaction_item, previous_item) {
   this.amount = ko.observable(parseFloat(transaction_item.amount));
+  this.reconciled = ko.observable(transaction_item.reconciled);
   this.previous_item = ko.observable(previous_item);
-
+  
   this.formattedAmount = ko.computed(function() {
     return accounting.formatNumber(this.amount(), 2);
   }, this);
@@ -135,6 +136,9 @@ function TransactionItemViewModel(transaction_item, previous_item) {
   }, this);
   this.formattedBalance = ko.computed(function() {
     return accounting.formatNumber(this.balance(), 2);
+  }, this);
+  this.formattedReconciled = ko.computed(function() {
+    return this.reconciled() ? "X" : "";
   }, this);
 }
 

@@ -32,7 +32,7 @@
         -#%th Date
         -#%th Description
         -#%th Account
-        -#%th Rec.
+        %th Rec.
         %th.number_column Amount
         %th.number_column Balance
       %tbody{ data: { bind: "foreach: transaction_items" }}
@@ -40,7 +40,7 @@
           -#%td{ data: { bind: "text: formattedTransactionDate" }}
           -#%td{ data: { bind: "text: description" }}
           -#%td{ data: { bind: "text: account" }}
-          -#%td{ data: { bind: "text: formattedReconciled" }}
+          %td{ data: { bind: "text: formattedReconciled" }}
           %td.number_column{ data: { bind: "text: formattedAmount" }}
           %td.number_column{ data: { bind: "text: formattedBalance" }}
   <!-- /ko -->
