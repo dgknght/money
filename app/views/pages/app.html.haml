@@ -1,20 +1,31 @@
 :javascript  
   $(function() {
+    // Initialize and bind the view model
     app = new MoneyApp();
     ko.applyBindings(app);
+    
+    // Initialize the tab panel and refresh when new tabs are added
+    var tabs = $('#tab_container').tabs();
+    app.displayedAccounts.subscribe(function() {
+      tabs.tabs('refresh');
+      var length = $('#tab_container div').length
+      tabs.tabs('option', 'active', length - 1);
+    });
   })
-#entity_container
-  Entity: 
-  %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity, optionsCaption: 'Select an entity...'" } }
-#account_container
-  %table#account_list.inner_list{ cellspacing: 0, cellpadding: 0 }
-    %tbody{ data: { bind: "foreach: accounts" } }
-      %tr{ data: { bind: "click: window.showTransactions" }}
-        %td{ data: { bind: "text: name, css: cssClass" }}
-        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
+#entity_and_account
+  #entity_container
+    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
+  #account_container
+    %table#account_list.inner_list{ cellspacing: 0, cellpadding: 0 }
+      %tbody{ data: { bind: "foreach: accounts" } }
+        %tr{ data: { bind: "click: window.showTransactions" }}
+          %td{ data: { bind: "text: name, css: cssClass" }}
+          %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
 #tab_container
-  %ul#tab_navigation{ data: { bind: "foreach:displayedAccounts"}}
-    %li{ data: { bind: "text: name"}}
-  #tab_bodies{ data: { bind: "foreach: displayedAccounts" }}
-    .tab_body
-      %span{ data: { bind: "text: name"}}
+  %ul{ data: { bind: "foreach:displayedAccounts"}}
+    %li
+      %a{ data: { bind: "text: name, attr: {'href': '#' + element_id}"}}
+  <!-- ko foreach: displayedAccounts -->
+  %div{ data: { bind: "attr: {'id': element_id}"}}
+    %p{ data: { bind: "text: name"}}
+  <!-- /ko -->

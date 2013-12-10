@@ -72,10 +72,11 @@ Array.prototype.where = function(predicate) {
 function AccountViewModel(account) {
   this.id = account.id;
   this.parent_id = account.parent_id;
+  this.element_id = "account_" + this.id;
   this.account_type = ko.observable(account.account_type);
   this.name = ko.observable(account.name);
   this.balance = ko.observable(new Number(account.balance));
-  this.cssClass = "account_depth_" + account.depth;
+  this.cssClass = "account_list_item account_depth_" + account.depth;
   this.children = ko.observableArray();
   this.balanceWithChildren = ko.computed(function() {
     var result = this.balance();
