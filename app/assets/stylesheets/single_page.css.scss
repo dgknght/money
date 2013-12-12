@@ -1,9 +1,20 @@
-#account_container, #entity_container, #tab_container {
+#entity_and_account, #tab_container {
   display: inline-block;
 }
 
-#account_container, #entity_container {
+#entity_and_account {
   float: left;
+}
+
+#entity_container {
+  border: 1px solid black;
+  border-radius: 1em;
+  padding: .5em;
+}
+
+#entity_container select {
+  font-size: 125%;
+  font-weight: bold;
 }
 
 #account_container {
@@ -17,25 +28,14 @@
   min-width: 10em;  
 }
 
+.account_list_item {
+  cursor:pointer;
+}
+
 #tab_container {
   margin: {
-    top: 1em;
-    left: 2em;
+    left: 1em;
   }
   min-height: 20em;
   min-width: 60em;
-  border: 1px solid black;
-  border-radius: 1em;
-}
-
-.tab_body {
-  position: absolute;
-  border: 1px solid blue;
-}
-
-table.inner_list td {
-  padding: {
-    right: .5em;
-    }
-  cursor: pointer;
 }
