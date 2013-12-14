@@ -2,7 +2,15 @@
   #entity_container
     %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
   #account_container{ data: { bind: "with: selectedEntity()" }}
-    %span{ data: { bind: "text: name" }}
+    %table.list#accounts_table{ cellspacing: 0, cellpadding: 0}
+      %tr
+        %th Name
+        %th Balance
+      %tbody{ data: { bind: "foreach: accounts" }}
+        %tr{ data: { bind: "css: cssClass" }}
+          %td
+            %span{ data: { bind: "text: name, css: cssClass" }}
+          %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
     
 :javascript  
   $(function() {

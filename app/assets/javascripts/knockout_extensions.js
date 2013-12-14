@@ -25,9 +25,6 @@ function lazyComputed(callback, value, context) {
     read: function() {      
       if (result.state() == 'new') {
         result.state('loading');
-        
-        console.log("calling _callback=" + self._callback);
-        
         self._callback.call(self._context);
       }
       return value();
