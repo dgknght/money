@@ -1,7 +1,14 @@
-
 /*
  * Array extension methods
  */
+Array.prototype.any = function(predicate) {
+  for (var i = 0; i < this.length; i++) {
+    if (predicate(this[i]))
+      return true;
+  }
+  return false;
+};
+
 Array.prototype.delimit = function(delimitor) {
   var result = "";
   var first = true;
@@ -29,6 +36,14 @@ Array.prototype.groupBy = function(getKey) {
     list.push(value);
   }
   return result;
+};
+
+Array.prototype.firstIndexOf = function(predicate) {
+  for (var i = 0; i < this.length; i++) {
+    if (predicate(this[i]))
+      return i;
+  }
+  return -1;
 };
 
 Array.prototype.pushAll = function(values) {

@@ -4,6 +4,7 @@
 //= require entity_view_model
 //= require account_view_model
 //= require accounting.min
+//= require jquery-ui-1.10.3.custom.min
 
 /*
  * Constructor for the client-side application
@@ -23,4 +24,16 @@ function MoneyApp() {
       }).pushAllTo(_self.entities);
     });
   }, this);
+  
+  this.displayAccount = function(account) {
+    var index = this.displayedAccounts().firstIndexOf(function(a) {
+      return a.id == account.id;
+    });
+    if (index == -1) {
+      this.displayedAccounts.push(account);
+      this.selectedAccountIndex(this.displayedAccounts().length - 1);
+    } else {
+      this.selectedAccountIndex(index);
+    }
+  };
 };

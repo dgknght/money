@@ -7,11 +7,17 @@
         %th Name
         %th Balance
       %tbody{ data: { bind: "foreach: accounts" }}
-        %tr{ data: { bind: "css: cssClass" }}
+        %tr{ data: { bind: "css: cssClass, click: display" }}
           %td
             %span{ data: { bind: "text: name, css: cssClass" }}
           %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
-    
+#transactions
+  %ul{ data: { bind: "foreach: displayedAccounts" }}
+    %li
+      %a{ data: { bind: "text: name, attr: {href: '#account_' + id }" }}
+  <!-- ko foreach: displayedAccounts -->
+  %div{ data: { bind: "text: name, attr: {id: 'account_' + id }" }}
+  <!-- /ko -->
 :javascript  
   $(function() {
     // Initialize and bind the view model
@@ -19,9 +25,11 @@
     ko.applyBindings(app);
     
     // Initialize the tab panel and refresh when new tabs are added
-    //var tabs = $('#tab_container').tabs();
-    //app.selectedAccountIndex.subscribe(function(index) {
-    //  tabs.tabs('refresh');
-    //  tabs.tabs('option', 'active', index);
-    //});
+    var tabs = $('#transactions').tabs();
+    app.displayedAccounts.subscribe(function(accounts) {
+      tabs.tabs('refresh');
+    });
+    app.selectedAccountIndex.subscribe(function(index) {
+      tabs.tabs('option', 'active', index);
+    });
   })

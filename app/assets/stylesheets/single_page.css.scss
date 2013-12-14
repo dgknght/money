@@ -1,4 +1,4 @@
-#entity_and_account, #tab_container {
+#entity_and_account, #transactions {
   display: inline-block;
 }
 
@@ -45,11 +45,15 @@
   }
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .account_list_item {
   cursor:pointer;
 }
 
-#tab_container {
+#transactions {
   margin: {
     left: 1em;
   }

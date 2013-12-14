@@ -10,7 +10,7 @@
     var path = "entities/{id}/accounts.json".format({id: this.id});
     $.getJSON(path, function(accounts) {
       var viewModels = $.map(accounts, function(account, index) {
-        return new AccountViewModel(account, _self);
+        return new AccountViewModel(account, app);
       });
       $.each(viewModels, function(index, viewModel) {
         viewModels

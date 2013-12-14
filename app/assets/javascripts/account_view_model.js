@@ -2,6 +2,7 @@
  * Account view model
  */
 function AccountViewModel(account, app) {
+  var _self = this;
   this._app = app;
   this.id = account.id
   this.name = ko.observable(account.name);
@@ -20,7 +21,7 @@ function AccountViewModel(account, app) {
   }, this);
   
   this.cssClass = ko.computed(function() {
-    return "account_depth_{depth}".format({ depth: this.depth() });
+    return "clickable account_depth_{depth}".format({ depth: this.depth() });
   }, this);
   
   this.formattedBalance = ko.computed(function() {
@@ -30,6 +31,10 @@ function AccountViewModel(account, app) {
   this.formattedBalanceWithChildren = ko.computed(function() {
     return accounting.formatMoney(this.balanceWithChildren());
   }, this);
+  
+  this.display = function() {
+    app.displayAccount(_self);
+  };
 }
 
 /*
@@ -47,7 +52,9 @@ function AccountGroupViewModel(name, accounts) {
     
     return children.sum(function(a) { return a.balanceWithChildren(); });
   }, this);
-    
+  
+  this.display = function() {};
+  
   this.formattedBalanceWithChildren = ko.computed(function() {
     return accounting.formatMoney(this.balanceWithChildren());
   }, this);
