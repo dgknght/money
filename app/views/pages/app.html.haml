@@ -1,3 +1,9 @@
+#entity_and_account
+  #entity_container
+    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
+  #account_container{ data: { bind: "with: selectedEntity()" }}
+    %span{ data: { bind: "text: name" }}
+    
 :javascript  
   $(function() {
     // Initialize and bind the view model
@@ -5,14 +11,9 @@
     ko.applyBindings(app);
     
     // Initialize the tab panel and refresh when new tabs are added
-    var tabs = $('#tab_container').tabs();
-    app.selectedAccountIndex.subscribe(function(index) {
-      tabs.tabs('refresh');
-      tabs.tabs('option', 'active', index);
-    });
+    //var tabs = $('#tab_container').tabs();
+    //app.selectedAccountIndex.subscribe(function(index) {
+    //  tabs.tabs('refresh');
+    //  tabs.tabs('option', 'active', index);
+    //});
   })
-#entity_and_account
-  #entity_container
-    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
-  #account_container
-    %span{ data: { bind: "text: selectedEntity().name" }}
