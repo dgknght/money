@@ -35,6 +35,12 @@ function AccountViewModel(account, app) {
   this.display = function() {
     app.displayAccount(_self);
   };
+  
+  this.transaction_items = ko.lazyObservableArray(function() {
+    app.getTransactionItems(this, function(transaction_items) {
+      transaction_items.pushAllTo(_self.transaction_items);
+    });
+  }, this);
 }
 
 /*

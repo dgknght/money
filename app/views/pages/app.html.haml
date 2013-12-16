@@ -6,17 +6,25 @@
       %tr
         %th Name
         %th Balance
-      %tbody{ data: { bind: "foreach: accounts" }}
-        %tr{ data: { bind: "css: cssClass, click: display" }}
-          %td
-            %span{ data: { bind: "text: name, css: cssClass" }}
-          %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
+      <!-- ko foreach: accounts -->
+      %tr{ data: { bind: "css: cssClass, click: display" }}
+        %td
+          %span{ data: { bind: "text: name, css: cssClass" }}
+        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
+      <!-- /ko -->
 #transactions
   %ul{ data: { bind: "foreach: displayedAccounts" }}
     %li
       %a{ data: { bind: "text: name, attr: {href: '#account_' + id }" }}
   <!-- ko foreach: displayedAccounts -->
-  %div{ data: { bind: "text: name, attr: {id: 'account_' + id }" }}
+  %div{ data: { bind: "attr: {id: 'account_' + id }" }}
+    %table{ cellspacing: 0, cellpadding: 0}
+      %tr
+        %th Amount
+      <!-- ko foreach: transaction_items -->
+      %tr
+        %td{ data: { bind: "text: amount" }}
+      <!-- /ko -->
   <!-- /ko -->
 :javascript  
   $(function() {

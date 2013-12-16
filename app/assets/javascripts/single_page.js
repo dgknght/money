@@ -36,4 +36,18 @@ function MoneyApp() {
       this.selectedAccountIndex(index);
     }
   };
+  
+  this.getTransactionItems = function(account, callback) {
+    var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id, entity_id: _self.selectedEntity().id});
+    $.getJSON(path, function(transactions) {
+      var transaction_items = $.map(transactions, function(transaction, index) {
+        return transaction.items;
+      })
+      .flatten()
+      .where(function(transaction_item) {
+        transaction_item.account_id == account.id;
+      });
+      callback(transaction_items);
+    });
+  };
 };

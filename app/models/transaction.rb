@@ -21,6 +21,10 @@ class Transaction < ActiveRecord::Base
   
   default_scope { order(:transaction_date) }
   
+  def as_json(options)
+    super(options.merge( include: :items ))
+  end
+  
   def total_credits
     sum_items(TransactionItem.credit)
   end
