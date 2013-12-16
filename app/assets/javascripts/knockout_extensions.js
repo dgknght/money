@@ -17,15 +17,11 @@ ko.lazyObservableArray = function(callback, context) {
 };
 
 function lazyComputed(callback, value, context) {
-  var self = this
-  this._context = context;
-  this._callback = callback;
-  
   var result = ko.computed({
     read: function() {      
       if (result.state() == 'new') {
         result.state('loading');
-        self._callback.call(self._context);
+        callback.call(context);
       }
       return value();
     },
@@ -33,9 +29,8 @@ function lazyComputed(callback, value, context) {
       result.state('loaded');
       value(newValue);
     },
-    deferEvaluation: true,
-    owner: self
-  });
+    deferEvaluation: true
+  }, this);
   result.state = ko.observable('new');
   result.refresh = function() { result.state('new'); };
   return result;
