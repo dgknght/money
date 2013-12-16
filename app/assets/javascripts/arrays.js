@@ -46,6 +46,20 @@ Array.prototype.firstIndexOf = function(predicate) {
   return -1;
 };
 
+Array.prototype.flatten = function() {
+  var result = new Array();
+  $.each(this, function(index, item) {
+    if (item instanceof Array) {
+      $.each(item, function(i, v) {
+        result.push(v);
+      });
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+};
+
 Array.prototype.pushAll = function(values) {
   $.each(values, function(index, value) { this.push(value); });
 };
