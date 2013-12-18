@@ -56,6 +56,12 @@
       .where(function(transaction_item) {
         return transaction_item.account_id() == account.id;
       });
+
+      // assign the 'previous' references
+      for (var i = 1; i < transaction_items.length; i++) {
+        transaction_items[i].previousItem(transaction_items[i-1]);
+      }
+
       callback(transaction_items);
     });
   };

@@ -4,6 +4,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.account_id = ko.observable(transaction_item.account_id);
   this.action = ko.observable(transaction_item.action);
   this.amount = ko.observable(transaction_item.amount);
+  this.previousItem = ko.observable();
 
   this.account = ko.computed(function() {
     return this.transaction.entity.getAccount(this.account_id());
@@ -19,5 +20,14 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.formattedPolarizedAmount = ko.computed(function() {
     return accounting.formatNumber(this.polarizedAmount(), 2);
+  }, this);
+
+  this.balance = ko.computed(function() {
+    var base = this.previousItem() == null ? 0 : this.previousItem().balance();
+    return base + this.polarizedAmount();
+  }, this);
+
+  this.formattedBalance = ko.computed(function() {
+    return accounting.formatNumber(this.balance(), 2);
   }, this);
 }
