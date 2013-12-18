@@ -22,6 +22,16 @@ Array.prototype.delimit = function(delimitor) {
   });
   return result;
 };
+
+Array.prototype.first = function(predicate) {
+  for (var i = 0; i < this.length; i++) {
+    var item = this[i];
+    if (predicate(item))
+      return item;
+  }
+  return null;
+};
+
 Array.prototype.groupBy = function(getKey) {
   var result = new Object();
   for (var i = 0; i < this.length; i++) {
@@ -59,6 +69,10 @@ Array.prototype.flatten = function() {
   });
   return result;
 };
+
+Array.prototype.map = function(transform) {
+  return $.map(this, transform);
+}
 
 Array.prototype.pushAll = function(values) {
   $.each(values, function(index, value) { this.push(value); });

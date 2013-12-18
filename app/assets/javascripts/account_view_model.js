@@ -1,9 +1,12 @@
 /*
  * Account view model
  */
-function AccountViewModel(account, app) {
+function AccountViewModel(account, entity) {
+  var CREDIT = 'credit';
+  var DEBIT = 'debit';
+
   var _self = this;
-  this._app = app;
+  this._entity = entity;
   this.id = account.id
   this.name = ko.observable(account.name);
   this.account_type = ko.observable(account.account_type);
@@ -32,12 +35,30 @@ function AccountViewModel(account, app) {
     return accounting.formatMoney(this.balanceWithChildren());
   }, this);
   
+  this.isLeftSide = function() {
+    return this.account_type() == 'asset' || this.account_type() == 'expense';
+  };
+
+  this.isRightSide = function() {
+    return !this.isLeftSide();
+  };
+
+  this.polarity = function(action) {
+    console.log("polarity action=" + action);
+    console.log("polarity account_type=" + this.account_type());
+    console.log("isLeftSide()=" + this.isLeftSide());
+
+    if ((action == CREDIT && this.isLeftSide()) || (action == DEBIT && this.isRightSide()))
+      return -1;
+    return 1;
+  };
+
   this.display = function() {
-    app.displayAccount(_self);
+    entity.displayAccount(_self);
   };
   
   this.transaction_items = ko.lazyObservableArray(function() {
-    app.getTransactionItems(this, function(transaction_items) {
+    entity.getTransactionItems(this, function(transaction_items) {
       transaction_items.pushAllTo(_self.transaction_items);
     });
   }, this);

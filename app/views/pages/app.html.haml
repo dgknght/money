@@ -23,7 +23,7 @@
         %th Amount
       <!-- ko foreach: transaction_items -->
       %tr
-        %td{ data: { bind: "text: amount" }}
+        %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
       <!-- /ko -->
   <!-- /ko -->
 :javascript  

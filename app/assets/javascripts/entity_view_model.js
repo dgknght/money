@@ -10,7 +10,7 @@
     var path = "entities/{id}/accounts.json".format({id: this.id});
     $.getJSON(path, function(accounts) {
       var viewModels = $.map(accounts, function(account, index) {
-        return new AccountViewModel(account, app);
+        return new AccountViewModel(account, _self);
       });
       $.each(viewModels, function(index, viewModel) {
         viewModels
@@ -33,4 +33,30 @@
       }
     });
   }, this);
+  
+  this.displayAccount = function(account) {
+    this._app.displayAccount(account);
+  };
+
+  this.getAccount = function(account_id) {
+    return this.accounts().first(function(a) {
+      return a.id == account_id;
+    });
+  };
+
+  this.getTransactionItems = function(account, callback) {
+    var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id, entity_id: this.id});
+    $.getJSON(path, function(transactions) {
+      var transaction_items = transactions.map(function(transaction, index) {
+        return new TransactionViewModel(transaction, _self);
+      }).map(function(transaction, index) {
+        return transaction.items();
+      })
+      .flatten()
+      .where(function(transaction_item) {
+        return transaction_item.account_id() == account.id;
+      });
+      callback(transaction_items);
+    });
+  };
 }
