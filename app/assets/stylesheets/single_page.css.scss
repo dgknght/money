@@ -75,6 +75,19 @@ span.account_depth_2 {
   padding-left: 4em;
 }
 
-.number_column {
-  padding-left: .5em;
+.register td, .register th{
+  padding-right: .5em;
+}
+
+.register td {
+  border: 1px solid #999;
+  padding: .5em;
+}
+
+.register {
+  border-collapse: collapse;
+}
+
+.register td.boolean_column {
+  text-align: center;
 }

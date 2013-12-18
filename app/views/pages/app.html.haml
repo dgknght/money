@@ -18,12 +18,18 @@
       %a{ data: { bind: "text: name, attr: {href: '#account_' + id }" }}
   <!-- ko foreach: displayedAccounts -->
   %div{ data: { bind: "attr: {id: 'account_' + id }" }}
-    %table{ cellspacing: 0, cellpadding: 0}
+    %table.register{ cellspacing: 0, cellpadding: 0}
       %tr
+        %th.number_column Date
+        %th Description
+        %th.boolean_column Rec.
         %th.number_column Amount
         %th.number_column Balance
       <!-- ko foreach: transaction_items -->
-      %tr
+      %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
+        %td.number_column{ data: { bind: "text: formattedTransactionDate" }}
+        %td{ data: { bind: "text: description" }}
+        %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}
       <!-- /ko -->

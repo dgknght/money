@@ -4,6 +4,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.account_id = ko.observable(transaction_item.account_id);
   this.action = ko.observable(transaction_item.action);
   this.amount = ko.observable(transaction_item.amount);
+  this.reconciled = ko.observable(transaction_item.reconciled);
   this.previousItem = ko.observable();
 
   this.account = ko.computed(function() {
@@ -29,5 +30,13 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.formattedBalance = ko.computed(function() {
     return accounting.formatNumber(this.balance(), 2);
+  }, this);
+
+  this.formattedTransactionDate = ko.computed(function() {
+    return this.transaction.transaction_date().toLocaleDateString();
+  }, this);
+
+  this.description = ko.computed(function() {
+    return this.transaction.description();
   }, this);
 }
