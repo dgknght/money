@@ -25,6 +25,8 @@ function MoneyApp() {
       }).pushAllTo(_self.entities);
     });
   }, this);
+  this.accountTypes = ko.observableArray(['asset', 'liability', 'equity', 'income', 'expense']);
+  this.editAccount = ko.observable();
   
   // TODO Consider moving this into entity, but need to be able to handle event registration in app.html.haml
   this.displayedAccounts = ko.observableArray();

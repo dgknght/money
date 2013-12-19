@@ -6,7 +6,7 @@ function AccountViewModel(account, entity) {
   var DEBIT = 'debit';
 
   var _self = this;
-  this._entity = entity;
+  this.entity = entity;
   this.id = account.id
   this.name = ko.observable(account.name);
   this.account_type = ko.observable(account.account_type);
@@ -52,7 +52,7 @@ function AccountViewModel(account, entity) {
   this.display = function() {
     entity.displayAccount(_self);
   };
-  
+
   this.undisplay = function() {
     entity.undisplayAccount(_self);
   };
@@ -62,13 +62,25 @@ function AccountViewModel(account, entity) {
       transaction_items.pushAllTo(_self.transaction_items);
     });
   }, this);
+
+  this.canEdit = function() { return true; };
+  this.edit = function() {
+    _self.entity.editAccount(_self);
+  };
+  this.canBeParent = function() { return true; }
+
+  this.availableParents = ko.computed(function() {
+    return this.entity.accounts().where(function(account) {
+      return account.canBeParent() && account.id != _self.id;
+    });
+  }, this);
 }
 
 /*
  * View model that wraps a group of accounts of the same type
  */
 function AccountGroupViewModel(name, accounts) {
-  this.name = name;
+  this.name = ko.observable(name);
   this.accounts = ko.observableArray(accounts);
   this.cssClass = "account_category";
   
@@ -85,4 +97,9 @@ function AccountGroupViewModel(name, accounts) {
   this.formattedBalanceWithChildren = ko.computed(function() {
     return accounting.formatMoney(this.balanceWithChildren());
   }, this);
+
+  this.canEdit = function() { return false; };
+  this.edit = function() {};
+  this.canBeParent = function() { return false; }
+  this.availableParents = function() { return []; }
 }

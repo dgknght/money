@@ -48,6 +48,10 @@
     });
   };
 
+  this.editAccount = function(account) {
+    this._app.editAccount(account);
+  };
+
   this.getTransactionItems = function(account, callback) {
     var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id, entity_id: this.id});
     $.getJSON(path, function(transactions) {

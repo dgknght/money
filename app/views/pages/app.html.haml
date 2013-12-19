@@ -6,11 +6,14 @@
       %tr
         %th Name
         %th Balance
+        %th &nbsp;
       <!-- ko foreach: accounts -->
-      %tr{ data: { bind: "css: cssClass, click: display" }}
-        %td
+      %tr{ data: { bind: "css: cssClass" }}
+        %td{ data: { bind: "click: display" }}
           %span{ data: { bind: "text: name, css: cssClass" }}
-        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
+        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren,click: display" }}
+        %td.action_cell
+          %a.small_edit_button{ data: { bind: "visible: canEdit(), click: edit"}, href: '#' } Edit
       <!-- /ko -->
 #transactions
   %ul{ data: { bind: "foreach: displayedAccounts" }}
@@ -37,8 +40,28 @@
         %td.number_column{ data: { bind: "text: formattedBalance" }}
       <!-- /ko -->
   <!-- /ko -->
+
+<!-- Account Form -->
+#account_form.dialog{ title: 'Account', data: { bind: "with: editAccount"}}
+  %form
+    %div
+      %label{ for: 'account_account_type' } Account type
+      %br
+      %select#account_account_type{ data: { bind: "options: $root.accountTypes, value: account_type" }}
+    %div
+      %label{ for: 'account_parent' } Parent
+      %br
+      %select#account_parent{ data: { bind: "options: availableParents, optionsCaption: 'None', optionsText: function(a) { return a.name(); }, optionsValue: function(a) { return a.id; }, value: parent_id" }}
+    %div
+      %label{ for: 'account_name' } Account type
+      %br
+      %input#account_name{ type: 'text', data: { bind: "value: name" }}
+
 :javascript  
   $(function() {
+    // Initialize JQuery elements
+    $('.dialog').dialog({ autoOpen: false, modal: true});
+
     // Initialize and bind the view model
     app = new MoneyApp();
     ko.applyBindings(app);
@@ -51,4 +74,13 @@
     app.selectedAccountIndex.subscribe(function(index) {
       tabs.tabs('option', 'active', index);
     });
-  })
+
+    // Initialize the account form
+    app.editAccount.subscribe(function(account) {
+      if (account == null) {
+        $('#account_form').dialog('close');
+      } else {
+        $('#account_form').dialog('open');
+      }
+    });
+  });

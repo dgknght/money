@@ -196,6 +196,14 @@ table.attributes {
   margin: 2px;
 }
 
+.any_small_button {
+  @include hide-text;
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  margin: 2px;
+}
+
 .any_form_button {
   @extend .any_button;
   padding: 0;
@@ -207,6 +215,11 @@ table.attributes {
 .add_button {
   @extend .any_button;
   background-image: url(/assets/add.png)
+}
+
+.small_add_button {
+  @extend .any_small_button;
+  background-image: url(/assets/add_small.png)
 }
 
 .save_button {
@@ -224,6 +237,11 @@ table.attributes {
   background-image: url(/assets/edit.png)
 }
 
+.small_edit_button {
+  @extend .any_small_button;
+  background-image: url(/assets/edit_small.png)
+}
+
 .show_button {
   @extend .any_form_button;
   background-image: url(/assets/show.png)
@@ -232,6 +250,11 @@ table.attributes {
 .delete_button {
   @extend .any_form_button;
   background-image: url(/assets/delete.png)
+}
+
+.small_delete_button {
+  @extend .any_small_button;
+  background-image: url(/assets/delete_small.png)
 }
 
 .reconcile_button {
