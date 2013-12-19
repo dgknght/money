@@ -1,3 +1,39 @@
+#entity_and_account
+  #entity_container
+    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
+  #account_container{ data: { bind: "with: selectedEntity()" }}
+    %table.list#accounts_table{ cellspacing: 0, cellpadding: 0}
+      %tr
+        %th Name
+        %th Balance
+      <!-- ko foreach: accounts -->
+      %tr{ data: { bind: "css: cssClass, click: display" }}
+        %td
+          %span{ data: { bind: "text: name, css: cssClass" }}
+        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
+      <!-- /ko -->
+#transactions
+  %ul{ data: { bind: "foreach: displayedAccounts" }}
+    %li
+      %a{ data: { bind: "text: name, attr: {href: '#account_' + id }" }}
+  <!-- ko foreach: displayedAccounts -->
+  %div{ data: { bind: "attr: {id: 'account_' + id }" }}
+    %table.register{ cellspacing: 0, cellpadding: 0}
+      %tr
+        %th.number_column Date
+        %th Description
+        %th.boolean_column Rec.
+        %th.number_column Amount
+        %th.number_column Balance
+      <!-- ko foreach: transaction_items -->
+      %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
+        %td.number_column{ data: { bind: "text: formattedTransactionDate" }}
+        %td{ data: { bind: "text: description" }}
+        %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
+        %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
+        %td.number_column{ data: { bind: "text: formattedBalance" }}
+      <!-- /ko -->
+  <!-- /ko -->
 :javascript  
   $(function() {
     // Initialize and bind the view model
@@ -5,41 +41,11 @@
     ko.applyBindings(app);
     
     // Initialize the tab panel and refresh when new tabs are added
-    var tabs = $('#tab_container').tabs();
-    app.selectedAccountIndex.subscribe(function(index) {
+    var tabs = $('#transactions').tabs();
+    app.displayedAccounts.subscribe(function(accounts) {
       tabs.tabs('refresh');
+    });
+    app.selectedAccountIndex.subscribe(function(index) {
       tabs.tabs('option', 'active', index);
     });
   })
-#entity_and_account
-  #entity_container
-    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
-  #account_container
-    %table#account_list.inner_list{ cellspacing: 0, cellpadding: 0 }
-      %tbody{ data: { bind: "foreach: accounts" } }
-        %tr{ data: { bind: "click: window.showTransactions" }}
-          %td{ data: { bind: "text: name, css: cssClass" }}
-          %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
-#tab_container
-  %ul{ data: { bind: "foreach:displayedAccounts"}}
-    %li
-      %a{ data: { bind: "text: name, attr: {'href': '#' + element_id}"}}
-  <!-- ko foreach: displayedAccounts -->
-  %div{ data: { bind: "attr: {'id': element_id}"}}
-    %table.transaction_item_table
-      %tr
-        -#%th Date
-        -#%th Description
-        -#%th Account
-        %th Rec.
-        %th.number_column Amount
-        %th.number_column Balance
-      %tbody{ data: { bind: "foreach: transaction_items" }}
-        %tr
-          -#%td{ data: { bind: "text: formattedTransactionDate" }}
-          -#%td{ data: { bind: "text: description" }}
-          -#%td{ data: { bind: "text: account" }}
-          %td{ data: { bind: "text: formattedReconciled" }}
-          %td.number_column{ data: { bind: "text: formattedAmount" }}
-          %td.number_column{ data: { bind: "text: formattedBalance" }}
-  <!-- /ko -->

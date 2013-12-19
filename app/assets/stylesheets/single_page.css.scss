@@ -1,4 +1,4 @@
-#entity_and_account, #tab_container {
+#entity_and_account, #transactions {
   display: inline-block;
 }
 
@@ -25,17 +25,69 @@
   }
   border: 1px solid black;
   border-radius: 1em;
-  min-width: 10em;  
+  min-width: 10em;
+  table.list {
+    border:none;
+  }
+  table.list th {
+    padding: {
+      left: .2em;
+      right: 1em;
+    }
+    &:first-of-type {
+      border-top-left-radius: .6em;
+      border-bottom-left-radius: .6em;
+    }
+    &:last-of-type {
+      border-top-right-radius: .6em;
+      border-bottom-right-radius: .6em;
+    }
+  }
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .account_list_item {
   cursor:pointer;
 }
 
-#tab_container {
+#transactions {
   margin: {
     left: 1em;
   }
   min-height: 20em;
   min-width: 60em;
+}
+
+tr.account_category td {
+  font-weight: bold;
+  font-size: 110%;
+}
+
+span.account_depth_0 {
+}
+span.account_depth_1 {
+  padding-left: 2em;
+}
+span.account_depth_2 {
+  padding-left: 4em;
+}
+
+.register td, .register th{
+  padding-right: .5em;
+}
+
+.register td {
+  border: 1px solid #999;
+  padding: .5em;
+}
+
+.register {
+  border-collapse: collapse;
+}
+
+.register td.boolean_column {
+  text-align: center;
 }
