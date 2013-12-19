@@ -24,6 +24,9 @@ Array.prototype.delimit = function(delimitor) {
 };
 
 Array.prototype.first = function(predicate) {
+  if (predicate == null)
+    predicate = function() { return true; };
+
   for (var i = 0; i < this.length; i++) {
     var item = this[i];
     if (predicate(item))

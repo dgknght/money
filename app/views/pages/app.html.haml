@@ -22,6 +22,7 @@
       %tr
         %th.number_column Date
         %th Description
+        %th Account
         %th.boolean_column Rec.
         %th.number_column Amount
         %th.number_column Balance
@@ -29,6 +30,7 @@
       %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
         %td.number_column{ data: { bind: "text: formattedTransactionDate" }}
         %td{ data: { bind: "text: description" }}
+        %td{ data: { bind: "text: otherAccountName" }}
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}

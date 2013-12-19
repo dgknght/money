@@ -39,4 +39,15 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.description = ko.computed(function() {
     return this.transaction.description();
   }, this);
+
+  this.otherAccountName = ko.computed(function() {
+    var self = this;
+    var otherItems = this.transaction.items().where(function(item) {
+      return item.id != self.id;
+    });
+
+    return otherItems.length == 1
+      ? otherItems.first().account().name()
+      : "[multiple]";
+  }, this);
 }
