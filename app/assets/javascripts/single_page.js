@@ -17,7 +17,6 @@ function MoneyApp() {
   this.name = function(){ return 'MoneyApp'; };
   
   this.selectedEntity = ko.observable();
-  this.displayedAccounts = ko.observableArray();
   this.selectedAccountIndex = ko.observable();
   this.entities = ko.lazyObservableArray(function() {
     $.getJSON("entities.json", function(entities) {
@@ -27,15 +26,26 @@ function MoneyApp() {
     });
   }, this);
   
+  // TODO Consider moving this into entity, but need to be able to handle event registration in app.html.haml
+  this.displayedAccounts = ko.observableArray();
   this.displayAccount = function(account) {
     var index = this.displayedAccounts().firstIndexOf(function(a) {
       return a.id == account.id;
     });
     if (index == -1) {
       this.displayedAccounts.push(account);
-      this.selectedAccountIndex(this.displayedAccounts().length - 1);
-    } else {
-      this.selectedAccountIndex(index);
+      index = this.displayedAccounts().length - 1;
+    }
+    this.selectedAccountIndex(index);
+  };
+
+  this.undisplayAccount = function(account) {
+    var index = this.displayedAccounts().firstIndexOf(function(a) {
+      return a.id == account.id;
+    });
+    if (index != -1) {
+      this.displayedAccounts.splice(index, 1);
     }
   };
+
 };

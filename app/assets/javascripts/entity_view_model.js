@@ -38,6 +38,10 @@
     this._app.displayAccount(account);
   };
 
+  this.undisplayAccount = function(account) {
+    this._app.undisplayAccount(account);
+  };
+
   this.getAccount = function(account_id) {
     return this.accounts().first(function(a) {
       return a.id == account_id;

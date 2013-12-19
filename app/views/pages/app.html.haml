@@ -16,6 +16,7 @@
   %ul{ data: { bind: "foreach: displayedAccounts" }}
     %li
       %a{ data: { bind: "text: name, attr: {href: '#account_' + id }" }}
+      %span.ui-icon.ui-icon-close{ role: 'presentation', data: { bind: "click: undisplay" }} Remove Tab
   <!-- ko foreach: displayedAccounts -->
   %div{ data: { bind: "attr: {id: 'account_' + id }" }}
     %table.register{ cellspacing: 0, cellpadding: 0}

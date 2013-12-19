@@ -53,6 +53,10 @@ function AccountViewModel(account, entity) {
     entity.displayAccount(_self);
   };
   
+  this.undisplay = function() {
+    entity.undisplayAccount(_self);
+  };
+
   this.transaction_items = ko.lazyObservableArray(function() {
     entity.getTransactionItems(this, function(transaction_items) {
       transaction_items.pushAllTo(_self.transaction_items);
