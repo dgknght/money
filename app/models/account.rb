@@ -113,6 +113,13 @@ class Account < ActiveRecord::Base
     return -1 if (action == TransactionItem.credit && left_side?) || (action == TransactionItem.debit && right_side?)
     1
   end
+
+  def recalculate_balance
+    debit_total = transaction_items.debits.sum(:amount);
+    credit_total = transaction_items.credits.sum(:amount);
+    self.balance = (debit_total * polarity(TransactionItem.debit)) + (credit_total * polarity(TransactionItem.credit))
+    save!
+  end
   
   private
     def credit_transaction_items(start_date, end_date)
