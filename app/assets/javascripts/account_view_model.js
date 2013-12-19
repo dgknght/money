@@ -44,10 +44,6 @@ function AccountViewModel(account, entity) {
   };
 
   this.polarity = function(action) {
-    console.log("polarity action=" + action);
-    console.log("polarity account_type=" + this.account_type());
-    console.log("isLeftSide()=" + this.isLeftSide());
-
     if ((action == CREDIT && this.isLeftSide()) || (action == DEBIT && this.isRightSide()))
       return -1;
     return 1;
