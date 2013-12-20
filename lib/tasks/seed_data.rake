@@ -127,11 +127,11 @@ namespace :seed_data do
     transaction_defs = [
     
       # Opening balances
-      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 2000}, {account: 'Checking', action: 'debit', amount: 2000}]),
-      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 200000}, {account: 'Home', action: 'debit', amount: 200000}]),
-      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 10000}, {account: 'Car', action: 'debit', amount: 10000}]),
-      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 30000}, {account: 'Reserve', action: 'debit', amount: 30000}]),
-      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Home Loan', action: 'credit', amount: 175000}, {account: 'Opening Balances', action: 'debit', amount: 175000}]),
+      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 2_000}, {account: 'Checking', action: 'debit', amount: 2_000}]),
+      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 200_000}, {account: 'Home', action: 'debit', amount: 200_000}]),
+      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 10_000}, {account: 'Car', action: 'debit', amount: 10_000}]),
+      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 30_000}, {account: 'Reserve', action: 'debit', amount: 30_000}]),
+      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Home Loan', action: 'credit', amount: 175_000}, {account: 'Opening Balances', action: 'debit', amount: 175_000}]),
       
       # Paycheck
       TransactionDef.new('2013-01-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
@@ -171,14 +171,14 @@ namespace :seed_data do
       TransactionDef.new('2013-03-25', 'Chevron', [{account: 'Credit Card', action: 'credit', amount: 40}, {account: 'Gasoline', action: 'debit', amount: 40}]),
       
       # Mortgate
-      TransactionDef.new('2013-01-01', 'Bank', [{account: 'Checking', action: 'credit', amount: 1000}, {account: 'Mortgage Interest', action: 'debit', amount: 900}, {account: 'Home Loan', action: 'debit', amount: 100}]),
-      TransactionDef.new('2013-02-01', 'Bank', [{account: 'Checking', action: 'credit', amount: 1000}, {account: 'Mortgage Interest', action: 'debit', amount: 899}, {account: 'Home Loan', action: 'debit', amount: 101}]),
-      TransactionDef.new('2013-03-01', 'Bank', [{account: 'Checking', action: 'credit', amount: 1000}, {account: 'Mortgage Interest', action: 'debit', amount: 898}, {account: 'Home Loan', action: 'debit', amount: 102}]),
+      TransactionDef.new('2013-01-01', 'Mortgage Co.', [{account: 'Checking', action: 'credit', amount: 1000}, {account: 'Mortgage Interest', action: 'debit', amount: 900}, {account: 'Home Loan', action: 'debit', amount: 100}]),
+      TransactionDef.new('2013-02-01', 'Mortgage Co.', [{account: 'Checking', action: 'credit', amount: 1000}, {account: 'Mortgage Interest', action: 'debit', amount: 899}, {account: 'Home Loan', action: 'debit', amount: 101}]),
+      TransactionDef.new('2013-03-01', 'Mortgage Co.', [{account: 'Checking', action: 'credit', amount: 1000}, {account: 'Mortgage Interest', action: 'debit', amount: 898}, {account: 'Home Loan', action: 'debit', amount: 102}]),
       
       # Credit Card
-      TransactionDef.new('2013-01-08', 'Bank', [{account: 'Checking', action: 'credit', amount: 150}, {account: 'Credit Card', action: 'debit', amount: 150}]),
-      TransactionDef.new('2013-02-08', 'Bank', [{account: 'Checking', action: 'credit', amount: 150}, {account: 'Credit Card', action: 'debit', amount: 150}]),
-      TransactionDef.new('2013-03-08', 'Bank', [{account: 'Checking', action: 'credit', amount: 150}, {account: 'Credit Card', action: 'debit', amount: 150}])
+      TransactionDef.new('2013-01-08', 'Master Charge', [{account: 'Checking', action: 'credit', amount: 500}, {account: 'Credit Card', action: 'debit', amount: 500}]),
+      TransactionDef.new('2013-02-08', 'Master Charge', [{account: 'Checking', action: 'credit', amount: 500}, {account: 'Credit Card', action: 'debit', amount: 500}]),
+      TransactionDef.new('2013-03-08', 'Master Charge', [{account: 'Checking', action: 'credit', amount: 500}, {account: 'Credit Card', action: 'debit', amount: 500}])
     ]
     transaction_defs.each { |t| create_transaction(entity, t) }
   end
