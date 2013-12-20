@@ -80,9 +80,27 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.canEdit = function() { return true; };
+
   this.edit = function() {
     _self.entity.editAccount(_self);
   };
+
+  this.canDestroy = function() { return _self.children().length == 0; };
+
+  this.destroy = function() {
+    if (!confirm("Are you sure you want to delete the acount \"" + this.name() + "\"?")) return;
+
+    $.ajax({
+      url: this._serverPath(),
+      type: 'DELETE',
+      success: function(data, textStatus, jqXHR) {
+        _self.entity.accounts.remove(_self);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+      }
+    });
+  };
+
   this.canBeParent = function() { return true; }
 
   this.availableParents = ko.computed(function() {
@@ -213,6 +231,8 @@ function AccountGroupViewModel(name, accounts) {
 
   this.canEdit = function() { return false; };
   this.edit = function() {};
+  this.canDestroy = function() { return false; };
+  this.destroy = function() {};
   this.canBeParent = function() { return false; }
   this.availableParents = function() { return []; }
 }
