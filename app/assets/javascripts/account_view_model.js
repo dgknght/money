@@ -74,6 +74,23 @@ function AccountViewModel(account, entity) {
       return account.canBeParent() && account.id != _self.id;
     });
   }, this);
+
+  this.reload = function(callback) {
+    var path = "accounts/{id}.json".format({ id: _self.id });
+    $.getJSON(path, function(data) {
+      _self.name(data.name);
+      _self.parent_id(data.parent_id);
+      _self.account_type(data.account_type);
+      if (callback != null)
+        callback();
+    });
+  };
+
+  this.save = function(callback) {
+    console.log("save " + _self.name());
+    if (callback != null)
+      callback();
+  };
 }
 
 /*

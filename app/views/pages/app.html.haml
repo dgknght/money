@@ -59,9 +59,6 @@
 
 :javascript  
   $(function() {
-    // Initialize JQuery elements
-    $('.dialog').dialog({ autoOpen: false, modal: true});
-
     // Initialize and bind the view model
     app = new MoneyApp();
     ko.applyBindings(app);
@@ -83,4 +80,19 @@
         $('#account_form').dialog('open');
       }
     });
+
+    // Initialize JQuery elements
+    $('.dialog').dialog({ 
+      autoOpen: false, 
+      modal: true,
+      buttons: {
+        Save: function() {
+          app.editAccount().save(function() { app.editAccount(null); });
+        },
+        Cancel: function() {
+          app.editAccount().reload(function() { app.editAccount(null); });
+        }
+      }
+    });
+
   });
