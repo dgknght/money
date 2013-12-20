@@ -75,21 +75,49 @@ function AccountViewModel(account, entity) {
     });
   }, this);
 
+  this._serverPath = function() {
+    return "accounts/{id}.json".format({ id: _self.id });
+  };
+
   this.reload = function(callback) {
-    var path = "accounts/{id}.json".format({ id: _self.id });
-    $.getJSON(path, function(data) {
+    $.getJSON(this._serverPath(), function(data) {
       _self.name(data.name);
       _self.parent_id(data.parent_id);
       _self.account_type(data.account_type);
+
       if (callback != null)
         callback();
     });
   };
 
   this.save = function(callback) {
-    console.log("save " + _self.name());
-    if (callback != null)
-      callback();
+    callback = callback == null ? function(){} : callback;
+    $.ajax({
+      url: this._serverPath(),
+      type: 'PUT',
+      dataType: 'json',
+      data: { account: this._toJson() },
+      complete: function(jqXHR, textStatus) {
+        callback();
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log("*** ERROR ***");
+        console.log("textStatus=" + textStatus);
+        console.log("errorThrown=" + errorThrown);
+        console.log("jqXHR.responseText=" + jqXHR.responseText);
+        callback();
+      }
+    });
+
+  };
+
+  this._toJson = function() {
+    return {
+        id: this.id,
+        account_type: this.account_type(),
+        parent_id: this.parent_id(),
+        name: this.name()
+      };
   };
 }
 
