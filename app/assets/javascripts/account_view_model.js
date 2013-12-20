@@ -13,6 +13,17 @@ function AccountViewModel(account, entity) {
   this.balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
+
+  this.entityDescription = function() {
+    return this.name();
+  };
+  this.entityPath = function() {
+    return "accounts/{id}.json".format({ id: _self.id });
+  };
+  this.onDestroyed = function() {
+    _self.entity.accounts.remove(_self);
+  };
+
   this.parent = ko.computed(function() {
     if (this.parent_id() == null) return null;
     return this.entity.getAccount(this.parent_id());
@@ -86,20 +97,6 @@ function AccountViewModel(account, entity) {
   };
 
   this.canDestroy = function() { return _self.children().length == 0; };
-
-  this.destroy = function() {
-    if (!confirm("Are you sure you want to delete the acount \"" + this.name() + "\"?")) return;
-
-    $.ajax({
-      url: this._serverPath(),
-      type: 'DELETE',
-      success: function(data, textStatus, jqXHR) {
-        _self.entity.accounts.remove(_self);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-      }
-    });
-  };
 
   this.canBeParent = function() { return true; }
 
@@ -206,6 +203,8 @@ function AccountViewModel(account, entity) {
       };
   };
 }
+
+AccountViewModel.prototype = new ServiceEntity();
 
 /*
  * View model that wraps a group of accounts of the same type
