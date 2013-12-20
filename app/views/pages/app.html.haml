@@ -6,14 +6,15 @@
       %tr
         %th Name
         %th Balance
-        %th &nbsp;
-      <!-- ko foreach: accounts -->
+        %th
+          %a.small_header_add_button{ href: '#', title: 'Click here to add a new account.', data: { bind: "click: newAccount" } }Add
+      <!-- ko foreach: groupedAccounts -->
       %tr{ data: { bind: "css: cssClass" }}
         %td{ data: { bind: "click: display" }}
           %span{ data: { bind: "text: name, css: cssClass" }}
         %td.number_column{ data: { bind: "text: formattedBalanceWithChildren,click: display" }}
         %td.action_cell
-          %a.small_edit_button{ data: { bind: "visible: canEdit(), click: edit"}, href: '#' } Edit
+          %a.small_edit_button{ data: { bind: "visible: canEdit(), click: edit"}, href: '#', title: 'Click here to edit this account.' } Edit
       <!-- /ko -->
 #transactions
   %ul{ data: { bind: "foreach: displayedAccounts" }}

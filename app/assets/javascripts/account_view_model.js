@@ -12,9 +12,25 @@ function AccountViewModel(account, entity) {
   this.account_type = ko.observable(account.account_type);
   this.balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
-  this.depth = ko.observable(account.depth);
   this.parent_id = ko.observable(account.parent_id);
+  this.parent = ko.computed(function() {
+    if (this.parent_id() == null) return null;
+    return this.entity.getAccount(this.parent_id());
+  }, this);
+
+  this.path = ko.computed(function() {
+    var parent = this.parent();
+    var prefix = parent == null ? "" : parent.path() + "/";
+    var result = prefix + this.name();
+    return result;
+  }, this);
   
+  this.depth = ko.computed(function() {
+    var parent = this.parent();
+    if (parent == null) return 0;
+    return parent.depth() + 1;
+  }, this);
+
   this.balanceWithChildren = ko.computed(function() {
     var result = this.balance();
     $.each(this.children(), function(index, child) {
@@ -80,6 +96,13 @@ function AccountViewModel(account, entity) {
   };
 
   this.reload = function(callback) {
+    callback = callback == null ? function(){} : callback;
+
+    if (this.id == null) {
+      callback();
+      return;
+    }
+
     $.getJSON(this._serverPath(), function(data) {
       _self.name(data.name);
       _self.parent_id(data.parent_id);
@@ -92,11 +115,58 @@ function AccountViewModel(account, entity) {
 
   this.save = function(callback) {
     callback = callback == null ? function(){} : callback;
+    if (this.id == null) {
+      this._insert(callback);
+    } else {
+      this._update(callback);
+    }
+  };
+
+  this._insert = function(callback) {
+    var path = "entities/{id}/accounts.json".format({ id: _self.entity.id });
+    $.ajax({
+      url: path,
+      accepts: 'json',
+      type: 'POST',
+      dataType: 'json',
+      data: { account: this._toJson() },
+      success: function(data) {
+        _self.id = data.id;
+
+        // Add the new account to it's parent, if a parent was specified
+        if (_self.parent_id() != null) {
+          var parent = _self.entity.getAccount(_self.parent_id());
+          if (parent == null) {
+            console.log("Unable to find parent account with id=" + _self.parent_id);
+          } else {
+            parent.children.push(_self);
+          }
+        }
+
+        // Add the new account to the entity
+        _self.entity.accounts.push(_self);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log("*** ERROR ***");
+        console.log("textStatus=" + textStatus);
+        console.log("errorThrown=" + errorThrown);
+        console.log("jqXHR.responseText=" + jqXHR.responseText);
+      },
+      complete: function(jqXHR, textStatus) {
+        callback();
+      }
+    });
+  };
+
+  this._update= function(callback) {
     $.ajax({
       url: this._serverPath(),
       type: 'PUT',
       dataType: 'json',
       data: { account: this._toJson() },
+      success: function() {
+        // TODO if the parent change, we'll need to move the account to the new parent
+      },
       complete: function(jqXHR, textStatus) {
         callback();
       },
@@ -105,10 +175,8 @@ function AccountViewModel(account, entity) {
         console.log("textStatus=" + textStatus);
         console.log("errorThrown=" + errorThrown);
         console.log("jqXHR.responseText=" + jqXHR.responseText);
-        callback();
       }
     });
-
   };
 
   this._toJson = function() {

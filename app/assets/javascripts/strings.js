@@ -7,3 +7,9 @@ String.prototype.format = function(args) {
     return (typeof value === 'string' || typeof value === 'number') ? value : fullMatch;
   });
 };
+
+String.prototype.compareTo = function(otherString) {
+  if (this < otherString) return -1;
+  if (this > otherString) return 1;
+  return 0;
+};

@@ -222,6 +222,11 @@ table.attributes {
   background-image: url(/assets/add_small.png)
 }
 
+.small_header_add_button {
+  @extend .any_small_button;
+  background-image: url(/assets/add_small_inverted.png)
+}
+
 .save_button {
   @extend .any_form_button;
   background-image: url(/assets/save.png)

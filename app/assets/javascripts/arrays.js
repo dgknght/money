@@ -78,6 +78,7 @@ Array.prototype.map = function(transform) {
 }
 
 Array.prototype.pushAll = function(values) {
+  if (values == null) return;
   $.each(values, function(index, value) { this.push(value); });
 };
 

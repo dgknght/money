@@ -17,23 +17,35 @@
           .where(function(m) { return m.parent_id() == viewModel.id })
           .pushAllTo(viewModel.children);
       });
-      var grouped = viewModels.groupBy(function(account) {
-        return account.account_type();
-      });
-      
-      var types = ["Asset", "Liability", "Equity", "Income", "Expense"];
-      for (var i = 0; i < types.length; i++) {
-        var type = types[i];
-        var key = type.toLowerCase();
-        var groupViewModel = new AccountGroupViewModel(type, grouped[key]);
-        _self.accounts.push(groupViewModel);
-        $.each(grouped[key], function(index, entity) {
-          _self.accounts.push(entity);
-        });
-      }
+      viewModels.pushAllTo(_self.accounts);
     });
   }, this);
+
+  this.groupedAccounts = ko.computed(function() {
+    var accounts = this.accounts()
+    accounts.sort(function(a, b) { return a.path().compareTo(b.path()); });
+    var grouped = accounts.groupBy(function(account) {
+      return account.account_type();
+    });
+    
+    var types = ["Asset", "Liability", "Equity", "Income", "Expense"];
+    var result = new Array();
+    for (var i = 0; i < types.length; i++) {
+      var type = types[i];
+      var key = type.toLowerCase();
+      var groupViewModel = new AccountGroupViewModel(type, grouped[key]);
+      result.push(groupViewModel);
+      if (grouped[key] != null)
+        grouped[key].pushAllTo(result);
+    }
+    return result;
+  }, this);
   
+  this.newAccount = function() {
+    var viewModel = new AccountViewModel({ name: 'New account'}, _self);
+    _self._app.editAccount(viewModel);
+  };
+
   this.displayAccount = function(account) {
     this._app.displayAccount(account);
   };
