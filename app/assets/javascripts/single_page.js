@@ -1,6 +1,7 @@
 //= require strings
 //= require arrays
 //= require knockout_extensions.js
+//= require service_entity
 //= require entity_view_model
 //= require account_view_model
 //= require transaction_view_model
