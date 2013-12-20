@@ -32,6 +32,7 @@
         %th.boolean_column Rec.
         %th.number_column Amount
         %th.number_column Balance
+        %th &nbsp;
       <!-- ko foreach: transaction_items -->
       %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
         %td.number_column{ data: { bind: "text: formattedTransactionDate" }}
@@ -40,6 +41,8 @@
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}
+        %td.action_cell
+          %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
       <!-- /ko -->
   <!-- /ko -->
 

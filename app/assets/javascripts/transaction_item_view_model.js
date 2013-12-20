@@ -50,4 +50,8 @@ function TransactionItemViewModel(transaction_item, transaction) {
       ? otherItems.first().account().name()
       : "[multiple]";
   }, this);
+
+  this.destroy = function() {
+    this.transaction.destroy();
+  };
 }
