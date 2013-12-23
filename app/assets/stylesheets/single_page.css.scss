@@ -59,6 +59,19 @@
   }
   min-height: 20em;
   min-width: 20em;
+
+  table.detail {
+    border-collapse: collapse;
+
+    td {
+      padding: .2em;
+    }
+  }
+  
+  td.detail_cell {
+    margin-right: 5em;
+    
+  }
 }
 
 tr.account_category td {
@@ -90,4 +103,9 @@ span.account_depth_2 {
 
 .register td.boolean_column {
   text-align: center;
+}
+
+.account-toggle {
+  float: right;
+  cursor: pointer;
 }

@@ -37,12 +37,27 @@
       %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
         %td.number_column{ data: { bind: "text: formattedTransactionDate" }}
         %td{ data: { bind: "text: description" }}
-        %td{ data: { bind: "text: otherAccountName" }}
+        %td
+          %span.ui-icon.account-toggle{ data: { bind: "click: toggleDetails, css: toggleCss" }} &nbsp;
+          %span{ data: { bind: "text: otherAccountName" }}
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}
         %td.action_cell
           %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
+      %tr{ data: { bind: "if: showDetails" }}
+        %td.detail_cell{ colspan: 7} 
+          %table.detail{cellpadding: 0, cellspacing: 0}
+            %tr
+              %th Account
+              %th.number_column Debit
+              %th.number_column Credit
+            <!-- ko foreach: details -->
+            %tr
+              %td{ data: { bind: "text: accountName" }}
+              %td.number_column{ data: { bind: "text: formattedDebitAmount" }}
+              %td.number_column{ data: { bind: "text: formattedCreditAmount" }}
+            <!-- /ko -->
       <!-- /ko -->
   <!-- /ko -->
 
