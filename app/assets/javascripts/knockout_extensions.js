@@ -35,3 +35,34 @@ function lazyComputed(callback, value, context) {
   result.refresh = function() { result.state('new'); };
   return result;
 }
+
+/*
+ * Inline Editor
+ */
+ko.extenders.inlineEditor = function(target) {
+  target.isEditing = ko.observable(false);
+
+  target.edit = function() {
+    target.isEditing(true);
+  };
+
+  target.stopEditing = function() {
+    target.isEditing(false);
+  };
+
+  return target;
+};
+
+ko.bindingHandlers.inlineEditor = {
+  init: function(element, valueAccessor) {
+    var observable = valueAccessor(); // This assumes we've been bound to an observable property
+    observable.extend({ inlineEditor: this });
+  },
+  update: function(element, valueAccessor) {
+    var observable = valueAccessor();
+    ko.bindingHandlers.css.update(element, function() {
+      return { editing: observable.isEditing };
+    });
+    element.focus();
+  }
+};

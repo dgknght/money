@@ -109,3 +109,20 @@ span.account_depth_2 {
   float: right;
   cursor: pointer;
 }
+
+.edit {
+  display: none;
+}
+
+.editing .edit {
+  display: block;
+}
+
+.editing .view {
+  display: none;
+}
+
+input.number_field {
+  text-align: right;
+  width: 6em;
+}

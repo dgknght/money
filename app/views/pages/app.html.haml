@@ -41,7 +41,9 @@
           %span.ui-icon.account-toggle{ data: { bind: "click: toggleDetails, css: toggleCss" }} &nbsp;
           %span{ data: { bind: "text: otherAccountName" }}
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
-        %td.number_column{ data: { bind: "text: formattedPolarizedAmount" }}
+          %td.number_column{ data: { bind: "inlineEditor: formattedPolarizedAmount" }}
+            %span.view{ data: { bind: "text: formattedPolarizedAmount, click: formattedPolarizedAmount.edit" }}
+            %input.edit.number_field{ data: { bind: "value: formattedPolarizedAmount, enterKey: formattedPolarizedAmount.stopEditing, selectAndFocus: formattedPolarizedAmount.isEditing, event: { blur: formattedPolarizedAmount.stopEditing }"}}
         %td.number_column{ data: { bind: "text: formattedBalance" }}
         %td.action_cell
           %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
