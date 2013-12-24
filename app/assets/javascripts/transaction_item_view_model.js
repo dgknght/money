@@ -8,6 +8,11 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.previousItem = ko.observable();
   this.showDetails = ko.observable(false);
 
+
+  this.amount.subscribe(function(a) {
+    this.transaction.save();
+  }, this);
+
   this.toggleDetails = function() {
     if (this.showDetails()) {
       this.details.removeAll();
@@ -36,13 +41,30 @@ function TransactionItemViewModel(transaction_item, transaction) {
     return accounting.formatNumber(this.amount(), 2);
   }, this);
 
-  this.polarizedAmount = ko.computed(function() {
-    return this.account().polarity(this.action()) * this.amount();
-  }, this);
+  this.polarizedAmount = ko.computed({
+    read: function() {
+      return this.account().polarity(this.action()) * this.amount();
+    },
+    write: function(value) {
+      if (value == this.polarizedAmount()) return;
 
-  this.formattedPolarizedAmount = ko.computed(function() {
-    return accounting.formatNumber(this.polarizedAmount(), 2);
-  }, this);
+      this.action(this.account().inferAction(value));
+      this.amount(Math.abs(value));
+      this.otherItem().polarizedAmount(-value);
+    },
+    owner: this
+  });
+
+  this.formattedPolarizedAmount = ko.computed({
+    read: function() {
+      return accounting.formatNumber(this.polarizedAmount(), 2);
+    },
+    write: function(value) {
+      var number = accounting.unformat(value);
+      this.polarizedAmount(isNaN(number) ? 0 : number);
+    },
+    owner: this
+  });
 
   this.creditAmount = ko.computed({
     read: function() {
@@ -117,18 +139,32 @@ function TransactionItemViewModel(transaction_item, transaction) {
     return this.transaction.description();
   }, this);
 
-  this.otherAccountName = ko.computed(function() {
+  this.otherItem = ko.computed(function() {
     var self = this;
     var otherItems = this.transaction.items().where(function(item) {
       return item.id != self.id;
     });
 
     return otherItems.length == 1
-      ? otherItems.first().account().name()
-      : "[multiple]";
+      ? otherItems.first()
+      : null;
+  }, this);
+
+  this.otherAccountName = ko.computed(function() {
+    var otherItem = this.otherItem();
+    return otherItem == null ? "[multiple]" : otherItem.account().name();
   }, this);
 
   this.destroy = function() {
     this.transaction.destroy();
   };
+
+  this.toJson = function() {
+    return {
+      id: this.id,
+      action: this.action(),
+      amount: this.amount(),
+      account_id: this.account_id()
+    };
+  }
 }

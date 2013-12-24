@@ -43,26 +43,65 @@ ko.extenders.inlineEditor = function(target) {
   target.isEditing = ko.observable(false);
 
   target.edit = function() {
+    target.previousValue = target();
     target.isEditing(true);
   };
 
-  target.stopEditing = function() {
+  target.finishEditing = function() {
+    target.previousValue = null;
     target.isEditing(false);
+  };
+
+  target.abortEditing = function() {
+
+    console.log("abortEditing");
+
+    console.log("setting value to previousValue " + target.previousValue);
+
+    target.previousValue = null;
+    target.isEditing(false);
+    target(target.previousValue);
   };
 
   return target;
 };
 
+ko.bindingHandlers.hidden = {
+  update: function(element, valueAccessor) {
+    ko.bindingHandlers.visible.update(element, function() {
+      return !ko.utils.unwrapObservable(valueAccessor());
+    });
+  }
+};
+
 ko.bindingHandlers.inlineEditor = {
-  init: function(element, valueAccessor) {
+  init: function(element, valueAccessor, allBindings) {
     var observable = valueAccessor(); // This assumes we've been bound to an observable property
     observable.extend({ inlineEditor: this });
-  },
-  update: function(element, valueAccessor) {
-    var observable = valueAccessor();
-    ko.bindingHandlers.css.update(element, function() {
-      return { editing: observable.isEditing };
+
+    var link = $("<a></a>").appendTo(element);
+    link.click(function(){ observable.edit(); });
+    ko.applyBindingsToNode(link[0], {
+        text: observable,
+        hidden: observable.isEditing
     });
-    element.focus();
+
+    var input = $('<input type="text" />').appendTo(element);
+    ko.applyBindingsToNode(input[0], {
+      value: observable,
+      visible: observable.isEditing,
+      hasFocus: observable.isEditing
+    });
+    if (allBindings.has('editorClass')) {
+      input.addClass(allBindings.get('editorClass'));
+    }
+    input.keyup(function(e) {
+      var code = e.keyCode || e.which;
+      if (code == 13) { // Enter
+        observable.finishEditing();
+      } else if (code == 27) { // Escape
+        observable.abortEditing();
+      }
+    });
   }
 };

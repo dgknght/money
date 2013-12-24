@@ -24,6 +24,10 @@ function TransactionViewModel(transaction, entity) {
     });
   };
 
+  this.entityIdentifier = function() {
+    return "transaction";
+  };
+
   this.onDestroyed = function() {
     $.each(this.items(), function(index, item) {
       item.account().transaction_items.remove(item);
@@ -32,6 +36,15 @@ function TransactionViewModel(transaction, entity) {
 
   this.entityPath = function() {
     return "transactions/{id}.json".format({id: this.id});
+  };
+
+  this.toJson = function() {
+    return {
+      id: this.id,
+      transaction_date: this.transaction_date(),
+      description: this.description(),
+      items: this.items().map(function(item) { return item.toJson(); })
+    };
   };
 
   var itemViewModels = $.map(transaction.items, function(item, index) {

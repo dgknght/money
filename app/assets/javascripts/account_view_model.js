@@ -17,6 +17,10 @@ function AccountViewModel(account, entity) {
   this.entityDescription = function() {
     return this.name();
   };
+  this.entityIdentifier = function() { return 'account'; };
+  this.entityListPath = function() {
+    return "entities/{id}/accounts.json".format({ id: _self.entity.id });
+  };
   this.entityPath = function() {
     return "accounts/{id}.json".format({ id: _self.id });
   };
@@ -76,12 +80,32 @@ function AccountViewModel(account, entity) {
     return 1;
   };
 
+  this.inferAction = function(value) {
+    if (value < 0) {
+      return this.isLeftSide() ? CREDIT : DEBIT;
+    } else {
+      return this.isLeftSide() ? DEBIT : CREDIT;
+    }
+  };
+
   this.display = function() {
     entity.displayAccount(_self);
   };
 
   this.undisplay = function() {
     entity.undisplayAccount(_self);
+  };
+
+  this.insertSucceeded = function() {
+    if (this.parent_id() != null) {
+      var parent = this.entity.getAccount(this.parent_id());
+      if (parent == null) {
+        console.log("Unable to find parent account with id=" + this.parent_id());
+      } else {
+        parent.children.push(this);
+      }
+    }
+    this.entity.accounts.push(this);
   };
 
   this.transaction_items = ko.lazyObservableArray(function() {
@@ -128,73 +152,7 @@ function AccountViewModel(account, entity) {
     });
   };
 
-  this.save = function(callback) {
-    callback = callback == null ? function(){} : callback;
-    if (this.id == null) {
-      this._insert(callback);
-    } else {
-      this._update(callback);
-    }
-  };
-
-  this._insert = function(callback) {
-    var path = "entities/{id}/accounts.json".format({ id: _self.entity.id });
-    $.ajax({
-      url: path,
-      accepts: 'json',
-      type: 'POST',
-      dataType: 'json',
-      data: { account: this._toJson() },
-      success: function(data) {
-        _self.id = data.id;
-
-        // Add the new account to it's parent, if a parent was specified
-        if (_self.parent_id() != null) {
-          var parent = _self.entity.getAccount(_self.parent_id());
-          if (parent == null) {
-            console.log("Unable to find parent account with id=" + _self.parent_id);
-          } else {
-            parent.children.push(_self);
-          }
-        }
-
-        // Add the new account to the entity
-        _self.entity.accounts.push(_self);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        console.log("*** ERROR ***");
-        console.log("textStatus=" + textStatus);
-        console.log("errorThrown=" + errorThrown);
-        console.log("jqXHR.responseText=" + jqXHR.responseText);
-      },
-      complete: function(jqXHR, textStatus) {
-        callback();
-      }
-    });
-  };
-
-  this._update= function(callback) {
-    $.ajax({
-      url: this._serverPath(),
-      type: 'PUT',
-      dataType: 'json',
-      data: { account: this._toJson() },
-      success: function() {
-        // TODO if the parent change, we'll need to move the account to the new parent
-      },
-      complete: function(jqXHR, textStatus) {
-        callback();
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        console.log("*** ERROR ***");
-        console.log("textStatus=" + textStatus);
-        console.log("errorThrown=" + errorThrown);
-        console.log("jqXHR.responseText=" + jqXHR.responseText);
-      }
-    });
-  };
-
-  this._toJson = function() {
+  this.toJson = function() {
     return {
         id: this.id,
         account_type: this.account_type(),
