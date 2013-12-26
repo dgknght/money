@@ -36,7 +36,9 @@ class Transaction < ActiveRecord::Base
   private
   
     def credits_and_debits_are_in_balance
-      errors.add(:total_credits, 'must equal total_debits') unless total_credits == total_debits
+      c = total_credits
+      d = total_debits
+      errors.add(:total_credits, "must equal total_debits (#{c} != #{d})") unless c == d 
     end
 
     def items_are_present

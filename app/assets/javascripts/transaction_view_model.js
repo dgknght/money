@@ -15,8 +15,6 @@ function TransactionViewModel(transaction, entity) {
   }, this);
 
   this.entityDescription = function() {
-    console.log("creditAmount=" + this.creditAmount());
-
     return "'{description}' on {date} for {amount}".format({
       date: this.transaction_date().toLocaleDateString(),
       description: this.description(),
@@ -38,13 +36,38 @@ function TransactionViewModel(transaction, entity) {
     return "transactions/{id}.json".format({id: this.id});
   };
 
+  this._saveToken = null;
+  this.requestSave = function() {
+    if (this._saveToken != null) {
+      clearTimeout(this._saveToken);
+      this._saveToken = null;
+    }
+
+    this._saveToken = setTimeout(function() { _self.save(); }, 1000);
+  }
+
   this.toJson = function() {
     return {
       id: this.id,
       transaction_date: this.transaction_date(),
       description: this.description(),
-      items: this.items().map(function(item) { return item.toJson(); })
+      items_attributes: this.items().map(function(item) { return item.toJson(); })
     };
+  };
+
+  this.updateSucceeded = function() {
+    this.entity._app.notify("The transaction was updated successfully.", "notice");
+  };
+
+  this.updateFailed = function(error) {
+    var message = "";
+    for (var key in error.errors) {
+      message += "<dt>" + key + "</dt>";
+      message += "<dd>" + error.errors[key].delimit() + "</dd>";
+    }
+
+    message = "<dl>" + message + "</dl>";
+    this.entity._app.notify(message, "error");
   };
 
   var itemViewModels = $.map(transaction.items, function(item, index) {

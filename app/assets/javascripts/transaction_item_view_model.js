@@ -8,9 +8,10 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.previousItem = ko.observable();
   this.showDetails = ko.observable(false);
 
+  this._saveId = null;
 
   this.amount.subscribe(function(a) {
-    this.transaction.save();
+    this.transaction.requestSave();
   }, this);
 
   this.toggleDetails = function() {
@@ -50,7 +51,11 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
       this.action(this.account().inferAction(value));
       this.amount(Math.abs(value));
-      this.otherItem().polarizedAmount(-value);
+
+      var otherItem = this.otherItem();
+      if (this.account().sameSideAs(otherItem.account()))
+        value = 0 - value;
+      this.otherItem().polarizedAmount(value);
     },
     owner: this
   });

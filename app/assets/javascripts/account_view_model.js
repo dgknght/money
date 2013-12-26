@@ -80,12 +80,18 @@ function AccountViewModel(account, entity) {
     return 1;
   };
 
-  this.inferAction = function(value) {
-    if (value < 0) {
-      return this.isLeftSide() ? CREDIT : DEBIT;
+  this.sameSideAs = function(account) {
+    if (this.isLeftSide()) {
+      return account.isLeftSide();
     } else {
-      return this.isLeftSide() ? DEBIT : CREDIT;
+      return !account.isLeftSide();
     }
+  };
+
+  this.inferAction = function(value) {
+    if (value < 0)
+      return this.isLeftSide() ? CREDIT : DEBIT;
+    return this.isLeftSide() ? DEBIT : CREDIT;
   };
 
   this.display = function() {

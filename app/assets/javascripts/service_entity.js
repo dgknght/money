@@ -54,7 +54,10 @@ ServiceEntity.prototype = {
         console.log("textStatus=" + textStatus);
         console.log("errorThrown=" + errorThrown);
         console.log("jqXHR.responseText=" + jqXHR.responseText);
-        error();
+
+        errorObj = $.parseJSON(jqXHR.responseText);
+        self.insertFailed(errorObj);
+        error(errorObj);
       },
       complete: function(jqXHR, textStatus) {
         self.insertCompleted();
@@ -63,6 +66,7 @@ ServiceEntity.prototype = {
     });
   },
   insertCompleted: function() {},
+  insertFailed: function() {},
   insertSucceeded: function() {},
   onDestroyed: function() {
     console.log("The onDestroyed method was not overridden. This may have been a mistake.");
@@ -103,10 +107,14 @@ ServiceEntity.prototype = {
         console.log("textStatus=" + textStatus);
         console.log("errorThrown=" + errorThrown);
         console.log("jqXHR.responseText=" + jqXHR.responseText);
-        error();
+
+        errorObj = $.parseJSON(jqXHR.responseText);
+        self.updateFailed(errorObj);
+        error(errorObj);
       }
     });
   },
   updateCompleted: function() {},
+  updateFailed: function() {},
   updateSucceeded: function() {}
 };
