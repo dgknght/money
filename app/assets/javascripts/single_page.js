@@ -6,6 +6,7 @@
 //= require account_view_model
 //= require transaction_view_model
 //= require transaction_item_view_model
+//= require notification_view_model.js
 //= require accounting.min
 //= require jquery-ui-1.10.3.custom.min
 
@@ -28,6 +29,14 @@ function MoneyApp() {
   }, this);
   this.accountTypes = ko.observableArray(['asset', 'liability', 'equity', 'income', 'expense']);
   this.editAccount = ko.observable();
+  this.notifications = ko.observableArray();
+
+  this.notify = function(message, type) {
+    type = type == null ? 'notice' : type;
+    var notification = new NotificationViewModel(type, message);
+    this.notifications.push(notification);
+    setTimeout(function() { _self.notifications.remove(notification); }, 10000);
+  };
   
   // TODO Consider moving this into entity, but need to be able to handle event registration in app.html.haml
   this.displayedAccounts = ko.observableArray();
