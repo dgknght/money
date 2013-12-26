@@ -1,4 +1,8 @@
 #entity_and_account
+  #notifications
+    <!-- ko foreach: notifications -->
+    %div{ data: { bind: "css: type, html: message" }}
+    <!-- /ko -->
   #entity_container
     %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
   #account_container{ data: { bind: "with: selectedEntity()" }}
