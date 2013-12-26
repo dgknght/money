@@ -136,12 +136,25 @@ function TransactionItemViewModel(transaction_item, transaction) {
     return accounting.formatNumber(this.balance(), 2);
   }, this);
 
-  this.formattedTransactionDate = ko.computed(function() {
-    return this.transaction.transaction_date().toLocaleDateString();
+  this.formattedTransactionDate = ko.computed({
+    read: function() {
+      return this.transaction.transaction_date().toLocaleDateString();
+    },
+    write: function(value) {
+      var dateValue = new Date(value);
+      this.transaction.transaction_date(dateValue);
+    },
+    owner: this
   }, this);
 
-  this.description = ko.computed(function() {
-    return this.transaction.description();
+  this.description = ko.computed({
+    read: function() {
+      return this.transaction.description();
+    }, 
+    write: function(value) {
+      this.transaction.description(value);
+    },
+    owner: this
   }, this);
 
   this.otherItem = ko.computed(function() {

@@ -66,9 +66,16 @@ function TransactionViewModel(transaction, entity) {
       message += "<dd>" + error.errors[key].delimit() + "</dd>";
     }
 
-    message = "<dl>" + message + "</dl>";
+    message = "Unable to update the transaction. <dl>" + message + "</dl>";
     this.entity._app.notify(message, "error");
   };
+
+  this.transaction_date.subscribe(function(value) {
+    this.requestSave();
+  }, this);
+  this.description.subscribe(function(value) {
+    this.requestSave();
+  }, this);
 
   var itemViewModels = $.map(transaction.items, function(item, index) {
       return new TransactionItemViewModel(item, _self);
