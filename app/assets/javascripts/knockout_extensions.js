@@ -37,6 +37,17 @@ function lazyComputed(callback, value, context) {
 }
 
 /*
+ * hidden binding handler
+ */
+ko.bindingHandlers.hidden = {
+  update: function(element, valueAccessor) {
+    ko.bindingHandlers.visible.update(element, function() {
+      return !ko.utils.unwrapObservable(valueAccessor());
+    });
+  }
+};
+
+/*
  * Inline Editor
  */
 ko.extenders.inlineEditor = function(target) {
@@ -53,25 +64,12 @@ ko.extenders.inlineEditor = function(target) {
   };
 
   target.abortEditing = function() {
-
-    console.log("abortEditing");
-
-    console.log("setting value to previousValue " + target.previousValue);
-
     target.previousValue = null;
     target.isEditing(false);
     target(target.previousValue);
   };
 
   return target;
-};
-
-ko.bindingHandlers.hidden = {
-  update: function(element, valueAccessor) {
-    ko.bindingHandlers.visible.update(element, function() {
-      return !ko.utils.unwrapObservable(valueAccessor());
-    });
-  }
 };
 
 ko.bindingHandlers.inlineEditor = {
@@ -92,9 +90,6 @@ ko.bindingHandlers.inlineEditor = {
       visible: observable.isEditing,
       hasFocus: observable.isEditing
     });
-    if (allBindings.has('editorClass')) {
-      input.addClass(allBindings.get('editorClass'));
-    }
     input.keyup(function(e) {
       var code = e.keyCode || e.which;
       if (code == 13) { // Enter
@@ -102,6 +97,72 @@ ko.bindingHandlers.inlineEditor = {
       } else if (code == 27) { // Escape
         observable.abortEditing();
       }
+    });
+  }
+};
+
+ko.bindingHandlers.editorClass = {
+  init: function(element, valueAccessor) {
+    ko.applyBindingsToNode($('select,input', element)[0], {
+      css: valueAccessor()
+    });
+  }
+};
+
+/*
+ * Inline list editor
+ */
+ko.bindingHandlers.inlineListEditor = {
+  init: function(element, valueAccessor, allBindings) {
+    var observable = valueAccessor();
+    observable.extend({ inlineEditor: this});
+
+    var link = $("<a></a>").appendTo(element);
+    link.click(function(){ observable.edit(); });
+    ko.applyBindingsToNode(link[0], {
+        text: observable,
+        hidden: observable.isEditing
+    });
+
+    console.log("allBindings.listOptions=" + allBindings.listOptions);
+
+    var select = $('<select></select>').appendTo(element);
+    ko.applyBindingsToNode(select[0], {
+      value: observable,
+      visible: observable.isEditing,
+      hasFocus: observable.isEditing,
+    });
+    select.keyup(function(e) {
+      var code = e.keyCode || e.which;
+      if (code == 13) { // Enter
+        observable.finishEditing();
+      } else if (code == 27) { // Escape
+        observable.abortEditing();
+      }
+    });
+  }
+};
+
+ko.bindingHandlers.listOptions = {
+  init: function(element, valueAccessor) {
+    ko.applyBindingsToNode($('select', element)[0], {
+      options: valueAccessor()
+    });
+  }
+};
+
+ko.bindingHandlers.listOptionsText = {
+  init: function(element, valueAccessor) {
+    ko.applyBindingsToNode($('select', element)[0], {
+      optionsText: valueAccessor()
+    });
+  }
+};
+
+ko.bindingHandlers.listOptionsValue = {
+  init: function(element, valueAccessor) {
+    ko.applyBindingsToNode($('select', element)[0], {
+      optionsValue: valueAccessor()
     });
   }
 };

@@ -43,7 +43,7 @@
         %td{ data: { bind: "inlineEditor: description" }}
         %td
           %span.ui-icon.account-toggle{ data: { bind: "click: toggleDetails, css: toggleCss" }} &nbsp;
-          %span{ data: { bind: "text: otherAccountName" }}
+          %span{ data: { bind: "inlineListEditor: otherAccountName, listOptions: availableAccounts, listOptionsText: path, listOptionsValue: id" }}
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "inlineEditor: formattedPolarizedAmount, editorClass: 'number_field'" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}

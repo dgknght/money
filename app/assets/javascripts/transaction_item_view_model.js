@@ -173,6 +173,10 @@ function TransactionItemViewModel(transaction_item, transaction) {
     return otherItem == null ? "[multiple]" : otherItem.account().name();
   }, this);
 
+  this.availableAccounts = ko.computed(function() {
+    return this.transaction.entity.accounts();
+  }, this);
+
   this.destroy = function() {
     this.transaction.destroy();
   };
