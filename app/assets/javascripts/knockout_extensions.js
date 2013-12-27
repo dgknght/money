@@ -124,8 +124,6 @@ ko.bindingHandlers.inlineListEditor = {
         hidden: observable.isEditing
     });
 
-    console.log("allBindings.listOptions=" + allBindings.listOptions);
-
     var select = $('<select></select>').appendTo(element);
     ko.applyBindingsToNode(select[0], {
       value: observable,
@@ -144,25 +142,18 @@ ko.bindingHandlers.inlineListEditor = {
 };
 
 ko.bindingHandlers.listOptions = {
-  init: function(element, valueAccessor) {
-    ko.applyBindingsToNode($('select', element)[0], {
-      options: valueAccessor()
-    });
-  }
-};
+  init: function(element, valueAccessor, allBindings) {
 
-ko.bindingHandlers.listOptionsText = {
-  init: function(element, valueAccessor) {
-    ko.applyBindingsToNode($('select', element)[0], {
-      optionsText: valueAccessor()
-    });
-  }
-};
+    console.log("start listOptions applyBindingsToNode");
 
-ko.bindingHandlers.listOptionsValue = {
-  init: function(element, valueAccessor) {
     ko.applyBindingsToNode($('select', element)[0], {
-      optionsValue: valueAccessor()
+      options: valueAccessor(),
+      optionsText: allBindings.get('listOptionsText'),
+      optionsValue: allBindings.get('listOptionsValue'),
+      multiple: allBindings.get('listMultiple')
     });
+
+    console.log("end listOptions applyBindingsToNode");
+
   }
 };
