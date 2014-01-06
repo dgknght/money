@@ -111,6 +111,38 @@ ko.bindingHandlers.inlineEditor = {
   }
 };
 
+ko.bindingHandlers.inlineDateEditor = {
+  init: function(element, valueAccessor, allBindings) {
+    var observable = valueAccessor();
+    observable.extend({ inlineEditor: this });
+
+    var link = $("<a></a>").appendTo(element);
+    link.click(function(){ observable.edit(); });
+    ko.applyBindingsToNode(link[0], {
+        text: observable,
+        hidden: observable.isEditing
+    });
+
+    var input = $('<input type="text" />').appendTo(element);
+    ko.applyBindingsToNode(input[0], {
+      value: observable,
+      visible: observable.isEditing,
+      hasFocus: observable.isEditing
+    });
+
+    input.datepicker();
+
+    input.keyup(function(e) {
+      var code = e.keyCode || e.which;
+      if (code == 13) { // Enter
+        observable.finishEditing();
+      } else if (code == 27) { // Escape
+        observable.abortEditing();
+      }
+    });
+  }
+};
+
 ko.bindingHandlers.editorClass = {
   init: function(element, valueAccessor) {
     ko.applyBindingsToNode($('select,input', element)[0], {

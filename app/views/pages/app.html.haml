@@ -39,7 +39,7 @@
         %th &nbsp;
       <!-- ko foreach: transaction_items -->
       %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
-        %td.number_column{ data: { bind: "inlineEditor: formattedTransactionDate" }}
+        %td.number_column{ data: { bind: "inlineDateEditor: formattedTransactionDate" }}
         %td{ data: { bind: "inlineEditor: description" }}
         %td
           %span.ui-icon.account-toggle{ data: { bind: "click: toggleDetails, css: toggleCss" }} &nbsp;
