@@ -60,6 +60,12 @@
     });
   };
 
+  this.getAccountFromPath = function(path) {
+    return this.accounts().first(function(a) {
+      return a.path() == path;
+    });
+  };
+
   this.editAccount = function(account) {
     this._app.editAccount(account);
   };

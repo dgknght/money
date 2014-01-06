@@ -61,4 +61,22 @@ function MoneyApp() {
     }
   };
 
+  this.getAccountPaths = function(request, callback) {
+    var entity = _self.selectedEntity();
+    if (entity == null) {
+      callback([]);
+      return;
+    }
+
+    var text = request.term.toLowerCase();
+    var result = entity.accounts()
+      .map(function(account, index) {
+        return account.path();
+      })
+      .where(function(path) {
+        return path.toLowerCase().indexOf(text) >= 0;
+      });
+    callback(result);
+  };
+
 };

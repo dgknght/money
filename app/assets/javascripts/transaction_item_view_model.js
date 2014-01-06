@@ -14,6 +14,10 @@ function TransactionItemViewModel(transaction_item, transaction) {
     this.transaction.requestSave();
   }, this);
 
+  this.account_id.subscribe(function(id) {
+    this.transaction.requestSave();
+  }, this);
+
   this.toggleDetails = function() {
     if (this.showDetails()) {
       this.details.removeAll();
@@ -173,8 +177,27 @@ function TransactionItemViewModel(transaction_item, transaction) {
     return otherItem == null ? "[multiple]" : otherItem.account().name();
   }, this);
 
-  this.availableAccounts = ko.computed(function() {
-    return this.transaction.entity.accounts();
+  this.otherAccountPath = ko.computed({
+    read: function() {
+      var otherItem = this.otherItem();
+      return otherItem == null ? "[multiple]" : otherItem.account().path();
+    },
+    write: function(value) {
+      var account = this.transaction.entity.getAccountFromPath(value);
+      if (account == null) {
+        console.log("Unable to find the account \"" + value + "\".");
+        return;
+      }
+
+      var otherItem = this.otherItem();
+      if (otherItem == null) {
+        console.log("The transaction item cannot be edited in simple mode.");
+        return;
+      }
+
+      otherItem.account_id(account.id);
+    },
+    owner: this
   }, this);
 
   this.destroy = function() {
