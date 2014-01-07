@@ -26,6 +26,10 @@ function TransactionViewModel(transaction, entity) {
     return "transaction";
   };
 
+  this.entityListPath = function() {
+    return "entities/{entity_id}/transactions.json".format({ entity_id: _self.entity.id });
+  };
+
   this.onDestroyed = function() {
     $.each(this.items(), function(index, item) {
       item.account().transaction_items.remove(item);
@@ -53,6 +57,21 @@ function TransactionViewModel(transaction, entity) {
       description: this.description(),
       items_attributes: this.items().map(function(item) { return item.toJson(); })
     };
+  };
+
+  this.insertSucceeded = function(data) {
+    // update the ID values on the new items
+    $.each(data.items, function(index, item) {
+      var viewModel = _self.items().first(function(i) { return i.account_id() == item.account_id && i.amount() == item.amount && i.action() == item.action && i.id() == null});
+      viewModel.id(item.id);
+    });
+
+    // Add the new transaction items to the appropriate accounts
+    $.each(_self.items(), function(index, item) {
+      if (item.account().transaction_items.state() != 'new') {
+        item.account().transaction_items.push(item);
+      }
+    });
   };
 
   this.updateSucceeded = function() {

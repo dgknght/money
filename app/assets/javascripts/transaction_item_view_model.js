@@ -1,5 +1,5 @@
 function TransactionItemViewModel(transaction_item, transaction) {
-  this.id = transaction_item.id;
+  this.id = ko.observable(transaction_item.id);
   this.transaction = transaction;
   this.account_id = ko.observable(transaction_item.account_id);
   this.action = ko.observable(transaction_item.action);
@@ -142,7 +142,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.formattedTransactionDate = ko.computed({
     read: function() {
-      return this.transaction.transaction_date().toLocaleDateString();
+      return this.transaction.transaction_date().toLocaleDateString("en-US", {timeZone: "utc"});
     },
     write: function(value) {
       var dateValue = new Date(value);
@@ -164,7 +164,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.otherItem = ko.computed(function() {
     var self = this;
     var otherItems = this.transaction.items().where(function(item) {
-      return item.id != self.id;
+      return item.id() != self.id();
     });
 
     return otherItems.length == 1
@@ -206,7 +206,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.toJson = function() {
     return {
-      id: this.id,
+      id: this.id(),
       action: this.action(),
       amount: this.amount(),
       account_id: this.account_id()

@@ -46,7 +46,7 @@ ServiceEntity.prototype = {
       data: this.getPostData(),
       success: function(data) {
         self.id = data.id;
-        self.insertSucceeded();
+        self.insertSucceeded(data);
         success();
       },
       error: function(jqXHR, textStatus, errorThrown) {
@@ -67,7 +67,7 @@ ServiceEntity.prototype = {
   },
   insertCompleted: function() {},
   insertFailed: function() {},
-  insertSucceeded: function() {},
+  insertSucceeded: function(data) {},
   onDestroyed: function() {
     console.log("The onDestroyed method was not overridden. This may have been a mistake.");
   },

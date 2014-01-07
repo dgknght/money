@@ -120,6 +120,12 @@ function AccountViewModel(account, entity) {
     });
   }, this);
 
+  this.newTransactionItem = new NewTransactionItemViewModel(this);
+
+  this.saveNewTransaction = function() {
+    this.newTransactionItem.save();
+  };
+
   this.canEdit = function() { return true; };
 
   this.edit = function() {

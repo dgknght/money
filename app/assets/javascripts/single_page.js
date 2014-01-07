@@ -10,6 +10,7 @@
 //= require notification_view_model.js
 //= require accounting.min
 //= require jquery-ui-1.10.3.custom.min
+//= require new_transaction_item_view_model.js
 
 /*
  * Constructor for the client-side application

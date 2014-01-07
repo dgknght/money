@@ -212,6 +212,14 @@ table.attributes {
   cursor: pointer;
 }
 
+.any_small_form_button {
+  @extend .any_small_button;
+  padding: 0;
+  background-color: transparent;
+  border: 0px;
+  cursor: pointer;
+}
+
 .add_button {
   @extend .any_button;
   background-image: url(/assets/add.png)
@@ -230,6 +238,11 @@ table.attributes {
 .save_button {
   @extend .any_form_button;
   background-image: url(/assets/save.png)
+}
+
+.small_save_button {
+  @extend .any_small_form_button;
+  background-image: url(/assets/save_small.png)
 }
 
 .back_button {
