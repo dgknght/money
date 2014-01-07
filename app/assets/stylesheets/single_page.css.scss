@@ -149,3 +149,20 @@ input.number_field, input.date_field {
   border-radius: .5em;
   box-shadow: .2em .2em .2em $shadow-color
 }
+
+.validation_summary {
+  font-weight: bold;
+  color: $red;
+  text-align: center;
+  ul {
+    display: inline-block;
+    border-radius: .5em;
+    border: 1px solid $red;
+    text-align: left;
+    padding: {
+      left: 2em;
+      top: .5em;
+      bottom: .5em;
+    }
+  }
+}

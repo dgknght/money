@@ -1,9 +1,9 @@
 function TransactionItemViewModel(transaction_item, transaction) {
   this.id = ko.observable(transaction_item.id);
   this.transaction = transaction;
-  this.account_id = ko.observable(transaction_item.account_id);
+  this.account_id = ko.observable(transaction_item.account_id).extend({ required: "A valid account must be specified." });
   this.action = ko.observable(transaction_item.action);
-  this.amount = ko.observable(transaction_item.amount);
+  this.amount = ko.observable(transaction_item.amount).extend({ required: "An amount must be specified.", numeric: "The amount must be a valid number." });
   this.reconciled = ko.observable(transaction_item.reconciled);
   this.previousItem = ko.observable();
   this.showDetails = ko.observable(false);
@@ -54,12 +54,12 @@ function TransactionItemViewModel(transaction_item, transaction) {
       if (value == this.polarizedAmount()) return;
 
       this.action(this.account().inferAction(value));
-      this.amount(Math.abs(value));
+      this.amount(value == null ? null : Math.abs(value));
 
       var otherItem = this.otherItem();
-      if (this.account().sameSideAs(otherItem.account()))
+      if (value != null && this.account().sameSideAs(otherItem.account()))
         value = 0 - value;
-      this.otherItem().polarizedAmount(value);
+      this.otherItem().polarizedAmount(value || 0);
     },
     owner: this
   });
@@ -69,8 +69,8 @@ function TransactionItemViewModel(transaction_item, transaction) {
       return accounting.formatNumber(this.polarizedAmount(), 2);
     },
     write: function(value) {
-      var number = accounting.unformat(value);
-      this.polarizedAmount(isNaN(number) ? 0 : number);
+      var number = parseFloat(value);
+      this.polarizedAmount(isNaN(number) ? null : number);
     },
     owner: this
   });
@@ -211,5 +211,16 @@ function TransactionItemViewModel(transaction_item, transaction) {
       amount: this.amount(),
       account_id: this.account_id()
     };
-  }
+  };
+
+  this.validate = function() {
+    return _.every(this.validatedProperties(), function(prop) { return !prop.hasError(); });
+  };
+
+  this.validatedProperties = function() {
+    return [
+      this.account_id,
+      this.amount
+    ];
+  };
 }

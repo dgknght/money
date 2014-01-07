@@ -124,7 +124,14 @@ ServiceEntity.prototype = {
   updateFailed: function() {},
   updateSucceeded: function() {},
   validate: function() {
-    return _.every(this.validatedProperties(), function(prop) { return !prop.hasError(); });
+    return _.every(this.validatedProperties(), function(prop) {
+      if (prop.push != null) {
+        // assume we have a collection of view models
+        return _.every(prop, function(value) { return value.validate(); });
+      } else {
+        return !prop.hasError();
+      }
+    });
   },
   validatedProperties: function() { return []; }
 };

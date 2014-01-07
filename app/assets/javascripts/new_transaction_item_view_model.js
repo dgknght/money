@@ -3,13 +3,13 @@ function NewTransactionItemViewModel(account) {
 
   this._account = account;
 
-  this.account_id = ko.observable();
+  this.account_id = ko.observable().extend({ required: "An account must be specified." });
 
-  this.transaction_date = ko.observable(new Date());
+  this.transaction_date = ko.observable(new Date()).extend({ required: "A transaction date must be specified." });
 
-  this.description = ko.observable();
+  this.description = ko.observable().extend({ required: "A description must be specified." });
 
-  this.amount = ko.observable();
+  this.amount = ko.observable().extend({ required: "A valid amount must be specified." });
 
   this.otherAccount = ko.computed(function() {
     if (this.account_id() == null) return null;
@@ -43,6 +43,8 @@ function NewTransactionItemViewModel(account) {
   }, this);
 
   this.save = function() {
+    if (!this.validate()) return;
+
     // Build the new transaction object graph and save it
     var otherAccount = _self.otherAccount();
     var otherAmount = otherAccount.sameSideAs(_self._account) ? 0 - _self.amount() : _self.amount();
@@ -69,5 +71,14 @@ function NewTransactionItemViewModel(account) {
     _self.description(null);
     _self.amount(null);
     _self.account_id(null);
+  };
+
+  this.isInvalid = ko.observable();
+
+  this.validate = function() {
+    var props = [this.amount, this.account_id, this.description, this.transaction_date];
+    var result = _.every(props, function(prop) { return !prop.hasError(); });
+    this.isInvalid(!result);
+    return result;
   };
 }

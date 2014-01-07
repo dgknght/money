@@ -64,9 +64,9 @@ ko.extenders.inlineEditor = function(target) {
   };
 
   target.abortEditing = function() {
+    target(target.previousValue);
     target.previousValue = null;
     target.isEditing(false);
-    target(target.previousValue);
   };
 
   return target;
@@ -213,6 +213,21 @@ ko.extenders.required = function(target, message) {
 
   function validate(value) {
     target.errorMessage(value ? null : message || "This field is required.");
+  }
+
+  validate(target());
+
+  target.subscribe(validate);
+
+  return target;
+};
+
+ko.extenders.numeric = function(target, message) {
+  target.extend({ errable: this });
+
+  function validate(value) {
+    var num = parseFloat(value);
+    target.errorMessage(isNaN(num) ? message || "The value must be a number." : null);
   }
 
   validate(target());

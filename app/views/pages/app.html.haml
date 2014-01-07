@@ -46,6 +46,7 @@
           %span{ data: { bind: "inlineEditor: otherAccountPath, editorClass: 'account_field', autocompleteLookup: getAccountPaths" }}
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "inlineEditor: formattedPolarizedAmount, editorClass: 'number_field'" }}
+          %span.validation_message{ data: { bind: "visible: amount.hasError, text: amount.errorMessage" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}
         %td.action_cell
           %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
@@ -77,6 +78,12 @@
         %td &nbsp;
         %td
           %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: saveNewTransactionItem" }} Save
+  .validation_summary{ data: { bind: "visible: newTransactionItem.isInvalid" }}
+    %ul{ data: { bind: "with: newTransactionItem" }}
+      %li{ data: { bind: "visible: transaction_date.hasError, text: transaction_date.errorMessage" }}
+      %li{ data: { bind: "visible: description.hasError, text: description.errorMessage" }}
+      %li{ data: { bind: "visible: account_id.hasError, text: account_id.errorMessage" }}
+      %li{ data: { bind: "visible: amount.hasError, text: amount.errorMessage" }}
   <!-- /ko -->
 
 <!-- Account Form -->

@@ -72,6 +72,8 @@ function AccountViewModel(account, entity) {
   };
 
   this.inferAction = function(value) {
+    if (value == null)
+      return null;
     if (value < 0)
       return this.isLeftSide() ? CREDIT : DEBIT;
     return this.isLeftSide() ? DEBIT : CREDIT;

@@ -2,8 +2,8 @@ function TransactionViewModel(transaction, entity) {
   var _self = this;
   this.entity = entity;
   this.id = transaction.id;
-  this.transaction_date = ko.observable(new Date(transaction.transaction_date));
-  this.description = ko.observable(transaction.description);
+  this.transaction_date = ko.observable(new Date(transaction.transaction_date)).extend({ required: "A valid transaction date must be specified." });
+  this.description = ko.observable(transaction.description).extend({ required: "A description must be specified" });
   this.items = new ko.observableArray();
 
   this.creditAmount = ko.computed(function() {
@@ -42,12 +42,19 @@ function TransactionViewModel(transaction, entity) {
 
   this._saveToken = null;
   this.requestSave = function() {
+    if (!this.validate()) {
+
+      console.log("requestSave aborted...model isn't valid.");
+
+      return;
+    }
+
     if (this._saveToken != null) {
       clearTimeout(this._saveToken);
       this._saveToken = null;
     }
 
-    this._saveToken = setTimeout(function() { _self.save(); }, 1000);
+    this._saveToken = setTimeout(function() { console.log('executing the requested save'); _self.save(); }, 1000);
   }
 
   this.toJson = function() {
@@ -95,6 +102,14 @@ function TransactionViewModel(transaction, entity) {
   this.description.subscribe(function(value) {
     this.requestSave();
   }, this);
+
+  this.validatedProperties = function() {
+    return [
+      this.description,
+      this.transaction_date,
+      this.items()
+    ]
+  };
 
   var itemViewModels = $.map(transaction.items, function(item, index) {
       return new TransactionItemViewModel(item, _self);
