@@ -10,7 +10,6 @@ function AccountViewModel(account, entity) {
   this.id = account.id
   this.name = ko.observable(account.name);
   this.account_type = ko.observable(account.account_type);
-  this.balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
 
@@ -46,24 +45,8 @@ function AccountViewModel(account, entity) {
     return parent.depth() + 1;
   }, this);
 
-  this.balanceWithChildren = ko.computed(function() {
-    var result = this.balance();
-    $.each(this.children(), function(index, child) {
-      result += child.balanceWithChildren();
-    });
-    return result;
-  }, this);
-  
   this.cssClass = ko.computed(function() {
     return "clickable account_depth_{depth}".format({ depth: this.depth() });
-  }, this);
-  
-  this.formattedBalance = ko.computed(function() {
-    return accounting.formatMoney(this.balance());
-  }, this);
-  
-  this.formattedBalanceWithChildren = ko.computed(function() {
-    return accounting.formatMoney(this.balanceWithChildren());
   }, this);
   
   this.isLeftSide = function() {
@@ -120,6 +103,29 @@ function AccountViewModel(account, entity) {
     });
   }, this);
 
+  this.balance = ko.computed(function() {
+    if (this.transaction_items.state() == 'new' || typeof this.transaction_items() === "undefined")
+      return account.balance * 1;
+    
+    return this.transaction_items().sum(function(item) { return item.polarizedAmount(); });
+  }, this);
+
+  this.balanceWithChildren = ko.computed(function() {
+    var result = this.balance();
+    $.each(this.children(), function(index, child) {
+      result += child.balanceWithChildren();
+    });
+    return result;
+  }, this);
+  
+  this.formattedBalance = ko.computed(function() {
+    return accounting.formatMoney(this.balance());
+  }, this);
+  
+  this.formattedBalanceWithChildren = ko.computed(function() {
+    return accounting.formatMoney(this.balanceWithChildren());
+  }, this);
+  
   this.newTransactionItem = new NewTransactionItemViewModel(this);
 
   this.saveNewTransaction = function() {
