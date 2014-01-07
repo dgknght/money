@@ -91,7 +91,8 @@
       %br
       %select#account_parent{ data: { bind: "options: availableParents, optionsCaption: 'None', optionsText: function(a) { return a.name(); }, optionsValue: function(a) { return a.id; }, value: parent_id" }}
     %div
-      %label{ for: 'account_name' } Account type
+      %label{ for: 'account_name' } Name
+      %span.validation_message{ data: { bind: "visible: name.hasError, text: name.errorMessage" }}
       %br
       %input#account_name{ type: 'text', data: { bind: "value: name" }}
 

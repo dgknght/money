@@ -1,3 +1,16 @@
+$shadow-color: #CCC;
+
+$white: #FFF;
+$dark-grey: #333;
+$medium-grey: #999;
+$light-grey: #CCC;
+
+$green: #00A000;
+$yellow: #A0A000;
+$red: #A00000;
+
+$black: #000;
+
 #entity_and_account, #transactions {
   display: inline-block;
 }
@@ -125,4 +138,14 @@ span.account_depth_2 {
 input.number_field, input.date_field {
   text-align: right;
   width: 6em;
+}
+
+.validation_message {
+  display: inline-block;
+  font-size: 80%;
+  padding: .2em;
+  color: $white;
+  background-color: $red;
+  border-radius: .5em;
+  box-shadow: .2em .2em .2em $shadow-color
 }

@@ -8,8 +8,8 @@ function AccountViewModel(account, entity) {
   var _self = this;
   this.entity = entity;
   this.id = account.id
-  this.name = ko.observable(account.name);
-  this.account_type = ko.observable(account.account_type);
+  this.name = ko.observable(account.name).extend({ required: "Name is a required field." });
+  this.account_type = ko.observable(account.account_type).extend({ required: "Account type is a required field." });
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
 
@@ -177,6 +177,13 @@ function AccountViewModel(account, entity) {
         parent_id: this.parent_id(),
         name: this.name()
       };
+  };
+
+  this.validatedProperties = function() {
+    return [
+      this.name,
+      this.account_type
+    ];
   };
 }
 
