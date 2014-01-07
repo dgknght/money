@@ -10,6 +10,7 @@ function AccountViewModel(account, entity) {
   this.id = account.id
   this.name = ko.observable(account.name).extend({ required: "Name is a required field." });
   this.account_type = ko.observable(account.account_type).extend({ required: "Account type is a required field." });
+  this._balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
 
@@ -107,7 +108,7 @@ function AccountViewModel(account, entity) {
 
   this.balance = ko.computed(function() {
     if (this.transaction_items.state() == 'new' || typeof this.transaction_items() === "undefined")
-      return account.balance * 1;
+      return this._balance();
     
     return this.transaction_items().sum(function(item) { return item.polarizedAmount(); });
   }, this);
@@ -186,6 +187,14 @@ function AccountViewModel(account, entity) {
       this.name,
       this.account_type
     ];
+  };
+
+  this.processNewTransactionItem = function(item) {
+    if (this.transaction_items.state() == 'new') {
+      this._balance(this._balance() + item.polarizedAmount());
+    } else {
+      this.transaction_items.push(item);
+    }
   };
 }
 

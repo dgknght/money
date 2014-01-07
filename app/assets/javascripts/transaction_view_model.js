@@ -75,9 +75,7 @@ function TransactionViewModel(transaction, entity) {
 
     // Add the new transaction items to the appropriate accounts
     $.each(_self.items(), function(index, item) {
-      if (item.account().transaction_items.state() != 'new') {
-        item.account().transaction_items.push(item);
-      }
+      item.account().processNewTransactionItem(item);
     });
   };
 
