@@ -151,3 +151,42 @@ ko.bindingHandlers.editorClass = {
   }
 };
 
+/*
+ * autocomplete
+ *
+ * Uses jQueryUI autocomplete to creating a text box binding
+ */
+ko.bindingHandlers.autocomplete = {
+  init: function(element, valueAccessor, allBindings) {
+    var observable = valueAccessor();
+
+    if (!allBindings.has('source'))
+      throw "The source binding must be specified";
+    $(element).autocomplete({
+      source: allBindings.get('source'),
+      select: function(event, ui) {
+        observable(ui.item.value);
+      }
+    });
+
+    ko.applyBindingsToNode(element, {
+      value: observable
+    });
+  }
+};
+
+/*
+ * datePicker
+ *
+ * Uses jQueryUI datepicker to create a text box binding
+ */
+ko.bindingHandlers.datePicker = {
+  init: function(element, valueAccessor, allBindings) {
+    $(element).datepicker();
+
+    var observable = valueAccessor();
+    ko.applyBindingsToNode(element, {
+      value: observable
+    });
+  }
+};

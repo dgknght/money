@@ -32,8 +32,14 @@ function NewTransactionItemViewModel(account) {
     }
   }, this);
 
-  this.formattedTransactionDate = ko.computed(function() {
-    return this.transaction_date().toLocaleDateString();
+  this.formattedTransactionDate = ko.computed({
+    read: function() {
+      return this.transaction_date().toLocaleDateString();
+    },
+    write: function(value) {
+      var dateValue = new Date(value);
+      this.transaction_date(dateValue);
+    }
   }, this);
 
   this.save = function() {

@@ -66,17 +66,17 @@
 
       %tr{ data: { bind: "with: newTransactionItem"}}
         %td.number_column
-          %input.date_field{ type: 'text', placeholder: 'Transaction date', data: { bind: "value: formattedTransactionDate" } }
+          %input.date_field{ type: 'text', placeholder: 'Transaction date', data: { bind: "datePicker: formattedTransactionDate" } }
         %td
           %input{ type: 'text', placeholder: 'Description', data: { bind: "value: description" } }
         %td
-          %input{ type: 'text', placeholder: 'Account', data: { bind: "value: otherAccountPath" } }
+          %input{ type: 'text', placeholder: 'Account', data: { bind: "autocomplete: otherAccountPath, source: getAccountPaths" } }
         %td &nbsp;
         %td
           %input.number_field{ type: 'text', placeholder: 'Amount', data: { bind: "value: amount" } }
         %td &nbsp;
         %td
-          %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: save" }} Save
+          %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: saveNewTransactionItem" }} Save
   <!-- /ko -->
 
 <!-- Account Form -->
@@ -113,6 +113,13 @@
     window.getAccountPaths = function(request, callback) {
       return app.getAccountPaths(request, callback);
     };
+
+    window.saveNewTransactionItem = function(item) {
+      item.save();
+      window.setTimeout(function() {
+        $('.date_field').focus();
+      }, 500);
+    }
 
     // Initialize the account form
     app.editAccount.subscribe(function(account) {
