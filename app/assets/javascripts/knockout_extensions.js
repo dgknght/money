@@ -190,3 +190,34 @@ ko.bindingHandlers.datePicker = {
     });
   }
 };
+
+/*
+ * errable
+ *
+ * Extension that adds properties for managing validation and other errors
+ */
+ko.extenders.errable = function(target) {
+  target.errorMessage = ko.observable();
+  target.hasError = ko.computed(function() {
+    return target.errorMessage() != null;
+  }, this);
+};
+
+/*
+ * required
+ *
+ * Extension that invalidates a property that is required but empty
+ */
+ko.extenders.required = function(target, message) {
+  target.extend({ errable: this});
+
+  function validate(value) {
+    target.errorMessage(value ? null : message || "This field is required.");
+  }
+
+  validate(target());
+
+  target.subscribe(validate);
+
+  return target;
+};

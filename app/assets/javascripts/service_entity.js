@@ -78,6 +78,12 @@ ServiceEntity.prototype = {
     success = success == null ? function() {} : success;
     error = error == null ? function() {} : error;
     complete = complete == null ? function() {} : complete;
+
+    if (!this.validate()) {
+      error("The item cannot be saved due to validation errors.");
+      return;
+    }
+
     if (this.id == null) {
       this.insert(success, error, complete);
     } else {
@@ -116,5 +122,9 @@ ServiceEntity.prototype = {
   },
   updateCompleted: function() {},
   updateFailed: function() {},
-  updateSucceeded: function() {}
+  updateSucceeded: function() {},
+  validate: function() {
+    return _.every(this.validatedProperties(), function(prop) { return !prop.hasError(); });
+  },
+  validatedProperties: function() { return []; }
 };
