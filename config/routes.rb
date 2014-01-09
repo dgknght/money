@@ -28,6 +28,7 @@ Money::Application.routes.draw do
   
   get 'home' => 'entities#index'
   get 'app' => 'pages#app'
+  get 'qunit' => 'tests#index'
   
   root :to => 'pages#welcome'
   
