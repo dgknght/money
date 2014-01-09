@@ -1,10 +1,11 @@
 Feature: Delete an account
-c  Scenario: A user deletes and account
+  Scenario: A user deletes and account
     Given there is a user with email address "john@doe.com" and password "please01"
-    And user "john@doe.com" has an asset account named "Ex-wife's checking"
+    And user "john@doe.com" has an entity named "Personal"
+    And entity "Personal" has an asset account named "Ex-wife's checking"
     And I am signed in as "john@doe.com/please01"
     
-    When I am on my home page
+    When I am on the "Personal" entity page
     Then I should see the following accounts table
       | Name               | Balance |
       | Assets             | 0.00    |
