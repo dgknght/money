@@ -32,3 +32,14 @@ test("should be creatable with valid data and a MoneyApp instance", function() {
   };
   ok(new EntityViewModel(entity, app));
 })
+asyncTest("should have a list of accounts", 1, function() {
+  var app = new MoneyApp();
+  app.entities.subscribe(function(entities) {
+    if (entities.length == 0) return;
+
+    var entity = app.entities().first();
+    ok(entity.accounts, "It should have an accounts property.");
+    start();
+  });
+  app.entities();
+})
