@@ -27,15 +27,9 @@ describe TransactionsController do
         end
         
         context 'in json' do
-          let (:t1) { FactoryGirl.create(:transaction, entity: entity) }
-          let!(:i1) { FactoryGirl.create(:transaction_item, transaction: t1, account: account) }
-          let!(:i2) { FactoryGirl.create(:transaction_item, transaction: t1) }
-          let (:t2) { FactoryGirl.create(:transaction, entity: entity) }
-          let!(:i3) { FactoryGirl.create(:transaction_item, transaction: t2, account: account) }
-          let!(:i4) { FactoryGirl.create(:transaction_item, transaction: t2) }
-          let (:different_account) { FactoryGirl.create(:transaction, entity: entity) }
-          let!(:i5) { FactoryGirl.create(:transaction_item, transaction: t2) }
-          let!(:i6) { FactoryGirl.create(:transaction_item, transaction: t2) }
+          let!(:t1) { FactoryGirl.create(:transaction, entity: entity) }
+          let!(:t2) { FactoryGirl.create(:transaction, entity: entity) }
+          let!(:different_entity) { FactoryGirl.create(:transaction) }
           
           it 'should be successful' do
             get :index, entity_id: entity, format: :json
