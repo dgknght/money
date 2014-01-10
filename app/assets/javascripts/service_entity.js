@@ -123,8 +123,9 @@ ServiceEntity.prototype = {
   updateCompleted: function() {},
   updateFailed: function() {},
   updateSucceeded: function() {},
+  isValid: ko.observable(null),
   validate: function() {
-    return _.every(this.validatedProperties(), function(prop) {
+    var result = _.every(this.validatedProperties(), function(prop) {
       if (prop.push != null) {
         // assume we have a collection of view models
         return _.every(prop, function(value) { return value.validate(); });
@@ -132,6 +133,8 @@ ServiceEntity.prototype = {
         return !prop.hasError();
       }
     });
+    this.isValid(result);
+    return result;
   },
   validatedProperties: function() { return []; }
 };

@@ -1,7 +1,7 @@
 function TransactionViewModel(transaction, entity) {
   var _self = this;
   this.entity = entity;
-  this.id = transaction.id;
+  this.id = ko.observable(transaction.id);
   this.transaction_date = ko.observable(new Date(transaction.transaction_date)).extend({ required: "A valid transaction date must be specified." });
   this.description = ko.observable(transaction.description).extend({ required: "A description must be specified" });
   this.items = new ko.observableArray();

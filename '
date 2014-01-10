@@ -63,12 +63,6 @@ test("should be creatable with valid data and a MoneyApp instance", function() {
   };
   ok(new EntityViewModel(entity, app));
 })
-test("name should be required", function() {
-  var entity = new EntityViewModel({}, new MoneyApp());
-  equal(entity.validate(), false, "The model should not be valid if the name is missing.");
-  entity.name("test");
-  equal(entity.validate(), true, "The model should be valid if the name is supplied.");
-})
 asyncTest("should have a list of accounts", 4, function() {
   var app = new MoneyApp();
   app.entities.subscribe(function(entities) {
@@ -94,21 +88,6 @@ asyncTest("should have a list of accounts", 4, function() {
   });
   app.entities();
 })
-
-function getFromLazyLoadedCollection(obj, property, id, callback) {
-  var subscription = obj[property].subscribe(function(values) {
-    var result = _.find(values, function(value){ return value.id() == id; });
-    if (result != null) {
-      subscription.dispose();
-      callback(result);
-    }
-  });
-  obj[property]();
-}
-
-function getEntity(app, entity_id, callback) {
-  getFromLazyLoadedCollection(app, 'entities', entity_id, callback);
-}
 
 module('AccountViewModel', {
   setup: function() {
@@ -144,27 +123,6 @@ module('AccountViewModel', {
     $.mockjaxClear();
   }
 });
-asyncTest("validation", function() {
-  var app = new MoneyApp();
-  getEntity(app, 10, function(entity) {
-    var account = new AccountViewModel({}, entity);
-    account.name('Test');
-    account.account_type('asset');
-    ok(account.validate(), 'The account should be valid with a name and an account type');
-
-    account.name(null);
-    equal(account.validate(), false, 'The account should not be valid without a name');
-
-    account.name('test');
-    account.account_type(null);
-    equal(account.validate(), false, 'The account should not be valid without an account type');
-
-//    account.account_type('not a valid type');
-//    equal(account.validate(), false, 'The account should not be valid without a valid account type');
-
-    start();
-  });
-})
 asyncTest("should have a transaction_items property", function() {
   expect(6);
 
@@ -197,6 +155,21 @@ asyncTest("should have a transaction_items property", function() {
   app.entities();
 });
 
+function getFromLazyLoadedCollection(obj, property, id, callback) {
+  var subscription = obj[property].subscribe(function(values) {
+    var result = _.find(values, function(value){ return value.id == id; });
+    if (result != null) {
+      subscription.dispose();
+      callback(result);
+    }
+  });
+  obj[property]();
+}
+
+function getEntity(app, entity_id, callback) {
+  getFromLazyLoadedCollection(app, 'entities', entity_id, callback);
+}
+
 function getAccount(app, keys, callback) {
   getEntity(app, keys.entity_id, function(entity) {
     getFromLazyLoadedCollection(entity, 'accounts', keys.account_id, callback);
@@ -204,9 +177,6 @@ function getAccount(app, keys, callback) {
 }
 
 function getTransactionItem(app, keys, callback) {
-  getAccount(app, keys, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', keys.transaction_item_id, callback);
-  });
 }
 
 module('TransactionItemViewModel', {
@@ -243,26 +213,12 @@ module('TransactionItemViewModel', {
     $.mockjaxClear();
   }
 });
-asyncTest("setting polarizedAmount should update the opposing item amount", function() {
-  expect(2);
+asyncTest("should update the opposing transaction item if there are only two in the transaction", function() {
+  expect(1);
 
   var app = new MoneyApp();
   var transactionItem = getTransactionItem(app, {entity_id: 10, account_id: 1, transaction_item_id: 1}, function(transactionItem) {
-    transactionItem.polarizedAmount(1001);
-    _.each(transactionItem.transaction.items(), function(item) {
-      equal(item.amount(), 1001, "each item should have the new amount.");
-    });
-    start();
-  });
-})
-asyncTest("setting polarizedAmount to a negative value should update the action on this and the opposing item", function() {
-  expect(2);
-
-  var app = new MoneyApp();
-  var transactionItem = getTransactionItem(app, {entity_id: 10, account_id: 1, transaction_item_id: 1}, function(transactionItem) {
-    transactionItem.polarizedAmount(-1000);
-    equal(transactionItem.action(), 'credit');
-    equal(transactionItem.otherItem().action(), 'debit');
+    ok(transactionItem);
     start();
   });
 })

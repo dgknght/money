@@ -7,7 +7,7 @@ function AccountViewModel(account, entity) {
 
   var _self = this;
   this.entity = entity;
-  this.id = account.id
+  this.id = ko.observable(account.id);
   this.name = ko.observable(account.name).extend({ required: "Name is a required field." });
   this.account_type = ko.observable(account.account_type).extend({ required: "Account type is a required field." });
   this._balance = ko.observable(account.balance * 1);
@@ -19,10 +19,10 @@ function AccountViewModel(account, entity) {
   };
   this.entityIdentifier = function() { return 'account'; };
   this.entityListPath = function() {
-    return "entities/{id}/accounts.json".format({ id: _self.entity.id });
+    return "entities/{id}/accounts.json".format({ id: _self.entity.id() });
   };
   this.entityPath = function() {
-    return "accounts/{id}.json".format({ id: _self.id });
+    return "accounts/{id}.json".format({ id: _self.id() });
   };
   this.onDestroyed = function() {
     _self.entity.accounts.remove(_self);
@@ -147,18 +147,18 @@ function AccountViewModel(account, entity) {
 
   this.availableParents = ko.computed(function() {
     return this.entity.accounts().where(function(account) {
-      return account.canBeParent() && account.id != _self.id;
+      return account.canBeParent() && account.id() != _self.id();
     });
   }, this);
 
   this._serverPath = function() {
-    return "accounts/{id}.json".format({ id: _self.id });
+    return "accounts/{id}.json".format({ id: _self.id() });
   };
 
   this.reload = function(callback) {
     callback = callback == null ? function(){} : callback;
 
-    if (this.id == null) {
+    if (this.id() == null) {
       callback();
       return;
     }
@@ -175,7 +175,7 @@ function AccountViewModel(account, entity) {
 
   this.toJson = function() {
     return {
-        id: this.id,
+        id: this.id(),
         account_type: this.account_type(),
         parent_id: this.parent_id(),
         name: this.name()
