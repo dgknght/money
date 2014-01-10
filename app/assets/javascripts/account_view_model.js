@@ -9,7 +9,10 @@ function AccountViewModel(account, entity) {
   this.entity = entity;
   this.id = ko.observable(account.id);
   this.name = ko.observable(account.name).extend({ required: "Name is a required field." });
-  this.account_type = ko.observable(account.account_type).extend({ required: "Account type is a required field." });
+  this.account_type = ko.observable(account.account_type).extend({
+    required: "Account type is a required field.",
+    includedIn: ['asset', 'liability', 'equity', 'income', 'expense']
+  });
   this._balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);

@@ -159,8 +159,8 @@ asyncTest("validation", function() {
     account.account_type(null);
     equal(account.validate(), false, 'The account should not be valid without an account type');
 
-//    account.account_type('not a valid type');
-//    equal(account.validate(), false, 'The account should not be valid without a valid account type');
+    account.account_type('not a valid type');
+    equal(account.validate(), false, 'The account should not be valid without a valid account type');
 
     start();
   });

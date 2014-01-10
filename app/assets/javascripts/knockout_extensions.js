@@ -197,10 +197,14 @@ ko.bindingHandlers.datePicker = {
  * Extension that adds properties for managing validation and other errors
  */
 ko.extenders.errable = function(target) {
-  target.errorMessage = ko.observable();
-  target.hasError = ko.computed(function() {
-    return target.errorMessage() != null;
-  }, this);
+  if (target.errorMessage == null) {
+    target.errorMessage = ko.observable();
+  }
+  if (target.hasError == null) {
+    target.hasError = ko.computed(function() {
+      return target.errorMessage() != null;
+    }, this);
+  }
 };
 
 /*
@@ -228,6 +232,23 @@ ko.extenders.numeric = function(target, message) {
   function validate(value) {
     var num = parseFloat(value);
     target.errorMessage(isNaN(num) ? message || "The value must be a number." : null);
+  }
+
+  validate(target());
+
+  target.subscribe(validate);
+
+  return target;
+};
+
+ko.extenders.includedIn = function(target, list) {
+  target.extend({ errable: this });
+
+  function validate(value) {
+    var message = _.include(list, value) 
+      ? null 
+      : "The value must be one of the specified values.";
+    target.errorMessage(message);
   }
 
   validate(target());
