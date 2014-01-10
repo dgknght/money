@@ -10,13 +10,13 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this._saveId = null;
 
-  this.amount.subscribe(function(a) {
-    this.transaction.requestSave();
-  }, this);
-
-  this.account_id.subscribe(function(id) {
-    this.transaction.requestSave();
-  }, this);
+//  this.amount.subscribe(function(a) {
+//    this.transaction.requestSave();
+//  }, this);
+//
+//  this.account_id.subscribe(function(id) {
+//    this.transaction.requestSave();
+//  }, this);
 
   this.toggleDetails = function() {
     if (this.showDetails()) {
