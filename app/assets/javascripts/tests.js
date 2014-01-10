@@ -209,7 +209,7 @@ function getTransactionItem(app, keys, callback) {
   });
 }
 
-module('TransactionItemViewModel', {
+module('TransactionViewModel', {
   setup: function() {
     $.mockjax({
       url: 'entities.json',
@@ -222,6 +222,59 @@ module('TransactionItemViewModel', {
       responseText: [
         { id: 1, name: 'Checking', account_type: 'asset' },
         { id: 2, name: 'Salary', account_type: 'income' },
+        { id: 3, name: 'Income Tax', account_type: 'expense' }
+      ]
+    });
+  },
+  teardown: function() {
+    $.mockjaxClear();
+  }
+});
+asyncTest("validation", function() {
+  expect(4);
+
+  var app = new MoneyApp();
+  // I get the account here because the account list must be loaded for the transaction item to work
+  var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
+    var transaction = {
+      transaction_date: new Date(),
+      description: 'Paycheck', 
+      items: [
+        { account_id: 1, action: 'debit', amount: 1000 },
+        { account_id: 2, action: 'credit', amount: 1000 }
+      ]
+    };
+    var viewModel = new TransactionViewModel(transaction, account.entity);
+    ok(viewModel.validate(), "The model should be valid with a transaction date, description, and balanced items.");
+
+    viewModel.transaction_date(null);
+    equal(viewModel.validate(), false, "The model should not be valid without a transaction date.");
+
+    viewModel.transaction_date("not a date");
+    equal(viewModel.validate(), false, "The model should not be valid with an invalid transaction date.");
+
+    viewModel.transaction_date(new Date());
+
+    viewModel.description(null);
+    equal(viewModel.validate(), false, "The model should not be valid without a description.");
+
+    start();
+  });
+})
+
+module('TransactionItemViewModel', {
+  setup: function() {
+    $.mockjax({
+      url: 'entities.json',
+      responseText: [
+        { id: 10, name: 'First Entity' }
+      ]
+    });
+    $.mockjax({
+      url: 'entities/10/accounts.json',
+      responseText: [
+        { id: 1, name: 'Checking', account_type: 'asset' },
+        { id: 2, name: 'Salary', account_type: 'income' }
       ]
     });
     $.mockjax({

@@ -257,3 +257,25 @@ ko.extenders.includedIn = function(target, list) {
 
   return target;
 };
+
+ko.extenders.isDate = function(target, message) {
+  target.extend({ errable: this });
+
+  function validate(value) {
+
+    console.log("isDate.validate(" + value + ")");
+
+    if (value == null) return;
+
+    var message = (!_.isDate(value) || isNaN(value))
+      ? "The value must be a date."
+      : null;
+      target.errorMessage(message);
+  }
+
+  validate(target());
+
+  target.subscribe(validate);
+
+  return target;
+};

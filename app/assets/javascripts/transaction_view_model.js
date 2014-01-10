@@ -2,9 +2,24 @@ function TransactionViewModel(transaction, entity) {
   var _self = this;
   this.entity = entity;
   this.id = ko.observable(transaction.id);
-  this.transaction_date = ko.observable(new Date(transaction.transaction_date)).extend({ required: "A valid transaction date must be specified." });
+  this.transaction_date = ko.observable(new Date(transaction.transaction_date)).extend({ 
+    required: "A valid transaction date must be specified.",
+    isDate: null
+  });
   this.description = ko.observable(transaction.description).extend({ required: "A description must be specified" });
   this.items = new ko.observableArray();
+
+  this.formattedTransactionDate = ko.computed({
+    read: function() {
+      var d = this.transaction_date();
+      return (d && d.toLocaleDateString) ? d.toLocaleDateString("en-US", {timeZone: "utc"}) : null;
+    },
+    write: function(value) {
+      var dateValue = new Date(value);
+      this.transaction.transaction_date(dateValue);
+    },
+    owner: this
+  }, this);
 
   this.creditAmount = ko.computed(function() {
     return this.items().where(function(item) {

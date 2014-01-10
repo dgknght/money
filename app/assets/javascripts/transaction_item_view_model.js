@@ -142,11 +142,10 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.formattedTransactionDate = ko.computed({
     read: function() {
-      return this.transaction.transaction_date().toLocaleDateString("en-US", {timeZone: "utc"});
+      return this.transaction.formattedTransactionDate();
     },
     write: function(value) {
-      var dateValue = new Date(value);
-      this.transaction.transaction_date(dateValue);
+      this.transaction.formattedTransactionDate(value);
     },
     owner: this
   }, this);
