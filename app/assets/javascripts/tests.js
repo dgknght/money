@@ -254,6 +254,56 @@ module('TransactionViewModel', {
     $.mockjaxClear();
   }
 });
+asyncTest("creditAmount", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
+    var transaction = {
+      transaction_date: new Date(),
+      description: 'Paycheck', 
+      items: [
+        { account_id: 1, action: 'debit', amount: 1000 },
+        { account_id: 2, action: 'credit', amount: 1000 }
+      ]
+    };
+    var viewModel = new TransactionViewModel(transaction, account.entity);
+
+    equal(viewModel.creditAmount(), 1000, "creditAmount should be the sum of all the credit items.");
+
+    var item = _.find(viewModel.items(), function(item) { return item.account_id() == 2; });
+    item.amount(987);
+
+    equal(viewModel.creditAmount(), 987, "creditAmount should change when an item with a 'credit' action changes");
+
+    start();
+  });
+});
+asyncTest("debitAmount", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
+    var transaction = {
+      transaction_date: new Date(),
+      description: 'Paycheck', 
+      items: [
+        { account_id: 1, action: 'debit', amount: 1000 },
+        { account_id: 2, action: 'credit', amount: 1000 }
+      ]
+    };
+    var viewModel = new TransactionViewModel(transaction, account.entity);
+
+    equal(viewModel.debitAmount(), 1000, "debitAmount should be the sum of all the debit items.");
+
+    var item = _.find(viewModel.items(), function(item) { return item.account_id() == 1; });
+    item.amount(123);
+
+    equal(viewModel.debitAmount(), 123, "debitAmount should change when an item with a 'debit' action changes");
+
+    start();
+  });
+});
 asyncTest("validation", function() {
   expect(6);
 
