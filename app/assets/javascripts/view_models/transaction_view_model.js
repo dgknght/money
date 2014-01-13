@@ -20,7 +20,7 @@ function TransactionViewModel(transaction, entity) {
     },
     write: function(value) {
       var dateValue = new Date(value);
-      this.transaction.transaction_date(dateValue);
+      this.transaction_date(dateValue);
     },
     owner: this
   }, this);

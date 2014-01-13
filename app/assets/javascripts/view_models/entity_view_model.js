@@ -6,6 +6,7 @@
   this._app = app;
   this.id = ko.observable(entity.id);
   this.name = ko.observable(entity.name).extend({ required: "A name must be specified." });
+  this.transactions = ko.observableArray();
   this.validatedProperties = function() {
     return [
       this.name
@@ -75,26 +76,30 @@
     this._app.editAccount(account);
   };
 
+  this._transactionAccountsSearched = {};
   this.getTransactionItems = function(account, callback) {
-    var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id(), entity_id: this.id()});
-    $.getJSON(path, function(transactions) {
-      var transaction_items = transactions.map(function(transaction, index) {
-        return new TransactionViewModel(transaction, _self);
-      }).map(function(transaction, index) {
-        return transaction.items();
-      })
-      .flatten()
-      .where(function(transaction_item) {
-        return transaction_item.account_id() == account.id();
+    if (this._transactionAccountsSearched[account.id()] == null) {
+      var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id(), entity_id: this.id()});
+      $.getJSON(path, function(transactions) {
+
+        var viewModels = _.map(transactions, function(t) { return new TransactionViewModel(t, _self); });
+        viewModels.pushAllTo(_self.transactions);
+
+        var result = _self._getItemsByAccountId(account.id(), viewModels);
+        callback(result);
       });
+    } else {
+      var result = this._getItemsByAccountId(account.id());
+      callback(result);
+    }
+  };
 
-      // assign the 'previous' references
-      for (var i = 1; i < transaction_items.length; i++) {
-        transaction_items[i].previousItem(transaction_items[i-1]);
-      }
-
-      callback(transaction_items);
-    });
+  this._getItemsByAccountId = function(account_id, transactions) {
+    return _.chain(transactions || _self.transactions())
+      .map(function(t) { return t.items(); })
+      .flatten()
+      .filter(function(item) { return item.account_id() == account_id; })
+      .value();
   };
 }
 EntityViewModel.prototype = new ServiceEntity();

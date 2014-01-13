@@ -45,7 +45,8 @@ function TransactionItemViewModel(transaction_item, transaction) {
   }, this);
 
   this.accountName = ko.computed(function() {
-    return this.account().name();
+    var account = this.account();
+    return account == null ? null : account.name();
   }, this);
 
   this.formattedAmount = ko.computed(function() {
@@ -54,7 +55,9 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.polarizedAmount = ko.computed({
     read: function() {
-      return this.account().polarity(this.action()) * this.amount();
+      var account = this.account();
+      var polarity = account == null ? 1 : account.polarity(this.action());
+      return polarity * this.amount();
     },
     write: function(value) {
       if (value == this.polarizedAmount()) return;
@@ -144,65 +147,6 @@ function TransactionItemViewModel(transaction_item, transaction) {
 
   this.formattedBalance = ko.computed(function() {
     return accounting.formatNumber(this.balance(), 2);
-  }, this);
-
-  this.formattedTransactionDate = ko.computed({
-    read: function() {
-      return this.transaction.formattedTransactionDate();
-    },
-    write: function(value) {
-      this.transaction.formattedTransactionDate(value);
-    },
-    owner: this
-  }, this);
-
-  this.description = ko.computed({
-    read: function() {
-      return this.transaction.description();
-    }, 
-    write: function(value) {
-      this.transaction.description(value);
-    },
-    owner: this
-  }, this);
-
-  this.otherItem = ko.computed(function() {
-    var self = this;
-    var otherItems = this.transaction.items().where(function(item) {
-      return item.id() != self.id();
-    });
-
-    return otherItems.length == 1
-      ? otherItems.first()
-      : null;
-  }, this);
-
-  this.otherAccountName = ko.computed(function() {
-    var otherItem = this.otherItem();
-    return otherItem == null ? "[multiple]" : otherItem.account().name();
-  }, this);
-
-  this.otherAccountPath = ko.computed({
-    read: function() {
-      var otherItem = this.otherItem();
-      return otherItem == null ? "[multiple]" : otherItem.account().path();
-    },
-    write: function(value) {
-      var account = this.transaction.entity.getAccountFromPath(value);
-      if (account == null) {
-        console.log("Unable to find the account \"" + value + "\".");
-        return;
-      }
-
-      var otherItem = this.otherItem();
-      if (otherItem == null) {
-        console.log("The transaction item cannot be edited in simple mode.");
-        return;
-      }
-
-      otherItem.account_id(account.id);
-    },
-    owner: this
   }, this);
 
   this.destroy = function() {

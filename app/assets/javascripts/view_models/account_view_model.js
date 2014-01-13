@@ -105,7 +105,8 @@ function AccountViewModel(account, entity) {
 
   this.transaction_items = ko.lazyObservableArray(function() {
     entity.getTransactionItems(this, function(transaction_items) {
-      transaction_items.pushAllTo(_self.transaction_items);
+      var viewModels = _.map(transaction_items, function(item) { return new TransactionItemRollupViewModel(item); });
+      viewModels.pushAllTo(_self.transaction_items);
     });
   }, this);
 

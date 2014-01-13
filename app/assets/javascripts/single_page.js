@@ -10,6 +10,7 @@
 //= require view_models/account_view_model
 //= require view_models/transaction_view_model
 //= require view_models/transaction_item_view_model
+//= require view_models/transaction_item_rollup_view_model
 //= require view_models/notification_view_model.js
 //= require view_models/new_transaction_item_view_model.js
 
