@@ -3,11 +3,15 @@ function TransactionViewModel(transaction, entity) {
   this.entity = entity;
   this.id = ko.observable(transaction.id);
   this.transaction_date = ko.observable(new Date(transaction.transaction_date)).extend({ 
+    propertyName: 'transaction_date',
     required: "A valid transaction date must be specified.",
     isDate: null
   });
-  this.description = ko.observable(transaction.description).extend({ required: "A description must be specified" });
-  this.items = new ko.observableArray();
+  this.description = ko.observable(transaction.description).extend({
+    propertyName: 'description',
+    required: "A description must be specified"
+  });
+  this.items = new ko.observableArray().extend({ propertyName: 'items' });
 
   this.formattedTransactionDate = ko.computed({
     read: function() {
@@ -21,13 +25,21 @@ function TransactionViewModel(transaction, entity) {
     owner: this
   }, this);
 
+  this.debitAmount = ko.computed(function() {
+    return this.items().where(function(item) {
+      return item.action() == 'debit';
+    }).sum(function(item) {
+      return item.amount();
+    });
+  }, this).extend({ propertyName: 'debitAmount' });
+
   this.creditAmount = ko.computed(function() {
     return this.items().where(function(item) {
       return item.action() == 'credit';
     }).sum(function(item) {
       return item.amount();
     });
-  }, this);
+  }, this).extend({ propertyName: 'creditAmount', equalTo: _self.debitAmount });
 
   this.entityDescription = function() {
     return "'{description}' on {date} for {amount}".format({
@@ -109,18 +121,18 @@ function TransactionViewModel(transaction, entity) {
     this.entity._app.notify(message, "error");
   };
 
-  this.transaction_date.subscribe(function(value) {
-    this.requestSave();
-  }, this);
-  this.description.subscribe(function(value) {
-    this.requestSave();
-  }, this);
+//  this.transaction_date.subscribe(function(value) {
+//    this.requestSave();
+//  }, this);
+//  this.description.subscribe(function(value) {
+//    this.requestSave();
+//  }, this);
 
   this.validatedProperties = function() {
     return [
       this.description,
       this.transaction_date,
-      this.items()
+      this.creditAmount
     ]
   };
 

@@ -2,6 +2,30 @@
 //= require single_page
 //= require jquery.mockjax
 
+module('ServiceEntity');
+test("errorMessages", function() {
+  function ViewModel(id) {
+    this.id = id;
+    this.name = ko.observable().extend({
+      propertyName: 'name',
+      required: "Name is required."
+    });
+    this.children = ko.observableArray().extend({
+      propertyName: 'children'
+    });
+    this.validatedProperties = function() {
+      return [ this.name, this.children ];
+    };
+  }
+  ViewModel.prototype = new ServiceEntity();
+
+  var viewModel = new ViewModel('first');
+  viewModel.children.push(new ViewModel('second'));
+  viewModel.validate(); // The properties won't have error messages until validation has been called
+
+  deepEqual(viewModel.errorMessages(), ["name: Name is required.", "children - name: Name is required."], "The errorMessage property should list each property that is in error.");
+});
+
 module('MoneyApp', {
   setup: function() {
     $.mockjax({
@@ -231,7 +255,7 @@ module('TransactionViewModel', {
   }
 });
 asyncTest("validation", function() {
-  expect(4);
+  expect(6);
 
   var app = new MoneyApp();
   // I get the account here because the account list must be loaded for the transaction item to work
@@ -257,6 +281,17 @@ asyncTest("validation", function() {
 
     viewModel.description(null);
     equal(viewModel.validate(), false, "The model should not be valid without a description.");
+    viewModel.description('test');
+
+    var newItem = new TransactionItemViewModel({ account_id: 3, action: 'debit', amount: 100 }, viewModel);
+    viewModel.items.push(newItem);
+
+    equal(viewModel.validate(), false, "The model should not be valid if the sum of credits does not equal the sum of debits.");
+
+    var checkingItem = _.find(viewModel.items(), function(item) { return item.account_id() == 1});
+    checkingItem.amount(900);
+
+    ok(viewModel.validate(), "The model should be valid if the sum of credits and debits are the same.");
 
     start();
   });

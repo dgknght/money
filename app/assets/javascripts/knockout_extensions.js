@@ -205,6 +205,15 @@ ko.extenders.errable = function(target) {
       return target.errorMessage() != null;
     }, this);
   }
+  if (target.propertyName == null) {
+    target.propertyName = "unspecified";
+  }
+  if (target.errorMessages == null) {
+    target.errorMessages = function() {
+      if (!target.hasError()) return [];
+      return ["{name}: {message}".format({ name: target.propertyName, message: target.errorMessage() })];
+    };
+  }
 };
 
 /*
@@ -258,24 +267,53 @@ ko.extenders.includedIn = function(target, list) {
   return target;
 };
 
+ko.extenders.propertyName = function(target, name) {
+  target.propertyName = name;
+};
+
 ko.extenders.isDate = function(target, message) {
   target.extend({ errable: this });
 
   function validate(value) {
-
-    console.log("isDate.validate(" + value + ")");
-
     if (value == null) return;
 
     var message = (!_.isDate(value) || isNaN(value))
       ? "The value must be a date."
       : null;
-      target.errorMessage(message);
+    target.errorMessage(message);
   }
 
   validate(target());
 
   target.subscribe(validate);
+
+  return target;
+};
+
+ko.extenders.equalTo = function(target, otherProperty) {
+  target.extend({ errable: this });
+
+
+  function validate(value) {
+    var otherValue = otherProperty();
+    var message = (value == otherValue)
+      ? null
+      : "must be equal to the value of " + otherProperty.propertyName;
+    target.errorMessage(message);
+  }
+
+  function validateReverse(otherValue) {
+    value = target();
+    var message = (value == otherValue)
+      ? null
+      : "must be equal to the value of " + otherProperty.propertyName;
+    target.errorMessage(message);
+  }
+
+  validate(target());
+
+  target.subscribe(validate);
+  otherProperty.subscribe(validateReverse);
 
   return target;
 };

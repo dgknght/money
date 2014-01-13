@@ -1,9 +1,15 @@
 function TransactionItemViewModel(transaction_item, transaction) {
   this.id = ko.observable(transaction_item.id);
   this.transaction = transaction;
-  this.account_id = ko.observable(transaction_item.account_id).extend({ required: "A valid account must be specified." });
-  this.action = ko.observable(transaction_item.action);
-  this.amount = ko.observable(transaction_item.amount).extend({ required: "An amount must be specified.", numeric: "The amount must be a valid number." });
+  this.account_id = ko.observable(transaction_item.account_id).extend({ required: "A valid account must be specified." }).extend({
+    propertyName: 'account_id'
+  });;
+  this.action = ko.observable(transaction_item.action).extend({
+    propertyName: 'action'
+  });
+  this.amount = ko.observable(transaction_item.amount).extend({ required: "An amount must be specified.", numeric: "The amount must be a valid number." }).extend({
+    propertyName: 'amount'
+  });
   this.reconciled = ko.observable(transaction_item.reconciled);
   this.previousItem = ko.observable();
   this.showDetails = ko.observable(false);
@@ -212,6 +218,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
     };
   };
 
+  // TODO This is all duplicated from service entity...need to consolodate it
   this.validate = function() {
     return _.every(this.validatedProperties(), function(prop) { return !prop.hasError(); });
   };
@@ -221,5 +228,11 @@ function TransactionItemViewModel(transaction_item, transaction) {
       this.account_id,
       this.amount
     ];
+  };
+
+  this.errorMessages = function() {
+    return _.chain(this.validatedProperties())
+      .map(function(prop) { return _.map((_.isArray(prop) ? prop : [prop]), function(p){ return p.errorMessages(); }); })
+      .flatten();
   };
 }

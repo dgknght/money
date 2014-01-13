@@ -136,5 +136,20 @@ ServiceEntity.prototype = {
     this.isValid(result);
     return result;
   },
-  validatedProperties: function() { return []; }
+  validatedProperties: function() { return []; },
+  errorMessages: function() {
+    return _.chain(this.validatedProperties())
+      .map(function(prop) {
+        if (prop.push) {
+          var result = _.map(prop(), function(item) {
+            return _.map(item.errorMessages(), function(message) { return prop.propertyName + " - " + message});
+          });
+          return result;
+        } else {
+          return prop.errorMessages();
+        }
+      })
+      .flatten()
+      .value();
+  }
 };
