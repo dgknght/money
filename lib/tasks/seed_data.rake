@@ -72,6 +72,7 @@ namespace :seed_data do
       AccountDef.new('Groceries', 'expense'),
       AccountDef.new('Mortgage Interest', 'expense'),
       AccountDef.new('Dining', 'expense'),
+      AccountDef.new('Tax', 'expense', [AccountDef.new('Federal', 'expense'), AccountDef.new('Social Security', 'expense'), AccountDef.new('Medicare', 'expense')])
     ]
     account_defs.each { |a| create_account(entity, a) }
   end
@@ -134,12 +135,12 @@ namespace :seed_data do
       TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Home Loan', action: 'credit', amount: 175_000}, {account: 'Opening Balances', action: 'debit', amount: 175_000}]),
       
       # Paycheck
-      TransactionDef.new('2013-01-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
-      TransactionDef.new('2013-01-15', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
-      TransactionDef.new('2013-02-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
-      TransactionDef.new('2013-02-15', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
-      TransactionDef.new('2013-03-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
-      TransactionDef.new('2013-03-15', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 5000}]),
+      TransactionDef.new('2013-01-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 3867.50}, {account: 'Federal', action: 'debit', amount: 750}, {account: 'Social Security', action: 'debit', amount: 310}, {account: 'Medicare', action: 'debit', amount: 72.5}]),
+      TransactionDef.new('2013-01-15', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 3867.50}, {account: 'Federal', action: 'debit', amount: 750}, {account: 'Social Security', action: 'debit', amount: 310}, {account: 'Medicare', action: 'debit', amount: 72.5}]),
+      TransactionDef.new('2013-02-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 3867.50}, {account: 'Federal', action: 'debit', amount: 750}, {account: 'Social Security', action: 'debit', amount: 310}, {account: 'Medicare', action: 'debit', amount: 72.5}]),
+      TransactionDef.new('2013-02-15', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 3867.50}, {account: 'Federal', action: 'debit', amount: 750}, {account: 'Social Security', action: 'debit', amount: 310}, {account: 'Medicare', action: 'debit', amount: 72.5}]),
+      TransactionDef.new('2013-03-01', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 3867.50}, {account: 'Federal', action: 'debit', amount: 750}, {account: 'Social Security', action: 'debit', amount: 310}, {account: 'Medicare', action: 'debit', amount: 72.5}]),
+      TransactionDef.new('2013-03-15', 'Paycheck', [{account: 'Salary', action: 'credit', amount: 5000}, {account: 'Checking', action: 'debit', amount: 3867.50}, {account: 'Federal', action: 'debit', amount: 750}, {account: 'Social Security', action: 'debit', amount: 310}, {account: 'Medicare', action: 'debit', amount: 72.5}]),
       
       # Groceries
       TransactionDef.new('2013-01-06', 'Kroger', [{account: 'Credit Card', action: 'credit', amount: 80}, {account: 'Groceries', action: 'debit', amount: 80}]),
