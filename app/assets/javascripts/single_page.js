@@ -1,17 +1,17 @@
+//= require lib/accounting.min
+//= require lib/jquery-ui-1.10.3.custom.min
+//= require lib/underscore.js
 //= require strings
 //= require arrays
 //= require util
 //= require knockout_extensions.js
 //= require service_entity
-//= require entity_view_model
-//= require account_view_model
-//= require transaction_view_model
-//= require transaction_item_view_model
-//= require notification_view_model.js
-//= require accounting.min
-//= require jquery-ui-1.10.3.custom.min
-//= require underscore.js
-//= require new_transaction_item_view_model.js
+//= require view_models/entity_view_model
+//= require view_models/account_view_model
+//= require view_models/transaction_view_model
+//= require view_models/transaction_item_view_model
+//= require view_models/notification_view_model.js
+//= require view_models/new_transaction_item_view_model.js
 
 /*
  * Constructor for the client-side application

@@ -1,4 +1,4 @@
-//= require knockout-3.0.0.debug
+//= require lib/knockout-3.0.0.debug
 
 /*
  * Knockout extensions

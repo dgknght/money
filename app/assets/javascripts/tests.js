@@ -1,6 +1,6 @@
-//= require qunit-1.13.0
 //= require single_page
-//= require jquery.mockjax
+//= require lib/qunit-1.13.0
+//= require lib/jquery.mockjax
 
 module('ServiceEntity');
 test("errorMessages", function() {
