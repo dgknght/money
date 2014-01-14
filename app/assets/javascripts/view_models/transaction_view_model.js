@@ -54,7 +54,7 @@ function TransactionViewModel(transaction, entity) {
   };
 
   this.entityListPath = function() {
-    return "entities/{entity_id}/transactions.json".format({ entity_id: _self.entity.id });
+    return "entities/{entity_id}/transactions.json".format({ entity_id: _self.entity.id() });
   };
 
   this.onDestroyed = function() {
@@ -64,7 +64,7 @@ function TransactionViewModel(transaction, entity) {
   };
 
   this.entityPath = function() {
-    return "transactions/{id}.json".format({id: this.id});
+    return "transactions/{id}.json".format({id: this.id()});
   };
 
   this._saveToken = null;
