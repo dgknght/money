@@ -165,3 +165,25 @@ asyncTest("toggleDetails", function() {
     });
   });
 });
+asyncTest("formattedBalance", function() {
+  expect(1);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      equal(item.formattedBalance(), "1,000.00", "should have the correct value.");
+      start();
+    });
+  });
+});
+asyncTest("destroy", function() {
+  expect(1);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      ok(item.destroy); //TODO Would like to verify that the ajax method is called correctly
+      start();
+    });
+  });
+});

@@ -1,7 +1,8 @@
-function TransactionItemRollupViewModel(transaction_item) {
+function TransactionItemRollupViewModel(transaction_item, previousItem) {
   this.transaction_item = transaction_item;
   this.details = ko.observableArray();
   this.showDetails = ko.observable(false);
+  this.previousItem = ko.observable(previousItem);
 
   this.id = ko.computed(function() {
     return this.transaction_item.id();
@@ -129,5 +130,18 @@ function TransactionItemRollupViewModel(transaction_item) {
   this.toggleCss = ko.computed(function() {
    return this.showDetails() ? "ui-icon-triangle-1-s" : "ui-icon-triangle-1-e";
   }, this);
+
+  this.balance = ko.computed(function() {
+    var base = this.previousItem() == null ? 0 : this.previousItem().balance();
+    return base + this.polarizedAmount();
+  }, this);
+
+  this.formattedBalance = ko.computed(function() {
+    return accounting.formatNumber(this.balance(), 2);
+  }, this);
+
+  this.destroy = function() {
+    this.transaction_item.destroy();
+  };
 
 }

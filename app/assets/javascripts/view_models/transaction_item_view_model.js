@@ -11,7 +11,6 @@ function TransactionItemViewModel(transaction_item, transaction) {
     propertyName: 'amount'
   });
   this.reconciled = ko.observable(transaction_item.reconciled);
-  this.previousItem = ko.observable();
 
   this._saveId = null;
 
@@ -107,15 +106,6 @@ function TransactionItemViewModel(transaction_item, transaction) {
     },
     owner: this
   });
-
-  this.balance = ko.computed(function() {
-    var base = this.previousItem() == null ? 0 : this.previousItem().balance();
-    return base + this.polarizedAmount();
-  }, this);
-
-  this.formattedBalance = ko.computed(function() {
-    return accounting.formatNumber(this.balance(), 2);
-  }, this);
 
   this.destroy = function() {
     this.transaction.destroy();
