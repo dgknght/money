@@ -1,26 +1,21 @@
 function TransactionItemViewModel(transaction_item, transaction) {
   this.id = ko.observable(transaction_item.id);
   this.transaction = transaction;
-  this.account_id = ko.observable(transaction_item.account_id).extend({ required: "A valid account must be specified." }).extend({
+  this.account_id = ko.observable(transaction_item.account_id).extend({
+    required: "A valid account must be specified.",
     propertyName: 'account_id'
-  });;
+  });
   this.action = ko.observable(transaction_item.action).extend({
     propertyName: 'action'
   });
-  this.amount = ko.observable(transaction_item.amount).extend({ required: "An amount must be specified.", numeric: "The amount must be a valid number." }).extend({
+  this.amount = ko.observable(transaction_item.amount).extend({
+    required: "An amount must be specified.",
+    numeric: "The amount must be a valid number.",
     propertyName: 'amount'
   });
   this.reconciled = ko.observable(transaction_item.reconciled);
 
   this._saveId = null;
-
-//  this.amount.subscribe(function(a) {
-//    this.transaction.requestSave();
-//  }, this);
-//
-//  this.account_id.subscribe(function(id) {
-//    this.transaction.requestSave();
-//  }, this);
 
   this.account = ko.computed(function() {
     return this.transaction.entity.getAccount(this.account_id());
