@@ -1,4 +1,6 @@
 function TransactionItemRollupViewModel(transaction_item, previousItem) {
+  var _self = this;
+
   this.transaction_item = transaction_item;
   this.details = ko.observableArray();
   this.showDetails = ko.observable(false);
@@ -144,4 +146,8 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     this.transaction_item.destroy();
   };
 
+  this.formattedTransactionDate.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
+  this.description.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
+  this.polarizedAmount.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
+  this.otherAccountPath.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
 }
