@@ -22,8 +22,8 @@ module('TransactionItemRollupViewModel', {
           transaction_date: '2014-01-13',
           description: 'Paycheck',
           items: [
-            { id: 100, account_id: 1, action: 'debit', amount: 1000 },
-            { id: 200, account_id: 2, action: 'credit', amount: 1000 },
+            { id: 100, account_id: 1, action: 'debit', amount: 1000, reconciled: true },
+            { id: 200, account_id: 2, action: 'credit', amount: 1000, reconciled: false },
           ]
         },
       ]
@@ -69,6 +69,18 @@ asyncTest('otherAccountPath', function() {
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
       equal(item.otherAccountPath(), 'Checking', 'should have the correct value.');
+      start();
+    });
+  });
+});
+asyncTest('reconciled', function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      equal(item.reconciled(), false, 'should have the correct value.');
+      equal(item.otherItem().reconciled(), true, 'should have the correct value.');
       start();
     });
   });

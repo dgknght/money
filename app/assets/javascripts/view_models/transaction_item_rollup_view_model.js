@@ -41,6 +41,10 @@ function TransactionItemRollupViewModel(transaction_item) {
     owner: this
   }, this);
 
+  this.reconciled = ko.computed(function() {
+    return this.transaction_item.reconciled();
+  }, this);
+
   this.polarizedAmount = ko.computed({
     read: function() {
       return this.transaction_item.polarizedAmount();
