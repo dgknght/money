@@ -81,7 +81,7 @@ function TransactionViewModel(transaction, entity) {
       this._saveToken = null;
     }
 
-    this._saveToken = setTimeout(function() { console.log('executing the requested save'); _self.save(); }, 1000);
+    this._saveToken = setTimeout(function() { _self.save(); }, 1000);
   }
 
   this.toJson = function() {

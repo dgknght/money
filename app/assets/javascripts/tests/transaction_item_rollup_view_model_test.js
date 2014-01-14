@@ -15,6 +15,11 @@ module('TransactionItemRollupViewModel', {
       ]
     });
     $.mockjax({
+      url: 'transactions/10.json',
+      type: 'PUT',
+      responseText: []
+    });
+    $.mockjax({
       url: 'entities/10/transactions.json?account_id=2',
       responseText: [
         {
