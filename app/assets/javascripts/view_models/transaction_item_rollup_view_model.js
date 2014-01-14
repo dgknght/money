@@ -16,16 +16,6 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     owner: this
   });
 
-  this.amount= ko.computed({
-    read: function() {
-      return this.transaction_item.amount();
-    },
-    write: function(value) {
-      this.transaction_item.amount(value);
-    },
-    owner: this
-  }, this);
-
   this.formattedTransactionDate = ko.computed({
     read: function() {
       return this.transaction_item.transaction.formattedTransactionDate();

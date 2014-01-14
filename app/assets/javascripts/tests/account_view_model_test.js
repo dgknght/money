@@ -76,7 +76,7 @@ asyncTest("should have a transaction_items property", function() {
         var item = account.transaction_items().first();
         equal(item.id(), 1, "The first transaction item should have the right account_id value.");
         equal(item.action(), 'debit', "The first transaction item should have the right action value.");
-        equal(item.amount(), 1000, "The first transaction item should have the right amount value.");
+        equal(item.polarizedAmount(), 1000, "The first transaction item should have the right amount value.");
         start();
       });
       equal(account.transaction_items().length, 0, "The transaction_items property should not load until accessed.");

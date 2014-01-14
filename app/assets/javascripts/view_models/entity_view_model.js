@@ -97,6 +97,15 @@
     });
   };
 
+  this.getTransactionItem = function(id) {
+    return _.chain(this.transactions())
+      .map(function(t) { return t.items(); })
+      .flatten()
+      .filter(function(i) { return i.id() == id})
+      .first()
+      .value();
+  };
+
   this._getItemsByAccountId = function(account_id, transactions) {
     return _.chain(transactions || _self.transactions())
       .map(function(t) { return t.items(); })

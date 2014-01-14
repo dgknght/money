@@ -46,7 +46,7 @@
           %span{ data: { bind: "inlineEditor: otherAccountPath, editorClass: 'account_field', autocompleteLookup: getAccountPaths" }}
         %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
         %td.number_column{ data: { bind: "inlineEditor: formattedPolarizedAmount, editorClass: 'number_field'" }}
-          %span.validation_message{ data: { bind: "visible: amount.hasError, text: amount.errorMessage" }}
+          %span.validation_message{ data: { bind: "visible: polarizedAmount.hasError, text: polarizedAmount.errorMessage" }}
         %td.number_column{ data: { bind: "text: formattedBalance" }}
         %td.action_cell
           %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete

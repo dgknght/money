@@ -100,7 +100,7 @@ asyncTest('save transaction_items', function() {
 
     account.transaction_items.subscribe(function(items) {
       var item = _.last(items);
-      equal(item.amount(), 5, "The amount property should have the correct value.");
+      equal(item.polarizedAmount(), 5, "The amount property should have the correct value.");
       equal(item.action(), 'debit', "The action property should have the correct value.");
       equal(item.balance(), 5, "The balance property should have the correct value.");
 

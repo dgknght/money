@@ -90,13 +90,13 @@ asyncTest('reconciled', function() {
     });
   });
 });
-asyncTest('amount', function() {
+asyncTest('formattedPolarizedAmount', function() {
   expect(1);
 
   var app = new MoneyApp();
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
-      equal(item.amount(), 1000, 'should have the correct value.');
+      equal(item.formattedPolarizedAmount(), '1,000.00', 'should have the correct value.');
       start();
     });
   });
@@ -115,6 +115,27 @@ asyncTest("polarizedAmount setter", function() {
     });
   });
 });
+//asyncTest("polarizedAmount setter - other account without transaction items loaded", function() {
+//  expect(2);
+//
+//  var app = new MoneyApp();
+//  getAccount(app, { entity_id: 10, account_id: 2 }, function(salary) {
+//    var checking = app.entities().first().accounts().first(function(a) { return a.id() == 1; });
+//    getFromLazyLoadedCollection(salary, 'transaction_items', 200, function(item) {
+//      checking.balance.subscribe(function(balance) {
+//        equal(balance, 1001, "The balance of the other account should update to reflect the change.");
+//        start();
+//      });
+//
+//      item.polarizedAmount(1001);
+//    });
+//  });
+//});
+//asyncTest("polarizedAmount setter - other account with transaction items loaded", function() {
+//  expect(2);
+//
+//  ok(false, 'need to write the test.');
+//});
 asyncTest("polarizedAmount setter - negative", function() {
   expect(3);
 
@@ -148,7 +169,7 @@ asyncTest("formattedPolarizedAmount setter", function() {
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
       item.formattedPolarizedAmount("123.45");
-      equal(item.amount(), 123.45, "should update the underlying amount.");
+      equal(item.transaction_item.amount(), 123.45, "should update the underlying amount.");
       start();
     });
   });

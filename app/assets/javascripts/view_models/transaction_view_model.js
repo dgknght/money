@@ -121,12 +121,6 @@ function TransactionViewModel(transaction, entity) {
     this.entity._app.notify(message, "error");
   };
 
-//  this.transaction_date.subscribe(function(value) {
-//    this.requestSave();
-//  }, this);
-//  this.description.subscribe(function(value) {
-//    this.requestSave();
-//  }, this);
 
   this.validatedProperties = function() {
     return [
@@ -136,8 +130,14 @@ function TransactionViewModel(transaction, entity) {
     ]
   };
 
+  this._getTransactionItemViewModel = function(item) {
+    var existing = this.entity.getTransactionItem(item.id);
+    if (existing) return existing;
+    return new TransactionItemViewModel(item, _self);
+  };
+
   var itemViewModels = $.map(transaction.items, function(item, index) {
-      return new TransactionItemViewModel(item, _self);
+    return _self._getTransactionItemViewModel(item);
   });
   itemViewModels.pushAllTo(this.items);
 }
