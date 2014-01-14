@@ -50,15 +50,31 @@ function TransactionItemRollupViewModel(transaction_item) {
       return this.transaction_item.polarizedAmount();
     },
     write: function(value) {
+      var account = this.transaction_item.account();
+      if (account == null) throw "Cannot set polarizedAmount unless account_id is set to a valid value.";
+
       var otherItem = this.otherItem();
       if (otherItem == null)
         throw "Cannot set the amount through TransactionItemRollupViewModel unless there is exactly one other item.";
 
-      if (value != null && this.transaction_item.account().sameSideAs(otherItem.account()))
-        value = 0 - value;
-      otherItem.polarizedAmount(value || 0);
-
+      // Set the current item
       this.transaction_item.polarizedAmount(value);
+
+      // Set the other item
+      if (value != null && account.sameSideAs(otherItem.account()))
+        value = 0 - value;
+      otherItem.polarizedAmount(value);
+    },
+    owner: this
+  }, this);
+
+  this.formattedPolarizedAmount = ko.computed({
+    read: function() {
+      return accounting.formatNumber(this.polarizedAmount(), 2);
+    },
+    write: function(value) {
+      var amount = parseFloat(value);
+      this.polarizedAmount(isNaN(amount) ? null : amount);
     },
     owner: this
   }, this);

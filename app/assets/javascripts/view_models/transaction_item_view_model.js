@@ -69,17 +69,6 @@ function TransactionItemViewModel(transaction_item, transaction) {
     owner: this
   });
 
-  this.formattedPolarizedAmount = ko.computed({
-    read: function() {
-      return accounting.formatNumber(this.polarizedAmount(), 2);
-    },
-    write: function(value) {
-      var number = parseFloat(value);
-      this.polarizedAmount(isNaN(number) ? null : number);
-    },
-    owner: this
-  });
-
   this.creditAmount = ko.computed({
     read: function() {
       return this.action() == 'credit' ? this.amount() : 0;

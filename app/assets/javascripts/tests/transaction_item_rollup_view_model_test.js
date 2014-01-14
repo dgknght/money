@@ -109,7 +109,7 @@ asyncTest("polarizedAmount setter", function() {
       start();
     });
   });
-})
+});
 asyncTest("polarizedAmount setter - negative", function() {
   expect(3);
 
@@ -124,4 +124,27 @@ asyncTest("polarizedAmount setter - negative", function() {
       start();
     });
   });
-})
+});
+asyncTest("formattedPolarizedAmount", function() {
+  expect(1);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      equal(item.formattedPolarizedAmount(), "1,000.00", "should have the correct value.");
+      start();
+    });
+  });
+});
+asyncTest("formattedPolarizedAmount setter", function() {
+  expect(1);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      item.formattedPolarizedAmount("123.45");
+      equal(item.amount(), 123.45, "should update the underlying amount.");
+      start();
+    });
+  });
+});
