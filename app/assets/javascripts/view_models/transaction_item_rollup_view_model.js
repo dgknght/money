@@ -1,5 +1,7 @@
 function TransactionItemRollupViewModel(transaction_item) {
   this.transaction_item = transaction_item;
+  this.details = ko.observableArray();
+  this.showDetails = ko.observable(false);
 
   this.id = ko.computed(function() {
     return this.transaction_item.id();
@@ -112,6 +114,20 @@ function TransactionItemRollupViewModel(transaction_item) {
       otherItem.account_id(account.id);
     },
     owner: this
+  }, this);
+
+  this.toggleDetails = function() {
+    if (this.showDetails()) {
+      this.details.removeAll();
+      this.showDetails(false);
+    } else {
+      this.transaction_item.transaction.items().pushAllTo(this.details);
+      this.showDetails(true);
+    }
+  };
+
+  this.toggleCss = ko.computed(function() {
+   return this.showDetails() ? "ui-icon-triangle-1-s" : "ui-icon-triangle-1-e";
   }, this);
 
 }

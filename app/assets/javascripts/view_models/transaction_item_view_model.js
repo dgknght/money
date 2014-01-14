@@ -12,7 +12,6 @@ function TransactionItemViewModel(transaction_item, transaction) {
   });
   this.reconciled = ko.observable(transaction_item.reconciled);
   this.previousItem = ko.observable();
-  this.showDetails = ko.observable(false);
 
   this._saveId = null;
 
@@ -23,22 +22,6 @@ function TransactionItemViewModel(transaction_item, transaction) {
 //  this.account_id.subscribe(function(id) {
 //    this.transaction.requestSave();
 //  }, this);
-
-  this.toggleDetails = function() {
-    if (this.showDetails()) {
-      this.details.removeAll();
-      this.showDetails(false);
-    } else {
-      this.transaction.items().pushAllTo(this.details);
-      this.showDetails(true);
-    }
-  };
-
-  this.toggleCss = ko.computed(function() {
-   return this.showDetails() ? "ui-icon-triangle-1-s" : "ui-icon-triangle-1-e";
-  }, this);
-
-  this.details = ko.observableArray();
 
   this.account = ko.computed(function() {
     return this.transaction.entity.getAccount(this.account_id());

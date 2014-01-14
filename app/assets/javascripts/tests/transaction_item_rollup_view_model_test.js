@@ -148,3 +148,20 @@ asyncTest("formattedPolarizedAmount setter", function() {
     });
   });
 });
+asyncTest("toggleDetails", function() {
+  expect(6);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      equal(item.details().length, 0, "The details should be empty by default.");
+      equal(item.showDetails(), false, "The details should be hidden by default.");
+      equal(item.toggleCss(), 'ui-icon-triangle-1-e', "The indicator should point right when details are hidden.");
+      item.toggleDetails();
+      equal(item.details().length, 2, "The details should not be empty after toggle.");
+      equal(item.showDetails(), true, "The details should not be hidden after toggle.");
+      equal(item.toggleCss(), 'ui-icon-triangle-1-s', "The indicator should point down when details are displayed.");
+      start();
+    });
+  });
+});
