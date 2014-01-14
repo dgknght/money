@@ -46,6 +46,14 @@ function TransactionItemRollupViewModel(transaction_item) {
       return this.transaction_item.polarizedAmount();
     },
     write: function(value) {
+      var otherItem = this.otherItem();
+      if (otherItem == null)
+        throw "Cannot set the amount through TransactionItemRollupViewModel unless there is exactly one other item.";
+
+      if (value != null && this.transaction_item.account().sameSideAs(otherItem.account()))
+        value = 0 - value;
+      otherItem.polarizedAmount(value || 0);
+
       this.transaction_item.polarizedAmount(value);
     },
     owner: this

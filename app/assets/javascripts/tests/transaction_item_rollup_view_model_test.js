@@ -38,7 +38,7 @@ asyncTest('formattedTransactionDate', function() {
 
   var app = new MoneyApp();
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 2, function(item) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
       equal(item.formattedTransactionDate(), '1/13/2014', 'should have the correct value.');
 
       item.formattedTransactionDate('1/1/2014');
@@ -56,7 +56,7 @@ asyncTest('description', function() {
 
   var app = new MoneyApp();
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 2, function(item) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
       equal(item.description(), 'Paycheck', 'should have the correct value.');
       start();
     });
@@ -67,7 +67,7 @@ asyncTest('otherAccountPath', function() {
 
   var app = new MoneyApp();
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 2, function(item) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
       equal(item.otherAccountPath(), 'Checking', 'should have the correct value.');
       start();
     });
@@ -78,7 +78,7 @@ asyncTest('amount', function() {
 
   var app = new MoneyApp();
   getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 2, function(item) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
       equal(item.amount(), 1000, 'should have the correct value.');
       start();
     });
@@ -88,22 +88,28 @@ asyncTest("polarizedAmount setter", function() {
   expect(2);
 
   var app = new MoneyApp();
-  var transactionItem = getTransactionItem(app, {entity_id: 10, account_id: 1, transaction_item_id: 1}, function(transactionItem) {
-    transactionItem.polarizedAmount(1001);
-    _.each(transactionItem.transaction.items(), function(item) {
-      equal(item.amount(), 1001, "each item should have the new amount.");
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      item.polarizedAmount(1001);
+      _.each(item.transaction_item.transaction.items(), function(i) {
+        equal(i.amount(), 1001, "each item should have the new amount.");
+      });
+      start();
     });
-    start();
   });
 })
 asyncTest("polarizedAmount setter - negative", function() {
-  expect(2);
+  expect(3);
 
   var app = new MoneyApp();
-  var transactionItem = getTransactionItem(app, {entity_id: 10, account_id: 1, transaction_item_id: 100}, function(transactionItem) {
-    transactionItem.polarizedAmount(-1000);
-    equal(transactionItem.action(), 'credit');
-    equal(transactionItem.otherItem().action(), 'debit');
-    start();
+  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+      equal(item.action(), 'credit', "The action should be credit initially.");
+
+      item.polarizedAmount(-1000);
+      equal(item.action(), 'debit', "The action should change to debit when negating the amount.");
+      equal(item.otherItem().action(), 'credit', "The action of the other item should also be reversed.");
+      start();
+    });
   });
 })

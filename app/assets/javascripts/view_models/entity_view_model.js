@@ -78,20 +78,23 @@
 
   this._transactionAccountsSearched = {};
   this.getTransactionItems = function(account, callback) {
-    if (this._transactionAccountsSearched[account.id()] == null) {
-      var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id(), entity_id: this.id()});
-      $.getJSON(path, function(transactions) {
-
-        var viewModels = _.map(transactions, function(t) { return new TransactionViewModel(t, _self); });
-        viewModels.pushAllTo(_self.transactions);
-
-        var result = _self._getItemsByAccountId(account.id(), viewModels);
-        callback(result);
-      });
-    } else {
+    // Look in the local cache first
+    if (this._transactionAccountsSearched[account.id()]) {
       var result = this._getItemsByAccountId(account.id());
       callback(result);
+      return;
     }
+
+    // Load from the server if necessary
+    var path = "entities/{entity_id}/transactions.json?account_id={account_id}".format({account_id: account.id(), entity_id: this.id()});
+    $.getJSON(path, function(transactions) {
+      var viewModels = _.map(transactions, function(t) { return new TransactionViewModel(t, _self); });
+      viewModels.pushAllTo(_self.transactions);
+
+      var result = _self._getItemsByAccountId(account.id(), viewModels);
+      _self._transactionAccountsSearched[account.id()] = true;
+      callback(result);
+    });
   };
 
   this._getItemsByAccountId = function(account_id, transactions) {

@@ -60,15 +60,11 @@ function TransactionItemViewModel(transaction_item, transaction) {
       return polarity * this.amount();
     },
     write: function(value) {
-      if (value == this.polarizedAmount()) return;
+      var account = this.account();
+      if (account == null) throw "Cannot set polarizedAmount unless the account_id is set to a valid value.";
 
-      this.action(this.account().inferAction(value));
+      this.action(account.inferAction(value));
       this.amount(value == null ? null : Math.abs(value));
-
-      var otherItem = this.otherItem();
-      if (value != null && this.account().sameSideAs(otherItem.account()))
-        value = 0 - value;
-      this.otherItem().polarizedAmount(value || 0);
     },
     owner: this
   });
