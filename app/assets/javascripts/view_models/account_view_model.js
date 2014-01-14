@@ -202,7 +202,10 @@ function AccountViewModel(account, entity) {
     if (this.transaction_items.state() == 'new') {
       this._balance(this._balance() + item.polarizedAmount());
     } else {
-      this.transaction_items.push(item);
+      //TODO Need to account for items being entered out of chronological order
+      var previousItem = _.last(this.transaction_items());
+      var rollup = new TransactionItemRollupViewModel(item, previousItem);
+      this.transaction_items.push(rollup);
     }
   };
 }

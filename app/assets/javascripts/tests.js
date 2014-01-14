@@ -9,6 +9,7 @@
 //= require tests/transaction_view_model_test.js
 //= require tests/transaction_item_view_model_test.js
 //= require tests/transaction_item_rollup_view_model_test.js
+//= require tests/new_transaction_item_view_model_test.js
 
 function getFromLazyLoadedCollection(obj, property, id, callback) {
   var timeout = window.setTimeout(function() {

@@ -53,12 +53,12 @@ function NewTransactionItemViewModel(account) {
       description: _self.description(),
       items: [
         {
-          account_id: _self._account.id,
+          account_id: _self._account.id(),
           action: _self._account.inferAction(_self.amount()),
           amount: Math.abs(_self.amount())
         },
         {
-          account_id: _self.account_id(),
+          account_id: otherAccount.id(),
           action: otherAccount.inferAction(otherAmount),
           amount: Math.abs(otherAmount)
         }
