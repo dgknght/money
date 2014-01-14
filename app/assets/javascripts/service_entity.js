@@ -84,7 +84,7 @@ ServiceEntity.prototype = {
       return;
     }
 
-    if (this.id == null) {
+    if (this.id() == null) {
       this.insert(success, error, complete);
     } else {
       this.update(success, error, complete);
