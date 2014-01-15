@@ -25,21 +25,29 @@ function TransactionViewModel(transaction, entity) {
     owner: this
   }, this);
 
+  this._sum = function(action) {
+    return _.chain(this.items())
+      .filter(function(i) { return i.action() == action; })
+      .map(function(i) { return i.amount(); })
+      .reduce(function(sum, amount) { return sum + amount; }, 0)
+      .value();
+  };
+
   this.debitAmount = ko.computed(function() {
-    return this.items().where(function(item) {
-      return item.action() == 'debit';
-    }).sum(function(item) {
-      return item.amount();
-    });
+    return this._sum('debit');
   }, this).extend({ propertyName: 'debitAmount' });
 
+  this.formattedDebitAmount = ko.computed(function() {
+    return accounting.formatNumber(this.debitAmount(), 2);
+  }, this);
+
   this.creditAmount = ko.computed(function() {
-    return this.items().where(function(item) {
-      return item.action() == 'credit';
-    }).sum(function(item) {
-      return item.amount();
-    });
+    return this._sum('credit');
   }, this).extend({ propertyName: 'creditAmount', equalTo: _self.debitAmount });
+
+  this.formattedCreditAmount = ko.computed(function() {
+    return accounting.formatNumber(this.creditAmount(), 2);
+  }, this);
 
   this.entityDescription = function() {
     return "'{description}' on {date} for {amount}".format({
