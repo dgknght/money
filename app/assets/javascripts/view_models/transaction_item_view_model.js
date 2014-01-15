@@ -8,7 +8,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
   this.action = ko.observable(transaction_item.action).extend({
     propertyName: 'action'
   });
-  this.amount = ko.observable(transaction_item.amount).extend({
+  this.amount = ko.observable(transaction_item.amount * 1).extend({
     required: "An amount must be specified.",
     numeric: "The amount must be a valid number.",
     propertyName: 'amount'
@@ -68,7 +68,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
       if (value == null || value.length == 0) {
         this.creditAmount(0);
       } else {
-        this.creditAmount(parseFloat(value));
+        this.creditAmount(value.parseMoney());
       }
     },
     owner: this
@@ -96,7 +96,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
       if (value == null || value.length == 0) {
         this.debitAmount(0);
       } else {
-        this.debitAmount(parseFloat(value));
+        this.debitAmount(value.parseMoney());
       }
     },
     owner: this
