@@ -75,9 +75,14 @@ ServiceEntity.prototype = {
     console.log("The onServiceError method was not overridden. " + errorThrown);
   },
   save: function(success, error, complete) {
-    success = success == null ? function() {} : success;
-    error = error == null ? function() {} : error;
-    complete = complete == null ? function() {} : complete;
+    function ensureFunction(f) {
+      if (f != null && typeof f === "function")
+        return f;
+      return function() {};
+    }
+    success = ensureFunction(success);
+    error = ensureFunction(error);
+    complete = ensureFunction(complete);
 
     if (!this.validate()) {
       error("The item cannot be saved due to validation errors.");
