@@ -11,7 +11,9 @@ module('TransactionItemRollupViewModel', {
       responseText: [
         { id: 1, name: 'Checking', account_type: 'asset' },
         { id: 2, name: 'Salary', account_type: 'income' },
-        { id: 3, name: 'Income Tax', account_type: 'expense' }
+        { id: 3, name: 'Income Tax', account_type: 'expense' },
+        { id: 4, name: 'Credit Card', account_type: 'liability' },
+        { id: 5, name: 'Dining', account_type: 'expense' }
       ]
     });
     $.mockjax({
@@ -28,9 +30,23 @@ module('TransactionItemRollupViewModel', {
           description: 'Paycheck',
           items: [
             { id: 100, account_id: 1, action: 'debit', amount: 1000, reconciled: true },
-            { id: 200, account_id: 2, action: 'credit', amount: 1000, reconciled: false },
+            { id: 200, account_id: 2, action: 'credit', amount: 1000, reconciled: false }
           ]
-        },
+        }
+      ]
+    });
+    $.mockjax({
+      url: 'entities/10/transactions.json?account_id=5',
+      responseText: [
+        {
+          id: 11,
+          transaction_date: '2014-01-14',
+          description: 'Mooyah',
+          items: [
+            { id: 101, account_id: 5, action: 'debit', amount: 19, reconciled: true },
+            { id: 202, account_id: 4, action: 'credit', amount: 19, reconciled: false }
+          ]
+        }
       ]
     });
   },
@@ -111,6 +127,32 @@ asyncTest("polarizedAmount setter", function() {
       _.each(item.transaction_item.transaction.items(), function(i) {
         equal(i.amount(), 1001, "each item should have the new amount.");
       });
+      start();
+    });
+  });
+});
+asyncTest("polarizedAmount setter - expense and liability accounts", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 5 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 101, function(item) {
+      item.polarizedAmount(33);
+      equal(item.otherItem().polarizedAmount(), 33, "Setting a positive amount on the expense side should result in a positive value on the liability side.");
+      ok(item.transaction_item.transaction.validate(), "The transaction should be in a valid state after the adjustment.");
+      start();
+    });
+  });
+});
+asyncTest("otherAccountPath setter - expense and asset accounts", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 5 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 101, function(item) {
+      item.otherAccountPath("Checking");
+      equal(item.otherItem().polarizedAmount(), -19, "Setting a positive amount on the expense side should result in a negative value on the asset side.");
+      ok(item.transaction_item.transaction.validate(), "The transaction should be in a valid state after the adjustment.");
       start();
     });
   });

@@ -55,13 +55,17 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
       // Set the current item
       this.transaction_item.polarizedAmount(value);
 
-      // Set the other item
-      if (value != null && account.sameSideAs(otherItem.account()))
-        value = 0 - value;
-      otherItem.polarizedAmount(value);
+      this._updateOtherItemPolarizedAmount();
     },
     owner: this
   }, this);
+
+  this._updateOtherItemPolarizedAmount = function() {
+    var value = this.polarizedAmount();
+    if (value != null && this.transaction_item.account().sameSideAs(this.otherItem().account()))
+      value = 0 - value;
+    this.otherItem().polarizedAmount(value);
+  };
 
   this.formattedPolarizedAmount = ko.computed({
     read: function() {
@@ -92,19 +96,22 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
       return account == null ? "[multiple]" : account.path();
     },
     write: function(value) {
-      var account = this.transaction.entity.getAccountFromPath(value);
-      if (account == null) {
-        console.log("Unable to find the account \"" + value + "\".");
-        return;
-      }
-
       var otherItem = this.otherItem();
       if (otherItem == null) {
         console.log("The transaction item cannot be edited in simple mode.");
         return;
       }
 
-      otherItem.account_id(account.id);
+      var account = this.transaction_item.transaction.entity.getAccountFromPath(value);
+      if (account == null) {
+        console.log("Unable to find the account \"" + value + "\".");
+        return;
+      }
+
+      otherItem.account_id(account.id());
+
+      // Force the polarizedAmount of the other item to be updated, as the polarity might have changed
+      this._updateOtherItemPolarizedAmount();
     },
     owner: this
   }, this);
