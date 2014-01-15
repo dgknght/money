@@ -143,6 +143,10 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     this.transaction_item.destroy();
   };
 
+  this.transaction = function() {
+    return _self.transaction_item.transaction;
+  };
+
   this.formattedTransactionDate.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
   this.description.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
   this.polarizedAmount.subscribe(function() { _self.transaction_item.transaction.requestSave(); });

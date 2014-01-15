@@ -51,18 +51,28 @@
         %td.action_cell
           %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
       %tr{ data: { bind: "if: showDetails" }}
-        %td.detail_cell{ colspan: 7} 
+        %td.detail_cell{ colspan: 6, data: { bind: "with: transaction" }} 
           %table.detail{cellpadding: 0, cellspacing: 0}
             %tr
               %th Account
               %th.number_column Debit
               %th.number_column Credit
-            <!-- ko foreach: details -->
+            <!-- ko foreach: items-->
             %tr
-              %td{ data: { bind: "text: accountName" }}
+              %td
+                %input{ type: 'text', data: { bind: "autocomplete: accountName, source: getAccountPaths" }}
+              %td.number_column
+                %input.number_field{ type: 'text', data: { bind: "value: formattedDebitAmount" }}
+              %td.number_column
+                %input.number_field{ type: 'text', data: { bind: "value: formattedCreditAmount" }}
+            <!-- /ko -->
+            %tr
+              %td &nbsp;
               %td.number_column{ data: { bind: "text: formattedDebitAmount" }}
               %td.number_column{ data: { bind: "text: formattedCreditAmount" }}
-            <!-- /ko -->
+        %td{ data: { bind: "with: transaction" }}
+          %button.small_save_button{ data: { bind: "click: save" }, title: 'Click here to save the transaction.'}
+            Save
       <!-- /ko -->
 
       %tr{ data: { bind: "with: newTransactionItem"}}
