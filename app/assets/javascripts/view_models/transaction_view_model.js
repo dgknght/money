@@ -2,7 +2,7 @@ function TransactionViewModel(transaction, entity) {
   var _self = this;
   this.entity = entity;
   this.id = ko.observable(transaction.id);
-  this.transaction_date = ko.observable(new Date(transaction.transaction_date)).extend({ 
+  this.transaction_date = ko.observable(_.ensureDate(transaction.transaction_date)).extend({ 
     propertyName: 'transaction_date',
     required: "A valid transaction date must be specified.",
     isDate: null
@@ -94,8 +94,8 @@ function TransactionViewModel(transaction, entity) {
 
   this.toJson = function() {
     return {
-      id: this.id,
-      transaction_date: this.transaction_date(),
+      id: this.id(),
+      transaction_date: _.toIsoDate(this.transaction_date()),
       description: this.description(),
       items_attributes: this.items().map(function(item) { return item.toJson(); })
     };

@@ -115,6 +115,10 @@ function TransactionItemViewModel(transaction_item, transaction) {
     };
   };
 
+  this.remove = function() {
+    this.transaction.items.remove(this);
+  };
+
   // TODO This is all duplicated from service entity...need to consolodate it
   this.validate = function() {
     return _.every(this.validatedProperties(), function(prop) { return !prop.hasError(); });

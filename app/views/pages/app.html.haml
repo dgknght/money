@@ -57,6 +57,7 @@
               %th Account
               %th.number_column Debit
               %th.number_column Credit
+              %th &nbsp;
             <!-- ko foreach: items-->
             %tr
               %td
@@ -65,11 +66,14 @@
                 %input.number_field{ type: 'text', data: { bind: "value: formattedDebitAmount" }}
               %td.number_column
                 %input.number_field{ type: 'text', data: { bind: "value: formattedCreditAmount" }}
+              %td.action_cell
+                %a.small_delete_button{ href: '#', title: 'Click here to delete this item.', data: { bind: "click: remove" }}
             <!-- /ko -->
             %tr
               %td &nbsp;
               %td.number_column{ data: { bind: "text: formattedDebitAmount" }}
               %td.number_column{ data: { bind: "text: formattedCreditAmount" }}
+              %td &nbsp;
         %td{ data: { bind: "with: transaction" }}
           %button.small_save_button{ data: { bind: "click: save" }, title: 'Click here to save the transaction.'}
             Save

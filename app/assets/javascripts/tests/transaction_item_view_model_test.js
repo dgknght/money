@@ -33,10 +33,35 @@ module('TransactionItemViewModel', {
   }
 });
 asyncTest("amount", function() {
+  expect(1);
+
   var app = new MoneyApp();
   getAccount(app, { entity_id: 10, account_id: 101 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(item) {
       ok(_.isNumber(item.transaction_item.amount() + 1), "The amount should be a number");
+      start();
+    });
+  });
+});
+asyncTest("remove", function() {
+  expect(4);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 101 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(item) {
+      var transaction = item.transaction_item.transaction;
+      item.transaction_item.remove();
+      equal(1, transaction.items().length, "The number of items in the transaction should decrease by one after remove.");
+      
+      var isAbsent = _.every(transaction.items(), function(i) { return i.id() != item.id()});
+      ok(isAbsent, "The item should not longer be in the transaction after remove.");
+
+      equal(transaction.debitAmount(), 0, "The debit amount on the transaction should reflect the removed item.");
+
+      console.log("transaction.toJson()=" + transaction.toJson());
+
+      deepEqual(transaction.toJson(), { id: 1001, transaction_date: '2014-01-01', description: 'Salary', items_attributes: [{ id: 10002, account_id: 102, action: 'credit', amount: 1000}]}, "The serialized transaction should reflect the removed item.");
+
       start();
     });
   });

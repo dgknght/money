@@ -14,18 +14,46 @@ module('TransactionViewModel', {
         { id: 3, name: 'Income Tax', account_type: 'expense' }
       ]
     });
+    $.mockjax({
+      url: 'entities/10/transactions.json?account_id=1',
+      responseText: [
+        { 
+          id: 1001, 
+          transaction_date: '2014-01-01',
+          description: 'Salary',
+          items: [
+            { id: 10001, account_id: 1, action: 'debit', amount: "1000" },
+            { id: 10002, account_id: 2, action: 'credit', amount: "1000" }
+          ]
+        },
+      ]
+    });
   },
   teardown: function() {
     $.mockjaxClear();
   }
 });
+asyncTest("transaction_date", function() {
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 1 }, function(account) {
+    getFromLazyLoadedCollection(account, "transaction_items", 10001, function(item) {
+      ok(item.transaction_item, "The item rollup should reference the underlying transaction item.")
+      ok(item.transaction_item.transaction, "The transaction item should reference the transaction.")
+
+      var transaction = item.transaction_item.transaction;
+      ok(transaction.transaction_date(), "The tranaction should have a transaction_date property.");
+      equal(transaction.transaction_date().toLocaleDateString(), "1/1/2014", "The transaction_date property should have the correct value.");
+      start();
+    });
+  });
+});
 asyncTest("creditAmount", function() {
   expect(2);
 
   var app = new MoneyApp();
-  var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
+  getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
     var transaction = {
-      transaction_date: new Date(),
+      transaction_date: "2014-02-27",
       description: 'Paycheck', 
       items: [
         { account_id: 1, action: 'debit', amount: 1000 },
@@ -50,7 +78,7 @@ asyncTest("formattedCreditAmount", function() {
   var app = new MoneyApp();
   var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
     var transaction = {
-      transaction_date: new Date(),
+      transaction_date: "2014-02-27",
       description: 'Paycheck', 
       items: [
         { account_id: 1, action: 'debit', amount: 1000 },
@@ -75,7 +103,7 @@ asyncTest("debitAmount", function() {
   var app = new MoneyApp();
   var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
     var transaction = {
-      transaction_date: new Date(),
+      transaction_date: "2014-02-27",
       description: 'Paycheck', 
       items: [
         { account_id: 1, action: 'debit', amount: 1000 },
@@ -100,7 +128,7 @@ asyncTest("formattedDebitAmount", function() {
   var app = new MoneyApp();
   var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
     var transaction = {
-      transaction_date: new Date(),
+      transaction_date: "2014-02-27",
       description: 'Paycheck', 
       items: [
         { account_id: 1, action: 'debit', amount: 1000 },
@@ -126,7 +154,7 @@ asyncTest("validation", function() {
   // I get the account here because the account list must be loaded for the transaction item to work
   var account = getAccount(app, { entity_id: 10, account_id: 3 }, function(account) {
     var transaction = {
-      transaction_date: new Date(),
+      transaction_date: "2014-02-27",
       description: 'Paycheck', 
       items: [
         { account_id: 1, action: 'debit', amount: 1000 },
