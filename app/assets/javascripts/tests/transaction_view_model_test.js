@@ -176,8 +176,10 @@ asyncTest("validation", function() {
     equal(viewModel.validate(), false, "The model should not be valid without a description.");
     viewModel.description('test');
 
-    var newItem = new TransactionItemViewModel({ account_id: 3, action: 'debit', amount: 100 }, viewModel);
-    viewModel.items.push(newItem);
+    var newItem = viewModel.addTransactionItem();
+    newItem.account_id(3);
+    newItem.action('debit');
+    newItem.amount(100);
 
     equal(viewModel.validate(), false, "The model should not be valid if the sum of credits does not equal the sum of debits.");
 
@@ -189,3 +191,22 @@ asyncTest("validation", function() {
     start();
   });
 })
+asyncTest("addTransactionItem", function() {
+  expect(3);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 1 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(rollup) {
+      var transaction = rollup.transaction_item.transaction;
+      ok(transaction.addTransactionItem, "The object should have a method called 'addTransactionItem'");
+      if (transaction.addTransactionItem) {
+        var before = transaction.items().length;
+        var newItem = transaction.addTransactionItem();
+        ok(newItem, "It should not return null.");
+        var after = transaction.items().length;
+        equal(after - before, 1, "It should add an item to the items collection.");
+      }
+      start()
+    });
+  });
+});

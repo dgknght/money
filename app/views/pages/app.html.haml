@@ -70,7 +70,8 @@
                 %a.small_delete_button{ href: '#', title: 'Click here to delete this item.', data: { bind: "click: remove" }}
             <!-- /ko -->
             %tr
-              %td &nbsp;
+              %td
+                %a.small_add_button{ href: '#', data: { bind: "click: addTransactionItem" }} Add
               %td.number_column{ data: { bind: "text: formattedDebitAmount" }}
               %td.number_column{ data: { bind: "text: formattedCreditAmount" }}
               %td &nbsp;

@@ -14,6 +14,7 @@ function TransactionItemViewModel(transaction_item, transaction) {
     propertyName: 'amount'
   });
   this.reconciled = ko.observable(transaction_item.reconciled);
+  this.destroyed = ko.observable(false);
 
   this._saveId = null;
 
@@ -123,16 +124,27 @@ function TransactionItemViewModel(transaction_item, transaction) {
   };
 
   this.toJson = function() {
-    return {
+    var result = {
       id: this.id(),
       action: this.action(),
       amount: this.amount(),
       account_id: this.account_id()
     };
+
+    if (this.destroyed()) {
+      result._destroy = 1;
+      result.amount = 0;
+    }
+
+    return result;
   };
 
   this.remove = function() {
-    this.transaction.items.remove(this);
+    if (this.id() == null) {
+      this.transaction.allItems.remove(this);
+    } else {
+      this.destroyed(true);
+    }
   };
 
   // TODO This is all duplicated from service entity...need to consolodate it

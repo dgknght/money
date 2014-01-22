@@ -72,9 +72,16 @@ asyncTest("remove", function() {
 
       equal(transaction.debitAmount(), 0, "The debit amount on the transaction should reflect the removed item.");
 
-      console.log("transaction.toJson()=" + transaction.toJson());
-
-      deepEqual(transaction.toJson(), { id: 1001, transaction_date: '2014-01-01', description: 'Salary', items_attributes: [{ id: 10002, account_id: 102, action: 'credit', amount: 1000}]}, "The serialized transaction should reflect the removed item.");
+      var expected = { 
+        id: 1001, 
+        transaction_date: '2014-01-01', 
+        description: 'Salary',
+        items_attributes: [
+          { id: 10001, account_id: 101, action: 'debit', amount: 1000, _destroy: true },
+          { id: 10002, account_id: 102, action: 'credit', amount: 1000 }
+        ]
+      };
+      deepEqual(transaction.toJson(), expected, "The serialized transaction should reflect the removed item.");
 
       start();
     });

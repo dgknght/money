@@ -11,7 +11,10 @@ function TransactionViewModel(transaction, entity) {
     propertyName: 'description',
     required: "A description must be specified"
   });
-  this.items = new ko.observableArray().extend({ propertyName: 'items' });
+  this.allItems = new ko.observableArray().extend({ propertyName: 'items' });
+  this.items = new ko.computed(function() {
+    return _.filter(this.allItems(), function(i) { return !i.destroyed(); });
+  }, this);
 
   this.formattedTransactionDate = ko.computed({
     read: function() {
@@ -97,7 +100,7 @@ function TransactionViewModel(transaction, entity) {
       id: this.id(),
       transaction_date: _.toIsoDate(this.transaction_date()),
       description: this.description(),
-      items_attributes: this.items().map(function(item) { return item.toJson(); })
+      items_attributes: this.allItems().map(function(item) { return item.toJson(); })
     };
   };
 
@@ -129,6 +132,11 @@ function TransactionViewModel(transaction, entity) {
     this.entity._app.notify(message, "error");
   };
 
+  this.addTransactionItem = function() {
+    var newItem = new TransactionItemViewModel({}, _self);
+    this.allItems.push(newItem);
+    return newItem;
+  };
 
   this.validatedProperties = function() {
     return [
@@ -147,7 +155,7 @@ function TransactionViewModel(transaction, entity) {
   var itemViewModels = $.map(transaction.items, function(item, index) {
     return _self._getTransactionItemViewModel(item);
   });
-  itemViewModels.pushAllTo(this.items);
+  itemViewModels.pushAllTo(this.allItems);
 }
 
 TransactionViewModel.prototype = new ServiceEntity();
