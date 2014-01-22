@@ -26,6 +26,22 @@ function TransactionItemViewModel(transaction_item, transaction) {
     return account == null ? null : account.name();
   }, this);
 
+  this.accountPath = ko.computed({
+    read: function() {
+      var account = this.account();
+      return account == null ? null : account.path();
+    },
+    write: function(value) {
+      var account = this.transaction.entity.getAccountFromPath(value);
+      if (account == null) {
+        this.account_id(null);
+      } else {
+        this.account_id(account.id());
+      }
+    },
+    owner: this
+  }, this);
+
   this.formattedAmount = ko.computed(function() {
     return accounting.formatNumber(this.amount(), 2);
   }, this);

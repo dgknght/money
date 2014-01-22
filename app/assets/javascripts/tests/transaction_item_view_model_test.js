@@ -43,6 +43,20 @@ asyncTest("amount", function() {
     });
   });
 });
+asyncTest("accountPath", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: 10, account_id: 101 }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(item) {
+      var transactionItem = item.transaction_item;
+      ok(transactionItem.accountPath, "The object should have an accountPath property accessor");
+      if (transactionItem.accountPath)
+        equal(transactionItem.accountPath(), "Checking", "The property should have the correct value.");
+      start();
+    });
+  });
+});
 asyncTest("remove", function() {
   expect(4);
 

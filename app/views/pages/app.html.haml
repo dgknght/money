@@ -61,7 +61,7 @@
             <!-- ko foreach: items-->
             %tr
               %td
-                %input{ type: 'text', data: { bind: "autocomplete: accountName, source: getAccountPaths" }}
+                %input{ type: 'text', data: { bind: "autocomplete: accountPath, source: getAccountPaths" }}
               %td.number_column
                 %input.number_field{ type: 'text', data: { bind: "value: formattedDebitAmount" }}
               %td.number_column
