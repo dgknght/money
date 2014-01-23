@@ -113,5 +113,20 @@
       .filter(function(item) { return item.account_id() == account_id; })
       .value();
   };
+
+  this.entityListPath = function() {
+    return "entities.json";
+  };
+
+  this.entityIdentifier = function() {
+    return "entity";
+  };
+
+  this.toJson = function() {
+    return {
+      id: this.id(),
+      name: this.name()
+    };
+  };
 }
 EntityViewModel.prototype = new ServiceEntity();

@@ -23,11 +23,17 @@ $black: #000;
   border: 1px solid black;
   border-radius: 1em;
   padding: .5em;
-}
-
-#entity_container select {
-  font-size: 125%;
-  font-weight: bold;
+  .actions {
+    float: right;
+    height: 100%;
+    a {
+      vertical-align: middle;
+    }
+  }
+  select {
+    font-size: 125%;
+    font-weight: bold;
+  }
 }
 
 #account_container {

@@ -33,8 +33,17 @@ function MoneyApp() {
     });
   }, this);
   this.accountTypes = ko.observableArray(['asset', 'liability', 'equity', 'income', 'expense']);
+  this.editEntity = ko.observable();
   this.editAccount = ko.observable();
   this.notifications = ko.observableArray();
+
+  this.newEntity = function() {
+    var result = new EntityViewModel({ name: "New Entity" }, _self);
+    this.entities.push(result);
+    this.editEntity(result);
+    this.selectedEntity(result);
+    return result;
+  };
 
   this.notify = function(message, type) {
     type = type == null ? 'notice' : type;

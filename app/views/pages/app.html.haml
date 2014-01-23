@@ -4,6 +4,8 @@
     %div{ data: { bind: "css: type, html: message" }}
     <!-- /ko -->
   #entity_container
+    .actions
+      %a.small_add_button{ href: "#", data: { bind: "click: newEntity" }}
     %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
   #account_container{ data: { bind: "with: selectedEntity()" }}
     %table.list#accounts_table{ cellspacing: 0, cellpadding: 0}
@@ -101,6 +103,15 @@
       %li{ data: { bind: "visible: amount.hasError, text: amount.errorMessage" }}
   <!-- /ko -->
 
+<!-- Entity Form -->
+#entity_form.dialog{ title: 'Entity', data: { bind: "with: editEntity"}}
+  %form
+    %div
+      %label{ for: 'entity_name' } Name
+      %span.validation_message{ data: { bind: "visible: name.hasError, text: name.errorMessage" }}
+      %br
+      %input#entity_name{ type: 'text', data: { bind: "value: name" }}
+
 <!-- Account Form -->
 #account_form.dialog{ title: 'Account', data: { bind: "with: editAccount"}}
   %form
@@ -144,6 +155,28 @@
       }, 500);
     }
 
+    // Initialize the entity form
+    app.editEntity.subscribe(function(entity) {
+      if (entity == null) {
+        $('#entity_form').dialog('close');
+      } else {
+        $('#entity_form').dialog('open');
+      }
+    });
+
+    $('#entity_form').dialog({ 
+      autoOpen: false, 
+      modal: true,
+      buttons: {
+        Save: function() {
+          app.editEntity().save(function() { app.editEntity(null); });
+        },
+        Cancel: function() {
+          app.editEntity().reload(function() { app.editEntity(null); });
+        }
+      }
+    });
+
     // Initialize the account form
     app.editAccount.subscribe(function(account) {
       if (account == null) {
@@ -153,9 +186,7 @@
       }
     });
 
-    // Initialize JQuery elements
-    // dialogs
-    $('.dialog').dialog({ 
+    $('#account_form').dialog({ 
       autoOpen: false, 
       modal: true,
       buttons: {
