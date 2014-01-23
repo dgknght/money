@@ -60,6 +60,7 @@ namespace :seed_data do
     entity = Entity.first
 
     account_defs = [
+      AccountDef.new('Cash', 'asset'),
       AccountDef.new('Checking', 'asset'),
       AccountDef.new('Home', 'asset'),
       AccountDef.new('Savings', 'asset', [AccountDef.new('Car', 'asset'), AccountDef.new('Reserve', 'asset')]),
@@ -100,6 +101,9 @@ namespace :seed_data do
     else
       budget = entity.budgets.create!(name: '2013', start_date: '2013-01-01', period: Budget.month, period_count: 12)
       create_budget_item(budget, 'Salary', 10_000)
+      create_budget_item(budget, 'Federal', 1_500)
+      create_budget_item(budget, 'Social Security', 620)
+      create_budget_item(budget, 'Medicare', 145)
       create_budget_item(budget, 'Groceries', 320)
       create_budget_item(budget, 'Gasoline', 120)
       create_budget_item(budget, 'Mortgage Interest', 899)
