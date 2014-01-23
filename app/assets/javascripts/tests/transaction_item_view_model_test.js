@@ -77,7 +77,7 @@ asyncTest("remove", function() {
         transaction_date: '2014-01-01', 
         description: 'Salary',
         items_attributes: [
-          { id: 10001, account_id: 101, action: 'debit', amount: 1000, _destroy: true },
+          { id: 10001, account_id: 101, action: 'debit', amount: 0, _destroy: 1 },
           { id: 10002, account_id: 102, action: 'credit', amount: 1000 }
         ]
       };
