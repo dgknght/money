@@ -60,6 +60,10 @@
     this._app.undisplayAccount(account);
   };
 
+  this.edit = function() {
+    this._app.editEntity(_self);
+  };
+
   this.getAccount = function(account_id) {
     return this.accounts().first(function(a) {
       return a.id() == account_id;
@@ -112,6 +116,10 @@
       .flatten()
       .filter(function(item) { return item.account_id() == account_id; })
       .value();
+  };
+
+  this.entityPath = function() {
+    return "entities/{id}.json".format({ id: _self.id() });
   };
 
   this.entityListPath = function() {

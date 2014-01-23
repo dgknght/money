@@ -28,6 +28,21 @@ test("newEntity", function() {
   equal(after - before, 1, "should increase the number of entities");
   ok(app.editEntity(), "should set the 'editEntity' property to the new entity");
 });
+asyncTest("editSelectedEntity", function() {
+  expect(3);
+
+  var app = new MoneyApp();
+  ok(app.editSelectedEntity, "should be a method on the object");
+
+  getEntity(app, 1, function(entity) {
+    app.selectedEntity(entity);
+    app.editSelectedEntity();
+    ok(app.editEntity(), "should set the value of editEntity");
+    equal(app.editEntity().id(), 1, "should set the value of editEntity to the same entity as selectedEntity");
+
+    start();
+  });
+});
 
 asyncTest("entities", 4, function() {
   var app = new MoneyApp();

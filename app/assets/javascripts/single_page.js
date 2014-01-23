@@ -45,6 +45,10 @@ function MoneyApp() {
     return result;
   };
 
+  this.editSelectedEntity = function() {
+    _self.editEntity(_self.selectedEntity());
+  };
+
   this.notify = function(message, type) {
     type = type == null ? 'notice' : type;
     var notification = new NotificationViewModel(type, message);

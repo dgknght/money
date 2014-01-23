@@ -1,4 +1,4 @@
-module('EntityViewmodel', {
+module('EntityViewModel', {
   setup: function() {
     $.mockjax({
       url: 'entities.json',
@@ -57,3 +57,13 @@ asyncTest("should have a list of accounts", 4, function() {
   });
   app.entities();
 })
+asyncTest("edit", function() {
+  var app = new MoneyApp();
+  getEntity(app, 10, function(entity) {
+    ok(entity.edit, "should be a method on the object");
+    entity.edit();
+    ok(app.editEntity() && app.editEntity().id() == 10, "should set the 'editEntity' on the application object");
+
+    start();
+  });
+});
