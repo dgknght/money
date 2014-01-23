@@ -64,6 +64,14 @@
     this._app.editEntity(_self);
   };
 
+  this.onDestroyed = function() {
+    _self._app.entities.remove(_self);
+  };
+
+  this.remove = function(supressConfirmation) {
+    _self.destroy(supressConfirmation);
+  };
+
   this.getAccount = function(account_id) {
     return this.accounts().first(function(a) {
       return a.id() == account_id;
@@ -116,6 +124,10 @@
       .flatten()
       .filter(function(item) { return item.account_id() == account_id; })
       .value();
+  };
+
+  this.entityDescription = function() {
+    return "entity";
   };
 
   this.entityPath = function() {

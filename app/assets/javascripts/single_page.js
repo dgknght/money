@@ -49,6 +49,11 @@ function MoneyApp() {
     _self.editEntity(_self.selectedEntity());
   };
 
+  this.removeSelectedEntity = function(supressConfirmation) {
+    supressConfirmation = supressConfirmation && _.isBoolean(supressConfirmation);
+    _self.selectedEntity().remove(supressConfirmation);
+  };
+
   this.notify = function(message, type) {
     type = type == null ? 'notice' : type;
     var notification = new NotificationViewModel(type, message);

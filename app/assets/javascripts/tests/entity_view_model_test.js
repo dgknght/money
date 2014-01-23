@@ -13,6 +13,11 @@ module('EntityViewModel', {
         { id: 2, name: 'Salary', account_type: 'income' },
       ]
     });
+    $.mockjax({
+      url: 'entities/10.json',
+      type: 'DELETE',
+      responseText: []
+    });
   },
   teardown: function() {
     $.mockjaxClear();
@@ -65,5 +70,22 @@ asyncTest("edit", function() {
     ok(app.editEntity() && app.editEntity().id() == 10, "should set the 'editEntity' on the application object");
 
     start();
+  });
+});
+asyncTest("remove", function() {
+  expect(3);
+
+  var app = new MoneyApp();
+  getEntity(app, 10, function(entity) {
+    ok(entity.remove, "should be a method on the object");
+    var before = app.entities().length;
+    app.entities.subscribe(function(entities) {
+      var after = app.entities().length;
+      equal(after - before, -1, "should reduce the number of entities by 1")
+      var absent = _.every(app.entities(), function(e) { return e.id() != 10; });
+      ok(absent, "should remove the entity from the entities collection");
+      start();
+    });
+    entity.remove(true);
   });
 });

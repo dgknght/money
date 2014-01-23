@@ -7,6 +7,7 @@
     .actions
       %a.small_add_button{ href: "#", data: { bind: "click: newEntity" }}
       %a.small_edit_button{ href: "#", data: { bind: "click: editSelectedEntity" }}
+      %a.small_delete_button{ href: "#", data: { bind: "click: removeSelectedEntity" }}
     %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
   #account_container{ data: { bind: "with: selectedEntity()" }}
     %table.list#accounts_table{ cellspacing: 0, cellpadding: 0}

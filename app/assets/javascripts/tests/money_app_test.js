@@ -6,6 +6,11 @@ module('MoneyApp', {
         { id: 1, name: 'First Entity' }
       ]
     });
+    $.mockjax({
+      url: 'entities/1.json',
+      type: 'DELETE',
+      responseText: []
+    });
   },
   teardown: function() {
     $.mockjaxClear();
@@ -43,7 +48,27 @@ asyncTest("editSelectedEntity", function() {
     start();
   });
 });
+asyncTest("removeSelectedEntity", function() {
+  expect(3);
 
+  var app = new MoneyApp();
+  ok(app.removeSelectedEntity, "should be a method on the object");
+
+  getEntity(app, 1, function(entity) {
+    app.selectedEntity(entity);
+
+    var before = app.entities().length;
+    app.entities.subscribe(function(entities) {
+      var after = app.entities().length;
+      equal(after - before, -1, "should reduce the number of entities by 1");
+      var absent = _.every(app.entities(), function(e) { return e.id() != 1; });
+      ok(absent, "should remove the entity from the entities collection");
+      start();
+    });
+
+    app.removeSelectedEntity(true);
+  });
+});
 asyncTest("entities", 4, function() {
   var app = new MoneyApp();
   ok(app.entities, "It should have an entities property.");

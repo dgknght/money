@@ -2,8 +2,13 @@ function ServiceEntity() {
 }
 
 ServiceEntity.prototype = {
-  destroy: function() {
-    if (!confirm("Are you sure you want to delete the acount \"" + this.entityDescription() + "\"?")) return;
+  destroy: function(supressConfirmation) {
+    if (!supressConfirmation) {
+      var message = "Are you sure you want to delete the selected {description}?".format({
+        description: this.entityDescription()
+      });
+      if (!confirm(message)) return;
+    }
 
     var self = this;
     $.ajax({
@@ -45,7 +50,7 @@ ServiceEntity.prototype = {
       dataType: 'json',
       data: this.getPostData(),
       success: function(data) {
-        self.id = data.id;
+        self.id(data.id);
         self.insertSucceeded(data);
         success();
       },
