@@ -1,2 +1,14 @@
-<h1>Attachments#index</h1>
-<p>Find me in app/views/attachments/index.html.erb</p>
+%h2#page_title Attachments
+
+%table#attachments_table.list{ cellpadding: 0, cellspacing: 0}
+  %tr
+    %th Name
+    %th Content type
+    %th.action_cell &nbsp;
+  -@attachments.each do |attachment|
+    %tr
+      %td= attachment.name
+      %td= attachment.content_type
+      %td &nbsp;
+.actions
+  =link_to 'Add', new_transaction_attachment_path(@transaction), class: 'add_button', title: 'Click here to add a new attachment.'

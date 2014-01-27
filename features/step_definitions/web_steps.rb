@@ -39,6 +39,11 @@ When (/^(.*) within (.*)$/) do |step_content, section|
   within(scope) { step(step_content) }
 end
 
+When (/^I specify the file "([^"]+)" for "([^"]+)"$/) do |file, locator|
+  path = Rails.root.join('features', 'resources', file)
+  attach_file(locator, path)
+end
+
 Then (/^I should see the following (.*) table$/) do |description, expected_table|
   id = "##{description_to_id(description)}_table"
   html_table = find(id)

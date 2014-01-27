@@ -7,12 +7,13 @@ class AttachmentsController < ApplicationController
 
   def index
     authorize! :show, @transaction
-    @attachments = []
+    @attachments = @transaction.attachments
     respond_with @attachments
   end
 
   def new
     authorize! :update, @transaction
+    @attachment = @transaction.attachments.new
   end
 
   def create

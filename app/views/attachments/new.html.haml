@@ -1,2 +1,8 @@
-<h1>Attachments#new</h1>
-<p>Find me in app/views/attachments/new.html.erb</p>
+%h2#page_title New attachment
+=form_for([@attachment.transaction, @attachment]) do |f|
+  =f.label :raw_file, 'File'
+  %br
+  =f.file_field :raw_file
+
+  .actions
+    =f.submit 'Save', class: 'save_button', title: 'Click here to save the attachment.'

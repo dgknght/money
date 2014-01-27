@@ -21,10 +21,16 @@ Feature: Add an attachment
       | Transaction Date | Description |   Amount | 
       | 1/1/2014         | Paycheck    | 1,000.00 |
 
-    When I click "Attachment" within the 1st transaction row
+    When I click "Attachments" within the 1st transaction row
+    Then I should see "Attachments" within the page title
+
+    When I click "Add"
     Then I should see "New attachment" within the page title
 
-    When I fill in "File" with "Paystub.png"
+    When I specify the file "attachment.png" for "File"
     And I click "Save"
 
     Then I should see "The attachment was saved successfully" within the notice area
+    And I should see the following attachments table
+      | Name           | Content type |
+      | attachment.png | image/png    |
