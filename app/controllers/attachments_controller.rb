@@ -15,6 +15,19 @@ class AttachmentsController < ApplicationController
   end
 
   def create
+    @attachment = @transaction.attachments.new(attachment_params)
+    flash[:notice] = "The attachment was saved successfully." if @attachment.save
+
+    puts "@attachment.valid?=#{@attachment.valid?}"
+    @attachment.errors.full_messages.each { |m| puts m }
+
+    respond_with(@attachment) do |format|
+      if @attachment.valid?
+        format.html { redirect_to transaction_attachments_path(@transaction) }
+      else
+        format.html { render :new }
+      end
+    end
   end
 
   def show
@@ -24,6 +37,10 @@ class AttachmentsController < ApplicationController
   end
 
   private
+    def attachment_params
+      return params.require(:attachment).permit(:raw_file)
+    end
+
     def load_transaction
       @transaction = Transaction.find(params[:transaction_id])
     end

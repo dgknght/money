@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Attachment do
 
   let (:transaction) { FactoryGirl.create(:transaction) }
+  let (:file) { File.new(Rails.root.join('spec', 'resources', 'attachment.png')) }
   let (:attributes) do
     {
       transaction_id: transaction.id,
-      name: 'Photo.jpg',
-      content_type: 'image/jpeg'
+      raw_file: ActionDispatch::Http::UploadedFile.new(tempfile: file, filename: 'attachment.png', type: 'image/png')
     }
   end
 
@@ -15,24 +15,16 @@ describe Attachment do
     attachment = Attachment.new(attributes)
     expect(attachment).not_to be_nil
     expect(attachment).to be_valid
-    expect(attachment.name).to eq('Photo.jpg')
-    expect(attachment.content_type).to eq('image/jpeg')
+    expect(attachment.name).to eq('attachment.png')
+    expect(attachment.content_type).to eq('image/png')
     expect(attachment.transaction_id).to eq(transaction.id)
   end
 
-  describe 'name' do
+  describe 'raw_file' do
     it 'should be required' do
-      attachment = Attachment.new(attributes.without(:name))
+      attachment = Attachment.new(attributes.without(:raw_file))
       expect(attachment).not_to be_valid
       expect(attachment).to have(1).error_on(:name)
-    end
-  end
-
-  describe 'content_type' do
-    it 'should be required' do
-      attachment = Attachment.new(attributes.without(:content_type))
-      expect(attachment).not_to be_valid
-      expect(attachment).to have(1).error_on(:content_type)
     end
   end
 

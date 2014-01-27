@@ -5,6 +5,11 @@ describe AttachmentsController do
   let (:user) { FactoryGirl.create(:user) }
   let (:entity) { FactoryGirl.create(:entity, user: user) }
   let (:transaction) { FactoryGirl.create(:transaction, entity: entity) }
+  let (:attributes) do
+    {
+      raw_file: Rack::Test::UploadedFile.new(Rails.root.join('spec', 'resources', 'attachment.png'), 'images/png')
+    }
+  end
 
   context 'for an authenticated user' do
     context 'to which the entity belongs' do
@@ -31,13 +36,9 @@ describe AttachmentsController do
         end
       end
 
-      describe "POST :create", wip: true do
+      describe "POST :create" do
         it 'should redirect to the attachment index page for the transaction' do
-          path = File.dirname(__FILE__) + "/../resources/attachment.png"
-
-          puts "path=#{path}"
-
-          post :create, transaction_id: transaction, file: Rack::Test::UploadedFile.new(path, 'image/png')
+          post :create, transaction_id: transaction, attachment: attributes
           response.should redirect_to transaction_attachments_path(transaction)
         end
 

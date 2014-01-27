@@ -4,6 +4,7 @@ class CreateAttachments < ActiveRecord::Migration
       t.integer :transaction_id, null: false
       t.text :name, null: false
       t.text :content_type, null: false
+      t.integer :size, null: false
 
       t.timestamps
     end

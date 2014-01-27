@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20140127152918) do
     t.integer  "transaction_id", null: false
     t.text     "name",           null: false
     t.text     "content_type",   null: false
+    t.integer  "size",           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
