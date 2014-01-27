@@ -61,3 +61,7 @@ end
 Then (/^show me the page$/) do
   save_and_open_page
 end
+
+Then (/I should see an image/) do
+  expect(response_headers).to include('Content-Type' => 'image/png')
+end

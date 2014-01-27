@@ -3,6 +3,7 @@ class AttachmentContent < ActiveRecord::Base
   validates_presence_of :data
 
   def raw_file=(input)
+    input.rewind if input.eof?
     self.data = input.read
   end
 end

@@ -3,8 +3,6 @@
 FactoryGirl.define do
   factory :attachment do
     transaction
-    name "SomeImportantFile"
-    content_type "text/html"
-    size 1024
+    raw_file ActionDispatch::Http::UploadedFile.new(tempfile: File.new(Rails.root.join('spec', 'resources', 'attachment.png')), type: 'image/png', filename: 'attachment.png')
   end
 end

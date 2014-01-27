@@ -22,6 +22,7 @@ Money::Application.routes.draw do
     resources :attachments, only: [:index, :new, :create]
   end
   resources :attachments, only: [:show, :destroy]
+  resources :attachment_contents, only: :show
   resources :transaction_items, only: [ :destroy, :edit, :update ]
   resources :budgets, only: [:show, :edit, :update, :destroy] do
     resources :budget_items, only: [:index, :new, :create], path: 'items'

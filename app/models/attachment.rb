@@ -8,7 +8,7 @@ class Attachment < ActiveRecord::Base
       new_content = self.content
       new_content.raw_file = input
     else
-      new_content = content.nil? ? build_content(raw_file: input) : self.content
+      new_content = build_content(raw_file: input)
     end
 
     self.name = input.original_filename
