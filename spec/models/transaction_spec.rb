@@ -75,4 +75,12 @@ describe Transaction do
       transaction.should_not be_valid
     end
   end
+
+  describe 'attachments' do
+    let (:transaction) { FactoryGirl.create(:transaction) }
+
+    it 'should contain a list of attachments for the transaction' do
+      expect(transaction).to have(0).attachments
+    end
+  end
 end
