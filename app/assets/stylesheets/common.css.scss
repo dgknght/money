@@ -280,6 +280,11 @@ table.attributes {
   background-image: url(/assets/wrench.png)
 }
 
+.attachments_button {
+  @extend .any_button;
+  background-image: url(/assets/attachment.png);
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;
