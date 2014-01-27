@@ -42,10 +42,23 @@ describe AttachmentsController do
           response.should redirect_to transaction_attachments_path(transaction)
         end
 
-        it 'should create a new attachment record'
+        it 'should create a new attachment record' do
+          expect do
+            post :create, transaction_id: transaction, attachment: attributes
+          end.to change(Transaction, :count).by(1)
+        end
+
         context 'in json' do
-          it 'should be successful'
-          it 'should create a new attachment record'
+          it 'should be successful' do
+            post :create, transaction_id: transaction, attachment: attributes, format: :json
+            response.should be_success
+          end
+
+          it 'should create a new attachment record' do
+            expect do
+              post :create, transaction_id: transaction, attachment: attributes, format: :json
+            end.to change(Transaction, :count).by(1)
+          end
         end
       end
 
