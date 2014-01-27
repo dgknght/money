@@ -42,4 +42,11 @@ describe Attachment do
       expect(attachment.transaction).not_to be_nil
     end
   end
+
+  describe 'content' do
+    it 'should contain the raw attachment data' do
+      attachment = Attachment.new(attributes);
+      expect(attachment.content).not_to be_nil
+    end
+  end
 end

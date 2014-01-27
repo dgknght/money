@@ -1,4 +1,3 @@
-@wip
 Feature: Add an attachment
   As a user
   In order to keep track of receipts an other documents

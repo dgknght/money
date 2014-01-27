@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140127152918) do
+ActiveRecord::Schema.define(version: 20140127204526) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                       null: false
@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(version: 20140127152918) do
   end
 
   add_index "accounts", ["parent_id"], name: "index_accounts_on_parent_id"
+
+  create_table "attachment_contents", force: true do |t|
+    t.integer  "attachment_id"
+    t.binary   "data",          null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "attachment_contents", ["attachment_id"], name: "index_attachment_contents_on_attachment_id", unique: true
 
   create_table "attachments", force: true do |t|
     t.integer  "transaction_id", null: false
