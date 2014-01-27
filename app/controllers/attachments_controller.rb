@@ -17,10 +17,6 @@ class AttachmentsController < ApplicationController
   def create
     @attachment = @transaction.attachments.new(attachment_params)
     flash[:notice] = "The attachment was saved successfully." if @attachment.save
-
-    puts "@attachment.valid?=#{@attachment.valid?}"
-    @attachment.errors.full_messages.each { |m| puts m }
-
     respond_with(@attachment) do |format|
       if @attachment.valid?
         format.html { redirect_to transaction_attachments_path(@transaction) }
