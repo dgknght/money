@@ -1,6 +1,7 @@
 class AttachmentsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_transaction, only: [:index, :new, :create]
+  before_filter :load_attachment, only: [:show, :destroy]
 
   respond_to :html, :json
 
@@ -15,26 +16,31 @@ class AttachmentsController < ApplicationController
   end
 
   def create
+    authorize! :update, @transaction
     @attachment = @transaction.attachments.new(attachment_params)
     flash[:notice] = "The attachment was saved successfully." if @attachment.save
-    respond_with(@attachment) do |format|
-      if @attachment.valid?
-        format.html { redirect_to transaction_attachments_path(@transaction) }
-      else
-        format.html { render :new }
-      end
-    end
+    respond_with @attachment, location: transaction_attachments_path(@transaction)
   end
 
   def show
+    authorize! :show, @attachment
+    respond_with @attachment
   end
 
   def destroy
+    authorize! :destroy, @attachment
+    @attachment.destroy
+    flash[:notice] = "The attachment was removed successfully."
+    respond_with @attachment, location: transaction_attachments_path(@attachment.transaction)
   end
 
   private
     def attachment_params
       return params.require(:attachment).permit(:raw_file)
+    end
+
+    def load_attachment
+      @attachment = Attachment.find(params[:id])
     end
 
     def load_transaction

@@ -2,8 +2,9 @@
 
 FactoryGirl.define do
   factory :attachment do
-    transaction_id 1
-    name "MyText"
-    content_type "MyText"
+    transaction
+    name "SomeImportantFile"
+    content_type "text/html"
+    size 1024
   end
 end
