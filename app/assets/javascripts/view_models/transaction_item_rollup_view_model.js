@@ -16,6 +16,16 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     owner: this
   });
 
+  this.attachments = ko.computed(function() {
+    return this.transaction_item.transaction.attachments();
+  }, this);
+  this.hasAttachment = ko.computed(function() {
+    return this.transaction_item.transaction.hasAttachment();
+  }, this);
+  this.showAttachment = function() {
+    this.transaction_item.transaction.showAttachment();
+  };
+
   this.formattedTransactionDate = ko.computed({
     read: function() {
       return this.transaction_item.transaction.formattedTransactionDate();

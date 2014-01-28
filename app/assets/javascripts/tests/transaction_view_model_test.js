@@ -15,6 +15,10 @@ module('TransactionViewModel', {
       ]
     });
     $.mockjax({
+      url: 'transactions/*/attachments.json',
+      responseText: []
+    });
+    $.mockjax({
       url: 'entities/10/transactions.json?account_id=1',
       responseText: [
         { 

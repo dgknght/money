@@ -37,7 +37,7 @@ test("name should be required", function() {
   entity.name("test");
   equal(entity.validate(), true, "The model should be valid if the name is supplied.");
 })
-asyncTest("should have a list of accounts", 4, function() {
+asyncTest("should have a list of accounts", function() {
   var app = new MoneyApp();
   app.entities.subscribe(function(entities) {
     if (entities.length == 0) return;

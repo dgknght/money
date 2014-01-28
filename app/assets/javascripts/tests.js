@@ -7,6 +7,7 @@
 //= require tests/entity_view_model_test.js
 //= require tests/account_view_model_test.js
 //= require tests/transaction_view_model_test.js
+//= require tests/attachment_view_model_test.js
 //= require tests/transaction_item_view_model_test.js
 //= require tests/transaction_item_rollup_view_model_test.js
 //= require tests/new_transaction_item_view_model_test.js
@@ -33,9 +34,9 @@ function getAccount(app, keys, callback) {
   });
 }
 
-function getTransactionItem(app, keys, callback) {
-  getAccount(app, keys, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', keys.transaction_item_id, callback);
+function getTransactionItemRollup(app, ids, callback) {
+  getAccount(app, ids, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', ids.transaction_item_id, callback);
   });
 }
 
@@ -43,3 +44,8 @@ function getEntity(app, entity_id, callback) {
   getFromLazyLoadedCollection(app, 'entities', entity_id, callback);
 }
 
+function getAttachment(app, ids, callback) {
+  getTransactionItemRollup(app, ids, function(item) {
+    getFromLazyLoadedCollection(item, 'attachments', ids.attachment_id, callback);
+  });
+}

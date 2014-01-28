@@ -15,6 +15,23 @@ function TransactionViewModel(transaction, entity) {
   this.items = new ko.computed(function() {
     return _.filter(this.allItems(), function(i) { return !i.destroyed(); });
   }, this);
+  this.attachments = ko.lazyObservableArray(function() {
+    if (this.id() == null) return;
+
+    var path = "transactions/{id}/attachments.json".format({id: this.id()});
+    $.getJSON(path, function(attachments) {
+      var viewModels = $.map(attachments, function(attachment, index) {
+        return new AttachmentViewModel(attachment, _self);
+      });
+      viewModels.pushAllTo(_self.attachments);
+    });
+  }, this);
+  this.hasAttachment = ko.computed(function() {
+    return this.attachments().length > 0;
+  }, this);
+  this.showAttachment = function() {
+    throw 'not implemented';
+  };
 
   this.formattedTransactionDate = ko.computed({
     read: function() {

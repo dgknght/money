@@ -13,6 +13,8 @@
     ]
   };
   this.accounts = ko.lazyObservableArray(function() {
+    if (this.id() == null) return;
+
     var path = "entities/{id}/accounts.json".format({id: this.id()});
     $.getJSON(path, function(accounts) {
       var viewModels = $.map(accounts, function(account, index) {

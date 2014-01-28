@@ -17,7 +17,7 @@ module('TransactionItemRollupViewModel', {
       ]
     });
     $.mockjax({
-      url: 'transactions/10.json',
+      url: 'transactions/*.json',
       type: 'PUT',
       responseText: []
     });
@@ -47,6 +47,12 @@ module('TransactionItemRollupViewModel', {
             { id: 202, account_id: 4, action: 'credit', amount: 19, reconciled: false }
           ]
         }
+      ]
+    });
+    $.mockjax({
+      url: 'transactions/10/attachments.json',
+      responseText: [
+        { id: 1001, transaction_id: 10, name: 'Paystub', content_type: 'image/png' }
       ]
     });
   },
@@ -237,21 +243,59 @@ asyncTest("formattedBalance", function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
-      equal(item.formattedBalance(), "1,000.00", "should have the correct value.");
-      start();
-    });
+  var ids = {
+    entity_id: 10,
+    account_id: 2,
+    transaction_item_id: 200
+  };
+  getTransactionItemRollup(app, ids, function(item) {
+    equal(item.formattedBalance(), "1,000.00", "should have the correct value.");
+    start();
   });
 });
 asyncTest("destroy", function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
-      ok(item.destroy); //TODO Would like to verify that the ajax method is called correctly
+  var ids = {
+    entity_id: 10,
+    account_id: 2,
+    transaction_item_id: 200
+  };
+  getTransactionItemRollup(app, ids, function(item) {
+    ok(item.destroy); //TODO Would like to verify that the ajax method is called correctly
+    start();
+  });
+});
+asyncTest("hasAttachment", function() {
+  expect(3);
+
+  var app = new MoneyApp();
+  var ids = {
+    entity_id: 10,
+    account_id: 2,
+    transaction_item_id: 200
+  };
+  getTransactionItemRollup(app, ids, function(item) {
+    ok(item.hasAttachment, "should be a property on the object");
+    item.hasAttachment.subscribe(function(hasAttachment) {
+      ok(hasAttachment, "should be true if the transaction has an attachment");
       start();
     });
+    ok(item.hasAttachment() == false, "should be false until the attachments are loaded");
+  });
+});
+asyncTest("showAttachment", function() {
+  expect(1);
+
+  var app = new MoneyApp();
+  var ids = {
+    entity_id: 10,
+    account_id: 2,
+    transaction_item_id: 200
+  };
+  getTransactionItemRollup(app, ids, function(item) {
+    ok(item.showAttachment, "should be a method on the object");
+    start();
   });
 });
