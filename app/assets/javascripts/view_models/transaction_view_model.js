@@ -32,9 +32,7 @@ function TransactionViewModel(transaction, entity) {
   this.showAttachment = function() {
     var attachment = this.attachments().first();
     if (attachment == null) return;
-
-    var url = "attachment_contents/{id}".format({ id: attachment.id() });
-    window.open(url, "_blank");
+    attachment.show();
   };
 
   this.formattedTransactionDate = ko.computed({

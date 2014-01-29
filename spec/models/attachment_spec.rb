@@ -43,10 +43,15 @@ describe Attachment do
     end
   end
 
-  describe 'content' do
-    it 'should contain the raw attachment data' do
-      attachment = Attachment.new(attributes);
-      expect(attachment.content).not_to be_nil
+  describe 'attachment_content_id' do
+    it 'should point to the content record for the attachment' do
+      attachment = Attachment.create!(attributes);
+      expect(attachment.attachment_content_id).not_to be_nil
+    end
+
+    it 'should prevent saving if not set' do
+      attachment = Attachment.new(attributes.without(:raw_file).merge( name: 'test', content_type: 'text'))
+      expect(attachment.save).not_to be_true
     end
   end
 end

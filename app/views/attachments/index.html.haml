@@ -10,7 +10,7 @@
       %td= attachment.name
       %td= attachment.content_type
       %td.action_cell
-        =link_to 'View', attachment_content_path(attachment.content), class: 'show_button', title: 'Click here to view the attachment.'
+        =link_to 'View', attachment_content_path(attachment.attachment_content_id), class: 'show_button', title: 'Click here to view the attachment.'
         =render 'shared/delete_form', resource: attachment, url: attachment_url(attachment)
 .actions
   =link_to 'Add', new_transaction_attachment_path(@transaction), class: 'add_button', title: 'Click here to add a new attachment.'

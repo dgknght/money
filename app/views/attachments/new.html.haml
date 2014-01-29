@@ -1,4 +1,5 @@
 %h2#page_title New attachment
+=render "shared/errors", :resource => @attachment
 =form_for([@attachment.transaction, @attachment]) do |f|
   =f.label :raw_file, 'File'
   %br
@@ -6,3 +7,4 @@
 
   .actions
     =f.submit 'Save', class: 'save_button', title: 'Click here to save the attachment.'
+    =link_to 'Back', transaction_attachments_path(@attachment.transaction), class: 'back_button', title: 'Click here to return to the list of attachments.'

@@ -5,8 +5,8 @@ class AttachmentContentsController < ApplicationController
 
   def show
     content = AttachmentContent.find(params[:id])
-    authorize! :show, content.attachment
-    response.headers['Content-Type'] = content.attachment.content_type
+    authorize! :show, content.entity
+    response.headers['Content-Type'] = content.content_type
     render text: content.data
   end
 end

@@ -10,7 +10,7 @@ describe AttachmentContentsController do
 
       describe "GET 'show'" do
         it "should be successful" do
-          get :show, id: attachment.content.id
+          get :show, id: attachment.attachment_content_id
           expect(response).to be_success
         end
       end
@@ -22,7 +22,7 @@ describe AttachmentContentsController do
 
       describe "GET 'show'" do
         it "should redirect to the home page" do
-          get :show, id: attachment.content.id
+          get :show, id: attachment.attachment_content_id
           expect(response).to redirect_to home_path
         end
       end
@@ -32,7 +32,7 @@ describe AttachmentContentsController do
   context 'for an unauthenticated user' do
     describe "GET 'show'" do
       it "should redirect to the sign in page" do
-        get :show, id: attachment.content.id
+        get :show, id: attachment.attachment_content_id
         expect(response).to redirect_to new_user_session_path
       end
     end
