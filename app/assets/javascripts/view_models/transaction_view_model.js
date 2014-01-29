@@ -30,7 +30,11 @@ function TransactionViewModel(transaction, entity) {
     return this.attachments().length > 0;
   }, this);
   this.showAttachment = function() {
-    throw 'not implemented';
+    var attachment = this.attachments().first();
+    if (attachment == null) return;
+
+    var url = "attachment_contents/{id}".format({ id: attachment.id() });
+    window.open(url, "_blank");
   };
 
   this.formattedTransactionDate = ko.computed({
