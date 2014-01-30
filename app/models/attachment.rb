@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: attachments
+#
+#  id                    :integer          not null, primary key
+#  transaction_id        :integer          not null
+#  name                  :text             not null
+#  content_type          :text             not null
+#  size                  :integer          not null
+#  created_at            :datetime
+#  updated_at            :datetime
+#  attachment_content_id :integer          not null
+#
+
 class Attachment < ActiveRecord::Base
   belongs_to :transaction
   validates_presence_of :name, :transaction_id, :content_type
