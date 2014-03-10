@@ -29,6 +29,10 @@ function TransactionViewModel(transaction, entity) {
   this.hasAttachment = ko.computed(function() {
     return this.attachments().length > 0;
   }, this);
+  this.hasNoAttachments = ko.computed(function() {
+    return !this.hasAttachment();
+  }, this);
+  this.addAttachment = function() {};
   this.showAttachment = function() {
     var attachment = this.attachments().first();
     if (attachment == null) return;

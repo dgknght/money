@@ -290,6 +290,16 @@ table.attributes {
   background-image: url(/assets/attachment_small.png);
 }
 
+.add_attachment_button {
+  @extend .any_button;
+  background-image: url(/assets/add_attachment.png);
+}
+
+.small_add_attachment_button {
+  @extend .any_small_button;
+  background-image: url(/assets/add_attachment_small.png);
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;
