@@ -199,18 +199,15 @@ asyncTest("addTransactionItem", function() {
   expect(3);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 1 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(rollup) {
-      var transaction = rollup.transaction_item.transaction;
-      ok(transaction.addTransactionItem, "The object should have a method called 'addTransactionItem'");
-      if (transaction.addTransactionItem) {
-        var before = transaction.items().length;
-        var newItem = transaction.addTransactionItem();
-        ok(newItem, "It should not return null.");
-        var after = transaction.items().length;
-        equal(after - before, 1, "It should add an item to the items collection.");
-      }
-      start()
-    });
+  getTransaction(app, { entity_id: 10, account_id: 1, transaction_item_id: 10001 }, function(transaction) {
+    ok(transaction.addTransactionItem, "The object should have a method called 'addTransactionItem'");
+    if (transaction.addTransactionItem) {
+      var before = transaction.items().length;
+      var newItem = transaction.addTransactionItem();
+      ok(newItem, "It should not return null.");
+      var after = transaction.items().length;
+      equal(after - before, 1, "It should add an item to the items collection.");
+    }
+    start()
   });
 });

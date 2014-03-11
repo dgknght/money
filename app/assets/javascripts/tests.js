@@ -40,6 +40,14 @@ function getTransactionItemRollup(app, ids, callback) {
   });
 }
 
+function getTransaction(app, ids, callback) {
+  getAccount(app, ids, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', ids.transaction_item_id, function(rollup) {
+      callback(rollup.transaction_item.transaction);
+    });
+  });
+}
+
 function getEntity(app, entity_id, callback) {
   getFromLazyLoadedCollection(app, 'entities', entity_id, callback);
 }
