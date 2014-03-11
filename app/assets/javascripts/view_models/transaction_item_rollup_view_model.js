@@ -25,8 +25,8 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
   this.hasNoAttachments = ko.computed(function() {
     return this.transaction_item.transaction.hasNoAttachments();
   }, this);
-  this.addAttachment = function() {
-    this.transaction_item.transaction.addAttachment();
+  this.newAttachment = function() {
+    this.transaction_item.transaction.newAttachment();
   };
   this.showAttachment = function() {
     this.transaction_item.transaction.showAttachment();

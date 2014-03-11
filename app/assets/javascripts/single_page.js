@@ -36,6 +36,7 @@ function MoneyApp() {
   this.accountTypes = ko.observableArray(['asset', 'liability', 'equity', 'income', 'expense']);
   this.editEntity = ko.observable();
   this.editAccount = ko.observable();
+  this.editAttachment = ko.observable();
   this.notifications = ko.observableArray();
 
   this.newEntity = function() {

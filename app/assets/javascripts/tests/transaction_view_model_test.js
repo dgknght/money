@@ -211,3 +211,19 @@ asyncTest("addTransactionItem", function() {
     start()
   });
 });
+asyncTest('newAttachment', function() {
+  expect(3);
+
+  var app = new MoneyApp();
+  getTransaction(app, { entity_id: 10, account_id: 1, transaction_item_id: 10001 }, function(transaction) {
+    ok(transaction.newAttachment, 'The object should have a method called "newAttachment"');
+    if (transaction.newAttachment) {
+    transaction.newAttachment();
+    ok(app.editAttachment, 'The application object should have a method called "editAttachment"');
+      if (app.editAttachment) {
+        ok(app.editAttachment(), 'The application object editAttachment method should not return null after calling newAttachment on a transaction.');
+      }
+    }
+    start();
+  });
+});

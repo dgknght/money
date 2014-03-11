@@ -32,7 +32,9 @@ function TransactionViewModel(transaction, entity) {
   this.hasNoAttachments = ko.computed(function() {
     return !this.hasAttachment();
   }, this);
-  this.addAttachment = function() {};
+  this.newAttachment = function() {
+    this.entity._app.editAttachment(new AttachmentViewModel(null, this));
+  };
   this.showAttachment = function() {
     var attachment = this.attachments().first();
     if (attachment == null) return;
