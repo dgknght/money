@@ -11,7 +11,7 @@ describe AttachmentContentsController do
       describe "GET 'show'" do
         it "should be successful" do
           get :show, id: attachment.attachment_content_id
-          expect(response).to be_success
+          expect([200, 302]).to include(response.response_code)
         end
       end
     end
