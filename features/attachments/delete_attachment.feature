@@ -1,4 +1,3 @@
-@wip
 Feature: Delete an attachment
   As a user
   In order to discard an attachment that I do not need
