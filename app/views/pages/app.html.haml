@@ -133,6 +133,18 @@
       %br
       %input#account_name{ type: 'text', data: { bind: "value: name" }}
 
+<!-- Attachment Form -->
+#attachment_form.dialog{ title: 'Attachment', data: { bind: "with: editAttachment"}}
+  %form
+    %div
+      %label{ for: 'attachment_name' } Name
+      %br
+      %input#attachment_name{ data: { bind: "value: name" }}
+    %div
+      %label{ for: 'attachment_file' } File
+      %br
+      %input#attachment_file{ type: 'file', data: { bind: "value: raw_file" }}
+
 :javascript  
   $(function() {
     // Initialize and bind the view model
@@ -199,6 +211,28 @@
         },
         Cancel: function() {
           app.editAccount().reload(function() { app.editAccount(null); });
+        }
+      }
+    });
+
+    // Initialize the attachment form
+    app.editAttachment.subscribe(function(attachment) {
+      if (attachment == null) {
+        $('#attachment_form').dialog('close');
+      } else {
+        $('#attachment_form').dialog('open');
+      }
+    });
+
+    $('#attachment_form').dialog({ 
+      autoOpen: false, 
+      modal: true,
+      buttons: {
+        Save: function() {
+          app.editAttachment().save(function() { app.editAttachment(null); });
+        },
+        Cancel: function() {
+          app.editAttachment().reload(function() { app.editAttachment(null); });
         }
       }
     });
