@@ -22,14 +22,14 @@ function AttachmentViewModel(attachment, transaction) {
     return "attachment";
   };
   this.entityListPath = function() {
-    return "transactions/{transaction_id}/attachments.json".format({transaction_id: _self.transaction.id()});
+    return "transactions/{transaction_id}/attachments.json".format({transaction_id: this.transaction.id()});
   };
   this.toJson = function() {
     return {
-      id: _self.id(),
-      name: _self.name(),
-      content_type: _self.content_type(),
-      attachment_content_id: _self.attachment_content_id()
+      id: this.id(),
+      name: this.name(),
+      content_type: this.content_type(),
+      attachment_content_id: this.attachment_content_id()
     };
   };
 }
