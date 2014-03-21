@@ -176,6 +176,21 @@ ko.bindingHandlers.autocomplete = {
 };
 
 /*
+ * file
+ *
+ * Manages bindings for file inputs
+ */
+ko.bindingHandlers.file = {
+  init: function(element, valueAccessor) {
+    var observable = valueAccessor();
+    $(element).change(function(e) {
+      var file = element.files.length == 0 ? null : element.files[0];
+      observable(file);
+    });
+  }
+};
+
+/*
  * datePicker
  *
  * Uses jQueryUI datepicker to create a text box binding

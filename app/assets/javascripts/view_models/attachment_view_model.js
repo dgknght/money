@@ -13,6 +13,26 @@ function AttachmentViewModel(attachment, transaction) {
     this.attachment_content_id(attachment.attachment_content_id);
   }
 
+  this.save = function(success) {
+    var data = new FormData();
+    data.append("attachment[raw_file]", this.raw_file());
+    data.append("attachment[name]", this.name());
+    $.ajax( {
+      url: this.entityListPath(),
+      data: data
+      cache: false,
+      contentType: false,
+      processData: false,
+      type: 'POST',
+      success: function(data) {
+
+        console.log("success " + data);
+
+        success();
+      }
+    });
+  }
+
   this.show = function() {
     var url = "attachment_contents/{id}".format({ id: this.attachment_content_id() });
     window.open(url, "_blank");
@@ -24,13 +44,4 @@ function AttachmentViewModel(attachment, transaction) {
   this.entityListPath = function() {
     return "transactions/{transaction_id}/attachments.json".format({transaction_id: this.transaction.id()});
   };
-  this.toJson = function() {
-    return {
-      id: this.id(),
-      name: this.name(),
-      content_type: this.content_type(),
-      attachment_content_id: this.attachment_content_id()
-    };
-  };
 }
-AttachmentViewModel.prototype = new ServiceEntity();
