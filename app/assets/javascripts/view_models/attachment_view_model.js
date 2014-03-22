@@ -19,7 +19,7 @@ function AttachmentViewModel(attachment, transaction) {
     data.append("attachment[name]", this.name());
     $.ajax( {
       url: this.entityListPath(),
-      data: data
+      data: data,
       cache: false,
       contentType: false,
       processData: false,
