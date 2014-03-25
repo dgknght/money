@@ -156,14 +156,24 @@
     var tabs = $('#transactions').tabs();
     app.displayedAccounts.subscribe(function(accounts) {
       tabs.tabs('refresh');
-      tabs.find('.attachment_drop').bind("dragenter dragstart dragend dragover dragleave drag drop", function(e) {
-        e.preventDefault();
-        if (e.type == "drop") {
-          console.log('id=' + $(this).data('id'));
-          console.log('file=' + e.dataTransfer.files[0]);
-        }
-      });
+      window.setTimeout(bindAttachmentDrops, 500);
     });
+
+    function bindAttachmentDrops() {
+      var events = "dragenter dragstart dragend dragover dragleave drag drop";
+      var drops = tabs.find(".attachment_drop");
+      drops.off(events, handleAttachmentDrop);
+      drops.on(events, handleAttachmentDrop);
+    }
+
+    function handleAttachmentDrop(e, ui) {
+      e.preventDefault();
+      if (e.type == "drop") {
+        console.log('id=' + $(this).data('id'));
+        console.log('file=' + e.dataTransfer.files[0]);
+      }
+    }
+
     app.selectedAccountIndex.subscribe(function(index) {
       $('#transactions').tabs('option', 'active', index);
     });
