@@ -11,6 +11,8 @@ $red: #A00000;
 
 $black: #000;
 
+$drop-background-color: #0FF;
+
 #entity_and_account, #transactions {
   display: inline-block;
 }
@@ -171,4 +173,8 @@ input.number_field, input.date_field {
       bottom: .5em;
     }
   }
+}
+
+.attachment_droppable {
+  background-color: $drop-background-color;
 }

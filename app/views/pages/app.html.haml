@@ -162,23 +162,32 @@
     function bindAttachmentDrops() {
       var events = "dragenter dragstart dragend dragover dragleave drag drop";
       var drops = tabs.find(".attachment_drop");
-      drops.off(events, handleAttachmentDrop);
-      drops.on(events, handleAttachmentDrop);
+      drops.off(events, handleAttachmentDragAndDrop);
+      drops.on(events, handleAttachmentDragAndDrop);
     }
 
-    function handleAttachmentDrop(e, ui) {
+    function handleAttachmentDragAndDrop(e, ui) {
       e.preventDefault();
       if (e.type == "drop") {
-        var transactionItemId = $(this).data("id");
-        transactionItemId = parseInt(transactionItemId);
-        var transaction_item = _.find(app.selectedAccount().transaction_items(), function(item) { 
-          return item.id() == transactionItemId;
-        });
-        var transaction = transaction_item.transaction_item.transaction;
-        var attachment = new AttachmentViewModel({ name: 'Test Attachment'}, transaction);
-        attachment.raw_file(e.dataTransfer.files[0]);
-        attachment.save();
+        $(this).removeClass("attachment_droppable");
+        handleAttachmentDrop(e, $(this));
+      } else if (e.type == "dragenter") {
+        $(this).addClass("attachment_droppable");
+      } else if (e.type == "dragleave") {
+        $(this).removeClass("attachment_droppable");
       }
+    }
+
+    function handleAttachmentDrop(e, row) {
+      var transactionItemId = row.data("id");
+      transactionItemId = parseInt(transactionItemId);
+      var transaction_item = _.find(app.selectedAccount().transaction_items(), function(item) { 
+        return item.id() == transactionItemId;
+      });
+      var transaction = transaction_item.transaction_item.transaction;
+      var attachment = new AttachmentViewModel(null, transaction);
+      attachment.raw_file(e.dataTransfer.files[0]);
+      attachment.save();
     }
 
     app.selectedAccountIndex.subscribe(function(index) {
