@@ -65,6 +65,10 @@ function MoneyApp() {
   
   // TODO Consider moving this into entity, but need to be able to handle event registration in app.html.haml
   this.displayedAccounts = ko.observableArray();
+  this.selectedAccount = ko.computed(function() {
+    if (this.displayedAccounts().length == 0 || this.selectedAccountIndex() < 0) return null;
+    return this.displayedAccounts()[this.selectedAccountIndex()];
+  }, this);
   this.displayAccount = function(account) {
     var index = this.displayedAccounts().firstIndexOf(function(a) {
       return a.id == account.id;

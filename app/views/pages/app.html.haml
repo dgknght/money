@@ -169,8 +169,15 @@
     function handleAttachmentDrop(e, ui) {
       e.preventDefault();
       if (e.type == "drop") {
-        console.log('id=' + $(this).data('id'));
-        console.log('file=' + e.dataTransfer.files[0]);
+        var transactionItemId = $(this).data("id");
+        transactionItemId = parseInt(transactionItemId);
+        var transaction_item = _.find(app.selectedAccount().transaction_items(), function(item) { 
+          return item.id() == transactionItemId;
+        });
+        var transaction = transaction_item.transaction_item.transaction;
+        var attachment = new AttachmentViewModel({ name: 'Test Attachment'}, transaction);
+        attachment.raw_file(e.dataTransfer.files[0]);
+        attachment.save();
       }
     }
 
