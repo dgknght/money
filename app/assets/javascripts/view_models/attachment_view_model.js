@@ -1,4 +1,5 @@
 function AttachmentViewModel(attachment, transaction) {
+  var _self = this;
   this.transaction = transaction;
   this.id = ko.observable();
   this.name = ko.observable();
@@ -14,6 +15,7 @@ function AttachmentViewModel(attachment, transaction) {
   }
 
   this.save = function(success) {
+    success = _.ensureFunction(success);
     var data = new FormData();
     data.append("attachment[raw_file]", this.raw_file());
     data.append("attachment[name]", this.name());
@@ -25,9 +27,11 @@ function AttachmentViewModel(attachment, transaction) {
       processData: false,
       type: 'POST',
       success: function(data) {
-
-        console.log("success " + data);
-
+        _self.id(data.id);
+        _self.name(data.name);
+        _self.content_type(data.content_type);
+        _self.attachment_content_id(data.attachment_content_id);
+        _self.transaction.attachments.push(_self);
         success();
       }
     });
