@@ -37,7 +37,7 @@ class AttachmentsController < ApplicationController
 
   private
     def attachment_params
-      return params.require(:attachment).permit(:raw_file)
+      return params.require(:attachment).permit([:raw_file, :name])
     end
 
     def load_attachment
