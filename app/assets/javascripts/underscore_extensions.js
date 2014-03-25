@@ -8,6 +8,11 @@ _.mixin({
     }
     throw "The value \"" + value + "\" is not a valid date.";
   },
+  ensureFunction: function(f) {
+    if (f != null && typeof f === "function")
+      return f;
+    return function() {};
+  },
   parseDate: function(value) {
     var match = (/(\d{4})-(\d{2})-(\d{2})/).exec(value);
     if (match) {
