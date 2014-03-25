@@ -42,7 +42,7 @@
         %th.number_column Balance
         %th &nbsp;
       <!-- ko foreach: transaction_items -->
-      %tr{ data: { bind: "css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
+      %tr.attachment_drop{ data: { bind: "attr: {'data-id': id}, css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
         %td.number_column{ data: { bind: "inlineDateEditor: formattedTransactionDate, editorClass: 'date_field'" }}
         %td{ data: { bind: "inlineEditor: description" }}
         %td
@@ -146,6 +146,7 @@
       %input#attachment_file{ type: 'file', data: { bind: "file: raw_file" }}
 
 :javascript  
+  $.event.props.push("dataTransfer");
   $(function() {
     // Initialize and bind the view model
     app = new MoneyApp();
@@ -155,6 +156,13 @@
     var tabs = $('#transactions').tabs();
     app.displayedAccounts.subscribe(function(accounts) {
       tabs.tabs('refresh');
+      tabs.find('.attachment_drop').bind("dragenter dragstart dragend dragover dragleave drag drop", function(e) {
+        e.preventDefault();
+        if (e.type == "drop") {
+          console.log('id=' + $(this).data('id'));
+          console.log('file=' + e.dataTransfer.files[0]);
+        }
+      });
     });
     app.selectedAccountIndex.subscribe(function(index) {
       $('#transactions').tabs('option', 'active', index);
