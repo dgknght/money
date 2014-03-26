@@ -159,6 +159,7 @@
       window.setTimeout(bindAttachmentDrops, 500);
     });
 
+    // Handle attachment drop on transactions
     function bindAttachmentDrops() {
       var events = "dragenter dragstart dragend dragover dragleave drag drop";
       var drops = tabs.find(".attachment_drop");
@@ -190,10 +191,12 @@
       attachment.save();
     }
 
+    // Select the tab based on a click on an account in the account list
     app.selectedAccountIndex.subscribe(function(index) {
       $('#transactions').tabs('option', 'active', index);
     });
 
+    // global method delegates
     window.getAccountPaths = function(request, callback) {
       return app.getAccountPaths(request, callback);
     };

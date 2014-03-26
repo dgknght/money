@@ -18,7 +18,8 @@ function AttachmentViewModel(attachment, transaction) {
     success = _.ensureFunction(success);
     var data = new FormData();
     data.append("attachment[raw_file]", this.raw_file());
-    data.append("attachment[name]", this.name());
+    if (this.name())
+      data.append("attachment[name]", this.name());
     $.ajax( {
       url: this.entityListPath(),
       data: data,
