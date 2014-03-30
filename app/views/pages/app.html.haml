@@ -54,8 +54,24 @@
         %td.number_column{ data: { bind: "text: formattedBalance" }}
         %td.action_cell
           %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
-          %a.small_add_attachment_button{ href: '#', title: 'Click here to add an attachment.', data: { bind: "click: newAttachment, visible: hasNoAttachments" }}
-          %a.small_attachments_button{ href: '#', title: 'Click here to view the attachment.', data: { bind: "click: showAttachment, visible: hasAttachment" }}
+          %a.small_attachments_button{ href: '#', title: 'Click here to show or hide the attachment.', data: { bind: "click: toggleAttachmentsVisible" }}
+          %sub{ data: { bind: "text: attachments().length" }}
+          .attachment_container{ data: { bind: "visible: attachmentsVisible" }}
+            %table.nested_table{ cellspacing: 0, cellpadding: 0 }
+              %tr
+                %th Name
+                %th Type
+                %th &nbsp;
+              <!-- ko foreach: attachments -->
+              %tr
+                %td{ data: { bind: "text: name" } }
+                %td{ data: { bind: "text: content_type" } }
+                %td
+                  %a.small_show_button{ href: '#', title: 'Click here to view the attachment.', data: { bind: "click: show" } }
+              <!-- /ko -->
+            .actions
+              %a.small_add_button{ href: '#', title: 'Click here to add an attachment.', data: { bind: "click: newAttachment" }}
+
       %tr{ data: { bind: "if: showDetails" }}
         %td.detail_cell{ colspan: 6, data: { bind: "with: transaction" }} 
           %table.detail{cellpadding: 0, cellspacing: 0}
@@ -159,7 +175,12 @@
       window.setTimeout(bindAttachmentDrops, 500);
     });
 
-    // Handle attachment drop on transactions
+    function bindAttachmentDialogs() {
+      $('.attachment_container').dialog({
+        autoOpen: false
+      });
+    }
+
     function bindAttachmentDrops() {
       var events = "dragenter dragstart dragend dragover dragleave drag drop";
       var drops = tabs.find(".attachment_drop");

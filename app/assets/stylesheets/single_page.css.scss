@@ -178,3 +178,16 @@ input.number_field, input.date_field {
 .attachment_droppable {
   background-color: $drop-background-color;
 }
+
+.attachment_container {
+  position: absolute;
+  padding: 1em;
+  border: 1px solid $black;
+  border-radius: .5em;
+  background-color: $white;
+  table {
+    font-size: 90%;
+    border-collapse: collapse;
+  }
+}
+

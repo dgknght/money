@@ -28,9 +28,13 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
   this.newAttachment = function() {
     this.transaction_item.transaction.newAttachment();
   };
-  this.showAttachment = function() {
-    this.transaction_item.transaction.showAttachment();
+  this.attachmentsVisible = ko.observable(false);
+  this.toggleAttachmentsVisible= function() {
+    var current = this.attachmentsVisible();
+    this.attachmentsVisible(!current);
   };
+
+  this.attachmentsVisible.subscribe(function(v) {console.log("attachmentsVisible " + _self.id() + " " + v); });
 
   this.formattedTransactionDate = ko.computed({
     read: function() {

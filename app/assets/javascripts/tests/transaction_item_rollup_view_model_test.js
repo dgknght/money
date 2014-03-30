@@ -285,8 +285,8 @@ asyncTest("hasAttachment", function() {
     ok(item.hasAttachment() == false, "should be false until the attachments are loaded");
   });
 });
-asyncTest("showAttachment", function() {
-  expect(1);
+asyncTest("toggleAttachmentsVisible", function() {
+  expect(3);
 
   var app = new MoneyApp();
   var ids = {
@@ -295,7 +295,13 @@ asyncTest("showAttachment", function() {
     transaction_item_id: 200
   };
   getTransactionItemRollup(app, ids, function(item) {
-    ok(item.showAttachment, "should be a method on the object");
+    ok(item.toggleAttachmentsVisible, "should be a method on the object");
+    if (item.toggleAttachmentsVisible) {
+      item.toggleAttachmentsVisible();
+      equal(true, item.attachmentsVisible(), "should cause the value of 'attachmentsVisible' to change.");
+      item.toggleAttachmentsVisible();
+      equal(false, item.attachmentsVisible(), "should cause the value of 'attachmentsVisible' to change.");
+    }
     start();
   });
 });
