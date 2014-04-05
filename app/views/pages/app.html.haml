@@ -66,8 +66,9 @@
               %tr
                 %td{ data: { bind: "text: name" } }
                 %td{ data: { bind: "text: content_type" } }
-                %td
+                %td.action_cell
                   %a.small_show_button{ href: '#', title: 'Click here to view the attachment.', data: { bind: "click: show" } }
+                  %a.small_delete_button{ href: '#', title: 'Click here to delete the attachment.', data: { bind: "click: function() { destroy(); }" }}
               <!-- /ko -->
             .actions
               %a.small_add_button{ href: '#', title: 'Click here to add an attachment.', data: { bind: "click: newAttachment" }}
