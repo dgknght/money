@@ -5,7 +5,7 @@ Money::Application.routes.draw do
   resources :entities do
     resources :accounts, only: [:new, :create, :index]
     resources :transactions, only: [:index, :new, :create]
-    resources :commodities, only: [:index]
+    resources :commodities, only: [:index, :new, :create]
     resources :budgets, only: [:index, :new, :create]
     member do
       get :reports, to: 'reports#index'
@@ -22,6 +22,7 @@ Money::Application.routes.draw do
   resources :transactions, only: [:show, :edit, :update, :destroy] do
     resources :attachments, only: [:index, :new, :create]
   end
+  resources :commodities, only: [:show, :edit, :update]
   resources :attachments, only: [:show, :destroy]
   resources :attachment_contents, only: :show
   resources :transaction_items, only: [ :destroy, :edit, :update ]
