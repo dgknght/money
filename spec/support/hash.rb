@@ -1,7 +1,7 @@
 class Hash
   def without(keys)
     keys = [keys] unless keys.respond_to?(:include?)
-    reject { |k, v| keys.includle?(k) }
+    reject { |k, v| keys.include?(k) }
   end
 
   def only(keys)
