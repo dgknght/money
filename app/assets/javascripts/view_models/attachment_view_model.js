@@ -16,9 +16,6 @@ function AttachmentViewModel(attachment, transaction) {
 
   // TODO This is an exact copy of ServiceEntity.destory. it should be shared
   this.destroy = function(supressConfirmation) {
-
-    console.log("destroy supressConfirmation=" + supressConfirmation);
-
     if (!supressConfirmation) {
       var message = "Are you sure you want to delete the selected attachment?"
       if (!confirm(message)) return;
