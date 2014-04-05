@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140129162300) do
+ActiveRecord::Schema.define(version: 20140405153014) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                       null: false
@@ -77,6 +77,17 @@ ActiveRecord::Schema.define(version: 20140129162300) do
   add_index "budgets", ["entity_id"], name: "index_budgets_on_entity_id"
   add_index "budgets", ["name"], name: "index_budgets_on_name", unique: true
   add_index "budgets", ["start_date"], name: "index_budgets_on_start_date"
+
+  create_table "commodities", force: true do |t|
+    t.integer  "entity_id"
+    t.string   "name"
+    t.string   "symbol",     limit: 5
+    t.string   "market",     limit: 10
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "commodities", ["entity_id", "symbol"], name: "index_commodities_on_entity_id_and_symbol", unique: true
 
   create_table "entities", force: true do |t|
     t.integer  "user_id",                null: false
