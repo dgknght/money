@@ -13,6 +13,14 @@ $black: #000;
 
 $drop-background-color: #0FF;
 
+table.nested_table {
+  tr {
+    td {
+      padding: .3em;
+    }
+  }
+}
+
 #entity_and_account, #transactions {
   display: inline-block;
 }
@@ -181,7 +189,7 @@ input.number_field, input.date_field {
 
 .attachment_container {
   position: absolute;
-  padding: 1em;
+  padding: .5em;
   border: 1px solid $black;
   border-radius: .5em;
   background-color: $white;
