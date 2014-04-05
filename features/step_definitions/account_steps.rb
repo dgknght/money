@@ -11,3 +11,12 @@ Given(/^(#{USER}) has an? (liability|asset|equity|income|expense) account named 
   typed_balance = balance.nil? ? 0 : BigDecimal.new(balance)
   entity.accounts.find_by_name(name) || entity.accounts.create!(name: name, account_type: type, balance: typed_balance)
 end
+
+Given(/^(#{ENTITY}) has the following accounts$/) do |entity, table|
+  table.hashes.each do |row|
+    FactoryGirl.create(:account,  entity: entity,
+                                  account_type: row['Account type'],
+                                  name: row['Name'],
+                                  content_type: row['Equity'])
+  end
+end
