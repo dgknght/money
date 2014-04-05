@@ -10,9 +10,9 @@ Feature: Add a commodity
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
-    Then I should see "Commodities" within the main menu
+    Then I should see "Commodities" within the navigation
 
-    When I click "Commodities" within the main menu
+    When I click "Commodities" within the navigation
     Then I should see "Commodities" within the page title
     And I should see the following commodities table
       | Name | Symbol | Market | Most recent price |
@@ -22,7 +22,7 @@ Feature: Add a commodity
 
     When I fill in "Name" with "Knight Software Services"
     And I fill in "Symbol" with "KSS"
-    And I select "NYSE" from "Market"
+    And I select "NYSE" from the "Market" list
     And I click "Save"
 
     Then I should see "The commodity was created successfully." within the notice area

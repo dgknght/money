@@ -5,6 +5,7 @@ Money::Application.routes.draw do
   resources :entities do
     resources :accounts, only: [:new, :create, :index]
     resources :transactions, only: [:index, :new, :create]
+    resources :commodities, only: [:index]
     resources :budgets, only: [:index, :new, :create]
     member do
       get :reports, to: 'reports#index'
