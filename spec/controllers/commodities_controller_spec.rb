@@ -2,14 +2,29 @@ require 'spec_helper'
 
 describe CommoditiesController do
 
+  let(:entity) { FactoryGirl.create(:entity) }
+  let(:commodity) { FactoryGirl.create(:commodity, entity: entity) }
+
   context 'for an authenticated user' do
     context 'that owns the entity' do
+      before(:each) { sign_in entity.user }
+
       describe 'get :index' do
-        it 'should be successful'
+        it 'should be successful' do
+          get :index, entity_id: entity
+          expect(response).to be_success
+        end
 
         context 'in json' do
-          it 'should be successful'
-          it 'should return the list of commodities'
+          it 'should be successful' do
+            get :index, entity_id: entity, format: :json
+            expect(response).to be_success
+          end
+
+          it 'should return the list of commodities' do
+            get :index, entity_id: entity, format: :json
+            expect(response.body).to eq([commodity].to_json)
+          end
         end
       end
 
