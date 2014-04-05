@@ -9,6 +9,7 @@ gem 'rails', '4.0.0'
 gem 'sqlite3'
 gem 'devise'
 gem 'haml'
+gem 'haml-rails'
 gem 'cancan'
 
 group :test, :development do

@@ -52,5 +52,10 @@ module Money
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # Generate haml templates instead of erb
+    config.generators do |g|
+      g.template_engine :haml
+    end
   end
 end
