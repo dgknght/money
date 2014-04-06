@@ -123,47 +123,109 @@ describe CommoditiesController do
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the commodity list page'
-        it 'should delete the commodity'
+        it 'should redirect to the commodity list page' do
+          delete :destroy, id: commodity
+          expect(response).to redirect_to(entity_commodities_path(entity))
+        end
+
+        it 'should delete the commodity' do
+          expect do
+            delete :destroy, id: commodity
+          end.to change(Commodity, :count).by(-1)
+        end
 
         context 'in json' do
-          it 'should be successful'
-          it 'should delete the commodity'
+          it 'should be successful' do
+            delete :destroy, id: commodity, format: :json
+            expect(response).to be_success
+          end
+
+          it 'should delete the commodity' do
+            expect do
+              delete :destroy, id: commodity, format: :json
+            end.to change(Commodity, :count).by(-1)
+          end
         end
       end
     end
 
     context 'that does not own the entity' do
+      let (:other_user) { FactoryGirl.create(:user) }
+      before(:each) { sign_in other_user }
+
       describe 'get :index' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :index, entity_id: entity
+          expect(response).to redirect_to(home_path)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :index, entity_id: entity, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not return any data' do
+            get :index, entity_id: entity, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
       describe 'get :show' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :show, id: commodity
+          expect(response).to redirect_to(home_path)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :show, id: commodity, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not return any data' do
+            get :show, id: commodity, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
       describe 'get :new' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :new, entity_id: entity
+          expect(response).to redirect_to(home_path)
+        end
       end
 
       describe 'post :create' do
-        it 'should redirect to the user home page'
-        it 'should not create the new commodity'
+        it 'should redirect to the user home page' do
+          post :create, entity_id: entity, commodity: attributes
+          expect(response).to redirect_to(home_path)
+        end
+
+        it 'should not create the new commodity' do
+          expect do
+            post :create, entity_id: entity, commodity: attributes
+          end.not_to change(Commodity, :count)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not create the new commodity'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            post :create, entity_id: entity, commodity: attributes, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not create the new commodity' do
+            expect do
+              post :create, entity_id: entity, commodity: attributes, format: :json
+            end.not_to change(Commodity, :count)
+          end
+
+          it 'should not return any data' do
+            post :create, entity_id: entity, commodity: attributes, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 

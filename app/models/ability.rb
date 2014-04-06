@@ -5,6 +5,9 @@ class Ability
     user ||= User.new
     
     can :manage, Entity, user_id: user.id
+    can :manage, Commodity do |commodity|
+      user.entities.include? commodity.entity
+    end
     can :manage, Account do |account|
       user.entities.include? account.entity
     end
