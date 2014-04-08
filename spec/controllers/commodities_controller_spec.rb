@@ -230,28 +230,73 @@ describe CommoditiesController do
       end
 
       describe 'get :edit' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :edit, id: commodity
+          expect(response).to redirect_to(home_path)
+        end
       end
 
       describe 'put :update' do
-        it 'should redirect to the user home page'
-        it 'should not update the commodity'
+        it 'should redirect to the user home page' do
+          put :update, id: commodity, commodity: attributes
+          expect(response).to redirect_to(home_path)
+        end
+
+        it 'should not update the commodity' do
+          expect do
+            put :update, id: commodity, commodity: attributes
+            commodity.reload
+          end.not_to change(commodity, :name)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not update the commodity'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            put :update, id: commodity, commodity: attributes, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not update the commodity' do
+            expect do
+              put :update, id: commodity, commodity: attributes, format: :json
+              commodity.reload
+            end.not_to change(commodity, :name)
+          end
+
+          it 'should not return any data' do
+            put :update, id: commodity, commodity: attributes, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the user home page'
-        it 'should not delete the commodity'
+        it 'should redirect to the user home page' do
+          delete :destroy, id: commodity
+          expect(response).to redirect_to(home_path)
+        end
+
+        it 'should not delete the commodity' do
+          expect do
+            delete :destroy, id: commodity
+          end.not_to change(Commodity, :count)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not delete the commodity'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            delete :destroy, id: commodity, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not delete the commodity' do
+            expect do
+              delete :destroy, id: commodity, format: :json
+            end.not_to change(Commodity, :count)
+          end
+
+          it 'should not return any data' do
+            delete :destroy, id: commodity, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
     end
@@ -259,61 +304,150 @@ describe CommoditiesController do
 
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :index, entity_id: entity
+        expect(response).to redirect_to(new_user_session_path)
+      end
 
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          get :index, entity_id: entity, format: :json
+          expect(response.response_code).to eq(401)
+        end
+
+        it 'should return an error' do
+          get :index, entity_id: entity, format: :json
+          data = JSON.parse(response.body)
+          expect(data).to have_only('error')
+        end
       end
     end
 
     describe 'get :show' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :show, id: commodity
+        expect(response).to redirect_to(new_user_session_path)
+      end
 
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          get :show, id: commodity, format: :json
+          expect(response.response_code).to eq(401)
+        end
+
+        it 'should return an error' do
+          get :show, id: commodity, format: :json
+          expect(JSON.parse(response.body)).to have_only('error')
+        end
       end
     end
 
     describe 'get :new' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :new, entity_id: entity
+        expect(response).to redirect_to(new_user_session_path)
+      end
     end
 
     describe 'post :create' do
-      it 'should redirect to the sign in page'
-      it 'should not create the new commodity'
+      it 'should redirect to the sign in page' do
+        post :create, entity_id: entity, commodity: attributes
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not create the new commodity' do
+        expect do
+          post :create, entity_id: entity, commodity: attributes
+        end.not_to change(Commodity, :count)
+      end
 
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not create the new commodity'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          post :create, entity_id: entity, commodity: attributes, format: :json
+          expect(response.response_code).to eq(401)
+        end
+
+        it 'should not create the new commodity' do
+          expect do
+            post :create, entity_id: entity, commodity: attributes, format: :json
+          end.not_to change(Commodity, :count)
+        end
+
+        it 'should return an error' do
+          post :create, entity_id: entity, commodity: attributes, format: :json
+          expect(JSON.parse(response.body)).to have_only('error')
+        end
       end
     end
 
     describe 'get :edit' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :edit, id: commodity
+        expect(response).to redirect_to(new_user_session_path)
+      end
     end
 
     describe 'put :update' do
-      it 'should redirect to the sign in page'
-      it 'should not update the commodity'
+      it 'should redirect to the sign in page' do
+        put :update, id: commodity, commodity: attributes
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not update the commodity' do
+        expect do
+          put :update, id: commodity, commodity: attributes
+          commodity.reload
+        end.not_to change(commodity, :name)
+      end
 
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not update the commodity'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          put :update, id: commodity, commodity: attributes, format: :json
+          expect(response.response_code).to eq(401)
+        end
+
+        it 'should not update the commodity' do
+          expect do
+            put :update, id: commodity, commodity: attributes, format: :json
+            commodity.reload
+          end.not_to change(commodity, :name)
+        end
+
+        it 'should return an error' do
+          put :update, id: commodity, commodity: attributes, format: :json
+          expect(JSON.parse(response.body)).to have_only('error')
+        end
       end
     end
 
     describe 'delete :destroy' do
-      it 'should redirect to the sign in page'
-      it 'should not delete the commodity'
+      it 'should redirect to the sign in page' do
+        delete :destroy, id: commodity
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not delete the commodity' do
+        expect do
+          delete :destroy, id: commodity
+        end.not_to change(Commodity, :count)
+      end
 
       context 'in json' do
-        it 'should return "access denied"'
-        it 'should not delete the commodity'
-        it 'should not return any data'
+        it 'should return "access denied"' do
+          delete :destroy, id: commodity, format: :json
+          expect(response.response_code).to eq(401)
+        end
+
+        it 'should not delete the commodity' do
+          expect do
+            delete :destroy, id: commodity, format: :json
+          end.not_to change(Commodity, :count)
+        end
+
+        it 'should return an error' do
+          delete :destroy, id: commodity, format: :json
+          expect(JSON.parse(response.body)).to have_only('error')
+        end
       end
     end
   end

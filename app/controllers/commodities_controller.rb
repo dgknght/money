@@ -1,6 +1,7 @@
 class CommoditiesController < ApplicationController
+  before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :create, :new]
-  before_filter :load_commodity, only: [:show, :update, :destroy]
+  before_filter :load_commodity, only: [:show, :update, :destroy, :edit]
   respond_to :html, :json
 
   def index
@@ -26,15 +27,18 @@ class CommoditiesController < ApplicationController
   end
 
   def edit
+    authorize! :update, @commodity
   end
 
   def update
+    authorize! :update, @commodity
     @commodity.update_attributes(commodity_params)
     flash[:notice] = "The commodity was updated successful." if @commodity.save
     respond_with(@commodity, location: entity_commodities_path(@commodity.entity))
   end
 
   def destroy
+    authorize! :destroy, @commodity
     flash[:notice] = "The commodity was deleted successfully." if @commodity.destroy
     respond_with(@commodity, location: entity_commodities_path(@commodity.entity))
   end

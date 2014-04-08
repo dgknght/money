@@ -8,4 +8,8 @@ class Hash
     keys = [keys] unless keys.respond_to?(:include?)
     select { |k, v| keys.include?(k) }
   end
+
+  def has_only?(*keys)
+    self.keys.sort == keys.sort
+  end
 end
