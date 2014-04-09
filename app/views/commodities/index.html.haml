@@ -1,2 +1,16 @@
-%h1 Commodities#index
-%p Find me in app/views/commodities/index.html.haml
+%h2#page_title Commodities
+
+%table#commodities_table
+  %tr
+    %th Name
+    %th Symbol
+    %th Market
+    %th Most recent price
+  -@commodities.each do |commodity|
+    %tr
+      %td= commodity.name
+      %td= commodity.symbol
+      %td= commodity.market
+      %td &nbsp;
+.actions
+  =link_to 'Add', new_entity_commodity_path(@entity), class: 'add_button', title: 'Click here to add a new commodity.'

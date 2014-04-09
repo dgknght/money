@@ -1,4 +1,3 @@
-@wip
 Feature: Add a commodity
   As a user,
   In order to track investments in a commodity,

@@ -17,6 +17,7 @@ class CommoditiesController < ApplicationController
 
   def new
     authorize! :update, @entity
+    @commodity = @entity.commodities.new
   end
 
   def create

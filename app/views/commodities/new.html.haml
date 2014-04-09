@@ -1,2 +1,4 @@
-%h1 Commodities#new
-%p Find me in app/views/commodities/new.html.haml
+%h2#page_title New commodity
+
+=render 'shared/errors', resource: @commodity
+=render 'form', commodity: @commodity
