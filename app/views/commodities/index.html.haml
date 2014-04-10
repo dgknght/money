@@ -1,16 +1,19 @@
 %h2#page_title Commodities
 
-%table#commodities_table
+%table.list#commodities_table{ cellspacing: 0, cellpadding: 0 }
   %tr
     %th Name
     %th Symbol
     %th Market
     %th Most recent price
+    %th &nbsp;
   -@commodities.each do |commodity|
     %tr
       %td= commodity.name
       %td= commodity.symbol
       %td= commodity.market
       %td &nbsp;
+      %td= link_to 'Edit', edit_commodity_path(commodity), class: 'small_edit_button', title: 'Click here to edit the commodity.'
 .actions
   =link_to 'Add', new_entity_commodity_path(@entity), class: 'add_button', title: 'Click here to add a new commodity.'
+  =link_to 'Back', entities_path, class: 'back_button', title: 'Click here to return to the list of entities.'

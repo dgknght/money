@@ -1,7 +1,10 @@
 class CommoditiesController < ApplicationController
+  include ApplicationHelper
+
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :create, :new]
   before_filter :load_commodity, only: [:show, :update, :destroy, :edit]
+  before_filter :set_current_entity
   respond_to :html, :json
 
   def index
@@ -55,5 +58,9 @@ class CommoditiesController < ApplicationController
 
     def load_entity
       @entity = Entity.find(params[:entity_id])
+    end
+
+    def set_current_entity
+      self.current_entity = @entity || @commodity.entity
     end
 end
