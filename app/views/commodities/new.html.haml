@@ -1,4 +1,5 @@
 %h2#page_title New commodity
 
 =render 'shared/errors', resource: @commodity
-=render 'form', commodity: @commodity
+=form_for([@commodity.entity, @commodity]) do |f|
+  =render 'form_fields', commodity: @commodity, f: f

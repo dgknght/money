@@ -16,9 +16,7 @@ module NavigationHelpers
       when /the entity row for "([^"]+)"/ then "#entity_#{entity_id($1)}"
       when /the budget row for "([^"]+)"/ then "#budget_#{budget_id($1)}"
       when /the budget item row for "([^"]+)"/ then "#budget_item_#{budget_item_id($1)}"
-      when /the (\d+)(?:st|nd|rd|th) transaction row/ then "#transactions_table tr:nth-child(#{$1.to_i + 1})"
-      when /the (\d+)(?:st|nd|rd|th) transaction item row/ then "#transaction_items_table tr:nth-child(#{$1.to_i + 1})"
-      when /the (\d+)(?:st|nd|rd|th) attachment row/ then "#attachments_table tr:nth-child(#{$1.to_i + 1})"
+      when /the (\d+)(?:st|nd|rd|th) (.+) row/ then "##{underscore($2)}_table tr:nth-child(#{$1.to_i + 1})"
       else raise "Unrecognized section \"#{section}\""
     end
   end
@@ -65,6 +63,10 @@ module NavigationHelpers
       entity = Entity.find_by_name(name)
       raise "No entity found with name=#{name}" unless entity
       entity
+    end
+
+    def underscore(words)
+      words.gsub(/\s/, "_").pluralize
     end
 end
 World(NavigationHelpers)

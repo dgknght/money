@@ -1,4 +1,3 @@
-@wip
 Feature: Update a commodity
   As a user,
   In order to keep a commodity up-to-date,
@@ -19,10 +18,10 @@ Feature: Update a commodity
       | Name                    | Symbol | Market |
       | Night Software Services | KSS    | NYSE   |
 
-    When I click "Edit" within the commodity row for "KSS"
+    When I click "Edit" within the 1st commodity row
     Then I should see "Edit commodity" within the page title
 
-    When I fill in "Name" with "Knight"
+    When I fill in "Name" with "Knight Software Services"
     And I click "Save"
     Then I should see "The commodity was updated successfully" within the notice area
     And I should see the following commodities table

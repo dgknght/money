@@ -1,0 +1,16 @@
+%div
+  =f.label :name
+  %br
+  =f.text_field :name, autofocus: true
+
+%div
+  =f.label :symbol
+  %br
+  =f.text_field :symbol
+
+%div
+  =f.label :market
+  %br
+  =f.select :market, options_for_select(Commodity::MARKETS.map(&:upcase) , commodity.market)
+.actions
+  =f.submit 'Save', class: 'save_button', title: 'Click here to save the new commodity.'

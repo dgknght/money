@@ -1,2 +1,4 @@
-%h1 Commodities#edit
-%p Find me in app/views/commodities/edit.html.haml
+%h2#page_title Edit commodity
+=render 'shared/errors', resource: @commodity
+=form_for(@commodity) do |f|
+  =render 'form_fields', commodity: @commodity, f: f

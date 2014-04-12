@@ -37,7 +37,7 @@ class CommoditiesController < ApplicationController
   def update
     authorize! :update, @commodity
     @commodity.update_attributes(commodity_params)
-    flash[:notice] = "The commodity was updated successful." if @commodity.save
+    flash[:notice] = "The commodity was updated successfully." if @commodity.save
     respond_with(@commodity, location: entity_commodities_path(@commodity.entity))
   end
 
