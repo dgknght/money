@@ -14,3 +14,4 @@
   =f.select :market, options_for_select(Commodity::MARKETS.map(&:upcase) , commodity.market)
 .actions
   =f.submit 'Save', class: 'save_button', title: 'Click here to save the new commodity.'
+  =link_to 'Back', entity_commodities_path(commodity.entity), class: 'back_button', title: 'Click here to return to the list of commodities'

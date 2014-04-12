@@ -43,7 +43,7 @@ class CommoditiesController < ApplicationController
 
   def destroy
     authorize! :destroy, @commodity
-    flash[:notice] = "The commodity was deleted successfully." if @commodity.destroy
+    flash[:notice] = "The commodity was removed successfully." if @commodity.destroy
     respond_with(@commodity, location: entity_commodities_path(@commodity.entity))
   end
 
