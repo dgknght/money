@@ -7,8 +7,7 @@ Feature: Add a commodity price
   Scenario: A user enters a commodity price
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
-    And entity "Personal" has an asset account named "401k" that tracks commodities
-    And entity "Personal" has following commodities
+    And entity "Personal" has the following commodities
       | Name                     | Symbol | Market |
       | Knight Software Services | KSS    | NYSE   |
 
@@ -33,7 +32,7 @@ Feature: Add a commodity price
 
     When I click "Commodities" within the main menu
     Then I should see "Commodities" within the page title
-    And I shoulse see the following commodities table
+    And I should see the following commodities table
       | Name                     | Symbol | Most recent price |
       | Knight Software Services | KSS    |             10.67 |
 

@@ -1,3 +1,9 @@
+ACCOUNT = Transform(/^account "([^"]+)"$/) do |name|
+  account = Account.find_by_name(name)
+  account.should_not be_nil
+  account
+end
+
 CREDIT_ACCOUNT = Transform(/^crediting "([^"]+)"$/) do |name|
   find_account(name)
 end

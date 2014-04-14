@@ -1,9 +1,3 @@
-ACCOUNT = Transform(/^account "([^"]+)"$/) do |name|
-  account = Account.find_by_name(name)
-  account.should_not be_nil
-  account
-end
-
 Given(/^I have reconciled (#{ACCOUNT}) as of (#{DATE_VALUE}) at a balance of (#{DOLLAR_AMOUNT}) including the following items$/) do |account, reconciliation_date, closing_balance, items|
   items_attributes = items.hashes.map do |item|
     item.merge(
