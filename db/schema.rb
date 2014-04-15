@@ -11,16 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140405153014) do
+ActiveRecord::Schema.define(version: 20140415030105) do
 
   create_table "accounts", force: true do |t|
-    t.string   "name",                       null: false
-    t.string   "account_type",               null: false
+    t.string   "name",                                  null: false
+    t.string   "account_type",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "balance",      default: 0.0, null: false
-    t.integer  "entity_id",                  null: false
+    t.decimal  "balance",                 default: 0.0, null: false
+    t.integer  "entity_id",                             null: false
     t.integer  "parent_id"
+    t.string   "content_type", limit: 20
   end
 
   add_index "accounts", ["parent_id"], name: "index_accounts_on_parent_id"

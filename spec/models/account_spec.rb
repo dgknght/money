@@ -158,6 +158,53 @@ describe Account do
         child1.depth.should == 1
     end
   end
+
+  describe 'content_type' do
+    it 'should default to "currency"' do
+      account = entity.accounts.new(attributes)
+      account.should be_valid
+      account.content_type.should == Account.currency_content
+    end
+
+    it 'should accept "currency"' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.currency_content))
+      account.should be_valid
+    end
+
+    it 'should accept "commodity"' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+      account.should be_valid
+    end
+
+    it 'should not accept invalid entries' do
+      account = entity.accounts.new(attributes.merge(content_type: 'notvalid'))
+      account.should_not be_valid
+    end
+  end
+
+  describe 'currency?' do
+    it 'should be true if the account type is currency' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.currency_content))
+      account.should be_currency
+    end
+
+    it 'should be false if the account type is not currency' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+      account.should_not be_currency
+    end
+  end
+
+  describe 'commodity?' do
+    it 'should be true if the account type is commodity' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+      account.should be_commodity
+    end
+
+    it 'should be false if the account type is not commodity' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.currency_content))
+      account.should_not be_commodity
+    end
+  end
   
   describe 'asset scope' do
     it 'should return a list of asset accounts' do

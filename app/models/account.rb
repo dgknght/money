@@ -10,6 +10,7 @@
 #  balance      :decimal(, )      default(0.0), not null
 #  entity_id    :integer          not null
 #  parent_id    :integer
+#  content_type :string(20)
 #
 
 class Account < ActiveRecord::Base
@@ -18,6 +19,22 @@ class Account < ActiveRecord::Base
   has_many :children, -> { order :name }, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
   has_many :reconciliations, -> { order :reconciliation_date }, inverse_of: :account, autosave: true
   has_many :transaction_items
+
+  CONTENT_TYPES = %w(currency commodity)
+
+  class << self
+    CONTENT_TYPES.each do |type|
+      define_method "#{type}_content" do
+        type
+      end
+    end
+  end
+
+  CONTENT_TYPES.each do |type|
+    define_method "#{type}?" do
+      self.content_type == type
+    end
+  end
 
   LEFT_SIDE = %w(asset expense)
   RIGHT_SIDE = %w(liability equity income)
@@ -33,8 +50,12 @@ class Account < ActiveRecord::Base
   
   validates :account_type, presence: true, 
                            inclusion: { in: ACCOUNT_TYPES }
+  validates :content_type, presence: true,
+                           inclusion: { in: CONTENT_TYPES }
   validate :parent_must_have_same_type
   
+  before_validation :set_defaults
+
   scope :root, -> { where(parent_id: nil).order(:name) }
   scope :asset, -> { root.where(account_type: Account.asset_type) }
   scope :liability, -> { root.where(account_type: Account.liability_type) }
@@ -151,6 +172,10 @@ class Account < ActiveRecord::Base
       RIGHT_SIDE.include?(account_type)
     end
     
+    def set_defaults
+      self.content_type ||= Account.currency_content
+    end
+
     def sum_of(items)
       items.reduce(0) { |sum, item| sum += item.amount }
     end    
