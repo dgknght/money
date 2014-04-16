@@ -11,5 +11,16 @@ Given /^(#{ENTITY}) has the following commodities$/ do |entity, table|
 end
 
 Given /^(#{ACCOUNT}) has the following commodity transactions$/ do |account, table|
-  expect(true).to be_false
+  table.hashes.each do |hash|
+    attributes = {
+      transaction_date: hash['Date'],
+      action: hash['Action'],
+      symbol: hash['Symbol'],
+      price: hash['Price'],
+      shares: hash['Shares'],
+      value: hash['Value']
+    }
+    creator = TransactionCommodityCreator.new(account, attributes)
+    creator.create!
+  end
 end
