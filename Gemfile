@@ -19,6 +19,7 @@ group :test, :development do
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'launchy'
+  gem 'timecop'
 end
 
 group :development do
