@@ -14,6 +14,7 @@
       %td= commodity.market
       %td &nbsp;
       %td.action_cell
+        =link_to 'Prices', commodity_prices_path(commodity), class: 'prices_button', title: 'Click here to manage prices for this commodity.'
         =link_to 'Edit', edit_commodity_path(commodity), class: 'edit_button', title: 'Click here to edit the commodity.'
         =render 'shared/delete_form', resource: commodity, url: commodity_url(commodity)
 .actions

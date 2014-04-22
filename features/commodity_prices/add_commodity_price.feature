@@ -20,7 +20,7 @@ Feature: Add a commodity price
       | Name                     | Symbol | Most recent price |
       | Knight Software Services | KSS    |                   |
 
-    When I click "Prices" within the commodity row for "KSS"
+    When I click "Prices" within the 1st commodity row
     Then I should see "KSS Prices" within the page title
     And I should see the following commodity prices table
       |     Date | Price |
