@@ -1,16 +1,31 @@
 require 'spec_helper'
 
 describe PricesController do
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:commodity) { FactoryGirl.create(:commodity, entity: entity) }
+  let!(:price) { FactoryGirl.create(:price, commodity: commodity) }
 
   context 'for an authenticated user' do
     context 'that owns the entity' do
 
+      before(:each) { sign_in entity.user }
+
       describe 'get :index' do
-        it 'should be successful'
+        it 'should be successful' do
+          get :index, commodity_id: commodity
+          expect(response).to be_success
+        end
 
         context 'in json' do
-          it 'should be successful'
-          it 'should return the list of commodity prices'
+          it 'should be successful' do
+            get :index, commodity_id: commodity, format: :json
+            expect(response).to be_success
+          end
+
+          it 'should return the list of commodity prices' do
+            get :index, commodity_id: commodity, format: :json
+            expect(response.body).to eq([price].to_json)
+          end
         end
       end
 
