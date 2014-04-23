@@ -77,4 +77,11 @@ describe Commodity do
       expect(commodity).not_to be_valid
     end
   end
+
+  describe '#prices' do
+    it 'should list the prices for the commodity' do
+      commodity = entity.commodities.new(attributes)
+      expect(commodity).to respond_to(:prices)
+    end
+  end
 end

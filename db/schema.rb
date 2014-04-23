@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140415030105) do
+ActiveRecord::Schema.define(version: 20140423141551) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                  null: false
@@ -96,6 +96,16 @@ ActiveRecord::Schema.define(version: 20140415030105) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "prices", force: true do |t|
+    t.integer  "commodity_id",                         null: false
+    t.date     "trade_date",                           null: false
+    t.decimal  "price",        precision: 8, scale: 4, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "prices", ["commodity_id", "trade_date"], name: "index_prices_on_commodity_id_and_trade_date"
 
   create_table "reconciliation_items", force: true do |t|
     t.integer  "reconciliation_id",   null: false
