@@ -37,34 +37,149 @@ describe PricesController do
           it 'should return the new commodity price'
         end
       end
+
+      describe 'get :edit' do
+        it 'should be successful'
+      end
+
+      describe 'put :update' do
+        it 'should redirect to the commodity prices index page'
+        it' should update the specified commodity'
+
+        context 'in json' do
+          it 'should be successful'
+          it 'should update the specified commodity'
+        end
+      end
+
+      describe 'delete :destroy' do
+        it 'should redirect to the commodity prices index page'
+        it 'should delete the specified commodity'
+
+        context 'in json' do
+
+          it 'should be successful'
+          it 'should delete the specified commodity'
+        end
+      end
     end
 
     context 'that does not own the entity' do
+      describe 'get :index' do
+        it 'should redirect to the user home page'
+
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not return any data'
+        end
+      end
+
+      describe 'get :show' do
+        it 'should redirect to the user home page'
+
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not return any data'
+        end
+      end
+
+      describe 'get :new' do
+        it 'should redirect to the user home page'
+      end
+
+      describe 'post :create' do
+        it 'should redirect to the user home page'
+        it 'should not create a new commodity price'
+
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not create a new commodity price'
+          it 'should not return any data'
+        end
+      end
+
+      describe 'get :edit' do
+        it 'should redirect to the user home page'
+      end
+
+      describe 'put :update' do
+        it 'should redirect to the user home page'
+        it' should not update the specified commodity'
+
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not update the specified commodity'
+        end
+      end
+
+      describe 'delete :destroy' do
+        it 'should redirect to the user home page'
+        it 'should not delete the specified commodity'
+
+        context 'in json' do
+          it 'should return "resource not found"'
+          it 'should not delete the specified commodity'
+        end
+      end
     end
   end
 
   context 'for an unauthenticated user' do
-  end
+    describe 'get :index' do
+      it 'should redirect to the sign in page'
 
-  describe "GET 'edit'" do
-    it "returns http success" do
-      get 'edit'
-      response.should be_success
+      context 'in json' do
+        it 'should return "access denied"'
+        it 'should not return any data'
+      end
+    end
+
+    describe 'get :show' do
+      it 'should redirect to the sign in page'
+
+      context 'in json' do
+        it 'should return "access denied"'
+        it 'should not return any data'
+      end
+    end
+
+    describe 'get :new' do
+      it 'should redirect to the sign in page'
+    end
+
+    describe 'post :create' do
+      it 'should redirect to the sign in page'
+      it 'should not create a new commodity price'
+
+      context 'in json' do
+        it 'should return "access denied"'
+        it 'should not create a new commodity price'
+        it 'should not return any data'
+      end
+    end
+
+    describe 'get :edit' do
+      it 'should redirect to the sign in page'
+    end
+
+    describe 'put :update' do
+      it 'should redirect to the sign in page'
+      it' should not update the specified commodity'
+
+      context 'in json' do
+        it 'should return "access denied"'
+        it 'should not update the specified commodity'
+      end
+    end
+
+    describe 'delete :destroy' do
+      it 'should redirect to the sign in page'
+      it 'should not delete the specified commodity'
+
+      context 'in json' do
+        it 'should return "access denied"'
+        it 'should not delete the specified commodity'
+      end
     end
   end
-
-  describe "GET 'update'" do
-    it "returns http success" do
-      get 'update'
-      response.should be_success
-    end
-  end
-
-  describe "GET 'destroy'" do
-    it "returns http success" do
-      get 'destroy'
-      response.should be_success
-    end
-  end
-
 end
