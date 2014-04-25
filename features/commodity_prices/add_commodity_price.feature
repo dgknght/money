@@ -22,19 +22,19 @@ Feature: Add a commodity price
 
     When I click "Prices" within the 1st commodity row
     Then I should see "KSS Prices" within the page title
-    And I should see the following commodity prices table
-      |     Date | Price |
+    And I should see the following prices table
+      | Trade date | Price |
 
     When I click "Add"
     Then I should see "New commodity price" within the page title
 
-    When I fill in "Date" with "3/36/2014"
+    When I fill in "Trade date" with "2014-04-24"
     And I fill in "Price" with "11.34"
     And I click "Save"
-    Then I should see "The commodity price was saved successfully." within the notice area
-    And I should see the following commodity prices table
-      | Date      | Price |
-      | 3/26/2014 | 11.34 |
+    Then I should see "The price was created successfully." within the notice area
+    And I should see the following prices table
+      | Trade date | Price   |
+      |  4/24/2014 | 11.3400 |
 
     When I click "Back"
     Then I should see the following commodities table

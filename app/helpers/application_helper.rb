@@ -14,4 +14,8 @@ module ApplicationHelper
   def format_date(value)
     value.nil? ? '' : value.strftime('%-m/%-d/%Y')
   end
+
+  def format_price(value)
+    number_to_currency(value, unit: '', precision: 4)
+  end
 end
