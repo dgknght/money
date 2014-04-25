@@ -8,6 +8,9 @@ class Ability
     can :manage, Commodity do |commodity|
       user.entities.include? commodity.entity
     end
+    can :manage, Price do |price|
+      user.entities.include? price.commodity.entity
+    end
     can :manage, Account do |account|
       user.entities.include? account.entity
     end

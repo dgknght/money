@@ -134,62 +134,149 @@ describe PricesController do
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the commodity prices index page'
-        it 'should delete the specified commodity'
+        it 'should redirect to the commodity prices index page' do
+          delete :destroy, id: price
+          expect(response).to redirect_to commodity_prices_path(commodity)
+        end
+
+        it 'should delete the specified commodity' do
+          expect do
+            delete :destroy, id: price
+          end.to change(Price, :count).by(-1)
+        end
 
         context 'in json' do
+          it 'should be successful' do
+            delete :destroy, id: price, format: :json
+            expect(response).to be_success
+          end
 
-          it 'should be successful'
-          it 'should delete the specified commodity'
+          it 'should delete the specified commodity' do
+            expect do
+              delete :destroy, id: price, format: :json
+            end.to change(Price, :count).by(-1)
+          end
         end
       end
     end
 
     context 'that does not own the entity' do
+      let (:other_user) { FactoryGirl.create(:user) }
+      before(:each) { sign_in other_user }
+
       describe 'get :index' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :index, commodity_id: commodity
+          expect(response).to redirect_to home_path
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :index, commodity_id: commodity, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not return any data' do
+            get :index, commodity_id: commodity, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
       describe 'get :show' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :show, id: price
+          expect(response).to redirect_to home_path
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            get :show, id: price, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not return any data' do
+            get :show, id: price, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
       describe 'get :new' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :new, commodity_id: commodity
+          expect(response).to redirect_to home_path
+        end
       end
 
       describe 'post :create' do
-        it 'should redirect to the user home page'
-        it 'should not create a new commodity price'
+        it 'should redirect to the user home page' do
+          post :create, commodity_id: commodity, price: attributes
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not create a new commodity price' do
+          expect do
+            post :create, commodity_id: commodity, price: attributes
+          end.not_to change(Price, :count)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not create a new commodity price'
-          it 'should not return any data'
+          it 'should return "resource not found"' do
+            post :create, commodity_id: commodity, price: attributes, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not create a new commodity price' do
+            expect do
+              post :create, commodity_id: commodity, price: attributes, format: :json
+            end.not_to change(Price, :count)
+          end
+
+          it 'should not return any data' do
+            post :create, commodity_id: commodity, price: attributes, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
       describe 'get :edit' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :edit, id: price
+          expect(response).to redirect_to home_path
+        end
       end
 
       describe 'put :update' do
-        it 'should redirect to the user home page'
-        it' should not update the specified commodity'
+        it 'should redirect to the user home page' do
+          put :update, id: price, price: attributes
+          expect(response).to redirect_to home_path
+        end
+
+        it' should not update the specified commodity' do
+          expect do
+            put :update, id: price, price: attributes
+            price.reload
+          end.not_to change(price, :updated_at)
+        end
 
         context 'in json' do
-          it 'should return "resource not found"'
-          it 'should not update the specified commodity'
+          it 'should return "resource not found"' do
+            put :update, id: price, price: attributes, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not update the specified commodity' do
+            expect do
+              put :update, id: price, price: attributes, format: :json
+              price.reload
+            end.not_to change(price, :updated_at)
+          end
+
+          it 'should not return any data' do
+            put :update, id: price, price: attributes, format: :json
+            expect(response.body).to eq([].to_json)
+          end
         end
       end
 
@@ -207,7 +294,10 @@ describe PricesController do
 
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        get :index, commodity_id: commodity
+        expect(response).to redirect_to(new_user_session_path)
+      end
 
       context 'in json' do
         it 'should return "access denied"'
