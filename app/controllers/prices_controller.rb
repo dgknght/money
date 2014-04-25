@@ -38,6 +38,7 @@ class PricesController < ApplicationController
   end
 
   def destroy
+    authorize! :destroy, @price
     flash[:notice] = 'The price was deleted successfully.' if @price.destroy
     respond_with(@price, location: response_location)
   end
