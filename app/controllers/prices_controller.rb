@@ -1,6 +1,6 @@
 class PricesController < ApplicationController
   before_filter :load_commodity, only: [:index, :create]
-  before_filter :load_price, only: [:show]
+  before_filter :load_price, only: [:show, :update]
   respond_to :html, :json
 
   def index
@@ -25,6 +25,9 @@ class PricesController < ApplicationController
   end
 
   def update
+    @price.update_attributes(price_params)
+    flash[:notice] = 'The price was updated successfully.' if @price.save
+    respond_with(@price, location: commodity_prices_path(@price.commodity))
   end
 
   def destroy

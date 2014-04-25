@@ -99,16 +99,37 @@ describe PricesController do
       end
 
       describe 'get :edit' do
-        it 'should be successful'
+        it 'should be successful' do
+          get :edit, id: price
+          expect(response).to be_success
+        end
       end
 
       describe 'put :update' do
-        it 'should redirect to the commodity prices index page'
-        it' should update the specified commodity'
+        it 'should redirect to the commodity prices index page' do
+          put :update, id: price, price: attributes
+          expect(response).to redirect_to commodity_prices_path(commodity)
+        end
+
+        it' should update the specified commodity' do
+          expect do
+            put :update, id: price, price: attributes
+            price.reload
+          end.to change(price, :price).to(12.3456)
+        end
 
         context 'in json' do
-          it 'should be successful'
-          it 'should update the specified commodity'
+          it 'should be successful' do
+            put :update, id: price, price: attributes, format: :json
+            expect(response).to be_success
+          end
+
+          it 'should update the specified commodity' do
+            expect do
+              put :update, id: price, price: attributes, format: :json
+              price.reload
+            end.to change(price, :price).to(12.3456)
+          end
         end
       end
 

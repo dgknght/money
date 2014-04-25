@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :price do
-    commodity_id 1
-    trade_date "2014-04-23"
-    price "9.99"
+    commodity
+    trade_date { Date.today }
+    price 5.4321
   end
 end
