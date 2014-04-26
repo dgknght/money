@@ -29,7 +29,7 @@ describe PricesController do
           end
 
           it 'should return the list of prices' do
-            get :index, : commodity, format: :json
+            get :index, commodity_id: commodity, format: :json
             expect(response.body).to eq([price].to_json)
           end
         end
@@ -108,7 +108,7 @@ describe PricesController do
           expect(response).to redirect_to commodity_prices_path(commodity)
         end
 
-        it' should update the specified price' do
+        it 'should update the specified price' do
           expect do
             put :update, id: price, price: attributes
             price.reload
@@ -250,11 +250,11 @@ describe PricesController do
           expect(response).to redirect_to home_path
         end
 
-        it' should not update the specified price' do
+        it 'should not update the specified price' do
           expect do
             put :update, id: price, price: attributes
             price.reload
-          end.not_to change(price, :updated_at)
+          end.not_to change(price, :price)
         end
 
         context 'in json' do
@@ -267,7 +267,7 @@ describe PricesController do
             expect do
               put :update, id: price, price: attributes, format: :json
               price.reload
-            end.not_to change(price, :updated_at)
+            end.not_to change(price, :price)
           end
 
           it 'should not return any data' do
@@ -395,11 +395,11 @@ describe PricesController do
         expect(response).to redirect_to new_user_session_path
       end
 
-      it' should not update the specified price' do
+      it 'should not update the specified price' do
         expect do
           put :update, id: price, price: attributes
           price.reload
-        end.not_to change(price, :updated_at)
+        end.not_to change(price, :price)
       end
 
       context 'in json' do
@@ -412,7 +412,7 @@ describe PricesController do
           expect do
             put :update, id: price, price: attributes, format: :json
             price.reload
-          end.not_to change(price, :updated_at)
+          end.not_to change(price, :price)
         end
       end
     end
