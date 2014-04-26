@@ -12,7 +12,7 @@
       %td= commodity.name
       %td= commodity.symbol
       %td= commodity.market
-      %td &nbsp;
+      %td= format_price(commodity.latest_price.try(:price))
       %td.action_cell
         =link_to 'Prices', commodity_prices_path(commodity), class: 'prices_button', title: 'Click here to manage prices for this commodity.'
         =link_to 'Edit', edit_commodity_path(commodity), class: 'edit_button', title: 'Click here to edit the commodity.'

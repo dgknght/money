@@ -84,4 +84,21 @@ describe Commodity do
       expect(commodity).to respond_to(:prices)
     end
   end
+
+  describe '#latest_price' do
+    let (:commodity) { FactoryGirl.create(:commodity) }
+    let!(:p1) do
+      FactoryGirl.create(:price, commodity: commodity,
+                                 trade_date: '2014-01-03',
+                                 price: 11.11)
+    end
+    let!(:p2) do
+      FactoryGirl.create(:price, commodity: commodity,
+                                 trade_date: '2014-01-02',
+                                 price: 10.00)
+    end
+    it 'should return the most recent price for the commodity' do
+      expect(commodity.latest_price).to eq(p1)
+    end
+  end
 end

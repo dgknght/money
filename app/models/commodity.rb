@@ -32,4 +32,9 @@ class Commodity < ActiveRecord::Base
                       format: { with: /\A[a-z]+\z/i, message: 'cannot contain spaces' }
   validates :market,  presence: true,
                       inclusion: { in: MARKETS }
+
+  # Gets the latest price for the commodity
+  def latest_price
+    prices.order(trade_date: :desc).first
+  end
 end
