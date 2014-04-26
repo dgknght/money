@@ -28,8 +28,8 @@ describe PricesController do
             expect(response).to be_success
           end
 
-          it 'should return the list of commodity prices' do
-            get :index, commodity_id: commodity, format: :json
+          it 'should return the list of prices' do
+            get :index, : commodity, format: :json
             expect(response.body).to eq([price].to_json)
           end
         end
@@ -47,7 +47,7 @@ describe PricesController do
             expect(response).to be_success
           end
 
-          it 'should return the specified commodity price' do
+          it 'should return the specified price' do
             get :show, id: price, format: :json
             expect(response.body).to eq(price.to_json)
           end
@@ -62,12 +62,12 @@ describe PricesController do
       end
 
       describe 'post :create' do
-        it 'should redirect to the commodity price index page' do
+        it 'should redirect to the price index page' do
           post :create, commodity_id: commodity, price: attributes
           expect(response).to redirect_to commodity_prices_path(commodity)
         end
 
-        it 'should create a new commodity price' do
+        it 'should create a new price' do
           expect do
             post :create, commodity_id: commodity, price: attributes
           end.to change(commodity.prices, :count).by(1)
@@ -79,13 +79,13 @@ describe PricesController do
             expect(response).to be_success
           end
 
-          it 'should create a new commodity price' do
+          it 'should create a new price' do
             expect do
               post :create, commodity_id: commodity, price: attributes, format: :json
             end.to change(commodity.prices, :count).by(1)
           end
 
-          it 'should return the new commodity price' do
+          it 'should return the new price' do
             post :create, commodity_id: commodity, price: attributes, format: :json
             returned = JSON.parse(response.body)
             attributes.each do |key, value|
@@ -103,12 +103,12 @@ describe PricesController do
       end
 
       describe 'put :update' do
-        it 'should redirect to the commodity prices index page' do
+        it 'should redirect to the prices index page' do
           put :update, id: price, price: attributes
           expect(response).to redirect_to commodity_prices_path(commodity)
         end
 
-        it' should update the specified commodity' do
+        it' should update the specified price' do
           expect do
             put :update, id: price, price: attributes
             price.reload
@@ -121,7 +121,7 @@ describe PricesController do
             expect(response).to be_success
           end
 
-          it 'should update the specified commodity' do
+          it 'should update the specified price' do
             expect do
               put :update, id: price, price: attributes, format: :json
               price.reload
@@ -131,12 +131,12 @@ describe PricesController do
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the commodity prices index page' do
+        it 'should redirect to the prices index page' do
           delete :destroy, id: price
           expect(response).to redirect_to commodity_prices_path(commodity)
         end
 
-        it 'should delete the specified commodity' do
+        it 'should delete the specified price' do
           expect do
             delete :destroy, id: price
           end.to change(Price, :count).by(-1)
@@ -148,7 +148,7 @@ describe PricesController do
             expect(response).to be_success
           end
 
-          it 'should delete the specified commodity' do
+          it 'should delete the specified price' do
             expect do
               delete :destroy, id: price, format: :json
             end.to change(Price, :count).by(-1)
@@ -212,7 +212,7 @@ describe PricesController do
           expect(response).to redirect_to home_path
         end
 
-        it 'should not create a new commodity price' do
+        it 'should not create a new price' do
           expect do
             post :create, commodity_id: commodity, price: attributes
           end.not_to change(Price, :count)
@@ -224,7 +224,7 @@ describe PricesController do
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not create a new commodity price' do
+          it 'should not create a new price' do
             expect do
               post :create, commodity_id: commodity, price: attributes, format: :json
             end.not_to change(Price, :count)
@@ -250,7 +250,7 @@ describe PricesController do
           expect(response).to redirect_to home_path
         end
 
-        it' should not update the specified commodity' do
+        it' should not update the specified price' do
           expect do
             put :update, id: price, price: attributes
             price.reload
@@ -263,7 +263,7 @@ describe PricesController do
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not update the specified commodity' do
+          it 'should not update the specified price' do
             expect do
               put :update, id: price, price: attributes, format: :json
               price.reload
@@ -283,7 +283,7 @@ describe PricesController do
           expect(response).to redirect_to home_path
         end
 
-        it 'should not delete the specified commodity' do
+        it 'should not delete the specified price' do
           expect do
             delete :destroy, id: price
           end.not_to change(Price, :count)
@@ -295,7 +295,7 @@ describe PricesController do
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not delete the specified commodity' do
+          it 'should not delete the specified price' do
             expect do
               delete :destroy, id: price, format: :json
             end.not_to change(Price, :count)
@@ -357,7 +357,7 @@ describe PricesController do
         expect(response).to redirect_to new_user_session_path
       end
 
-      it 'should not create a new commodity price' do
+      it 'should not create a new price' do
         expect do
           post :create, commodity_id: commodity
         end.not_to change(Price, :count)
@@ -369,7 +369,7 @@ describe PricesController do
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not create a new commodity price' do
+        it 'should not create a new price' do
           expect do
             post :create, commodity_id: commodity, format: :json
           end.not_to change(Price, :count)
@@ -395,7 +395,7 @@ describe PricesController do
         expect(response).to redirect_to new_user_session_path
       end
 
-      it' should not update the specified commodity' do
+      it' should not update the specified price' do
         expect do
           put :update, id: price, price: attributes
           price.reload
@@ -408,7 +408,7 @@ describe PricesController do
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not update the specified commodity' do
+        it 'should not update the specified price' do
           expect do
             put :update, id: price, price: attributes, format: :json
             price.reload
@@ -423,7 +423,7 @@ describe PricesController do
         expect(response).to redirect_to new_user_session_path
       end
 
-      it 'should not delete the specified commodity' do
+      it 'should not delete the specified price' do
         expect do
           delete :destroy, id: price
         end.not_to change(Price, :count)
@@ -435,7 +435,7 @@ describe PricesController do
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not delete the specified commodity' do
+        it 'should not delete the specified price' do
           expect do
             delete :destroy, id: price, format: :json
           end.not_to change(Price, :count)
