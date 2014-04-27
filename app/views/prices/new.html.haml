@@ -1,14 +1,5 @@
 %h2#page_title New commodity price
 
+=render 'shared/errors', resource: @price
 =form_for([@commodity, @price]) do |f|
-  %div
-    =f.label :trade_date
-    %br
-    =f.text_field :trade_date, {class: 'date_field'}
-  %div
-    =f.label :price
-    %br
-    =f.number_field :price, {min: 0.0001, step: 0.0001}
-  .actions
-    =f.submit 'Save', class: 'save_button', title: 'Click here to save the price.'
-    =link_to 'Back', commodity_prices_path(@commodity), class: 'back_button', title: 'Click here to return to the list of prices.'
+  =render 'form_fields', f: f

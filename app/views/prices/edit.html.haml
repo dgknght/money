@@ -1,2 +1,5 @@
-%h1 Prices#edit
-%p Find me in app/views/prices/edit.html.haml
+%h2#page_title Edit price
+
+=render 'shared/errors', resource: @price
+=form_for(@price) do |f|
+  =render 'form_fields', f: f

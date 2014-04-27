@@ -32,6 +32,7 @@ Money::Application.routes.draw do
   resources :commodities, only: [:show, :edit, :update, :destroy] do
     resources :prices, only: [:index, :new, :create]
   end
+  resources :prices, only: [:edit, :update]
   resources :attachments, only: [:show, :destroy]
   resources :attachment_contents, only: :show
   resources :transaction_items, only: [ :destroy, :edit, :update ]
