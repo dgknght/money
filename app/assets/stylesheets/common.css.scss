@@ -305,6 +305,11 @@ table.attributes {
   background-image: url(/assets/add_attachment_small.png);
 }
 
+.prices_button {
+  @extend .any_button;
+  background-image: url(/assets/prices.png);
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;
