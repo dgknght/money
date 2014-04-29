@@ -1,10 +1,10 @@
 @wip
-Feature: Add an investment
+Feature: Enter a commodity transaction
   As a user,
-  In order to track my investment holdings,
-  I need to be able to add an investment to the system.
+  In order to track a commodity holding
+  I need to be able to enter a commodity purchase
 
-  Scenario: A user adds an invesment
+  Scenario: A user enters a commodity purchase
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
     And entity "Personal" has the following accounts
@@ -17,8 +17,8 @@ Feature: Add an investment
       |         1/1/2014 | Opening balance | Opening Balances | 401k          | 5,000.00 |
 
     And entity "Personal" has the following commodities
-      | Name                     | Commodity type | Symbol |
-      | Knight Software Services | stock          | KSS    |
+      | Name                     | Symbol | Market |
+      | Knight Software Services | KSS    | NYSE   |
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page

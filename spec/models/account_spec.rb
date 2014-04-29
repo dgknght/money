@@ -21,7 +21,13 @@ describe Account do
     account.should be_valid
   end
   
-  describe 'account_type' do
+  describe '::ACCOUNT_TYPES' do
+    it 'should list the available account types' do
+      Account::ACCOUNT_TYPES.should == %w(asset expense liability equity income)
+    end
+  end
+
+  describe '#account_type' do
     it 'should be required' do
       account = Account.new(attributes.without(:account_type))
       account.should_not be_valid
@@ -33,14 +39,14 @@ describe Account do
     end
   end
   
-  describe 'balance' do
+  describe '#balance' do
     it 'should default to zero' do
       account = Account.new(attributes.without(:balance))
       account.balance.should == 0
     end
   end
   
-  describe 'balance_as_of' do
+  describe '#balance_as_of' do
     let!(:t1) do
       FactoryGirl.create(:transaction,  entity: entity,
                                         transaction_date: '2013-01-02', 
@@ -67,7 +73,7 @@ describe Account do
     end
   end
   
-  describe 'balance_between' do
+  describe '#balance_between' do
     let!(:t1) do
       entity.transactions.create!(transaction_date: '2013-01-02', 
                                   description: 'Paycheck', 
@@ -92,7 +98,7 @@ describe Account do
     end
   end
   
-  describe 'balance_with_children' do
+  describe '#balance_with_children' do
     let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 11) }
     let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 12) }
     
@@ -101,7 +107,7 @@ describe Account do
     end
   end
   
-  describe 'parent' do
+  describe '#parent' do
     let(:parent) { FactoryGirl.create(:asset_account) }
     
     it 'should refer to another account' do
@@ -116,7 +122,7 @@ describe Account do
     end
   end
   
-  describe 'parent_name' do
+  describe '#parent_name' do
     let(:parent) { FactoryGirl.create(:asset_account, name: 'Parent Account') }
     
     it 'should get the name of the parent if a parent is specified' do
@@ -130,7 +136,7 @@ describe Account do
     end
   end
   
-  describe 'path' do
+  describe '#path' do
     let(:parent) { FactoryGirl.create(:asset_account, name: 'Parent Account') }
     
     it 'should get the name of account prefixed with any parent names' do
@@ -139,7 +145,7 @@ describe Account do
     end
   end
   
-  describe 'children' do
+  describe '#children' do
     let (:parent) { FactoryGirl.create(:asset_account) }
     let!(:child1) { FactoryGirl.create(:asset_account, parent_id: parent.id, name: 'Z should be second') }
     let!(:child2) { FactoryGirl.create(:asset_account, parent_id: parent.id, name: 'A should be first') }
@@ -149,7 +155,7 @@ describe Account do
     end
   end
   
-  describe 'depth' do
+  describe '#depth' do
     let (:parent) { FactoryGirl.create(:asset_account) }
     let!(:child1) { FactoryGirl.create(:asset_account, parent_id: parent.id) }
     
@@ -159,7 +165,7 @@ describe Account do
     end
   end
 
-  describe 'content_type' do
+  describe '#content_type' do
     it 'should default to "currency"' do
       account = entity.accounts.new(attributes)
       account.should be_valid
@@ -182,7 +188,7 @@ describe Account do
     end
   end
 
-  describe 'currency?' do
+  describe '#currency?' do
     it 'should be true if the account type is currency' do
       account = entity.accounts.new(attributes.merge(content_type: Account.currency_content))
       account.should be_currency
@@ -194,7 +200,7 @@ describe Account do
     end
   end
 
-  describe 'commodity?' do
+  describe '#commodity?' do
     it 'should be true if the account type is commodity' do
       account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
       account.should be_commodity
@@ -236,7 +242,7 @@ describe Account do
     end
   end
   
-  describe 'debit' do
+  describe '#debit' do
     it 'should increase the value of an asset account' do
       lambda do
         checking.debit(1)
@@ -269,7 +275,7 @@ describe Account do
     
   end
   
-  describe 'credit' do
+  describe '#credit' do
     it 'should decrease the value of an asset account' do
       lambda do
         checking.credit(1)
@@ -301,14 +307,14 @@ describe Account do
     end    
   end
   
-  describe 'reconciliations' do
+  describe '#reconciliations' do
     let!(:reconciliation) { FactoryGirl.create(:reconciliation, account: checking) }
     it 'should contain a list of reconciliations for the account' do
       checking.reconciliations.should == [reconciliation]
     end
   end
   
-  describe 'transaction_items' do
+  describe '#transaction_items' do
     let!(:t1) { FactoryGirl.create(:transaction, credit_account: checking, debit_account: groceries, amount: 100) }
     it 'should contain a list of transaction items for the account' do
       checking.transaction_items.should == t1.items.where(account_id: checking.id)
@@ -323,7 +329,7 @@ describe Account do
 # |Expense        | Increase | Decrease |
 # |Equity/Capital | Decrease | Increase |
 
-  describe 'polarity' do
+  describe '#polarity' do
     context 'for a credit action' do
       let(:action) { TransactionItem.credit }
       it 'should be negative for an asset account' do
