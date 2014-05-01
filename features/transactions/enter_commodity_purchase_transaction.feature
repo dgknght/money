@@ -1,5 +1,5 @@
 @wip
-Feature: Enter a commodity transaction
+Feature: Enter a commodity purchase transaction
   As a user,
   In order to track a commodity holding
   I need to be able to enter a commodity purchase
@@ -22,9 +22,9 @@ Feature: Enter a commodity transaction
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
-    Then I should see "Accounts" within the main menu
+    Then I should see "Accounts" within the navigation
 
-    When I click "Accounts" within the main menu
+    When I click "Accounts" within the navigation
     Then I should see "Accounts" within the page title
 
     When I click "401k" within the main content
@@ -35,15 +35,15 @@ Feature: Enter a commodity transaction
       | Cash            | 5,000.00 |
       | Total value     | 5,000.00 |
 
-    When I click the "Add" button
+    When I click "Add"
     Then I should see "New equity transaction" within the page title
 
     When I fill in "Transaction date" with "3/26/2014"
-    And I select "buy" from "Action"
+    And I select "buy" from the "Action" list
     And I fill in "Commodity" with "KSS"
     And I fill in "Shares" with "100"
     And I fill in "Amount" with "1100"
-    And I click the "Save" button
+    And I click "Save"
 
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following commodities table
