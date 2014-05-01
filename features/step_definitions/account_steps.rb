@@ -17,6 +17,6 @@ Given(/^(#{ENTITY}) has the following accounts$/) do |entity, table|
     FactoryGirl.create(:account,  entity: entity,
                                   account_type: row['Account type'],
                                   name: row['Name'],
-                                  content_type: row['Equity'])
+                                  content_type: row['Content type'])
   end
 end
