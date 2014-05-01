@@ -1,4 +1,9 @@
 module AccountsHelper
+  def account_link(account)
+    return account_holdings_path(account) if account.commodity?
+    account_transaction_items_path(account)
+  end
+
   def available_parent_accounts(account)
     {
       'Assets'      => to_array(Account.asset, account.id),
