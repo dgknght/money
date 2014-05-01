@@ -26,14 +26,7 @@ Feature: Add a new account
     And I click "Save"
     
     Then I should see "The account was successfully created." within the notice area
-    And I should see the following account attributes
-      | Account type  | asset    |
-      | Parent        |          |
-      | Name          | Checking |
-      | Path          | Checking |
-    
-    When I click "Back"
-    Then I should see the following accounts table
+    And I should see the following accounts table
       | Name        | Balance |
       | Assets      | 0.00    |
       | Checking    | 0.00    |

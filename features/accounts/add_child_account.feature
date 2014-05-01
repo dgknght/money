@@ -29,14 +29,7 @@ Feature: Add a child account
     And I select "Groceries" from the "Parent" list
     And I click "Save"    
     Then I should see "The account was successfully created." within the notice area
-    And I should see the following account attributes
-      | Account type | expense        |
-      | Parent       | Groceries      | 
-      | Name         | Food           |
-      | Path         | Groceries/Food |
-      
-    When I click "Back"
-    Then I should see the following accounts table
+    And I should see the following accounts table
       | Name        | Balance |
       | Assets      |  100.00 |
       | Checking    |  100.00 |

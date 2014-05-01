@@ -35,9 +35,9 @@ describe AccountsController do
     end
     
     describe 'post :create' do
-      it 'should redirect to the detail page for the new account' do
+      it 'should redirect to the account list page' do
         post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
-        response.should redirect_to account_path(Account.last)
+        response.should redirect_to entity_accounts_path(entity)
       end
       
       context 'in json' do
@@ -78,9 +78,9 @@ describe AccountsController do
     end
     
     describe 'put :update' do
-      it 'should redirect to the detail page for the specified account' do
+      it 'should redirect to the account list page' do
         put :update, id: checking, account: { name: 'The new name' }
-        response.should redirect_to account_path(checking)
+        response.should redirect_to entity_accounts_path(entity)
       end
       
       it 'should update the account' do

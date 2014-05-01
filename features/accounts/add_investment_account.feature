@@ -1,4 +1,3 @@
-@wip
 Feature: Add an investment account
   As a user,
   In order to track my investment holdings,
@@ -33,8 +32,6 @@ Feature: Add an investment account
     And I select "commodity" from the "Content type" list
     And I click "Save"
     Then I should see "The account was successfully created." within the notice area
-
-    When I click "Back"
     And I should see the following accounts table
       | Name             | Balance |
       | Assets           |    0.00 |

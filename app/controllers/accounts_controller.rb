@@ -34,7 +34,7 @@ class AccountsController < ApplicationController
     authorize! :update, @entity
     @account = @entity.accounts.new(account_params)
     flash[:notice] = "The account was successfully created." if @account.save
-    respond_with @account
+    respond_with @account, location: entity_accounts_path(@entity)
   end
 
   def edit
@@ -45,7 +45,7 @@ class AccountsController < ApplicationController
     authorize! :update, @account
     @account.update_attributes(account_params)
     flash[:notice] = "The account was successfully updated." if @account.save
-    respond_with @account
+    respond_with @account, location: entity_accounts_path(@account.entity)
   end
   
   private
