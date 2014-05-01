@@ -32,8 +32,9 @@ Feature: Add an investment account
     When I fill in "Name" with "401k"
     And I select "commodity" from the "Content type" list
     And I click "Save"
-
     Then I should see "The account was successfully created." within the notice area
+
+    When I click "Back"
     And I should see the following accounts table
       | Name             | Balance |
       | Assets           |    0.00 |
