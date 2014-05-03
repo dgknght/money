@@ -13,7 +13,7 @@ describe CommodityTransactionCreator do
     }
   end
 
-  it 'should be creatble with an account and valid attributes' do
+  it 'should be creatable with an account and valid attributes' do
     creator = CommodityTransactionCreator.new(attributes)
     expect(creator).to be_valid
     expect(creator.transaction_date).to eq(Date.parse('2014-04-15'))
@@ -112,9 +112,14 @@ describe CommodityTransactionCreator do
       it 'should create a new transaction' do
         expect do
           creator = CommodityTransactionCreator.new(attributes)
-          transaction = creator.create
-        end.to change(Transaction, :count).by(1)
-        expect(transaction).not_to be_nil
+          currency_trans, commodity_trans = creator.create
+        end.to change(Transaction, :count).by(2) # 1 for the currency and 1 for the commodity
+
+        expect(currency_trans).not_to be_nil
+        expect(currency_trans.total_debits).to eq(1_234)
+
+        expect(commodity_trans).not_to be_nil
+        expect(commodity_trans.total_debits).to eq(100)
       end
 
       it 'should debit the account dedicated to tracking purchases of this commodity'

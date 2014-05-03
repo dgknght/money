@@ -21,10 +21,19 @@ class CommodityTransactionCreator
 
   def create
     return nil unless valid?
+
+    currency_trans = nil
+    commodity_trans = nil
+    Account.transaction do
+      currency_trans = create_currency_transaction
+      commodity_trans = create_commodity_transaction
+    end
+    [currency_trans, commodity_trans]
   end
 
   def create!
     raise "Instance is invalid: #{errors.full_messages.join(', ')}" unless valid?
+    create
   end
 
   def initialize(attributes = {})
@@ -43,6 +52,30 @@ class CommodityTransactionCreator
   end
 
   private
+
+  def create_commodity_transaction
+    # if buying
+    #   debit the account that tracks shares of the specified commodity
+    #   credit ?
+    # if selling (we need to track lots of purchases and sell on FILO or FIFO bases
+    #   debit ?
+    #   credit the account that tracks shares of the specified commodity
+  end
+
+  def create_currency_transaction
+    # if buying:
+    #   debit an asset account that tracks money spent on commodities
+    #   credit the specified account (cash held in the investment account)
+    #
+    # if selling:
+    #   credit the asset account that tracks money spent on commodities
+    #   debit the specified account (cash held in the investment account)
+    #
+    #   if the value is greater than the purchase value (see FIFO or FILO above)
+    #     debit the capital gains account
+    #   else
+    #     credit the captial gains account
+  end
 
   def find_account
     return nil unless account_id
