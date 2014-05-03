@@ -211,6 +211,10 @@ describe Account do
       account.should_not be_commodity
     end
   end
+
+  describe '#holdings' do
+    it 'should list the commodities currently held in the account'
+  end
   
   describe 'asset scope' do
     it 'should return a list of asset accounts' do

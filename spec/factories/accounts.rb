@@ -21,5 +21,9 @@ FactoryGirl.define do
     factory :expense_account do
       account_type Account.expense_type
     end
+
+    factory :commodity_account do
+      content_type Account.commodity_content
+    end
   end
 end

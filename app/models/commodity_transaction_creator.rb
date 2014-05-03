@@ -23,6 +23,10 @@ class CommodityTransactionCreator
     return nil unless valid?
   end
 
+  def create!
+    raise "Instance is invalid: #{errors.full_messages.join(', ')}" unless valid?
+  end
+
   def initialize(attributes = {})
     attr = (attributes || {}).with_indifferent_access
     self.account_id = attr[:account_id]
