@@ -2,8 +2,21 @@ class CommodityTransactionCreator
   include ActiveModel::Validations
 
   ACTIONS = %w(buy sell)
+  class << self
+    ACTIONS.each do |a|
+      define_method a do
+        a
+      end
+    end
+  end
 
   attr_accessor :account_id, :transaction_date, :symbol, :action, :shares, :value
+
+  ACTIONS.each do |a|
+    define_method "#{a}?" do
+      action == a
+    end
+  end
 
   validates_presence_of :symbol, :account_id
   validates :shares, presence: true, numericality: true
@@ -24,7 +37,7 @@ class CommodityTransactionCreator
 
     transaction = nil
     Account.transaction do
-      transaction = create_currency_transaction
+      transaction = create_transaction
       process_lot(transaction)
     end
    transaction 
@@ -52,13 +65,55 @@ class CommodityTransactionCreator
 
   private
 
+  def create_buy_transaction
+    # debit an asset account that tracks money spent on the specified commodity
+    # credit the specified account (cash held in the investment account)
+    TransactionItemCreator.new(account, transaction_date: transaction_date,
+                                        description: "Purchase shares of #{symbol}",
+                                        other_account: find_or_create_commodity_account(symbol),
+                                        amount: -value).create!
+  end
+
+  def create_commodity_account(symbol)
+    account.children.create!(name => symbol)
+  end
+
+  def create_sell_transaction
+    #   credit the asset account that tracks money spent on the specified commodity
+    #   debit the specified account (cash held in the investment account)
+    TransactionItemCreator.new(account, transaction_date: transaction_date,
+                                        description: "Sell shares of #{symbol}",
+                                        other_account: account.children.where(name: symbol),
+                                        amount: value)
+    #   if the value is greater than the purchase value (see FIFO or FILO above)
+    #     debit the capital gains account
+    #   else
+    #     credit the captial gains account
+  end
+
+  def create_transaction
+    if buy?
+      create_buy_transaction
+    else
+      create_sell_transaction
+    end
+  end
+
+  def find_account
+    return nil unless account_id
+    Account.find(account_id)
+  end
+
+  def find_or_create_commodity_account(symbol)
+    account.children.where(name: symbol) || create_commodity_account(symbol)
+  end
+
   def process_lot(transaction)
     # if buying
     #   record the purchase lot (# of shares, price, transaction date)
     # if selling
     #   find the lot for all shares being sold (always FILO or FIFO, probably need an entity-level configuration)
     #   subtract the sold shares from the found lots
-
     # Lot attributes
     # transaction_id
     # commodity_id
@@ -67,23 +122,4 @@ class CommodityTransactionCreator
     # value
   end
 
-  def create_currency_transaction
-    # if buying:
-    #   debit an asset account that tracks money spent on the specified commodity
-    #   credit the specified account (cash held in the investment account)
-    #
-    # if selling:
-    #   credit the asset account that tracks money spent on the specified commodity
-    #   debit the specified account (cash held in the investment account)
-    #
-    #   if the value is greater than the purchase value (see FIFO or FILO above)
-    #     debit the capital gains account
-    #   else
-    #     credit the captial gains account
-  end
-
-  def find_account
-    return nil unless account_id
-    Account.find(account_id)
-  end
 end

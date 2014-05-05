@@ -129,6 +129,8 @@ describe CommodityTransactionCreator do
       it 'should create a new transaction'
       it 'should credit the account dedicated to tracking purchases of this commodity'
       it 'should debit the account to which products of the sale were directed'
+      it 'should create a capital gains transaction if the sale amount was greater than the cost of the sold commodities'
+      it 'should create a capital loss transaction if the sale amount was less than the cost of the cold commodities'
 
       context 'using FIFO' do
         it 'should subtract shares from the first purchased, non-empty lot'
