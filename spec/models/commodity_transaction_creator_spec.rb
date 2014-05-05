@@ -112,25 +112,31 @@ describe CommodityTransactionCreator do
       it 'should create a new transaction' do
         expect do
           creator = CommodityTransactionCreator.new(attributes)
-          currency_trans, commodity_trans = creator.create
-        end.to change(Transaction, :count).by(2) # 1 for the currency and 1 for the commodity
+          transaction = creator.create
+        end.to change(Transaction, :count).by(1)
 
-        expect(currency_trans).not_to be_nil
-        expect(currency_trans.total_debits).to eq(1_234)
-
-        expect(commodity_trans).not_to be_nil
-        expect(commodity_trans.total_debits).to eq(100)
+        expect(transaction).not_to be_nil
+        expect(transaction).to eq(1_234)
+        expect(transaction).to have(1).lot_transaction # adding a new lot
       end
 
       it 'should debit the account dedicated to tracking purchases of this commodity'
       it 'should credit the account from which frunds for taken to make the purchase'
-      it 'should increase the number of shares held of this commodity'
+      it 'should create a new lot'
     end
 
     context 'with a "sell" action' do
       it 'should create a new transaction'
       it 'should credit the account dedicated to tracking purchases of this commodity'
       it 'should debit the account to which products of the sale were directed'
+
+      context 'using FIFO' do
+        it 'should subtract shares from the first purchased, non-empty lot'
+      end
+
+      context 'using FILO' do
+        it 'should subtract shares from the last purchased, non-empty lot'
+      end
     end
   end
 end

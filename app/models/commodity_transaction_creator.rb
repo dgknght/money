@@ -22,13 +22,12 @@ class CommodityTransactionCreator
   def create
     return nil unless valid?
 
-    currency_trans = nil
-    commodity_trans = nil
+    transaction = nil
     Account.transaction do
-      currency_trans = create_currency_transaction
-      commodity_trans = create_commodity_transaction
+      transaction = create_currency_transaction
+      process_lot(transaction)
     end
-    [currency_trans, commodity_trans]
+   transaction 
   end
 
   def create!
@@ -53,22 +52,28 @@ class CommodityTransactionCreator
 
   private
 
-  def create_commodity_transaction
+  def process_lot(transaction)
     # if buying
-    #   debit the account that tracks shares of the specified commodity
-    #   credit ?
-    # if selling (we need to track lots of purchases and sell on FILO or FIFO bases
-    #   debit ?
-    #   credit the account that tracks shares of the specified commodity
+    #   record the purchase lot (# of shares, price, transaction date)
+    # if selling
+    #   find the lot for all shares being sold (always FILO or FIFO, probably need an entity-level configuration)
+    #   subtract the sold shares from the found lots
+
+    # Lot attributes
+    # transaction_id
+    # commodity_id
+    # shares
+    # price
+    # value
   end
 
   def create_currency_transaction
     # if buying:
-    #   debit an asset account that tracks money spent on commodities
+    #   debit an asset account that tracks money spent on the specified commodity
     #   credit the specified account (cash held in the investment account)
     #
     # if selling:
-    #   credit the asset account that tracks money spent on commodities
+    #   credit the asset account that tracks money spent on the specified commodity
     #   debit the specified account (cash held in the investment account)
     #
     #   if the value is greater than the purchase value (see FIFO or FILO above)
