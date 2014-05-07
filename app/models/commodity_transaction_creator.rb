@@ -68,14 +68,19 @@ class CommodityTransactionCreator
   def create_buy_transaction
     # debit an asset account that tracks money spent on the specified commodity
     # credit the specified account (cash held in the investment account)
-    TransactionItemCreator.new(account, transaction_date: transaction_date,
-                                        description: "Purchase shares of #{symbol}",
-                                        other_account: find_or_create_commodity_account(symbol),
-                                        amount: -value).create!
+    attributes = {
+      transaction_date: transaction_date,
+      description: "Purchase shares of #{symbol}",
+      other_account: find_or_create_commodity_account(symbol),
+      amount: -value
+    }
+    TransactionItemCreator.new(account, attributes).create!
   end
 
   def create_commodity_account(symbol)
-    account.children.create!(name => symbol)
+    account.children.create!(name: symbol,
+                             account_type: Account.asset_type,
+                             entity: account.entity)
   end
 
   def create_sell_transaction
@@ -105,7 +110,7 @@ class CommodityTransactionCreator
   end
 
   def find_or_create_commodity_account(symbol)
-    account.children.where(name: symbol) || create_commodity_account(symbol)
+    account.children.where(name: symbol).first || create_commodity_account(symbol)
   end
 
   def process_lot(transaction)

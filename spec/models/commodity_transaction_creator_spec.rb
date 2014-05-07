@@ -110,6 +110,7 @@ describe CommodityTransactionCreator do
   describe '#create' do
     context 'with a "buy" action' do
       it 'should create a new transaction' do
+        transaction = nil
         expect do
           creator = CommodityTransactionCreator.new(attributes)
           transaction = creator.create

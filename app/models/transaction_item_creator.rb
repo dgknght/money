@@ -3,7 +3,7 @@
 class TransactionItemCreator
   include ActiveModel::Validations
   
-  attr_accessor :transaction_date, :description, :other_account, :amount, :other_account_id
+  attr_accessor :transaction_date, :description, :amount, :other_account_id
   
   validates_presence_of :transaction_date, :description, :other_account_id, :amount
   validate :other_account_belongs_to_right_entity
@@ -31,10 +31,24 @@ class TransactionItemCreator
     self.transaction_date = as_date(attributes[:transaction_date]) || (@transaction_item ? @transaction_item.transaction.transaction_date : nil)
     self.description = attributes[:description] || (@transaction_item ? @transaction_item.transaction.description : nil)
     self.other_account_id = attributes[:other_account_id] || (@transaction_item ? other_item.account_id : nil)
-    self.other_account = Account.find(other_account_id) if other_account_id
+    self.other_account = attributes[:other_account] if attributes.has_key?(:other_account)
     self.amount = attributes[:amount] || (@transaction_item ? @transaction_item.amount : nil)
   end
   
+  def other_account
+    @other_account ||= find_account(self.other_account_id)
+  end
+
+  def other_account=(account)
+    @other_account = account;
+    self.other_account_id = account ? account.id : nil
+  end
+
+  def other_account_id=(id)
+    @other_account_id = id
+    @other_account = nil
+  end
+
   def update
     return false unless valid?
     update_transaction_item
@@ -54,6 +68,11 @@ class TransactionItemCreator
       transaction.items.new(account: other_account, amount: amount, action: TransactionItem.debit)
       transaction.save!
       result
+    end
+
+    def find_account(id)
+      return nil unless id
+      Account.find(id)
     end
     
     def other_account_belongs_to_right_entity
