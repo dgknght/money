@@ -117,7 +117,7 @@ describe CommodityTransactionCreator do
         end.to change(Transaction, :count).by(1)
 
         expect(transaction).not_to be_nil
-        expect(transaction).to eq(1_234)
+        expect(transaction.total_debits.to_i).to eq(1_234)
         expect(transaction).to have(1).lot_transaction # adding a new lot
       end
 
