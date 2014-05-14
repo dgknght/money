@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140513233813) do
+ActiveRecord::Schema.define(version: 20140514133257) do
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                  null: false
@@ -96,6 +96,17 @@ ActiveRecord::Schema.define(version: 20140513233813) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "lot_transactions", force: true do |t|
+    t.integer  "lot_id",                                 null: false
+    t.integer  "transaction_id",                         null: false
+    t.decimal  "shares_traded",  precision: 8, scale: 4, null: false
+    t.decimal  "price",          precision: 8, scale: 4, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lot_transactions", ["lot_id"], name: "index_lot_transactions_on_lot_id"
 
   create_table "lots", force: true do |t|
     t.integer  "account_id",                            null: false
