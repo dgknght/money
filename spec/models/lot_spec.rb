@@ -62,12 +62,16 @@ describe Lot do
   end
 
   describe '#current_value' do
-    let (:commodity_price_1) { FactoryGirl.create(:commodity_price, commodity: commodity, trade_date: '2014-05-13', price: 20) }
+    let!(:price2) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-05-13', price: 20) }
+    let!(:price1) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-05-01', price: 10) }
     it 'should return the value of the lot based on the specified date' do
       lot = Lot.create!(attributes)
       expect(lot.current_value).to eq(864.20)
     end
 
-    it 'should return the value of the lot based on the current date if no date is specified'
+    it 'should return the value of the lot based on the current date if no date is specified' do
+      log = Lot.create!(attributes)
+      expect(log.current_value('2014-05-02')).to eq(432.10)
+    end
   end
 end
