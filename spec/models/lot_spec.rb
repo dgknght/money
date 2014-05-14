@@ -74,4 +74,11 @@ describe Lot do
       expect(log.current_value('2014-05-02')).to eq(432.10)
     end
   end
+
+  describe '#transactions' do
+    it 'should list the lot transactions for the lot' do
+      lot = Lot.new(attributes)
+      expect(lot.transactions).to be_empty
+    end
+  end
 end

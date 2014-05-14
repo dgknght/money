@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe CommodityTransactionCreator do
+  let!(:commodity) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services') }
   let (:account) { FactoryGirl.create(:account) }
   let (:attributes) do
     {

@@ -212,10 +212,6 @@ describe Account do
     end
   end
 
-  describe '#holdings' do
-    it 'should list the commodities currently held in the account'
-  end
-  
   describe 'asset scope' do
     it 'should return a list of asset accounts' do
       Account.asset.should == [checking]
@@ -378,6 +374,13 @@ describe Account do
       it 'should be negative for an equity account' do
         FactoryGirl.create(:equity_account).polarity(action).should == -1
       end
+    end
+  end
+
+  describe '#lots' do
+    it 'should contain a list of commodity lots for the account' do
+      account = Account.new(attributes)
+      expect(account.lots).to be_empty
     end
   end
 end

@@ -83,4 +83,11 @@ describe Transaction do
       expect(transaction).to have(0).attachments
     end
   end
+
+  describe 'lot_transactions' do
+    it 'should list the lot transactions for the instance' do
+      transaction = Transaction.new(attributes)
+      expect(transaction.lot_transactions).to be_empty
+    end
+  end
 end

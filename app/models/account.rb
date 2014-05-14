@@ -19,6 +19,7 @@ class Account < ActiveRecord::Base
   has_many :children, -> { order :name }, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
   has_many :reconciliations, -> { order :reconciliation_date }, inverse_of: :account, autosave: true
   has_many :transaction_items
+  has_many :lots
 
   CONTENT_TYPES = %w(currency commodity)
 

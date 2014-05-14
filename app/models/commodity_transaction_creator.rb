@@ -32,6 +32,10 @@ class CommodityTransactionCreator
     self.account_id = account.nil? ? nil : account.id
   end
 
+  def commodity
+    @commodity ||= Commodity.find_by_symbol(symbol)
+  end
+
   def create
     return nil unless valid?
 
@@ -116,6 +120,11 @@ class CommodityTransactionCreator
   end
 
   def process_lot(transaction)
+    if buy?
+      process_purchase_lot transaction
+    else
+      process_sale_lot transaction
+    end
     # if buying
     #   record the purchase lot (# of shares, price, transaction date)
     # if selling
@@ -127,6 +136,17 @@ class CommodityTransactionCreator
     # shares
     # price
     # value
+  end
+
+  def process_purchase_lot(transaction)
+    lot = account.lots.create!(commodity: commodity,
+                               shares_owned: shares,
+                               price: price,
+                               purchase_date: transaction_date)
+    # Should this action trigger the above action?
+    lot_transaction = lot.transactions.create!(transaction: transaction, 
+                                               shares_traded: shares,
+                                               price: price)
   end
 
 end

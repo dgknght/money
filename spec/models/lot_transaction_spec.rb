@@ -49,4 +49,18 @@ describe LotTransaction do
       expect(transaction).to have(1).error_on(:price)
     end
   end
+
+  describe '#lot' do
+    it 'should reference the owning lot' do
+      transaction = LotTransaction.new attributes
+      expect(transaction.lot).not_to be_nil
+    end
+  end
+
+  describe '#transaction' do
+    it 'should reference the associated transaction' do
+      transaction = LotTransaction.new attributes
+      expect(transaction.transaction).not_to be_nil
+    end
+  end
 end
