@@ -11,7 +11,7 @@ describe TransactionItemCreator do
       transaction_date: '2013-01-01',
       description: 'Market Street',
       other_account_id: groceries.id,
-      amount: 100
+      amount: -100
     }
   end
   
@@ -30,7 +30,7 @@ describe TransactionItemCreator do
       creator = TransactionItemCreator.new(checking, attributes.without(:transaction_date))
       creator.should have(1).error_on(:transaction_date)
     end
-    
+
     it 'should be a date, or a date-parsable string' do
       creator = TransactionItemCreator.new(checking, attributes)
       creator.transaction_date.should == Date.civil(2013, 1, 1)
@@ -63,6 +63,96 @@ describe TransactionItemCreator do
       creator = TransactionItemCreator.new(checking, attributes.without(:amount))
       creator.should have(1).error_on(:amount)
     end
+
+    context 'for an asset account' do
+      let (:account) { FactoryGirl.create(:asset_account) }
+
+      it 'should be positive with a debit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should > 0
+      end
+
+      it 'should be negative with a credit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should < 0
+      end
+    end
+
+    context 'for an expense account' do
+      let (:account) { FactoryGirl.create(:expense_account) }
+
+      it 'should be positive with a debit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should > 0
+      end
+
+      it 'should be negative with a credit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should < 0
+      end
+    end
+
+    context 'for a liability account' do
+      let (:account) { FactoryGirl.create(:liability_account) }
+
+      it 'should be negative with a debit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should < 0
+      end
+
+      it 'should be positive with a credit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should > 0
+      end
+    end
+
+    context 'for an equtiy account' do
+      let (:account) { FactoryGirl.create(:equity_account) }
+
+      it 'should be negative with a debit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should < 0
+      end
+
+      it 'should be positive with a credit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should > 0
+      end
+    end
+
+    context 'for an income account' do
+      let (:account) { FactoryGirl.create(:income_account) }
+
+      it 'should be negative with a debit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should < 0
+      end
+
+      it 'should be positive with a credit action' do
+        transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
+        transaction_item = transaction.items.select { |i| i.account == account }.first
+        creator = TransactionItemCreator.new(transaction_item)
+        creator.amount.should > 0
+      end
+    end
   end
   
   
@@ -87,6 +177,23 @@ describe TransactionItemCreator do
     it 'should return null with invalid attributes' do
       creator = TransactionItemCreator.new(checking, attributes.without(:description))
       creator.create.should be_nil
+    end
+
+    it 'should adjust credit and debit actions for negative amounts' do
+      item = TransactionItemCreator.new(checking, attributes.merge(amount: 100)).create
+      item.amount.should == 100
+      item.action.should == TransactionItem.debit;
+    end
+
+    it 'should adjust credit and debit actions for the account type' do
+      car_loan = FactoryGirl.create(:liability_account, entity: checking.entity)
+      item = TransactionItemCreator.new(car_loan, attributes.merge(other_account: checking, amount: -100)).create
+      item.amount.should == 100
+      item.action.should == TransactionItem.debit
+
+      other_item = item.transaction.items.select { |i| i != item }.first
+      other_item.amount.should == 100
+      other_item.action.should == TransactionItem.credit
     end
   end
   
