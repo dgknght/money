@@ -123,6 +123,14 @@ class Account < ActiveRecord::Base
     parent ? parent.depth + 1 : 0
   end
   
+  def infer_action(amount)
+    if left_side?
+      amount < 0 ? TransactionItem.credit : TransactionItem.debit
+    else
+      amount < 0 ? TransactionItem.debit : TransactionItem.credit
+    end
+  end
+
   def parent_name
     parent ? parent.name : nil
   end

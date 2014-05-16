@@ -383,4 +383,76 @@ describe Account do
       expect(account.lots).to be_empty
     end
   end
+
+  describe '#infer_action' do
+    context 'for an asset account' do
+      let(:account) { FactoryGirl.create(:asset_account) }
+
+      it 'should return credit for a negative amount' do
+        action = account.infer_action(-1)
+        expect(action).to eq(TransactionItem.credit)
+      end
+
+      it 'should return debit for a positive amount' do
+        action = account.infer_action(1)
+        expect(action).to eq(TransactionItem.debit)
+      end
+    end
+
+    context 'for an expense account' do
+      let(:account) { FactoryGirl.create(:expense_account) }
+
+      it 'should return credit for a negative amount' do
+        action = account.infer_action(-1)
+        expect(action).to eq(TransactionItem.credit)
+      end
+
+      it 'should return debit for a positive amount' do
+        action = account.infer_action(1)
+        expect(action).to eq(TransactionItem.debit)
+      end
+    end
+
+    context 'for a liability account' do
+      let(:account) { FactoryGirl.create(:liability_account) }
+
+      it 'should return debit for a negative amount' do
+        action = account.infer_action(-1)
+        expect(action).to eq(TransactionItem.debit)
+      end
+
+      it 'should return credit for a positive amount' do
+        action = account.infer_action(1)
+        expect(action).to eq(TransactionItem.credit)
+      end
+    end
+
+    context 'for an equity account' do
+      let(:account) { FactoryGirl.create(:equity_account) }
+
+      it 'should return debit for a negative amount' do
+        action = account.infer_action(-1)
+        expect(action).to eq(TransactionItem.debit)
+      end
+
+      it 'should return credit for a positive amount' do
+        action = account.infer_action(1)
+        expect(action).to eq(TransactionItem.credit)
+      end
+    end
+
+    context 'for an income account' do
+      let(:account) { FactoryGirl.create(:income_account) }
+
+      it 'should return debit for a negative amount' do
+        action = account.infer_action(-1)
+        expect(action).to eq(TransactionItem.debit)
+      end
+
+      it 'should return credit for a positive amount' do
+        action = account.infer_action(1)
+        expect(action).to eq(TransactionItem.credit)
+      end
+    end
+  end
 end
