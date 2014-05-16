@@ -31,7 +31,7 @@ class TransactionItemCreator
     self.description = attributes[:description] || (@transaction_item ? @transaction_item.transaction.description : nil)
     self.other_account_id = attributes[:other_account_id] || (@transaction_item ? other_item.account_id : nil)
     self.other_account = attributes[:other_account] if attributes.has_key?(:other_account)
-    self.amount = attributes[:amount] || (@transaction_item ? @transaction_item.polarized_amount : nil)
+    self.amount = attributes[:amount].try(:to_f) || (@transaction_item ? @transaction_item.polarized_amount : nil)
   end
   
   def other_account
