@@ -41,8 +41,7 @@ class CommodityTransactionCreator
 
     transaction = nil
     Account.transaction do
-      transaction = create_transaction
-      process_lot(transaction)
+      transaction = buy? ? process_buy : process_sell
     end
    transaction 
   end
@@ -69,18 +68,23 @@ class CommodityTransactionCreator
 
   private
 
+  def capital_gains_account
+    #TODO Need to be able to configure this
+    @capital_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
+  end
+
+  def commodity_account
+    @commodity_account || find_or_create_commodity_account
+  end
+
   def create_buy_transaction
-    # debit an asset account that tracks money spent on the specified commodity
-    debit_account = find_or_create_commodity_account(symbol)
-    # credit the specified account (cash held in the investment account)
-    credit_account = account
     attributes = {
       transaction_date: transaction_date,
       description: "Purchase shares of #{symbol}",
-      other_account: debit_account,
+      other_account: commodity_account,
       amount: -value
     }
-    TransactionItemCreator.new(credit_account, attributes).create!.transaction
+    TransactionItemCreator.new(account, attributes).create!.transaction
   end
 
   def create_commodity_account(symbol)
@@ -89,25 +93,28 @@ class CommodityTransactionCreator
                              entity: account.entity)
   end
 
-  def create_sell_transaction
+  def create_sell_transaction(lot)
+    cost_of_shares_sold = lot.price * shares
+    gain_loss = value - cost_of_shares_sold
+
     #   credit the asset account that tracks money spent on the specified commodity
     #   debit the specified account (cash held in the investment account)
-    TransactionItemCreator.new(account, transaction_date: transaction_date,
-                                        description: "Sell shares of #{symbol}",
-                                        other_account: account.children.where(name: symbol),
-                                        amount: value)
-    #   if the value is greater than the purchase value (see FIFO or FILO above)
-    #     debit the capital gains account
-    #   else
-    #     credit the captial gains account
-  end
-
-  def create_transaction
-    if buy?
-      create_buy_transaction
-    else
-      create_sell_transaction
+    transaction = account.entity.transactions.new(transaction_date: transaction_date,
+                                                  description: "Sell shares of #{symbol}")
+    account_item = transaction.items.new(account: account,
+                                         action: account.infer_action(value),
+                                         amount: value)
+    commodity_account_item = transaction.items.new(account: commodity_account,
+                                                   action: TransactionItem.opposite_action(account_item.action),
+                                                   amount: cost_of_shares_sold)
+    if gain_loss != 0
+      gain_item = transaction.items.new(account: capital_gains_account,
+                                        action: capital_gains_account.infer_action(gain_loss),
+                                        amount: gain_loss.abs)
     end
+
+    transaction.save!
+    transaction
   end
 
   def find_account
@@ -115,30 +122,17 @@ class CommodityTransactionCreator
     Account.find(account_id)
   end
 
-  def find_or_create_commodity_account(symbol)
+  def find_or_create_commodity_account
     account.children.where(name: symbol).first || create_commodity_account(symbol)
   end
 
-  def process_lot(transaction)
-    if buy?
-      process_purchase_lot transaction
-    else
-      process_sale_lot transaction
-    end
-    # if buying
-    #   record the purchase lot (# of shares, price, transaction date)
-    # if selling
-    #   find the lot for all shares being sold (always FILO or FIFO, probably need an entity-level configuration)
-    #   subtract the sold shares from the found lots
-    # Lot attributes
-    # transaction_id
-    # commodity_id
-    # shares
-    # price
-    # value
+  def process_buy
+    transaction = create_buy_transaction
+    process_buy_lot(transaction)
+    transaction
   end
 
-  def process_purchase_lot(transaction)
+  def process_buy_lot(transaction)
     lot = account.lots.create!(commodity: commodity,
                                shares_owned: shares,
                                price: price,
@@ -149,4 +143,23 @@ class CommodityTransactionCreator
                                                price: price)
   end
 
+  def process_sell
+    lot = process_sell_lot
+    transaction = create_sell_transaction(lot)
+    lot.transactions.create!(transaction: transaction, shares_traded: -shares, price: price)
+    transaction
+  end
+
+  def process_sell_lot
+    # assume FIFO for now, need to decide how to store that
+    lot = account.lots.where('shares_owned > 0').order('purchase_date DESC').first
+    raise 'Not lot found' unless lot
+
+    # TODO handle situation where shares > shares_owned
+    lot.shares_owned -= shares
+    lot.save!
+
+    #TODO should this trigger the change in the lot itself?
+    lot
+  end
 end

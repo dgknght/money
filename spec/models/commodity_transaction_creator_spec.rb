@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe CommodityTransactionCreator do
-  let!(:commodity) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services') }
-  let (:account) { FactoryGirl.create(:account) }
+  let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services') }
+  let (:opening) { FactoryGirl.create(:equity_account, name: 'Opening balances') }
+  let (:ira) { FactoryGirl.create(:account, name: 'IRA') }
   let (:attributes) do
     {
-      account_id: account.id,
+      account_id: ira.id,
       transaction_date: '2014-04-15',
       symbol: 'KSS',
       action: 'buy',
@@ -135,8 +136,8 @@ describe CommodityTransactionCreator do
       it 'should credit the account from which frunds for taken to make the purchase' do
         expect do
           CommodityTransactionCreator.new(attributes).create
-          account.reload
-        end.to change(account, :balance).by(-1_234)
+          ira.reload
+        end.to change(ira, :balance).by(-1_234)
       end
 
       it 'should create a new lot transaction' do
@@ -154,18 +155,100 @@ describe CommodityTransactionCreator do
     end
 
     context 'with a "sell" action' do
-      it 'should create a new transaction'
-      it 'should credit the account dedicated to tracking purchases of this commodity'
-      it 'should debit the account to which products of the sale were directed'
-      it 'should create a capital gains transaction if the sale amount was greater than the cost of the sold commodities'
-      it 'should create a capital loss transaction if the sale amount was less than the cost of the cold commodities'
+      let!(:st_gains) do
+        FactoryGirl.create(:income_account, name: 'Short-term capital gains',
+                                            entity: ira.entity)
+      end
+      let!(:lt_gains) do
+        FactoryGirl.create(:income_account, name: 'Long-term capital gains',
+                                            entity: ira.entity)
+      end
+      context 'that sells all shares owned' do
+        let (:sell_attributes) { attributes.merge(action: 'sell') }
+        let!(:lot) do
+          FactoryGirl.create(:lot, account: ira,
+                                   commodity: kss,
+                                   price: 10.00,
+                                   shares_owned: 100,
+                                   purchase_date: '2014-01-01')
+        end
+        let!(:kss_account) do
+          FactoryGirl.create(:asset_account, name: 'KSS',
+                                             entity: ira.entity,
+                                             parent: ira)
+        end
+        let!(:commodity_transaction) do
+          FactoryGirl.create(:transaction, debit_account: kss_account, 
+                                           credit_account: ira, 
+                                           amount: 1_000)
+        end
 
-      context 'using FIFO' do
-        it 'should subtract shares from the first purchased, non-empty lot'
+        it 'should create a new transaction' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+          end.to change(Transaction, :count).by(1)
+        end
+
+        it 'should credit the account dedicated to tracking purchases of this commodity' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+            kss_account.reload
+          end.to change(kss_account, :balance).by(-1_000)
+        end
+
+        it 'should debit the specified account' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+            ira.reload
+          end.to change(ira, :balance).by(1_234)
+        end
+
+        it 'should subtract the shares sold from the lot' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+            lot.reload
+          end.to change(lot, :shares_owned).by(-100)
+        end
+
+        it 'should create a new lot transaction record' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+          end.to change(LotTransaction, :count).by(1)
+          lot_transaction = LotTransaction.last
+          expect(lot_transaction.shares_traded).to eq(-100)
+          expect(lot_transaction.price).to eq(12.34)
+        end
+
+        context 'for commodities held one year or less' do
+          it 'should debit the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+            expect do
+              CommodityTransactionCreator.new(sell_attributes).create
+              st_gains.reload
+            end.to change(st_gains, :balance).by(234)
+          end
+
+          it 'should credit the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+            expect do
+              CommodityTransactionCreator.new(sell_attributes.merge(value: 900)).create
+              st_gains.reload
+            end.to change(st_gains, :balance).by(-100)
+          end
+        end
+
+        context 'for commodities held longer than one year' do
+          it 'should debit the long-term capital gains account if the sale amount was greater than the cost of the sold commodities'
+          it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities'
+        end
       end
 
-      context 'using FILO' do
-        it 'should subtract shares from the last purchased, non-empty lot'
+      context 'what sells some of the shares owned' do
+        context 'using FIFO' do
+          it 'should subtract shares from the first purchased, non-empty lot'
+        end
+
+        context 'using FILO' do
+          it 'should subtract shares from the last purchased, non-empty lot'
+        end
       end
     end
   end
