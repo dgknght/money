@@ -68,11 +68,6 @@ class CommodityTransactionCreator
 
   private
 
-  def capital_gains_account
-    #TODO Need to be able to configure this
-    @capital_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
-  end
-
   def commodity_account
     @commodity_account || find_or_create_commodity_account
   end
@@ -108,8 +103,9 @@ class CommodityTransactionCreator
                                                    action: TransactionItem.opposite_action(account_item.action),
                                                    amount: cost_of_shares_sold)
     if gain_loss != 0
-      gain_item = transaction.items.new(account: capital_gains_account,
-                                        action: capital_gains_account.infer_action(gain_loss),
+      cg_account = get_capital_gains_account(lot.purchase_date)
+      gain_item = transaction.items.new(account: cg_account,
+                                        action: cg_account.infer_action(gain_loss),
                                         amount: gain_loss.abs)
     end
 
@@ -124,6 +120,16 @@ class CommodityTransactionCreator
 
   def find_or_create_commodity_account
     account.children.where(name: symbol).first || create_commodity_account(symbol)
+  end
+
+  def get_capital_gains_account(purchase_date)
+    one_year_later = Date.new(purchase_date.year + 1, purchase_date.month, purchase_date.day)
+    transaction_date < one_year_later ? short_term_gains_account : long_term_gains_account
+  end
+
+  def long_term_gains_account
+    #TODO Need to be able to configure this
+    @long_term_gains_account ||= account.entity.accounts.find_by_name('Long-term capital gains')
   end
 
   def process_buy
@@ -161,5 +167,10 @@ class CommodityTransactionCreator
 
     #TODO should this trigger the change in the lot itself?
     lot
+  end
+
+  def short_term_gains_account
+    #TODO Need to be able to configure this
+    @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
   end
 end
