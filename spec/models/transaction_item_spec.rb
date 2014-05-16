@@ -20,7 +20,7 @@ describe TransactionItem do
     item.should be_valid
   end
   
-  describe 'transaction' do
+  describe '#transaction' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:transaction))
       item.should_not be_valid
@@ -32,14 +32,14 @@ describe TransactionItem do
     end
   end
   
-  describe 'account' do
+  describe '#account' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:account))
       item.should_not be_valid
     end
   end
   
-  describe 'action' do
+  describe '#action' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:action))
       item.should_not be_valid
@@ -54,14 +54,14 @@ describe TransactionItem do
     end
   end
   
-  describe 'amount' do
+  describe '#amount' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:amount))
       item.should_not be_valid
     end
   end
   
-  describe 'polarized_amount' do
+  describe '#polarized_amount' do
     let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Credit card') }
     let (:credit_card) { FactoryGirl.create(:liability_account, entity: entity, name: 'Credit card') }
     let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Credit card') }
@@ -122,13 +122,13 @@ describe TransactionItem do
     end
   end
   
-  describe 'credits' do
+  describe '::credits' do
     it 'should return the transaction items with the :credit action' do
       TransactionItem.credits.where(action: TransactionItem.debit).should_not be_any
     end
   end
   
-  describe 'debits' do
+  describe '::debits' do
     it 'should return the transaction items with the :debit action' do
       TransactionItem.debits.where(action: TransactionItem.credit).should_not be_any
     end
@@ -211,7 +211,7 @@ describe TransactionItem do
     end
   end
   
-  describe 'reconciled?' do
+  describe '#reconciled?' do
     it 'should default to false' do
       item = TransactionItem.new(attributes)
       item.should_not be_reconciled
@@ -225,7 +225,7 @@ describe TransactionItem do
     end
   end
   
-  describe 'unreconciled scope' do
+  describe '#unreconciled scope' do
     let!(:unreconciled) { FactoryGirl.create(:transaction_item) }
     let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
     
@@ -235,13 +235,25 @@ describe TransactionItem do
     end
   end
   
-  describe 'reconciled scope' do
+  describe '#reconciled scope' do
     let!(:unreconciled) { FactoryGirl.create(:transaction_item) }
     let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
     
     it 'should return the reconciled transaction items' do
       TransactionItem.reconciled.should include(reconciled)
       TransactionItem.reconciled.should_not include(unreconciled)
+    end
+  end
+
+  describe '::opposite_action' do
+    it 'should return debit when give credit' do
+      result = TransactionItem.opposite_action(TransactionItem.credit)
+      expect(result).to eq(TransactionItem.debit)
+    end
+
+    it 'should return credit when give debit' do
+      result = TransactionItem.opposite_action(TransactionItem.debit)
+      expect(result).to eq(TransactionItem.credit)
     end
   end
 end

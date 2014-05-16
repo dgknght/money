@@ -26,6 +26,11 @@ class TransactionItem < ActiveRecord::Base
       end
     end
   end
+
+  def self.opposite_action(action)
+    return nil unless ACTIONS.include?(action)
+    action == TransactionItem.debit ? TransactionItem.credit : TransactionItem.debit
+  end
   
   validates_presence_of :account_id, :action, :amount, :transaction
   validates :action, inclusion: { in: ACTIONS }
