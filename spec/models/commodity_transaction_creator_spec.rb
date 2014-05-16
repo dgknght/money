@@ -119,12 +119,38 @@ describe CommodityTransactionCreator do
 
         expect(transaction).not_to be_nil
         expect(transaction.total_debits.to_i).to eq(1_234)
-        expect(transaction).to have(1).lot_transaction # adding a new lot
       end
 
-      it 'should debit the account dedicated to tracking purchases of this commodity'
-      it 'should credit the account from which frunds for taken to make the purchase'
-      it 'should create a new lot'
+      it 'should create an account to track money used to purchase this commodity, if the account does not exist' do
+        CommodityTransactionCreator.new(attributes).create
+        expect(Account.find_by_name('KSS')).not_to be_nil
+      end
+
+      it 'should debit the account dedicated to tracking purchases of this commodity' do
+        CommodityTransactionCreator.new(attributes).create
+        new_account = Account.find_by_name('KSS')
+        expect(new_account.balance).to eq(1_234)
+      end
+
+      it 'should credit the account from which frunds for taken to make the purchase' do
+        expect do
+          CommodityTransactionCreator.new(attributes).create
+          account.reload
+        end.to change(account, :balance).by(-1_234)
+      end
+
+      it 'should create a new lot transaction' do
+        expect do
+          CommodityTransactionCreator.new(attributes).create
+        end.to change(LotTransaction, :count).by(1)
+      end
+
+      it 'should create a new lot' do
+        transaction = nil
+        expect do
+          CommodityTransactionCreator.new(attributes).create
+        end.to change(Lot, :count).by(1)
+      end
     end
 
     context 'with a "sell" action' do

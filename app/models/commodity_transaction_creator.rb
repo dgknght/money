@@ -71,14 +71,14 @@ class CommodityTransactionCreator
 
   def create_buy_transaction
     # debit an asset account that tracks money spent on the specified commodity
-    debit_account = account
+    debit_account = find_or_create_commodity_account(symbol)
     # credit the specified account (cash held in the investment account)
-    credit_account = find_or_create_commodity_account(symbol)
+    credit_account = account
     attributes = {
       transaction_date: transaction_date,
       description: "Purchase shares of #{symbol}",
       other_account: debit_account,
-      amount: value
+      amount: -value
     }
     TransactionItemCreator.new(credit_account, attributes).create!.transaction
   end
