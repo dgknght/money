@@ -81,4 +81,24 @@ describe Lot do
       expect(lot.transactions).to be_empty
     end
   end
+
+  describe '::fifo' do
+    let!(:lot1) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-02-01') }
+    let!(:lot2) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-01-01') }
+    let!(:lot3) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-03-01', shares_owned: 0) }
+
+    it 'should return a list of non-zero-share lots in ascending order by date' do
+      expect(Lot.fifo).to eq([lot2, lot1])
+    end
+  end
+
+  describe '::filo' do
+    let!(:lot1) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-01-01') }
+    let!(:lot2) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-02-01') }
+    let!(:lot3) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-03-01', shares_owned: 0) }
+
+    it 'should return a list of non-zero-share lots in descending order by date' do
+      expect(Lot.filo).to eq([lot2, lot1])
+    end
+  end
 end

@@ -1,6 +1,20 @@
 class CommodityTransactionCreator
   include ActiveModel::Validations
 
+  VALUATION_METHODS = %w(fifo filo)
+  class << self
+    VALUATION_METHODS.each do |m|
+      define_method m do
+        m
+      end
+    end
+  end
+  VALUATION_METHODS.each do |m|
+    define_method "#{m}?" do
+      valuation_method.to_sym == m.to_sym
+    end
+  end
+
   ACTIONS = %w(buy sell)
   class << self
     ACTIONS.each do |a|
@@ -10,7 +24,7 @@ class CommodityTransactionCreator
     end
   end
 
-  attr_accessor :account_id, :transaction_date, :symbol, :action, :shares, :value
+  attr_accessor :account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method
 
   ACTIONS.each do |a|
     define_method "#{a}?" do
@@ -51,6 +65,10 @@ class CommodityTransactionCreator
     create
   end
 
+  def default_valuation_method
+    :filo #TODO Make this configurable
+  end
+
   def initialize(attributes = {})
     attr = (attributes || {}).with_indifferent_access
     self.account_id = attr[:account_id]
@@ -59,6 +77,7 @@ class CommodityTransactionCreator
     self.symbol = attr[:symbol]
     self.shares = attr[:shares]
     self.value = attr[:value]
+    self.valuation_method = attr[:valuation_method] || default_valuation_method
   end
 
   def price
@@ -157,8 +176,7 @@ class CommodityTransactionCreator
   end
 
   def process_sell_lot
-    # assume FIFO for now, need to decide how to store that
-    lot = account.lots.where('shares_owned > 0').order('purchase_date DESC').first
+    lot = (fifo? ? account.lots.fifo : account.lots.filo).first
     raise 'Not lot found' unless lot
 
     # TODO handle situation where shares > shares_owned

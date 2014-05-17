@@ -20,6 +20,10 @@ class Lot < ActiveRecord::Base
   validates_presence_of :account_id, :price, :commodity_id, :shares_owned, :purchase_date
   validates_numericality_of :price, greater_than: 0
 
+  default_scope { where('shares_owned > 0') }
+  scope :fifo, -> { order(purchase_date: :asc) }
+  scope :filo, -> { order(purchase_date: :desc) }
+
   def current_value(as_of = Date.today)
     return 0 if shares_owned == 0
 

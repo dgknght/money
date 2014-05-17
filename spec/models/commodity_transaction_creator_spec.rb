@@ -165,12 +165,19 @@ describe CommodityTransactionCreator do
       end
       context 'that sells all shares owned' do
         let (:sell_attributes) { attributes.merge(action: 'sell') }
-        let!(:lot) do
+        let!(:lot1) do
+          FactoryGirl.create(:lot, account: ira,
+                                   commodity: kss,
+                                   price: 8.00,
+                                   shares_owned: 100,
+                                   purchase_date: '2014-01-01')
+        end
+        let!(:lot2) do
           FactoryGirl.create(:lot, account: ira,
                                    commodity: kss,
                                    price: 10.00,
                                    shares_owned: 100,
-                                   purchase_date: '2014-01-01')
+                                   purchase_date: '2014-01-02')
         end
         let!(:kss_account) do
           FactoryGirl.create(:asset_account, name: 'KSS',
@@ -181,6 +188,90 @@ describe CommodityTransactionCreator do
           FactoryGirl.create(:transaction, debit_account: kss_account, 
                                            credit_account: ira, 
                                            amount: 1_000)
+        end
+
+        context 'using FILO' do
+          it 'should subtract the shares sold from the lot' do
+            expect do
+              CommodityTransactionCreator.new(sell_attributes).create
+              lot2.reload
+            end.to change(lot2, :shares_owned).by(-100)
+          end
+
+          context 'for commodities held one year or less' do
+            it 'should debit the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+              expect do
+                CommodityTransactionCreator.new(sell_attributes).create
+                st_gains.reload
+              end.to change(st_gains, :balance).by(234)
+            end
+
+            it 'should credit the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+              expect do
+                CommodityTransactionCreator.new(sell_attributes.merge(value: 900)).create
+                st_gains.reload
+              end.to change(st_gains, :balance).by(-100)
+            end
+          end
+
+          context 'for commodities held longer than one year' do
+            it 'should debit the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+              expect do
+                CommodityTransactionCreator.new(sell_attributes.merge(transaction_date: '2015-04-15')).create
+                lt_gains.reload
+              end.to change(lt_gains, :balance).by(234)
+            end
+
+            it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+              expect do
+                CommodityTransactionCreator.new(sell_attributes.merge(transaction_date: '2015-04-15', value: 900)).create
+                lt_gains.reload
+              end.to change(lt_gains, :balance).by(-100)
+            end
+          end
+        end
+
+        context 'using FIFO' do
+          let (:fifo_sell_attributes) { sell_attributes.merge(valuation_method: CommodityTransactionCreator.fifo) }
+
+          it 'should subtract the shares sold from the lot' do
+            expect do
+              CommodityTransactionCreator.new(fifo_sell_attributes).create
+              lot1.reload
+            end.to change(lot1, :shares_owned).by(-100)
+          end
+
+          context 'for commodities held one year or less' do
+            it 'should debit the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+              expect do
+                CommodityTransactionCreator.new(fifo_sell_attributes).create
+                st_gains.reload
+              end.to change(st_gains, :balance).by(434)
+            end
+
+            it 'should credit the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+              expect do
+                CommodityTransactionCreator.new(fifo_sell_attributes.merge(value: 700)).create
+                st_gains.reload
+              end.to change(st_gains, :balance).by(-100)
+            end
+          end
+
+          context 'for commodities held longer than one year' do
+            it 'should debit the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+              expect do
+                CommodityTransactionCreator.new(fifo_sell_attributes.merge(transaction_date: '2015-04-15')).create
+                lt_gains.reload
+              end.to change(lt_gains, :balance).by(434)
+            end
+
+            it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+              expect do
+                CommodityTransactionCreator.new(fifo_sell_attributes.merge(transaction_date: '2015-04-15', value: 700)).create
+                lt_gains.reload
+              end.to change(lt_gains, :balance).by(-100)
+            end
+          end
         end
 
         it 'should create a new transaction' do
@@ -203,13 +294,6 @@ describe CommodityTransactionCreator do
           end.to change(ira, :balance).by(1_234)
         end
 
-        it 'should subtract the shares sold from the lot' do
-          expect do
-            CommodityTransactionCreator.new(sell_attributes).create
-            lot.reload
-          end.to change(lot, :shares_owned).by(-100)
-        end
-
         it 'should create a new lot transaction record' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
@@ -217,38 +301,6 @@ describe CommodityTransactionCreator do
           lot_transaction = LotTransaction.last
           expect(lot_transaction.shares_traded).to eq(-100)
           expect(lot_transaction.price).to eq(12.34)
-        end
-
-        context 'for commodities held one year or less' do
-          it 'should debit the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
-            expect do
-              CommodityTransactionCreator.new(sell_attributes).create
-              st_gains.reload
-            end.to change(st_gains, :balance).by(234)
-          end
-
-          it 'should credit the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
-            expect do
-              CommodityTransactionCreator.new(sell_attributes.merge(value: 900)).create
-              st_gains.reload
-            end.to change(st_gains, :balance).by(-100)
-          end
-        end
-
-        context 'for commodities held longer than one year' do
-          it 'should debit the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
-            expect do
-              CommodityTransactionCreator.new(sell_attributes.merge(transaction_date: '2015-04-15')).create
-              lt_gains.reload
-            end.to change(lt_gains, :balance).by(234)
-          end
-
-          it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
-            expect do
-              CommodityTransactionCreator.new(sell_attributes.merge(transaction_date: '2015-04-15', value: 900)).create
-              lt_gains.reload
-            end.to change(lt_gains, :balance).by(-100)
-          end
         end
       end
 
