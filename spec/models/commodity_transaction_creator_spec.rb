@@ -265,7 +265,7 @@ describe CommodityTransactionCreator do
               end.to change(lt_gains, :balance).by(434)
             end
 
-            it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+           it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
               expect do
                 CommodityTransactionCreator.new(fifo_sell_attributes.merge(transaction_date: '2015-04-15', value: 700)).create
                 lt_gains.reload
@@ -331,8 +331,33 @@ describe CommodityTransactionCreator do
       end
 
       context 'that sells shares across lots with mixed long-term and short-term gains' do
-        it 'should debit the long-term gains account the correct amount'
-        it 'should debit the short-term gains account the correct amount'
+        let (:fifo_sell_attributes) { attributes.merge(action: 'sell', value: 2_468, shares: 200, valuation_method: CommodityTransactionCreator.fifo) }
+        let!(:lot3) do
+          FactoryGirl.create(:lot, account: ira,
+                                    commodity: kss,
+                                    price: 10.00,
+                                    shares_owned: 50,
+                                    purchase_date: '2013-01-02')
+        end
+        let!(:commodity_transaction) do
+          FactoryGirl.create(:transaction, debit_account: kss_account, 
+                                            credit_account: ira, 
+                                            amount: 500)
+        end
+
+        it 'should debit the long-term gains account the correct amount' do
+          expect do
+            CommodityTransactionCreator.new(fifo_sell_attributes).create
+            lt_gains.reload
+          end.to change(lt_gains, :balance).by(734)
+        end
+
+        it 'should debit the short-term gains account the correct amount' do
+          expect do
+            CommodityTransactionCreator.new(fifo_sell_attributes).create
+            st_gains.reload
+          end.to change(st_gains, :balance).by(434)
+        end
       end
     end
   end
