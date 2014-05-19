@@ -107,27 +107,29 @@ class CommodityTransactionCreator
                              entity: account.entity)
   end
 
-  def create_sell_transaction(lot)
-    cost_of_shares_sold = lot.price * shares
+  def create_sell_transaction(sale_results)
+    cost_of_shares_sold = sale_results.reduce(0) do |sum, result|
+      sum += (result.lot.price * result.shares)
+    end
     gain_loss = value - cost_of_shares_sold
 
-    #   credit the asset account that tracks money spent on the specified commodity
-    #   debit the specified account (cash held in the investment account)
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
                                                   description: "Sell shares of #{symbol}")
+    # account
     account_item = transaction.items.new(account: account,
                                          action: account.infer_action(value),
                                          amount: value)
-    commodity_account_item = transaction.items.new(account: commodity_account,
-                                                   action: TransactionItem.opposite_action(account_item.action),
-                                                   amount: cost_of_shares_sold)
+    # commodity
+    transaction.items.new(account: commodity_account,
+                          action: TransactionItem.opposite_action(account_item.action),
+                          amount: cost_of_shares_sold)
+    # gain/loss
     if gain_loss != 0
-      cg_account = get_capital_gains_account(lot.purchase_date)
-      gain_item = transaction.items.new(account: cg_account,
-                                        action: cg_account.infer_action(gain_loss),
-                                        amount: gain_loss.abs)
+      cg_account = get_capital_gains_account(sale_results[0].lot.purchase_date)
+      transaction.items.new(account: cg_account,
+                            action: cg_account.infer_action(gain_loss),
+                            amount: gain_loss.abs)
     end
-
     transaction.save!
     transaction
   end
@@ -169,22 +171,39 @@ class CommodityTransactionCreator
   end
 
   def process_sell
-    lot = process_sell_lot
-    transaction = create_sell_transaction(lot)
-    lot.transactions.create!(transaction: transaction, shares_traded: -shares, price: price)
+    sale_results = process_sell_lots
+    transaction = create_sell_transaction(sale_results)
+    sale_results.each do |result|
+      result.lot.transactions.create!(transaction: transaction,
+                                      shares_traded: -result.shares,
+                                      price: price)
+    end
     transaction
   end
 
-  def process_sell_lot
-    lot = (fifo? ? account.lots.fifo : account.lots.filo).first
-    raise 'Not lot found' unless lot
+  def process_sell_lots
+    shares_to_remove = shares
+    result = []
+    lots = fifo? ? account.lots.fifo : account.lots.filo
+    lots.each do |lot|
+      if shares_to_remove <= lot.shares_owned
+        result << OpenStruct.new(shares: shares_to_remove,
+                                 lot: lot)
+        lot.shares_owned -= shares_to_remove
+        shares_to_remove = 0
+      else
+        result << OpenStruct.new(shares: lot.shares_owned,
+                                 lot: lot)
+        shares_to_remove -= lot.shares_owned
+        lot.shares_owned = 0
+      end
+      lot.save!
 
-    # TODO handle situation where shares > shares_owned
-    lot.shares_owned -= shares
-    lot.save!
+      break if shares_to_remove == 0
+    end
 
-    #TODO should this trigger the change in the lot itself?
-    lot
+    raise "Unable to find lots containing #{shares} share(s)" unless shares_to_remove == 0
+    result
   end
 
   def short_term_gains_account

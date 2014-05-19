@@ -155,6 +155,30 @@ describe CommodityTransactionCreator do
     end
 
     context 'with a "sell" action' do
+      let!(:lot1) do
+        FactoryGirl.create(:lot, account: ira,
+                                  commodity: kss,
+                                  price: 8.00,
+                                  shares_owned: 100,
+                                  purchase_date: '2014-01-01')
+      end
+      let!(:lot2) do
+        FactoryGirl.create(:lot, account: ira,
+                                  commodity: kss,
+                                  price: 10.00,
+                                  shares_owned: 100,
+                                  purchase_date: '2014-01-02')
+      end
+      let!(:kss_account) do
+        FactoryGirl.create(:asset_account, name: 'KSS',
+                                            entity: ira.entity,
+                                            parent: ira)
+      end
+      let!(:commodity_transaction) do
+        FactoryGirl.create(:transaction, debit_account: kss_account, 
+                                          credit_account: ira, 
+                                          amount: 1_800)
+      end
       let!(:st_gains) do
         FactoryGirl.create(:income_account, name: 'Short-term capital gains',
                                             entity: ira.entity)
@@ -163,32 +187,8 @@ describe CommodityTransactionCreator do
         FactoryGirl.create(:income_account, name: 'Long-term capital gains',
                                             entity: ira.entity)
       end
-      context 'that sells all shares owned' do
+      context 'that sells some of the shares owned' do
         let (:sell_attributes) { attributes.merge(action: 'sell') }
-        let!(:lot1) do
-          FactoryGirl.create(:lot, account: ira,
-                                   commodity: kss,
-                                   price: 8.00,
-                                   shares_owned: 100,
-                                   purchase_date: '2014-01-01')
-        end
-        let!(:lot2) do
-          FactoryGirl.create(:lot, account: ira,
-                                   commodity: kss,
-                                   price: 10.00,
-                                   shares_owned: 100,
-                                   purchase_date: '2014-01-02')
-        end
-        let!(:kss_account) do
-          FactoryGirl.create(:asset_account, name: 'KSS',
-                                             entity: ira.entity,
-                                             parent: ira)
-        end
-        let!(:commodity_transaction) do
-          FactoryGirl.create(:transaction, debit_account: kss_account, 
-                                           credit_account: ira, 
-                                           amount: 1_000)
-        end
 
         context 'using FILO' do
           it 'should subtract the shares sold from the lot' do
@@ -304,18 +304,30 @@ describe CommodityTransactionCreator do
         end
       end
 
-      context 'that sells some of the shares owned' do
-        context 'using FIFO' do
-          it 'should subtract shares from the first purchased, non-empty lot'
-        end
-
-        context 'using FILO' do
-          it 'should subtract shares from the last purchased, non-empty lot'
-        end
-      end
-
       context 'that sells shares across multiple lots' do
-        it 'should debit the gains account the correct amount'
+        let (:sell_attributes) do
+          attributes.merge(action: 'sell', shares: 200, value: 2_468)
+        end
+        it 'should debit the gains account the correct amount' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+            st_gains.reload
+          end.to change(st_gains, :balance).by(234 + 434)
+        end
+
+        it 'should subract shares owned from the first lot' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+            lot1.reload
+          end.to change(lot1, :shares_owned).by(-100)
+        end
+
+        it 'should subract shares owned from the second lot' do
+          expect do
+            CommodityTransactionCreator.new(sell_attributes).create
+            lot2.reload
+          end.to change(lot2, :shares_owned).by(-100)
+        end
       end
 
       context 'that sells shares across lots with mixed long-term and short-term gains' do
