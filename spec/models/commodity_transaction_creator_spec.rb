@@ -86,6 +86,12 @@ describe CommodityTransactionCreator do
       expect(creator).not_to be_valid
       expect(creator).to have(1).error_on(:shares)
     end
+
+    it 'should not be zero' do
+      creator = CommodityTransactionCreator.new(attributes.merge(shares: 0))
+      expect(creator).not_to be_valid
+      expect(creator).to have(1).error_on(:shares)
+    end
   end
 
   describe '#price' do
@@ -335,8 +341,8 @@ describe CommodityTransactionCreator do
         let!(:lot3) do
           FactoryGirl.create(:lot, account: ira,
                                     commodity: kss,
-                                    price: 10.00,
-                                    shares_owned: 50,
+                                    price: 5.00,
+                                    shares_owned: 100,
                                     purchase_date: '2013-01-02')
         end
         let!(:commodity_transaction) do

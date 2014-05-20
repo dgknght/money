@@ -33,9 +33,10 @@ class CommodityTransactionCreator
   end
 
   validates_presence_of :symbol, :account_id
-  validates :shares, presence: true, numericality: true
+  validates :shares, presence: true, numericality: { greater_than: 0 }
   validates :action, presence: true, inclusion: { in: ACTIONS }
   validates :value, presence: true, numericality: true
+  validate :value_is_not_zero
 
   def account
     @account ||= find_account
@@ -75,8 +76,8 @@ class CommodityTransactionCreator
     self.transaction_date = attr.get_date(:transaction_date) || Date.today
     self.action = attr[:action]
     self.symbol = attr[:symbol]
-    self.shares = attr[:shares]
-    self.value = attr[:value]
+    self.shares = BigDecimal.new(attr[:shares], 4) if attr[:shares]
+    self.value = BigDecimal.new(attr[:value], 4) if attr[:value]
     self.valuation_method = attr[:valuation_method] || default_valuation_method
   end
 
@@ -86,6 +87,23 @@ class CommodityTransactionCreator
   end
 
   private
+
+  def calculate_gains(sale_results)
+    lt_gain = st_gain = cost_of_shares_sold = 0
+    sale_results.each do |result|
+      cost = (result.shares * result.lot.price)
+      proceeds = (result.shares * price)
+      gain = proceeds - cost
+
+      cost_of_shares_sold += cost
+      if more_than_a_year_ago?(result.lot.purchase_date)
+        lt_gain += gain
+      else
+        st_gain += gain
+      end
+    end
+    [cost_of_shares_sold, st_gain, lt_gain]
+  end
 
   def commodity_account
     @commodity_account || find_or_create_commodity_account
@@ -108,10 +126,7 @@ class CommodityTransactionCreator
   end
 
   def create_sell_transaction(sale_results)
-    cost_of_shares_sold = sale_results.reduce(0) do |sum, result|
-      sum += (result.lot.price * result.shares)
-    end
-    gain_loss = value - cost_of_shares_sold
+    cost_of_shares_sold, st_gain, lt_gain = calculate_gains(sale_results)
 
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
                                                   description: "Sell shares of #{symbol}")
@@ -124,12 +139,17 @@ class CommodityTransactionCreator
                           action: TransactionItem.opposite_action(account_item.action),
                           amount: cost_of_shares_sold)
     # gain/loss
-    if gain_loss != 0
-      cg_account = get_capital_gains_account(sale_results[0].lot.purchase_date)
-      transaction.items.new(account: cg_account,
-                            action: cg_account.infer_action(gain_loss),
-                            amount: gain_loss.abs)
+    if lt_gain != 0
+      transaction.items.new(account: long_term_gains_account,
+                            action: long_term_gains_account.infer_action(lt_gain),
+                            amount: lt_gain.abs)
     end
+    if st_gain != 0
+      transaction.items.new(account: short_term_gains_account,
+                            action: short_term_gains_account.infer_action(st_gain),
+                            amount: st_gain.abs)
+    end
+
     transaction.save!
     transaction
   end
@@ -143,14 +163,14 @@ class CommodityTransactionCreator
     account.children.where(name: symbol).first || create_commodity_account(symbol)
   end
 
-  def get_capital_gains_account(purchase_date)
-    one_year_later = Date.new(purchase_date.year + 1, purchase_date.month, purchase_date.day)
-    transaction_date < one_year_later ? short_term_gains_account : long_term_gains_account
-  end
-
   def long_term_gains_account
     #TODO Need to be able to configure this
     @long_term_gains_account ||= account.entity.accounts.find_by_name('Long-term capital gains')
+  end
+
+  def more_than_a_year_ago?(purchase_date)
+    one_year_later = Date.new(purchase_date.year + 1, purchase_date.month, purchase_date.day)
+    transaction_date > one_year_later
   end
 
   def process_buy
@@ -209,5 +229,10 @@ class CommodityTransactionCreator
   def short_term_gains_account
     #TODO Need to be able to configure this
     @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
+  end
+
+  def value_is_not_zero
+    return unless value == 0
+    errors.add(:value, 'cannot be zero')
   end
 end
