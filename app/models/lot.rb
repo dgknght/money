@@ -31,6 +31,6 @@ class Lot < ActiveRecord::Base
       where(['trade_date <= ?', as_of]).
       order(trade_date: :desc).
       first
-    historical_price.nil? ? nil : historical_price.price * shares_owned
+    (historical_price.nil? ? price : historical_price.price) * shares_owned
   end
 end

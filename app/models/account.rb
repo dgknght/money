@@ -123,6 +123,25 @@ class Account < ActiveRecord::Base
     parent ? parent.depth + 1 : 0
   end
   
+
+  Holding = Struct.new(:commodity, :total_shares, :average_price, :value, :lots)
+  def holdings
+    hash = {}
+    lots.each do |lot|
+      holding = hash[lot.commodity.symbol]
+      unless holding
+        holding = Holding.new(lot.commodity, 0, 0, 0, [])
+        hash[lot.commodity.symbol] = holding
+      end
+      holding = hash[lot.commodity.symbol]
+      holding.total_shares += lot.shares_owned
+      holding.value += lot.current_value
+      holding.average_price = holding.value / holding.total_shares
+      holding.lots << lot
+    end
+    hash.values
+  end
+
   def infer_action(amount)
     if left_side?
       amount < 0 ? TransactionItem.credit : TransactionItem.debit

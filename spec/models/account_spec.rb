@@ -455,4 +455,21 @@ describe Account do
       end
     end
   end
+
+  context 'for a commodity account' do
+    let (:account) { FactoryGirl.create(:commodity_account) }
+    let (:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
+    let!(:lot1) { FactoryGirl.create(:lot, account: account, commodity: kss, shares_owned: 100, purchase_date: '2014-01-01', price: 10.00) }
+    let!(:lot2) { FactoryGirl.create(:lot, account: account, commodity: kss, shares_owned: 100, purchase_date: '2014-02-01', price: 12.00) }
+
+    describe '#holdings' do
+      it 'should list summaries of commodities held in the account' do
+        expect(account).to have(1).holding
+        expect(account.holdings[0].commodity).to eq(kss)
+        expect(account.holdings[0].total_shares).to eq(200)
+        expect(account.holdings[0].average_price).to eq(11.00)
+        expect(account.holdings[0]).to have(2).lots
+      end
+    end
+  end
 end

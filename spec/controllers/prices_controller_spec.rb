@@ -346,7 +346,7 @@ describe PricesController do
 
     describe 'get :new' do
       it 'should redirect to the sign in page' do
-        get :new, commodity: commodity
+        get :new, commodity_id: commodity
         expect(response).to redirect_to new_user_session_path
       end
     end

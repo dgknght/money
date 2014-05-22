@@ -62,16 +62,25 @@ describe Lot do
   end
 
   describe '#current_value' do
-    let!(:price2) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-05-13', price: 20) }
-    let!(:price1) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-05-01', price: 10) }
-    it 'should return the value of the lot based on the specified date' do
-      lot = Lot.create!(attributes)
-      expect(lot.current_value).to eq(864.20)
+    context 'with no prices' do
+      it 'should return the value of the lot based on the purchase price' do
+        lot = Lot.create!(attributes)
+        expect(lot.current_value.round(4)).to eq(533.4275)
+      end
     end
 
-    it 'should return the value of the lot based on the current date if no date is specified' do
-      log = Lot.create!(attributes)
-      expect(log.current_value('2014-05-02')).to eq(432.10)
+    context 'with available prices' do
+      let!(:price2) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-05-13', price: 20) }
+      let!(:price1) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-05-01', price: 10) }
+      it 'should return the value of the lot based on the specified date' do
+        lot = Lot.create!(attributes)
+        expect(lot.current_value).to eq(864.20)
+      end
+
+      it 'should return the value of the lot based on the current date if no date is specified' do
+        log = Lot.create!(attributes)
+        expect(log.current_value('2014-05-02')).to eq(432.10)
+      end
     end
   end
 
