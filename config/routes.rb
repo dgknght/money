@@ -1,12 +1,5 @@
 Money::Application.routes.draw do
 
-  get "prices/index"
-  get "prices/show"
-  get "prices/new"
-  get "prices/create"
-  get "prices/edit"
-  get "prices/update"
-  get "prices/destroy"
   devise_for :users
 
   resources :entities do
