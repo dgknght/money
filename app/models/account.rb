@@ -124,20 +124,15 @@ class Account < ActiveRecord::Base
   end
   
 
-  Holding = Struct.new(:commodity, :total_shares, :average_price, :value, :lots)
   def holdings
     hash = {}
     lots.each do |lot|
       holding = hash[lot.commodity.symbol]
-      unless holding
-        holding = Holding.new(lot.commodity, 0, 0, 0, [])
-        hash[lot.commodity.symbol] = holding
+      if holding
+        holding << lot
+      else
+        hash[lot.commodity.symbol] = Holding.new(lot)
       end
-      holding = hash[lot.commodity.symbol]
-      holding.total_shares += lot.shares_owned
-      holding.value += lot.current_value
-      holding.average_price = holding.value / holding.total_shares
-      holding.lots << lot
     end
     hash.values
   end
