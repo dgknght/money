@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :new, :create]
-  before_filter :load_account, only: [:show, :edit, :update, :destroy]
+  before_filter :load_account, only: [:show, :edit, :update, :destroy, :new_purchase]
   before_filter :set_current_entity
   respond_to :html, :json
   
@@ -28,6 +28,10 @@ class AccountsController < ApplicationController
   def new
     authorize! :update, @entity
     @account = @entity.accounts.new
+  end
+
+  def new_purchase
+    authorize! :update, @account
   end
 
   def create

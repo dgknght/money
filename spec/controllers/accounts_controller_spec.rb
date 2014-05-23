@@ -4,141 +4,190 @@ describe AccountsController do
   let (:entity) { FactoryGirl.create(:entity) }
   let!(:checking) { FactoryGirl.create(:account, entity: entity, name: 'checking') }
   let!(:cash) { FactoryGirl.create(:account, entity: entity, name: 'cash') }
+  let (:ira) { FactoryGirl.create(:commodity_account, entity: entity, name: 'IRA') }
   
   context 'for an authenticated user' do
-    before(:each) { sign_in entity.user }
-    
-    describe 'get :index' do
-      it 'should be successful' do
-        get :index, entity_id: entity
-        response.should be_success
-      end
-    
-    context 'in json' do
-      it 'should be successful' do
-        get :index, entity_id: entity, format: :json
-        response.should be_success
-      end
+    context 'that owns the entity' do
+      before(:each) { sign_in entity.user }
       
-      it 'should return the list of accounts' do
-        get :index, entity_id: entity, format: :json
-        response.body.should == [checking, cash].to_json
+      describe 'get :index' do
+        it 'should be successful' do
+          get :index, entity_id: entity
+          response.should be_success
+        end
+
+        context 'in json' do
+          it 'should be successful' do
+            get :index, entity_id: entity, format: :json
+            response.should be_success
+          end
+          
+          it 'should return the list of accounts' do
+            get :index, entity_id: entity, format: :json
+            response.body.should == [checking, cash].to_json
+          end
+        end
       end
-    end
-    end
+
+      describe 'get :new' do
+        it 'should be successful' do
+          get :new, entity_id: entity
+          response.should be_success
+        end
+      end
     
-    describe 'get :new' do
-      it 'should be successful' do
-        get :new, entity_id: entity
-        response.should be_success
-      end
-    end
-    
-    describe 'post :create' do
-      it 'should redirect to the account list page' do
-        post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
-        response.should redirect_to entity_accounts_path(entity)
-      end
-      
-      context 'in json' do
-        it 'should create a new account' do
-          lambda do
-            post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account), format: :json
-          end.should change(Account, :count).by(1)
+      describe 'post :create' do
+        it 'should redirect to the account list page' do
+          post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
+          response.should redirect_to entity_accounts_path(entity)
         end
         
-        it 'should return the new account' do
-          attributes = FactoryGirl.attributes_for(:account)
-          post :create, entity_id: entity, account: attributes, format: :json
-          actual = JSON.parse(response.body)
-          attributes.each { |k, v| actual[k.to_s].to_s.should == v.to_s }
+        context 'in json' do
+          it 'should create a new account' do
+            lambda do
+              post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account), format: :json
+            end.should change(Account, :count).by(1)
+          end
+          
+          it 'should return the new account' do
+            attributes = FactoryGirl.attributes_for(:account)
+            post :create, entity_id: entity, account: attributes, format: :json
+            actual = JSON.parse(response.body)
+            attributes.each { |k, v| actual[k.to_s].to_s.should == v.to_s }
+          end
         end
       end
-    end
 
-    describe 'get :show' do
-      it 'should be successful' do
-        get :show, :id => checking
-        response.should be_success
-      end
-      
-      context 'in json' do
-        it 'should return the specified account' do
-          get :show, id: checking, format: :json
-          response.body.should == checking.to_json
+      describe 'get :show' do
+        it 'should be successful' do
+          get :show, :id => checking
+          response.should be_success
         end
-      end     
-    end
-    
-    describe 'get :edit' do
-      it 'should be successful' do
-        get :edit, id: checking
-        response.should be_success
+        
+        context 'in json' do
+          it 'should return the specified account' do
+            get :show, id: checking, format: :json
+            response.body.should == checking.to_json
+          end
+        end     
       end
-    end
     
-    describe 'put :update' do
-      it 'should redirect to the account list page' do
-        put :update, id: checking, account: { name: 'The new name' }
-        response.should redirect_to entity_accounts_path(entity)
+      describe 'get :edit' do
+        it 'should be successful' do
+          get :edit, id: checking
+          response.should be_success
+        end
       end
-      
-      it 'should update the account' do
-        lambda do
+    
+      describe 'put :update' do
+        it 'should redirect to the account list page' do
           put :update, id: checking, account: { name: 'The new name' }
-          checking.reload
-        end.should change(checking, :name).from('checking').to('The new name')
-      end
-      
-      context 'in json' do
+          response.should redirect_to entity_accounts_path(entity)
+        end
+        
         it 'should update the account' do
           lambda do
-            put :update, id: checking, account: { name: 'The new name' }, format: :json
+            put :update, id: checking, account: { name: 'The new name' }
             checking.reload
           end.should change(checking, :name).from('checking').to('The new name')
         end
+        
+        context 'in json' do
+          it 'should update the account' do
+            lambda do
+              put :update, id: checking, account: { name: 'The new name' }, format: :json
+              checking.reload
+            end.should change(checking, :name).from('checking').to('The new name')
+          end
+        end
       end
-    end
   
-    describe 'delete :destroy' do
-      it 'should redirect to the account list page' do
-        delete :destroy, id: checking
-        response.should redirect_to entity_accounts_path(entity)
-      end
-      
-      it 'should delete the specified account' do
-        lambda do
+      describe 'delete :destroy' do
+        it 'should redirect to the account list page' do
           delete :destroy, id: checking
-        end.should change(Account, :count).by(-1)
-      end
-      
-      context 'in json' do
-        it 'should be successful' do
-          delete :destroy, id: checking, format: :json
-          response.should be_success
+          response.should redirect_to entity_accounts_path(entity)
         end
         
         it 'should delete the specified account' do
           lambda do
-            delete :destroy, id: checking, format: :json
+            delete :destroy, id: checking
           end.should change(Account, :count).by(-1)
+        end
+        
+        context 'in json' do
+          it 'should be successful' do
+            delete :destroy, id: checking, format: :json
+            response.should be_success
+          end
+          
+          it 'should delete the specified account' do
+            lambda do
+              delete :destroy, id: checking, format: :json
+            end.should change(Account, :count).by(-1)
+          end
+        end
+      end
+
+      describe 'get :new_purchase' do
+        it 'be successful' do
+          get :new_purchase, id: ira
+          expect(response).to be_success
+        end
+      end
+    end
+
+    context 'that does not own the entity' do
+      let (:other_user) { FactoryGirl.create(:user) }
+      before(:each) { sign_in other_user }
+
+      describe 'get :index' do
+        it 'should redirect to the user home page'
+      end
+
+      describe 'get :new' do
+        it 'should redirect to the user home page'
+      end
+
+      describe 'post :create' do
+        it 'should redirect to the user home page'
+        it 'should not create a new account'
+      end
+
+      describe 'get :edit' do
+        it 'should redirect to the user home page'
+      end
+
+      describe 'put :update' do
+        it 'should redirect to the user home page'
+        it 'should not update the account'
+      end
+
+      describe 'delete :destroy' do
+        it 'should redirect to the user home page'
+        it 'should not delete the account'
+      end
+
+      describe 'get :new_purchase' do
+        it 'should redirect to the user home page' do
+          get :new_purchase, id: ira
+          expect(response).to redirect_to home_path
         end
       end
     end
   end
-  
+
   context 'for an unauthenticated user' do
     describe 'get :index' do
       it 'should redirect to the sign in page' do
         get :index, entity_id: entity
         response.should redirect_to new_user_session_path
       end
-    end
-    
-    context 'in json' do
-      it 'should return "access denied"' do
-        get :index, entity_id: entity, format: :json
-        response.response_code.should == 401
+      
+      context 'in json' do
+        it 'should return "access denied"' do
+          get :index, entity_id: entity, format: :json
+          response.response_code.should == 401
+        end
       end
     end
     
@@ -230,6 +279,13 @@ describe AccountsController do
             delete :destroy, id: checking, format: :json
           end.should_not change(Account, :count)
         end
+      end
+    end
+
+    describe 'get :new_purchase' do
+      it 'should redirect to the sign in page' do
+        get :new_purchase, id: ira
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end

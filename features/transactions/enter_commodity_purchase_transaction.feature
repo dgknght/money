@@ -29,7 +29,7 @@ Feature: Enter a commodity purchase transaction
 
     When I click "401k" within the main content
     Then I should see "401k Holdings" within the page title
-    And I should see the following commodities table
+    And I should see the following holdings table
       | Symbol          |    Value |
       | Commodity total |     0.00 |
       | Cash            | 5,000.00 |

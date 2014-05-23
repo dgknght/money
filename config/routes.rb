@@ -19,6 +19,9 @@ Money::Application.routes.draw do
     resources :transactions, only: [:index, :create]
     resources :transaction_items, only: [ :index, :create, :new ]
     resources :holdings, only: [ :index ]
+    member do
+      get :new_purchase
+    end
   end
   resources :transactions, only: [:show, :edit, :update, :destroy] do
     resources :attachments, only: [:index, :new, :create]

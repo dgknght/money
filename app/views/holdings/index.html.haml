@@ -1,2 +1,22 @@
 %h2#page_title #{h @account.name} Holdings
 
+%table#holdings_table
+  %tr
+    %th Symbol
+    %th Value
+  -@holdings.each do |holding|
+    %tr
+      %td= holding.commodity.symbol
+      %td= format_currency(holding.current_value)
+  %tr
+    %td Commodity total
+    %td= format_currency(@total_current_value)
+  %tr
+    %td Cash
+    %td= format_currency(@account.balance)
+  %tr
+    %td Total value
+    %td= format_currency(@total_current_value + @account.balance)
+.actions
+  =link_to 'Add', new_purchase_account_path(@account), class: 'add_button', title: 'Click here to purchase shares of a commodity.'
+
