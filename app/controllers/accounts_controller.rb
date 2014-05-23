@@ -32,6 +32,7 @@ class AccountsController < ApplicationController
 
   def new_purchase
     authorize! :update, @account
+    @creator = CommodityTransactionCreator.new account: @account
   end
 
   def create

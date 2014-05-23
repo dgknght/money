@@ -1,0 +1,25 @@
+%h2#page_title New commodity transaction
+
+=form_tag(url: create_purchase_account_path(@account), method: :post) do
+  %div
+    =label_tag :transaction_date
+    %br
+    =text_field_tag :transaction_date, @creator.transaction_date, class: 'date_field'
+  %div
+    =label_tag :action
+    %br
+    =select_tag :action, options_for_select(CommodityTransactionCreator::ACTIONS, @creator.action)
+  %div
+    =label_tag :symbol
+    %br
+    =text_field_tag :symbol, @creator.symbol
+  %div
+    =label_tag :shares
+    %br
+    =number_field_tag :shares, @creator.shares
+  %div
+    =label_tag :value
+    %br
+    =number_field_tag :value, @creator.value
+  .actions
+    =link_to 'Save', create_purchase_account_path(@creator.account), class: 'save_button'

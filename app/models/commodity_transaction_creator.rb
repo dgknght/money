@@ -73,7 +73,7 @@ class CommodityTransactionCreator
   def initialize(attributes = {})
     attr = (attributes || {}).with_indifferent_access
     self.account_id = attr[:account_id]
-    self.transaction_date = attr.get_date(:transaction_date) || Date.today
+    self.transaction_date = to_date(attr[:transaction_date]) || Date.today
     self.action = attr[:action]
     self.symbol = attr[:symbol]
     self.shares = BigDecimal.new(attr[:shares], 4) if attr[:shares]
@@ -229,6 +229,12 @@ class CommodityTransactionCreator
   def short_term_gains_account
     #TODO Need to be able to configure this
     @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
+  end
+
+  def to_date(value)
+    return nil unless value
+    return value.to_date if value.respond_to?(:to_date)
+    Date.parse(value)
   end
 
   def value_is_not_zero

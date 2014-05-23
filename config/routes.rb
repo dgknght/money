@@ -21,6 +21,7 @@ Money::Application.routes.draw do
     resources :holdings, only: [ :index ]
     member do
       get :new_purchase
+      post :create_purchase
     end
   end
   resources :transactions, only: [:show, :edit, :update, :destroy] do

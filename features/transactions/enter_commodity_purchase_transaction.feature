@@ -36,13 +36,13 @@ Feature: Enter a commodity purchase transaction
       | Total value     | 5,000.00 |
 
     When I click "Add"
-    Then I should see "New equity transaction" within the page title
+    Then I should see "New commodity transaction" within the page title
 
     When I fill in "Transaction date" with "3/26/2014"
     And I select "buy" from the "Action" list
-    And I fill in "Commodity" with "KSS"
+    And I fill in "Symbol" with "KSS"
     And I fill in "Shares" with "100"
-    And I fill in "Amount" with "1100"
+    And I fill in "Value" with "1100"
     And I click "Save"
 
     Then I should see "The transaction was created successfully." within the notice area
