@@ -141,30 +141,64 @@ describe AccountsController do
       before(:each) { sign_in other_user }
 
       describe 'get :index' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :index, entity_id: entity
+          expect(response).to redirect_to home_path
+        end
       end
 
       describe 'get :new' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :new, entity_id: entity
+          expect(response).to redirect_to home_path
+        end
       end
 
       describe 'post :create' do
-        it 'should redirect to the user home page'
-        it 'should not create a new account'
+        it 'should redirect to the user home page' do
+          post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account, entity: entity)
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not create a new account' do
+          expect do
+            post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account, entity: entity)
+          end.not_to change(Account, :count)
+        end
       end
 
       describe 'get :edit' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :edit, id: checking
+          expect(response).to redirect_to home_path
+        end
       end
 
       describe 'put :update' do
-        it 'should redirect to the user home page'
-        it 'should not update the account'
+        it 'should redirect to the user home page' do
+          put :update, id: checking, account: { name: 'the new name' }
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not update the account' do
+          expect do
+            put :update, id: checking, account: { name: 'the new name' }
+            checking.reload
+          end.not_to change(checking, :name)
+        end
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the user home page'
-        it 'should not delete the account'
+        it 'should redirect to the user home page' do
+          delete :destroy, id: checking
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not delete the account' do
+          expect do
+            delete :destroy, id: checking
+          end.not_to change(Account, :count)
+        end
       end
 
       describe 'get :new_purchase' do
