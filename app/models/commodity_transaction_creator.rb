@@ -36,7 +36,7 @@ class CommodityTransactionCreator
   validates :shares, presence: true, numericality: { greater_than: 0 }
   validates :action, presence: true, inclusion: { in: ACTIONS }
   validates :value, presence: true, numericality: true
-  validate :value_is_not_zero
+  validate :value_is_not_zero, :can_find_commodity
 
   def account
     @account ||= find_account
@@ -72,7 +72,8 @@ class CommodityTransactionCreator
 
   def initialize(attributes = {})
     attr = (attributes || {}).with_indifferent_access
-    self.account_id = attr[:account_id]
+    self.account_id = attr[:account_id] if attr[:account_id]
+    self.account = attr[:account] if attr[:account]
     self.transaction_date = to_date(attr[:transaction_date]) || Date.today
     self.action = attr[:action]
     self.symbol = attr[:symbol]
@@ -229,6 +230,10 @@ class CommodityTransactionCreator
   def short_term_gains_account
     #TODO Need to be able to configure this
     @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
+  end
+
+  def can_find_commodity
+    errors.add(:symbol, "does not refer to an existing commodity") unless commodity
   end
 
   def to_date(value)
