@@ -47,6 +47,10 @@ class CommodityTransactionCreator
     self.account_id = account.nil? ? nil : account.id
   end
 
+  def as_json(options)
+    { transaction: @transaction.as_json(options) }
+  end
+
   def commodity
     @commodity ||= Commodity.find_by_symbol(symbol)
   end
@@ -54,11 +58,10 @@ class CommodityTransactionCreator
   def create
     return nil unless valid?
 
-    transaction = nil
     Account.transaction do
-      transaction = buy? ? process_buy : process_sell
+      @transaction = buy? ? process_buy : process_sell
     end
-   transaction 
+   @transaction 
   end
 
   def create!

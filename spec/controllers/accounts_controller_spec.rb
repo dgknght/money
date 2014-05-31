@@ -163,6 +163,31 @@ describe AccountsController do
             post :create_purchase, id: ira, purchase: purchase_attributes
           end.to change(Lot, :count).by(1)
         end
+
+        context 'in json' do
+          it 'should be successful' do
+            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            expect(response).to be_success
+          end
+
+          it 'should return the new transaction' do
+            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            json = JSON.parse(response.body)
+            expect(json).to include('transaction')
+          end
+
+          it 'should create a new commodity transaction' do
+            expect do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            end.to change(Transaction, :count).by(1)
+          end
+
+          it 'should create a new lot' do
+            expect do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            end.to change(Lot, :count).by(1)
+          end
+        end
       end
     end
 
@@ -254,6 +279,25 @@ describe AccountsController do
           expect do
             post :create_purchase, id: ira, purchase: purchase_attributes
           end.not_to change(Lot, :count)
+        end
+
+        context 'in json' do
+          it 'should return "resource not found"' do
+            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            expect(response.response_code).to eq(404)
+          end
+
+          it 'should not create a new commodity transaction' do
+            expect do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            end.not_to change(Transaction, :count)
+          end
+
+          it 'should not create a new lot' do
+            expect do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            end.not_to change(Lot, :count)
+          end
         end
       end
     end
@@ -388,6 +432,25 @@ describe AccountsController do
         expect do
           post :create_purchase, id: ira, purchase: purchase_attributes
         end.not_to change(Lot, :count)
+      end
+
+      context 'in json' do
+        it 'should return "access denied"' do
+          post :create_purchase, id:ira, purchase: purchase_attributes, format: :json
+          expect(response.response_code).to eq(401)
+        end
+
+        it 'should not create a new commodity transaction' do
+          expect do
+            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+          end.not_to change(Transaction, :count)
+        end
+
+        it 'should not create a new lot' do
+          expect do
+            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+          end.not_to change(Lot, :count)
+        end
       end
     end
   end

@@ -46,13 +46,9 @@ class AccountsController < ApplicationController
     authorize! :update, @account
     @creator = CommodityTransactionCreator.new purchase_params
 
-    #TODO need json handling here
-    if @creator.create
-      flash[:notice] = "The transaction was created successfully."
-      redirect_to account_holdings_path(@account)
-    else
-      render :new_purchase
-    end
+    flash[:notice] = "The transaction was created successfully." if @creator.create
+    respond_with @creator, location: account_holdings_path(@account),
+                            action: :new_purchase
   end
 
   def edit
