@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :new, :create]
-  before_filter :load_account, only: [:show, :edit, :update, :destroy, :new_purchase]
+  before_filter :load_account, only: [:show, :edit, :update, :destroy, :new_purchase, :create_purchase]
   before_filter :set_current_entity
   respond_to :html, :json
   
@@ -42,6 +42,18 @@ class AccountsController < ApplicationController
     respond_with @account, location: entity_accounts_path(@entity)
   end
 
+  def create_purchase
+    @creator = CommodityTransactionCreator.new purchase_params
+
+    #TODO need json handling here
+    if @creator.create
+      flash[:notice] = "The transaction was created successfully."
+      redirect_to account_holdings_path(@account)
+    else
+      render :new_purchase
+    end
+  end
+
   def edit
     authorize! :update, @account
   end
@@ -54,6 +66,10 @@ class AccountsController < ApplicationController
   end
   
   private
+    def account_params
+      params.require(:account).permit(:name, :account_type, :entity_id, :parent_id, :content_type)
+    end
+
     def load_account
       parent = @entity.nil? ? Account : @entity.accounts
       @account = parent.find(params[:id])
@@ -63,11 +79,11 @@ class AccountsController < ApplicationController
       @entity = current_user.entities.find(params[:entity_id])
     end
     
+    def purchase_params
+      params.require(:purchase).permit(:transaction_date, :symbol, :action, :shares, :value).merge(account: @account)
+    end
+
     def set_current_entity
       self.current_entity = @entity || @account.entity
-    end
-    
-    def account_params
-      params.require(:account).permit(:name, :account_type, :entity_id, :parent_id, :content_type)
     end
 end

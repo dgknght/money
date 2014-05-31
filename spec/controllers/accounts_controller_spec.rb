@@ -134,6 +134,36 @@ describe AccountsController do
           expect(response).to be_success
         end
       end
+
+      describe 'post :create_purchase' do
+        let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
+        let (:purchase_attributes) do
+          {
+            transaction_date: '2014-01-01',
+            symbol: 'KSS',
+            action: 'buy',
+            shares: 100,
+            value: 1_000
+          }
+        end
+
+        it 'should redirect to the holdings page' do
+          post :create_purchase, id: ira, purchase: purchase_attributes
+          expect(response).to redirect_to account_holdings_path(ira)
+        end
+
+        it 'should create a new commodity transaction' do
+          expect do
+            post :create_purchase, id: ira, purchase: purchase_attributes
+          end.to change(Transaction, :count).by(1)
+        end
+
+        it 'should create a new lot' do
+          expect do
+            post :create_purchase, id: ira, purchase: purchase_attributes
+          end.to change(Lot, :count).by(1)
+        end
+      end
     end
 
     context 'that does not own the entity' do
@@ -206,6 +236,12 @@ describe AccountsController do
           get :new_purchase, id: ira
           expect(response).to redirect_to home_path
         end
+      end
+
+      describe 'post :create_purchase' do
+        it 'should redirect to the user home page'
+        it 'should not create a new commodity transaction'
+        it 'should not create a new lot'
       end
     end
   end
@@ -321,6 +357,12 @@ describe AccountsController do
         get :new_purchase, id: ira
         expect(response).to redirect_to(new_user_session_path)
       end
+    end
+
+    describe 'post :create_purchase' do
+      it 'should redirect to the sign in page'
+      it 'should not create a new commodity transaction'
+      it 'should not create a new lot'
     end
   end
 end
