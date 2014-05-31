@@ -43,6 +43,7 @@ class AccountsController < ApplicationController
   end
 
   def create_purchase
+    authorize! :update, @account
     @creator = CommodityTransactionCreator.new purchase_params
 
     #TODO need json handling here

@@ -5,6 +5,17 @@ describe AccountsController do
   let!(:checking) { FactoryGirl.create(:account, entity: entity, name: 'checking') }
   let!(:cash) { FactoryGirl.create(:account, entity: entity, name: 'cash') }
   let (:ira) { FactoryGirl.create(:commodity_account, entity: entity, name: 'IRA') }
+  let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
+  let (:purchase_attributes) do
+    {
+      transaction_date: '2014-01-01',
+      symbol: 'KSS',
+      action: 'buy',
+      shares: 100,
+      value: 1_000
+    }
+  end
+
   
   context 'for an authenticated user' do
     context 'that owns the entity' do
@@ -136,17 +147,6 @@ describe AccountsController do
       end
 
       describe 'post :create_purchase' do
-        let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
-        let (:purchase_attributes) do
-          {
-            transaction_date: '2014-01-01',
-            symbol: 'KSS',
-            action: 'buy',
-            shares: 100,
-            value: 1_000
-          }
-        end
-
         it 'should redirect to the holdings page' do
           post :create_purchase, id: ira, purchase: purchase_attributes
           expect(response).to redirect_to account_holdings_path(ira)
@@ -239,9 +239,22 @@ describe AccountsController do
       end
 
       describe 'post :create_purchase' do
-        it 'should redirect to the user home page'
-        it 'should not create a new commodity transaction'
-        it 'should not create a new lot'
+        it 'should redirect to the user home page' do
+          post :create_purchase, id: ira, purchase: purchase_attributes
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not create a new commodity transaction' do
+          expect do
+            post :create_purchase, id: ira, purchase: purchase_attributes
+          end.not_to change(Transaction, :count)
+        end
+
+        it 'should not create a new lot' do
+          expect do
+            post :create_purchase, id: ira, purchase: purchase_attributes
+          end.not_to change(Lot, :count)
+        end
       end
     end
   end
@@ -360,9 +373,22 @@ describe AccountsController do
     end
 
     describe 'post :create_purchase' do
-      it 'should redirect to the sign in page'
-      it 'should not create a new commodity transaction'
-      it 'should not create a new lot'
+      it 'should redirect to the sign in page' do
+        post :create_purchase, id: ira, purchase: purchase_attributes
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not create a new commodity transaction' do
+        expect do
+          post :create_purchase, id: ira, purchase: purchase_attributes
+        end.not_to change(Transaction, :count)
+      end
+
+      it 'should not create a new lot' do
+        expect do
+          post :create_purchase, id: ira, purchase: purchase_attributes
+        end.not_to change(Lot, :count)
+      end
     end
   end
 end
