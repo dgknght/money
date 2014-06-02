@@ -46,7 +46,7 @@ describe CommodityTransactionCreator do
     it 'should be required' do
       creator = CommodityTransactionCreator.new(attributes.except(:symbol))
       expect(creator).not_to be_valid
-      expect(creator).to have(1).error_on(:symbol)
+      expect(creator).to have(2).error_on(:symbol)
     end
   end
 
@@ -321,14 +321,14 @@ describe CommodityTransactionCreator do
           end.to change(st_gains, :balance).by(234 + 434)
         end
 
-        it 'should subract shares owned from the first lot' do
+        it 'should subtract shares owned from the first lot' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             lot1.reload
           end.to change(lot1, :shares_owned).by(-100)
         end
 
-        it 'should subract shares owned from the second lot' do
+        it 'should subtract shares owned from the second lot' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             lot2.reload
@@ -337,7 +337,6 @@ describe CommodityTransactionCreator do
       end
 
       context 'that sells shares across lots with mixed long-term and short-term gains' do
-        let (:fifo_sell_attributes) { attributes.merge(action: 'sell', value: 2_468, shares: 200, valuation_method: CommodityTransactionCreator.fifo) }
         let!(:lot3) do
           FactoryGirl.create(:lot, account: ira,
                                     commodity: kss,
@@ -352,17 +351,31 @@ describe CommodityTransactionCreator do
         end
 
         it 'should debit the long-term gains account the correct amount' do
+          creator = CommodityTransactionCreator.new(account: ira,
+                                                    transaction_date: '2014-02-01',
+                                                    symbol: 'KSS',
+                                                    action: 'sell',
+                                                    shares: 200,
+                                                    value: 2_000,
+                                                    valuation_method: 'fifo')
           expect do
-            CommodityTransactionCreator.new(fifo_sell_attributes).create
+            creator.create!
             lt_gains.reload
-          end.to change(lt_gains, :balance).by(734)
+          end.to change(lt_gains, :balance).by(500)
         end
 
         it 'should debit the short-term gains account the correct amount' do
+          creator = CommodityTransactionCreator.new(account: ira,
+                                                    transaction_date: '2014-02-01',
+                                                    symbol: 'KSS',
+                                                    action: 'sell',
+                                                    shares: 200,
+                                                    value: 2_000,
+                                                    valuation_method: 'fifo')
           expect do
-            CommodityTransactionCreator.new(fifo_sell_attributes).create
+            creator.create!
             st_gains.reload
-          end.to change(st_gains, :balance).by(434)
+          end.to change(st_gains, :balance).by(200)
         end
       end
     end

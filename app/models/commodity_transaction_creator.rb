@@ -87,7 +87,7 @@ class CommodityTransactionCreator
 
   def price
     return nil if value.nil? || shares.nil?
-    value / shares
+    value.to_f / shares.to_f
   end
 
   private
@@ -130,7 +130,19 @@ class CommodityTransactionCreator
   end
 
   def create_sell_transaction(sale_results)
-    cost_of_shares_sold, st_gain, lt_gain = calculate_gains(sale_results)
+    lt_gain = 0
+    st_gain = 0
+    cost_of_shares_sold = sale_results.reduce(0) do |sum, result|
+      cost = result.lot.price * result.shares
+      proceeds = price * result.shares
+      gain = proceeds - cost
+      if held_more_than_one_year?(result.lot.purchase_date)
+        lt_gain += gain
+      else
+        st_gain += gain
+      end
+      sum += cost
+    end
 
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
                                                   description: "Sell shares of #{symbol}")
@@ -142,12 +154,13 @@ class CommodityTransactionCreator
     transaction.items.new(account: commodity_account,
                           action: TransactionItem.opposite_action(account_item.action),
                           amount: cost_of_shares_sold)
-    # gain/loss
+    # long-term gain/loss
     if lt_gain != 0
       transaction.items.new(account: long_term_gains_account,
                             action: long_term_gains_account.infer_action(lt_gain),
                             amount: lt_gain.abs)
     end
+    # short-term gain/loss
     if st_gain != 0
       transaction.items.new(account: short_term_gains_account,
                             action: short_term_gains_account.infer_action(st_gain),
@@ -172,9 +185,11 @@ class CommodityTransactionCreator
     @long_term_gains_account ||= account.entity.accounts.find_by_name('Long-term capital gains')
   end
 
-  def more_than_a_year_ago?(purchase_date)
-    one_year_later = Date.new(purchase_date.year + 1, purchase_date.month, purchase_date.day)
-    transaction_date > one_year_later
+  def held_more_than_one_year?(purchase_date)
+    one_year_later = Date.new(purchase_date.year + 1,
+                              purchase_date.month,
+                              purchase_date.day)
+    transaction_date >= one_year_later
   end
 
   def process_buy
