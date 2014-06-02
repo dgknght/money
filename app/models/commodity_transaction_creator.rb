@@ -92,6 +92,35 @@ class CommodityTransactionCreator
 
   private
 
+  def add_balance_sheet_items(transaction, cost_of_shares_sold)
+    # account
+    account_item = transaction.items.new(account: account,
+                                         action: account.infer_action(value),
+                                         amount: value)
+    # commodity
+    transaction.items.new(account: commodity_account,
+                          action: TransactionItem.opposite_action(account_item.action),
+                          amount: cost_of_shares_sold)
+  end
+
+  def add_income_expense_items(transaction, st_gains, lt_gains)
+    add_inferred_action_item transaction, long_term_gains_account, lt_gains
+    add_inferred_action_item transaction, short_term_gains_account, st_gains
+  end
+
+  def add_inferred_action_item(transaction, account, amount)
+    return unless amount != 0
+    transaction.items.new(account: account,
+                          action: account.infer_action(amount),
+                          amount: amount.abs)
+  end
+
+  def add_sell_transaction_items(transaction, sale_results)
+    cost_of_shares_sold, st_gain, lt_gain = calculate_gains(sale_results)
+    add_balance_sheet_items transaction, cost_of_shares_sold
+    add_income_expense_items transaction, st_gain, lt_gain
+  end
+
   def calculate_gains(sale_results)
     lt_gain = st_gain = cost_of_shares_sold = 0
     sale_results.each do |result|
@@ -100,7 +129,7 @@ class CommodityTransactionCreator
       gain = proceeds - cost
 
       cost_of_shares_sold += cost
-      if more_than_a_year_ago?(result.lot.purchase_date)
+      if held_more_than_one_year?(result.lot.purchase_date)
         lt_gain += gain
       else
         st_gain += gain
@@ -130,43 +159,9 @@ class CommodityTransactionCreator
   end
 
   def create_sell_transaction(sale_results)
-    lt_gain = 0
-    st_gain = 0
-    cost_of_shares_sold = sale_results.reduce(0) do |sum, result|
-      cost = result.lot.price * result.shares
-      proceeds = price * result.shares
-      gain = proceeds - cost
-      if held_more_than_one_year?(result.lot.purchase_date)
-        lt_gain += gain
-      else
-        st_gain += gain
-      end
-      sum += cost
-    end
-
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
                                                   description: "Sell shares of #{symbol}")
-    # account
-    account_item = transaction.items.new(account: account,
-                                         action: account.infer_action(value),
-                                         amount: value)
-    # commodity
-    transaction.items.new(account: commodity_account,
-                          action: TransactionItem.opposite_action(account_item.action),
-                          amount: cost_of_shares_sold)
-    # long-term gain/loss
-    if lt_gain != 0
-      transaction.items.new(account: long_term_gains_account,
-                            action: long_term_gains_account.infer_action(lt_gain),
-                            amount: lt_gain.abs)
-    end
-    # short-term gain/loss
-    if st_gain != 0
-      transaction.items.new(account: short_term_gains_account,
-                            action: short_term_gains_account.infer_action(st_gain),
-                            amount: st_gain.abs)
-    end
-
+    add_sell_transaction_items transaction, sale_results
     transaction.save!
     transaction
   end
