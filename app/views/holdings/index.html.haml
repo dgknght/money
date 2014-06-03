@@ -3,20 +3,20 @@
 %table#holdings_table
   %tr
     %th Symbol
-    %th Value
+    %th.number_column Value
   -@holdings.each do |holding|
     %tr
       %td= holding.commodity.symbol
-      %td= format_currency(holding.current_value)
+      %td.number_column= format_currency(holding.current_value)
   %tr
     %td Commodity total
-    %td= format_currency(@total_current_value)
+    %td.number_column= format_currency(@total_current_value)
   %tr
     %td Cash
-    %td= format_currency(@account.balance)
+    %td.number_column= format_currency(@account.balance)
   %tr
     %td Total value
-    %td= format_currency(@total_current_value + @account.balance)
+    %td.number_column= format_currency(@total_current_value + @account.balance)
 .actions
   =link_to 'Add', new_purchase_account_path(@account), class: 'add_button', title: 'Click here to purchase shares of a commodity.'
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'
