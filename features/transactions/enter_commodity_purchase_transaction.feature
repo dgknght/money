@@ -1,3 +1,4 @@
+@wip
 Feature: Enter a commodity purchase transaction
   As a user,
   In order to track a commodity holding
@@ -29,10 +30,10 @@ Feature: Enter a commodity purchase transaction
     When I click "401k" within the main content
     Then I should see "401k Holdings" within the page title
     And I should see the following holdings table
-      | Symbol          |    Value |
-      | Commodity total |     0.00 |
-      | Cash            | 5,000.00 |
-      | Total value     | 5,000.00 |
+      | Symbol          |    Value | Cost | Gain/Loss |
+      | Commodity total |     0.00 |      |           |
+      | Cash            | 5,000.00 |      |           |
+      | Total value     | 5,000.00 | 0.00 |      0.00 |
 
     When I click "Add"
     Then I should see "New commodity transaction" within the page title
@@ -46,8 +47,8 @@ Feature: Enter a commodity purchase transaction
 
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following holdings table
-      | Symbol          |    Value |
-      | KSS             | 1,100.00 |
-      | Commodity total | 1,100.00 |
-      | Cash            | 3,900.00 |
-      | Total value     | 5,000.00 |
+      | Symbol          |    Value | Cost | Gain/Loss |
+      | KSS             | 1,100.00 | 0.00 |      0.00 |
+      | Commodity total | 1,100.00 |      |           |
+      | Cash            | 3,900.00 |      |           |
+      | Total value     | 5,000.00 | 0.00 |      0.00 |
