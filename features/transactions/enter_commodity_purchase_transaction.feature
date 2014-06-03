@@ -1,4 +1,3 @@
-@wip
 Feature: Enter a commodity purchase transaction
   As a user,
   In order to track a commodity holding
@@ -46,7 +45,7 @@ Feature: Enter a commodity purchase transaction
     And I click "Save"
 
     Then I should see "The transaction was created successfully." within the notice area
-    And I should see the following commodities table
+    And I should see the following holdings table
       | Symbol          |    Value |
       | KSS             | 1,100.00 |
       | Commodity total | 1,100.00 |
