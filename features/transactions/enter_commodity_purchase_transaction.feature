@@ -1,4 +1,3 @@
-@wip
 Feature: Enter a commodity purchase transaction
   As a user,
   In order to track a commodity holding
