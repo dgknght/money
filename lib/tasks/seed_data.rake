@@ -36,7 +36,7 @@ namespace :seed_data do
   # Accounts
   # --------
   
-  AccountDef = Struct.new(:name, :type, :children)
+  AccountDef = Struct.new(:name, :type, :children, :content_type)
   
   def create_account(entity, account_def, parent = nil)
     return if entity.accounts.find_by_name(account_def.name)
@@ -44,7 +44,8 @@ namespace :seed_data do
     account = FactoryGirl.create( :account,
                                   entity_id: entity.id, 
                                   name: account_def.name, 
-                                  account_type: account_def.type, 
+                                  account_type: account_def.type,
+                                  content_type: account_def.content_type || 'currency',
                                   parent_id: parent.nil? ? nil : parent.id)
     LOGGER.info "created account #{account.name}"
     
@@ -64,11 +65,13 @@ namespace :seed_data do
       AccountDef.new('Checking', 'asset'),
       AccountDef.new('Home', 'asset'),
       AccountDef.new('Savings', 'asset', [AccountDef.new('Car', 'asset'), AccountDef.new('Reserve', 'asset')]),
+      AccountDef.new('401k', 'asset', [], 'commodity'),
       AccountDef.new('Credit Card', 'liability'),
       AccountDef.new('Home Loan', 'liability'),
       AccountDef.new('Opening Balances', 'equity'),
       AccountDef.new('Gift', 'income'),
-      AccountDef.new('Salary', 'income'),
+      AccountDef.new('Salary', 'income', [AccountDef.new('Short-term capital gains', 'income'), AccountDef.new('Long-term capital gains', 'income')]),
+      AccountDef.new('Investment', 'income'),
       AccountDef.new('Gasoline', 'expense'),
       AccountDef.new('Groceries', 'expense'),
       AccountDef.new('Mortgage Interest', 'expense'),
@@ -110,6 +113,31 @@ namespace :seed_data do
     end
   end
   
+  #------------
+  # Commodities
+  # -----------
+
+  CommodityDef = Struct.new(:symbol, :name, :market)
+
+  def create_commodity(entity, commodity_def)
+    commodity = Commodity.create!(entity: entity,
+                                  symbol: commodity_def.symbol,
+                                  name: commodity_def.name,
+                                  market: commodity_def.market)
+    LOGGER.info "created commodity #{commodity.name} #{commodity.symbol}"
+  end
+
+  desc 'Loads commodities'
+  task :commodities => :entities do
+    entity = Entity.first
+
+    commodity_defs = [
+      CommodityDef.new('KSS', 'Knight Software Services', 'NYSE'),
+      CommodityDef.new('AAPL', 'Apple Inc.', 'NASDAQ')
+    ]
+    commodity_defs.each { |d| create_commodity(entity, d) }
+  end
+
   # ------------
   # Transactions
   # ------------
@@ -133,6 +161,7 @@ namespace :seed_data do
     
       # Opening balances
       TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 2_000}, {account: 'Checking', action: 'debit', amount: 2_000}]),
+      TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 10_000}, {account: '401k', action: 'debit', amount: 10_000}]),
       TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 200_000}, {account: 'Home', action: 'debit', amount: 200_000}]),
       TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 10_000}, {account: 'Car', action: 'debit', amount: 10_000}]),
       TransactionDef.new('2013-01-01', 'Opening Balance', [{account: 'Opening Balances', action: 'credit', amount: 30_000}, {account: 'Reserve', action: 'debit', amount: 30_000}]),
@@ -188,4 +217,11 @@ namespace :seed_data do
     transaction_defs.each { |t| create_transaction(entity, t) }
   end
   
+  # ===
+  # All
+  # ===
+
+  desc 'Loads all of the seed data'
+  task :all => [:transactions, :budget, :commodities] do
+  end
 end
