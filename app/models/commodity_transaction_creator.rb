@@ -145,7 +145,7 @@ class CommodityTransactionCreator
   def create_buy_transaction
     attributes = {
       transaction_date: transaction_date,
-      description: "Purchase shares of #{symbol}",
+      description: purchase_description,
       other_account: commodity_account,
       amount: -value
     }
@@ -160,7 +160,7 @@ class CommodityTransactionCreator
 
   def create_sell_transaction(sale_results)
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
-                                                  description: "Sell shares of #{symbol}")
+                                                  description: sale_description)
     add_sell_transaction_items transaction, sale_results
     transaction.save!
     transaction
@@ -240,6 +240,10 @@ class CommodityTransactionCreator
     result
   end
 
+  def purchase_description
+    "Purchase #{shares} share(s) of #{symbol} at #{"%.4f" % price}"
+  end
+
   def short_term_gains_account
     #TODO Need to be able to configure this
     @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
@@ -247,6 +251,10 @@ class CommodityTransactionCreator
 
   def can_find_commodity
     errors.add(:symbol, "does not refer to an existing commodity") unless commodity
+  end
+
+  def sale_description
+    "Sell #{shares} share(s) of #{symbol} at #{"%.4f" % price}"
   end
 
   def to_date(value)
