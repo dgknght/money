@@ -1,6 +1,6 @@
 %h2#page_title #{h @account.name} Holdings
 
-%table#holdings_table
+%table#holdings_table.list{ cellspacing: 0, cellpadding: 0}
   %tr
     %th Symbol
     %th.number_column Value
@@ -10,8 +10,8 @@
     %tr
       %td= holding.commodity.symbol
       %td.number_column= format_currency(holding.current_value)
-      %td.number_column= format_currency(holding.cost)
-      %td.number_column= format_currency(holding.gain_loss)
+      %td.number_column= format_currency(holding.total_cost)
+      %td.number_column= format_currency(holding.total_gain_loss)
   %tr
     %td Commodity total
     %td.number_column= format_currency(@total_current_value)

@@ -47,8 +47,8 @@ Feature: Enter a commodity purchase transaction
 
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following holdings table
-      | Symbol          |    Value | Cost | Gain/Loss |
-      | KSS             | 1,100.00 | 0.00 |      0.00 |
-      | Commodity total | 1,100.00 |      |           |
-      | Cash            | 3,900.00 |      |           |
-      | Total value     | 5,000.00 | 0.00 |      0.00 |
+      | Symbol          |    Value |     Cost | Gain/Loss |
+      | KSS             | 1,100.00 | 1,100.00 |      0.00 |
+      | Commodity total | 1,100.00 |          |           |
+      | Cash            | 3,900.00 |          |           |
+      | Total value     | 5,000.00 | 1,100.00 |      0.00 |

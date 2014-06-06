@@ -125,16 +125,7 @@ class Account < ActiveRecord::Base
   
 
   def holdings
-    hash = {}
-    lots.each do |lot|
-      holding = hash[lot.commodity.symbol]
-      if holding
-        holding << lot
-      else
-        hash[lot.commodity.symbol] = Holding.new(lot)
-      end
-    end
-    hash.values
+    HoldingCollection.new(lots)
   end
 
   def infer_action(amount)
