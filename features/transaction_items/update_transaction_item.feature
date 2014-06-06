@@ -28,7 +28,7 @@ Feature: Update a transaction item
     When I click "Edit" within the 2nd transaction item row
     Then I should see "Edit transaction item" within the page title
     
-    When I fill in "Amount" with "55"
+    When I fill in "Amount" with "-55"
     And I click "Save"    
     Then I should see "The transaction was updated successfully." within the notice area
     And I should see the following transaction items table

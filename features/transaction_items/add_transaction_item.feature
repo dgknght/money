@@ -29,7 +29,7 @@ Feature: Add a transaction item
     When I fill in "Transaction date" with "2/1/2013"
     And I fill in "Description" with "Kroger"
     And I select "Groceries" from the "Account" list
-    And I fill in "Amount" with "43.21"
+    And I fill in "Amount" with "-43.21"
     And I click "Save"
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following transaction items table
