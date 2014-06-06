@@ -465,10 +465,11 @@ describe Account do
     describe '#holdings' do
       it 'should list summaries of commodities held in the account' do
         expect(account).to have(1).holding
-        expect(account.holdings[0].commodity).to eq(kss)
-        expect(account.holdings[0].total_shares).to eq(200)
-        expect(account.holdings[0].average_price).to eq(11.00)
-        expect(account.holdings[0]).to have(2).lots
+        holding = account.holdings.first
+        expect(holding.commodity).to eq(kss)
+        expect(holding.total_shares).to eq(200)
+        expect(holding.average_price).to eq(11.00)
+        expect(holding).to have(2).lots
       end
     end
   end
