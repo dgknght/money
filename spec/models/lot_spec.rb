@@ -61,6 +61,21 @@ describe Lot do
     end
   end
 
+  describe '#cost' do
+    it 'should be the product of the number of shares held and the purchase price' do
+      lot = Lot.new(attributes)
+      expect(lot.cost).to eq(533.42745) # 12.345 * 43.21
+    end
+  end
+
+  describe '#gain_loss' do
+    let!(:price) { FactoryGirl.create(:price, commodity: commodity, price: 20) }
+    it 'should be the difference between the cost and the current value' do
+      lot = Lot.new(attributes)
+      expect(lot.gain_loss).to eq(330.77255) # 20 * 43.21 - 12.345 * 43.21
+    end
+  end
+
   describe '#current_value' do
     context 'with no prices' do
       it 'should return the value of the lot based on the purchase price' do

@@ -60,6 +60,21 @@ describe Holding do
     end
   end
 
+  describe '#total_gain_loss' do
+    let!(:price) do
+      FactoryGirl.create(:price, commodity: kss,
+                                 trade_date: '2014-05-01',
+                                 price: 15.00)
+    end
+    it 'should be the sum of the gain/loss of the lots' do
+      holding = Holding.new(lot1)
+      expect(holding.total_gain_loss).to eq(500.00)
+
+      holding << lot2
+      expect(holding.total_gain_loss).to eq(650.00)
+    end
+  end
+
   describe '#<<' do
     let (:other_lot) { FactoryGirl.create(:lot, account: lot1.account) }
 

@@ -2,7 +2,7 @@
 class Holding
   COMMODITY_MISMATCH_MESSAGE = 'All lots in the holding must belong to the same commodity'
   def <<(lot)
-    raise COMMODITY_MISMATCH_MESSAGE unless lot.commodity == @lots.first.commodity
+    raise COMMODITY_MISMATCH_MESSAGE unless lots.empty? || lot.commodity == commodity
     @lots << lot
   end
 
@@ -22,8 +22,8 @@ class Holding
     @lots.reduce(0) { |sum, lot| sum += lot.current_value }
   end
 
-  def initialize(lot_or_lots)
-    @lots = lot_or_lots.respond_to?(:length) ? lot_or_lots : [lot_or_lots]
+  def initialize(lot_or_lots = [])
+    @lots = [*lot_or_lots]
     validate_only_one_commodity
   end
 
@@ -32,14 +32,22 @@ class Holding
   end
 
   def total_cost
-    @lots.reduce(0) { |sum, lot| sum += lot.shares_owned * lot.price }
+    sum(:cost)
+  end
+
+  def total_gain_loss
+    sum(:gain_loss)
   end
 
   def total_shares
-    @lots.reduce(0) { |sum, lot| sum += lot.shares_owned }
+    sum(:shares_owned)
   end
 
   private
+
+  def sum(method_name)
+    @lots.reduce(0) { |sum, lot| sum + lot.send(method_name) }
+  end
 
   def validate_only_one_commodity
     commodity = nil

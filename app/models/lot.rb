@@ -24,13 +24,25 @@ class Lot < ActiveRecord::Base
   scope :fifo, -> { order(purchase_date: :asc) }
   scope :filo, -> { order(purchase_date: :desc) }
 
+  def cost
+    (price || 0) * (shares_owned || 0)
+  end
+
   def current_value(as_of = Date.today)
     return 0 if shares_owned == 0
+    (most_recent_price(as_of) || price) * shares_owned
+  end
 
-    historical_price = commodity.prices.
+  def gain_loss
+    current_value - cost
+  end
+
+  private
+
+  def most_recent_price(as_of)
+    commodity.prices.
       where(['trade_date <= ?', as_of]).
       order(trade_date: :desc).
-      first
-    (historical_price.nil? ? price : historical_price.price) * shares_owned
+      first.try(:price)
   end
 end
