@@ -11,7 +11,8 @@ class TransactionsController < ApplicationController
 
   def destroy
     authorize! :destroy, @transaction
-    flash[:notice] = "The transaction was removed successfully." if @transaction.destroy
+    destroyer = TransactionDestroyer.new(@transaction)
+    flash[:notice] = destroyer.notice if destroyer.destroy
     respond_with @transaction.entity, @transaction
   end
   
