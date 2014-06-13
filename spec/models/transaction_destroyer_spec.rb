@@ -36,8 +36,11 @@ describe TransactionDestroyer do
           end.to change(Lot, :count).by(-1)
         end
 
-        it 'should destroy the associating lot-transaction record'
-        it 'should reduce the balance of shares held of the associated commodity'
+        it 'should destroy the associating lot-transaction record' do
+          expect do
+            TransactionDestroyer.new(commodity_purchase_transaction).destroy
+          end.to change(LotTransaction, :count).by(-1)
+        end
       end
 
       context 'for lot-depleting transactions' do

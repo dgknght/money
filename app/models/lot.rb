@@ -15,7 +15,7 @@
 class Lot < ActiveRecord::Base
   belongs_to :account
   belongs_to :commodity
-  has_many :transactions, class_name: 'LotTransaction'
+  has_many :transactions, class_name: 'LotTransaction', dependent: :destroy
 
   validates_presence_of :account_id, :price, :commodity_id, :shares_owned, :purchase_date
   validates_numericality_of :price, greater_than: 0
