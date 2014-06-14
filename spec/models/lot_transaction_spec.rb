@@ -42,6 +42,36 @@ describe LotTransaction do
     end
   end
 
+  describe '#sale?'do
+    context 'when shares_traded is negative' do
+      it 'should be true' do
+        lot_transaction = LotTransaction.new attributes.merge(shares_traded: -100)
+        expect(lot_transaction.sale?).to be_true
+      end
+    end
+    context 'when shares_traded is positive' do
+      it 'should be false' do
+        lot_transaction = LotTransaction.new attributes
+        expect(lot_transaction.sale?).to be_false
+      end
+    end
+  end
+
+  describe '#purchase' do
+    context 'when shares_traded is negative' do
+      it 'should be false' do
+        lot_transaction = LotTransaction.new attributes.merge(shares_traded: -100)
+        expect(lot_transaction.purchase?).to be_false
+      end
+    end
+    context 'when shares_traded is positive' do
+      it 'should be true' do
+        lot_transaction = LotTransaction.new attributes
+        expect(lot_transaction.purchase?).to be_true
+      end
+    end
+  end
+
   describe '#price' do
     it 'should be required' do
       transaction = LotTransaction.new attributes.except(:price)

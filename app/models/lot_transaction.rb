@@ -15,4 +15,12 @@ class LotTransaction < ActiveRecord::Base
   belongs_to :lot
   belongs_to :transaction
   validates_presence_of :lot_id, :transaction_id, :shares_traded, :price
+
+  def sale?
+    shares_traded < 0
+  end
+
+  def purchase?
+    shares_traded > 0
+  end
 end
