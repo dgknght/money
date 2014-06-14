@@ -12,7 +12,11 @@ class TransactionsController < ApplicationController
   def destroy
     authorize! :destroy, @transaction
     destroyer = TransactionDestroyer.new(@transaction)
-    flash[:notice] = destroyer.notice if destroyer.destroy
+    if destroyer.destroy
+      flash[:notice] = destroyer.notice
+    else
+      flash[:error] = destroyer.error
+    end
     respond_with @transaction.entity, @transaction
   end
   

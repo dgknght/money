@@ -29,7 +29,7 @@ Feature: Remove transaction item
       |         1/2/2013 | Kroger      | Groceries |      |   -36.00 | 4,929.00 |
     
     When I click "Delete" within the 2nd transaction item row
-    Then I should see "The transaction was deleted successfully." within the notice area
+    Then I should see "The transaction was removed successfully." within the notice area
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
       |         1/1/2013 | Paycheck    | Salary    |      | 5,000.00 | 5,000.00 |

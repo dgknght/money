@@ -25,15 +25,13 @@ class TransactionItemsController < ApplicationController
   
   def destroy
     authorize! :destroy, @transaction_item
-    begin
-      flash[:notice] = "The transaction was deleted successfully." if @transaction_item.transaction.destroy
-      respond_with @transaction_item do |format|
-        format.html { redirect_to account_transaction_items_path(@transaction_item.account) }
-      end
-    rescue Money::CannotDeleteError => e
-      flash[:error] = e.message
-      redirect_to :back
+    destroyer = TransactionDestroyer.new(@transaction_item.transaction)
+    if destroyer.destroy
+      flash[:notice] = destroyer.notice
+    else
+      flash[:error] = destroyer.error
     end
+    respond_with @transaction, location: account_transaction_items_path(@transaction_item.account)
   end
   
   def edit

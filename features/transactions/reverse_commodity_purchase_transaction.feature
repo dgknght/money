@@ -1,4 +1,3 @@
-@wip
 Feature: Reverse a commodity purchase
   As a user,
   In order to correct a mistake,
@@ -73,7 +72,7 @@ Feature: Reverse a commodity purchase
       |         1/2/2014 | Purchase 100.0 share(s) of KSS at 10.0000 | 401k    |      | 1,000.00 | 1,000.00 |
 
     When I click "Delete" within the 1st transaction item row
-    Then I should see "The purchase transaction was deleted successfully." within the notice area
+    Then I should see "The commodity transaction was removed successfully." within the notice area
     And I should see the following transaction items table
       | Transaction date | Description                             | Account | Rec. |   Amount |  Balance |
 
@@ -83,7 +82,7 @@ Feature: Reverse a commodity purchase
     When I click "401k"
     Then I should see "401k Holdings" within the page title
     And I should see the following holdings table
-      | Symbol          | Value     | Cost | Gain\Loss |
+      | Symbol          | Value     | Cost | Gain/Loss |
       | Commodity total |      0.00 |      |           |
       | Cash            | 10,000.00 |      |           |
-      | Total value     | 10,000.00 |      |           |
+      | Total value     | 10,000.00 | 0.00 |      0.00 |
