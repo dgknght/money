@@ -178,6 +178,8 @@ class CommodityTransactionCreator
   def long_term_gains_account
     #TODO Need to be able to configure this
     @long_term_gains_account ||= account.entity.accounts.find_by_name('Long-term capital gains')
+    raise 'Long term gains account not found' unless @long_term_gains_account
+    @long_term_gains_account
   end
 
   def held_more_than_one_year?(purchase_date)
@@ -247,6 +249,8 @@ class CommodityTransactionCreator
   def short_term_gains_account
     #TODO Need to be able to configure this
     @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
+    raise 'Short term gains account not found' unless @short_term_gains_account
+    @short_term_gains_account
   end
 
   def can_find_commodity
