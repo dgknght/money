@@ -23,3 +23,12 @@ Given(/^(#{ENTITY}) has the following transactions$/) do |entity, table|
     FactoryGirl.create(:transaction, entity: entity, transaction_date: row['Transaction date'], description: row['Description'], amount: amount, credit_account: credit_account, debit_account: debit_account)
   end
 end
+
+Given(/^(#{ACCOUNT}) was used to purchase (\d+) shares of (\w+) for (#{DOLLAR_AMOUNT}) on (#{DATE_VALUE})$/) do |account, shares, symbol, value, transaction_date|
+  CommodityTransactionCreator.new(account: account,
+                                  transaction_date: transaction_date,
+                                  symbol: symbol,
+                                  shares: shares,
+                                  value: value,
+                                  action: CommodityTransactionCreator.buy).create!
+end
