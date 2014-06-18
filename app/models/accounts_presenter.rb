@@ -5,15 +5,43 @@ class AccountsPresenter
 
   DisplayRecord = Struct.new(:caption, :balance)
   def each
-    [
-      DisplayRecord.new('Assets', 0),
-      DisplayRecord.new('Liabilities', 0),
-      DisplayRecord.new('Equity', 0),
-      DisplayRecord.new('Income', 0),
-      DisplayRecord.new('Expense', 0),
-    ].each { |r| yield r }
+    assets = summaries(:asset, 'Assets')
+    liabilities = summaries(:liability, 'Liabilities')
+    equity = summaries(:equity, 'Equity')
+    balancer = balancing_record(assets.first.balance, liabilities.first.balance) 
+    if balancer
+      equity << balancer
+      equity.first.balance += balancer.balance
+    end
+    income = summaries(:income, 'Income')
+    expense = summaries(:expense, 'Expense')
+    (assets + liabilities + equity + income + expense).
+      flatten.
+      each { |r| yield r }
   end
 
   def initialize(entity)
+    raise 'Must specify an entity' unless entity && entity.respond_to?(:accounts)
+    @entity = entity
+  end
+
+  private
+
+  def balancing_record(total_assets, total_liabilities)
+    difference = total_assets - total_liabilities
+    DisplayRecord.new('Retained earnings', difference) if difference != 0
+  end
+
+  def sum(items)
+    items.reduce(0) { |sum, item| sum + item.balance }
+  end
+
+  def summaries(method, caption) 
+    accounts = @entity.accounts.send(method)
+    total = sum(accounts)
+    [
+      DisplayRecord.new(caption, total),
+      accounts.map { |a| DisplayRecord.new(a.name, a.balance) }
+    ]
   end
 end

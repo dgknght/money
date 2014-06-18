@@ -10,19 +10,40 @@ describe AccountsPresenter do
 
   context 'when no accounts are present' do
     it 'should enumerate empty summary records' do
-      presenter = AccountsPresenter.new(entity.accounts)
-      records = presenter.map { |r| [r.caption, r.balance] }
-      expect(records).to eq([
-        ['Assets', 0],
-        ['Liabilities', 0],
-        ['Equity', 0],
-        ['Income', 0],
-        ['Expense', 0],
+      presenter = AccountsPresenter.new(entity)
+      expect(presenter).to have_account_display_records([
+        { caption: 'Assets', balance: 0 },
+        { caption: 'Liabilities', balance: 0 },
+        { caption: 'Equity', balance: 0 },
+        { caption: 'Income', balance: 0 },
+        { caption: 'Expense', balance: 0 }
       ])
     end
   end
 
   context 'when accounts are present' do
-    it 'should enumerate summary records and detail records'
+    let (:checking) { FactoryGirl.create(:asset_account, name: 'Checking', entity: entity) }
+    let (:salary) { FactoryGirl.create(:income_account, name: 'Salary', entity: entity) }
+    let!(:paycheck) do
+      FactoryGirl.create(:transaction, description: 'Paycheck',
+                                       transaction_date: '2014-01-01',
+                                       amount: 5_000,
+                                       debit_account: checking,
+                                       credit_account: salary)
+    end
+
+    it 'should enumerate summary records and detail records' do
+      presenter = AccountsPresenter.new(entity)
+      expect(presenter).to have_account_display_records([
+        { caption: 'Assets', balance: 5_000 },
+        { caption: 'Checking', balance: 5_000 },
+        { caption: 'Liabilities', balance: 0 },
+        { caption: 'Equity', balance: 5_000 },
+        { caption: 'Retained earnings', balance: 5_000 },
+        { caption: 'Income', balance: 5_000 },
+        { caption: 'Salary', balance: 5_000 },
+        { caption: 'Expense', balance: 0 }
+      ])
+    end
   end
 end
