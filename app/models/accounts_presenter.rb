@@ -8,7 +8,7 @@ class AccountsPresenter
     assets = summaries(:asset, 'Assets')
     liabilities = summaries(:liability, 'Liabilities')
     equity = summaries(:equity, 'Equity')
-    balancer = balancing_record(assets.first.balance, liabilities.first.balance) 
+    balancer = balancing_record(assets.first.balance, liabilities.first.balance, equity.first.balance) 
     if balancer
       equity << balancer
       equity.first.balance += balancer.balance
@@ -27,13 +27,20 @@ class AccountsPresenter
 
   private
 
-  def balancing_record(total_assets, total_liabilities)
-    difference = total_assets - total_liabilities
+  def account_summaries(accounts, depth = 1)
+    accounts.map do |a|
+      [DisplayRecord.new(a.name, a.balance_with_children, depth)] +
+        account_summaries(a.children, depth + 1)
+    end
+  end
+
+  def balancing_record(total_assets, total_liabilities, total_equity)
+    difference = total_assets - (total_liabilities + total_equity)
     DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
   end
 
   def sum(items)
-    items.reduce(0) { |sum, item| sum + item.balance }
+    items.reduce(0) { |sum, item| sum + item.balance_with_children }
   end
 
   def summaries(method, caption) 
@@ -41,7 +48,7 @@ class AccountsPresenter
     total = sum(accounts)
     [
       DisplayRecord.new(caption, total, 0),
-      accounts.map { |a| DisplayRecord.new(a.name, a.balance, 1) }
+      account_summaries(accounts)
     ]
   end
 end
