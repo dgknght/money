@@ -3,7 +3,7 @@
 class AccountsPresenter
   include Enumerable
 
-  DisplayRecord = Struct.new(:caption, :balance)
+  DisplayRecord = Struct.new(:caption, :balance, :depth)
   def each
     assets = summaries(:asset, 'Assets')
     liabilities = summaries(:liability, 'Liabilities')
@@ -29,7 +29,7 @@ class AccountsPresenter
 
   def balancing_record(total_assets, total_liabilities)
     difference = total_assets - total_liabilities
-    DisplayRecord.new('Retained earnings', difference) if difference != 0
+    DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
   end
 
   def sum(items)
@@ -40,8 +40,8 @@ class AccountsPresenter
     accounts = @entity.accounts.send(method)
     total = sum(accounts)
     [
-      DisplayRecord.new(caption, total),
-      accounts.map { |a| DisplayRecord.new(a.name, a.balance) }
+      DisplayRecord.new(caption, total, 0),
+      accounts.map { |a| DisplayRecord.new(a.name, a.balance, 1) }
     ]
   end
 end

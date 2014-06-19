@@ -1,6 +1,6 @@
 RSpec::Matchers.define :have_account_display_records do |expected|
   match do |actual|
-    hashes = actual.map { |r| { caption: r.caption, balance: r.balance.to_f } }
+    hashes = actual.map { |r| to_hash(r) }
     expect(hashes).to eq(expected)
   end
 
@@ -10,10 +10,26 @@ RSpec::Matchers.define :have_account_display_records do |expected|
 
   def make_readable(values)
     if values.respond_to?(:join)
-      values = values.map { |r| "#{r[:caption]} - #{r[:balance]}" }
+      values = values.map { |r| readable_hash(r) }
     else
-      values = values.map { |r| "#{r.caption} - #{r.balance}" }
+      values = values.map { |r| readable_record(r) }
     end
     values.join("\n")
+  end
+
+  def readable_hash(hash)
+    "#{hash[:caption]} - #{hash[:balance]} - #{hash[:depth]}"
+  end
+
+  def readable_record(record)
+    "#{record.caption} - #{record.balance} - #{record.depth}"
+  end
+
+  def to_hash(record)
+    {
+      caption: record.caption,
+      balance: record.balance,
+      depth: record.depth
+    }
   end
 end

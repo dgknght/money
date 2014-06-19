@@ -12,11 +12,11 @@ describe AccountsPresenter do
     it 'should enumerate empty summary records' do
       presenter = AccountsPresenter.new(entity)
       expect(presenter).to have_account_display_records([
-        { caption: 'Assets', balance: 0 },
-        { caption: 'Liabilities', balance: 0 },
-        { caption: 'Equity', balance: 0 },
-        { caption: 'Income', balance: 0 },
-        { caption: 'Expense', balance: 0 }
+        { caption: 'Assets', balance: 0, depth: 0 },
+        { caption: 'Liabilities', balance: 0, depth: 0 },
+        { caption: 'Equity', balance: 0, depth: 0 },
+        { caption: 'Income', balance: 0, depth: 0 },
+        { caption: 'Expense', balance: 0, depth: 0 }
       ])
     end
   end
@@ -35,14 +35,14 @@ describe AccountsPresenter do
     it 'should enumerate summary records and detail records' do
       presenter = AccountsPresenter.new(entity)
       expect(presenter).to have_account_display_records([
-        { caption: 'Assets', balance: 5_000 },
-        { caption: 'Checking', balance: 5_000 },
-        { caption: 'Liabilities', balance: 0 },
-        { caption: 'Equity', balance: 5_000 },
-        { caption: 'Retained earnings', balance: 5_000 },
-        { caption: 'Income', balance: 5_000 },
-        { caption: 'Salary', balance: 5_000 },
-        { caption: 'Expense', balance: 0 }
+        { caption: 'Assets', balance: 5_000, depth: 0 },
+        { caption: 'Checking', balance: 5_000, depth: 1 },
+        { caption: 'Liabilities', balance: 0, depth: 0 },
+        { caption: 'Equity', balance: 5_000, depth: 0 },
+        { caption: 'Retained earnings', balance: 5_000, depth: 1 },
+        { caption: 'Income', balance: 5_000, depth: 0 },
+        { caption: 'Salary', balance: 5_000, depth: 1 },
+        { caption: 'Expense', balance: 0, depth: 0 }
       ])
     end
   end
