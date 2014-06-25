@@ -64,6 +64,10 @@ class Account < ActiveRecord::Base
   scope :income, -> { root.where(account_type: Account.income_type) }
   scope :expense, -> { root.where(account_type: Account.expense_type) }
   
+  def all_children
+    children.reduce([]) { |array, child| array + child.children }
+  end
+
   def as_json(options)
     super({ methods: :depth })
   end
@@ -122,7 +126,6 @@ class Account < ActiveRecord::Base
   def depth
     parent ? parent.depth + 1 : 0
   end
-  
 
   def holdings
     HoldingCollection.new(lots)
