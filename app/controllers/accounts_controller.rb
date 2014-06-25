@@ -16,7 +16,7 @@ class AccountsController < ApplicationController
   
   def index
     authorize! :show, @entity
-    @accounts = @entity.accounts
+    @accounts = AccountsPresenter.new(@entity)
     respond_with @accounts
   end
 

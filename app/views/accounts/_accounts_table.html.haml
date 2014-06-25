@@ -3,33 +3,17 @@
     %th Name
     %th Balance
     %th.action_cell &nbsp;
-  %tr.account_category
-    %td Assets
-    %td.number_column= format_currency(sum(accounts.asset))
-    %td
-  -accounts.asset.each do |account|
-    =render "accounts/account_rows", account: account
-  %tr.account_category
-    %td Liabilities
-    %td.number_column= format_currency(sum(accounts.liability))
-    %td
-  -accounts.liability.each do |account|
-    =render "accounts/account_rows", account: account
-  %tr.account_category
-    %td Equity
-    %td.number_column= format_currency(sum(accounts.equity))
-    %td
-  -accounts.equity.each do |account|
-    =render "accounts/account_rows", account: account
-  %tr.account_category
-    %td Income
-    %td.number_column= format_currency(sum(accounts.income))
-    %td
-  -accounts.income.each do |account|
-    =render "accounts/account_rows", account: account
-  %tr.account_category
-    %td Expense
-    %td.number_column= format_currency(sum(accounts.expense))
-    %td
-  -accounts.expense.each do |account|
-    =render "accounts/account_rows", account: account
+  -accounts.each do |record|
+    %tr{ :id => "#{record.identifier}" }
+      %td
+        %div{class: "account_depth_#{record.depth}"}
+          -if record.account
+            =link_to record.caption, account_link(record.account)
+          -else
+            =record.caption
+      %td.number_column= format_currency(record.balance)
+      %td.action_cell
+        -if record.account
+          = link_to "Edit", edit_account_path(record.account), class: 'edit_button', title: 'Click here to edit this account.'
+          = link_to "Reconcile", new_account_reconciliation_path(record.account), class: 'reconcile_button', title: 'Click here to reconcile this account with a bank statement.'
+          = render "shared/delete_form", :resource => record.account, :url => account_path(record.account)

@@ -7,6 +7,10 @@ class AccountSummaryRecord
     @records << record
   end
 
+  def account
+    nil
+  end
+
   def balance
     @records.select { |r| r.depth == 1 }.
       reduce(0) { |sum, record| sum + record.balance }
@@ -18,6 +22,10 @@ class AccountSummaryRecord
 
   def each
     ([self] + @records).each { |r| yield r }
+  end
+
+  def identifier
+    "summary_#{caption}"
   end
 
   def initialize(caption, records)

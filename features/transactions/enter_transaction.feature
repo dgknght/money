@@ -3,23 +3,28 @@ Feature: Enter a transaction
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
     
-    And entity "Personal" has an asset account named "Checking" with a balance of $100.00
-    And entity "Personal" has an expense account named "Groceries" with a balance of $0.00
-    And entity "Personal" has an equity account named "Retained" with a balance of $0.00
+    And entity "Personal" has the following accounts
+      | Name             | Account type |
+      | Checking         | asset        |
+      | Groceries        | expense      |
+      | Opening balances | equity       |
+    And entity "Personal" has the following transactions
+      | Description     | Transaction date | Amount | Debit account | Credit account   |
+      | Opening balance |       2014-01-01 |    100 | Checking      | Opening balances |
     And I am signed in as "john@doe.com/please01"
 
     When I am on the "Personal" entity page
     Then I should see "Transactions" within the secondary navigation
     And I should see the following accounts table
-      | Name        | Balance |
-      | Assets      | 100.00  |
-      | Checking    | 100.00  |
-      | Liabilities |   0.00  |
-      | Equity      |   0.00  |
-      | Retained    |   0.00  |
-      | Income      |   0.00  |
-      | Expense     |   0.00  |
-      | Groceries   |   0.00  |
+      | Name             | Balance |
+      | Assets           | 100.00  |
+      | Checking         | 100.00  |
+      | Liabilities      |   0.00  |
+      | Equity           | 100.00  |
+      | Opening balances | 100.00  |
+      | Income           |   0.00  |
+      | Expense          |   0.00  |
+      | Groceries        |   0.00  |
 
     When I click "Transactions" within the secondary navigation
     Then I should see "Transactions" within the page subtitle
@@ -38,12 +43,13 @@ Feature: Enter a transaction
 
     When I click "Back"
     Then I should see the following accounts table
-      | Name        | Balance |
-      | Assets      |  43.35  |
-      | Checking    |  43.35  |
-      | Liabilities |   0.00  |
-      | Equity      |   0.00  |
-      | Retained    |   0.00  |
-      | Income      |   0.00  |
-      | Expense     |  56.65  |
-      | Groceries   |  56.65  |
+      | Name              | Balance |
+      | Assets            |   43.35 |
+      | Checking          |   43.35 |
+      | Liabilities       |    0.00 |
+      | Equity            |   43.35 |
+      | Opening balances  |  100.00 |
+      | Retained earnings |  -56.65 |
+      | Income            |    0.00 |
+      | Expense           |   56.65 |
+      | Groceries         |   56.65 |

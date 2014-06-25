@@ -6,7 +6,16 @@ require 'accounts_presenter/account_summary_record'
 class AccountsPresenter
   include Enumerable
 
-  DisplayRecord = Struct.new(:caption, :balance, :depth)
+  def as_json(options)
+    @entity.accounts.as_json(options)
+  end
+
+  DisplayRecord = Struct.new(:caption, :balance, :depth, :account) do
+    def identifier
+      "adjustement_#{caption.gsub(/\s/, '')}"
+    end
+  end
+
   def each
     asset = summary(:asset, 'Assets')
     liability = summary(:liability, 'Liabilities')

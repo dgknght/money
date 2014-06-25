@@ -26,15 +26,16 @@ Feature: Reconcile an account
   When I click "Accounts" within the navigation
   Then I should see "Accounts" within the page title
   Then I should see the following accounts table
-    | Name        |   Balance |
-    | Assets      |  9,800.00 |
-    | Checking    |  9,800.00 |
-    | Liabilities |      0.00 |
-    | Equity      |      0.00 |
-    | Income      | 10,000.00 |
-    | Salary      | 10,000.00 |
-    | Expense     |    200.00 |
-    | Groceries   |    200.00 |
+    | Name              |   Balance |
+    | Assets            |  9,800.00 |
+    | Checking          |  9,800.00 |
+    | Liabilities       |      0.00 |
+    | Equity            |  9,800.00 |
+    | Retained earnings |  9,800.00 |
+    | Income            | 10,000.00 |
+    | Salary            | 10,000.00 |
+    | Expense           |    200.00 |
+    | Groceries         |    200.00 |
   
   When I click "Reconcile" within the account row for "Checking"
   Then I should see "Reconciliation" within the page title
