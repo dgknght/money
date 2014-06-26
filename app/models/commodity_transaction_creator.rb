@@ -158,6 +158,11 @@ class CommodityTransactionCreator
                              entity: account.entity)
   end
 
+  def create_price_record
+    commodity.prices.create!(trade_date: transaction_date,
+                             price: price)
+  end
+
   def create_sell_transaction(sale_results)
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
                                                   description: sale_description)
@@ -214,6 +219,7 @@ class CommodityTransactionCreator
                                       shares_traded: -result.shares,
                                       price: price)
     end
+    create_price_record
     transaction
   end
 

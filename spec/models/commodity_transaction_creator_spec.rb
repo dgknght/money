@@ -193,8 +193,9 @@ describe CommodityTransactionCreator do
         FactoryGirl.create(:income_account, name: 'Long-term capital gains',
                                             entity: ira.entity)
       end
+      let (:sell_attributes) { attributes.merge(action: 'sell') }
+
       context 'that sells some of the shares owned' do
-        let (:sell_attributes) { attributes.merge(action: 'sell') }
 
         context 'using FILO' do
           it 'should subtract the shares sold from the lot' do
@@ -377,6 +378,13 @@ describe CommodityTransactionCreator do
             st_gains.reload
           end.to change(st_gains, :balance).by(200)
         end
+      end
+
+      it 'should create a price history record' do
+        expect do
+          CommodityTransactionCreator.new(sell_attributes).create
+        end.to change(Price, :count).by(1)
+        expect(kss.prices.last.price).to eq(12.34)
       end
     end
   end
