@@ -55,7 +55,7 @@ Feature: Enter a commodity sale transaction
     When I click "Add"
     Then I should see "New commodity transaction" within the page title
 
-    When I fill in "Transaction date" with "1/15/2015"
+    When I fill in "Transaction date" with "1/15/2014"
     And I select "sell" from the "Action" list
     And I fill in "Symbol" with "KSS"
     And I fill in "Shares" with "50"
@@ -67,7 +67,7 @@ Feature: Enter a commodity sale transaction
     And I should see the following holdings table
       | Symbol          |     Value |     Cost | Gain/Loss |
       | KSS             |    600.00 |   500.00 |    100.00 |
-      | Commodity Total |    600.00 |          |           |
+      | Commodity total |    600.00 |          |           |
       | Cash            |  9,600.00 |          |           |
       | Total value     | 10,200.00 |   500.00 |    100.00 |
 
@@ -84,7 +84,7 @@ Feature: Enter a commodity sale transaction
       | Unrealized gains         |    100.00 |
       | Retained earnings        |    100.00 |
       | Income                   |    100.00 |
-      | Short-term capital gains |    100.00 |
       | Long-term capital gains  |      0.00 |
-      | Expenses                 |      0.00 |
+      | Short-term capital gains |    100.00 |
+      | Expense                  |      0.00 |
 
