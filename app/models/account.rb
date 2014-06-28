@@ -59,6 +59,7 @@ class Account < ActiveRecord::Base
 
   scope :root, -> { where(parent_id: nil).order(:name) }
   scope :asset, -> { root.where(account_type: Account.asset_type) }
+  scope :commodity, -> { asset.where(content_type: Account.commodity_content) }
   scope :liability, -> { root.where(account_type: Account.liability_type) }
   scope :equity, -> { root.where(account_type: Account.equity_type) }
   scope :income, -> { root.where(account_type: Account.income_type) }
@@ -157,6 +158,15 @@ class Account < ActiveRecord::Base
     credit_total = transaction_items.credits.sum(:amount);
     self.balance = (debit_total * polarity(TransactionItem.debit)) + (credit_total * polarity(TransactionItem.credit))
     save!
+  end
+
+  def unrealized_gains
+    lots.reduce(0) { |sum, lot| sum + lot.gain_loss }
+  end
+
+  def value
+    return balance if currency?
+    lots.reduce(0) { |sum, lot| sum + lot.current_value }
   end
   
   private

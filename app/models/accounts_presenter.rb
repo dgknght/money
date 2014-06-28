@@ -19,9 +19,11 @@ class AccountsPresenter
   def each
     asset = summary(:asset, 'Assets')
     liability = summary(:liability, 'Liabilities')
+
     equity = summary(:equity, 'Equity')
-    balancer = balancing_record(asset.balance, liability.balance, equity.balance) 
-    equity << balancer if balancer
+    equity << unrealized_gains
+    equity << balancing_record(asset.balance, liability.balance, equity.balance) 
+
     income = summary(:income, 'Income')
     expense = summary(:expense, 'Expense')
 
@@ -62,5 +64,10 @@ class AccountsPresenter
     summaries.reduce([]) do |list, record|
       list + record.to_a
     end
+  end
+
+  def unrealized_gains
+    amount = @entity.accounts.commodity.reduce(0) { |sum, account| sum + account.unrealized_gains }
+    DisplayRecord.new('Unrealized gains', amount, 1) unless amount == 0
   end
 end

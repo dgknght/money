@@ -71,5 +71,65 @@ describe AccountsPresenter do
         { caption: 'Expense', balance: 0, depth: 0 }
       ])
     end
+
+    context 'and investment accounts are present' do
+      let!(:ira) { FactoryGirl.create(:commodity_account, name: 'IRA', entity: entity) }
+      let!(:lt_grains) { FactoryGirl.create(:income_account, name: 'Long-term capital gains', entity: entity) }
+      let!(:st_grains) { FactoryGirl.create(:income_account, name: 'Short-term capital gains', entity: entity) }
+      let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services', entity: entity) }
+      let!(:open_ira) do
+        FactoryGirl.create(:transaction, description: 'Opening balance',
+                                        transaction_date: '2014-01-01',
+                                        amount: 1_500,
+                                        debit_account: ira,
+                                        credit_account: opening_balances)
+      end
+      before(:all) { Timecop.freeze('2014-06-01') }
+      after(:all) { Timecop.return }
+      before(:each) do
+        CommodityTransactionCreator.new(
+          account: ira,
+          action: CommodityTransactionCreator.buy,
+          symbol: 'KSS',
+          shares: 100,
+          value: 1_000,
+          transaction_date: '2014-01-02'
+        ).create!
+        CommodityTransactionCreator.new(
+          account: ira,
+          action: CommodityTransactionCreator.sell,
+          symbol: 'KSS',
+          shares: 50,
+          value: 600,
+          transaction_date: '2014-02-02'
+        ).create!
+      end
+
+      it 'should include unrealized gains' do
+        presenter = AccountsPresenter.new(entity)
+        expect(presenter).to have_account_display_records([
+          { caption: 'Assets', balance: 36_700, depth: 0 },
+          { caption: 'Checking', balance: 5_000, depth: 1 },
+          { caption: 'IRA', balance: 1_700, depth: 1 },
+          { caption: 'KSS', balance: 600, depth: 2 },
+          { caption: 'Savings', balance: 30_000, depth: 1 },
+          { caption: 'Car', balance: 6_000, depth: 2 },
+          { caption: 'Reserve', balance: 24_000, depth: 2 },
+          { caption: 'Liabilities', balance: 0, depth: 0 },
+
+          { caption: 'Equity', balance: 36_700, depth: 0 },
+          { caption: 'Opening balances', balance: 31_500, depth: 1 },
+          { caption: 'Unrealized gains', balance: 100, depth: 1 },
+          { caption: 'Retained earnings', balance: 5_100, depth: 1 },
+
+          { caption: 'Income', balance: 5_100, depth: 0 },
+          { caption: 'Long-term capital gains', balance: 0, depth: 1 },
+          { caption: 'Salary', balance: 5_000, depth: 1 },
+          { caption: 'Short-term capital gains', balance: 100, depth: 1 },
+
+          { caption: 'Expense', balance: 0, depth: 0 }
+        ])
+      end
+    end
   end
 end

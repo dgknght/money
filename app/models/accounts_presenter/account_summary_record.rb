@@ -4,7 +4,7 @@ class AccountSummaryRecord
   attr_reader :caption
 
   def <<(record)
-    @records << record
+    @records << record if record
   end
 
   def account

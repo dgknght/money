@@ -15,6 +15,7 @@ describe Account do
   let!(:earnings) { FactoryGirl.create(:equity_account, name: 'earnings', entity_id: entity.id) }
   let!(:salary) { FactoryGirl.create(:income_account, name: 'salary', entity_id: entity.id) }
   let!(:groceries) { FactoryGirl.create(:expense_account, name: 'groceries', entity_id: entity.id) }
+  let!(:ira) { FactoryGirl.create(:commodity_account, name: 'IRA', entity: entity) }
   
   it 'should be creatable from valid attributes' do
     account = Account.new(attributes)
@@ -214,7 +215,7 @@ describe Account do
 
   describe 'asset scope' do
     it 'should return a list of asset accounts' do
-      Account.asset.should == [checking]
+      Account.asset.should == [ira, checking]
     end
   end
   
@@ -239,6 +240,12 @@ describe Account do
   describe 'expense scope' do
     it 'should return a list of expense accounts' do
       Account.expense.should == [groceries]
+    end
+  end
+
+  describe 'commodity scope' do
+    it 'should return a list of commodity accounts' do
+      Account.commodity.should == [ira]
     end
   end
   
@@ -456,11 +463,20 @@ describe Account do
     end
   end
 
+  context 'for a currency account' do
+    describe '#value' do
+      it 'should return the balance' do
+        expect(checking.value).to eq(checking.balance)
+      end
+    end
+  end
+
   context 'for a commodity account' do
     let (:account) { FactoryGirl.create(:commodity_account) }
     let (:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
     let!(:lot1) { FactoryGirl.create(:lot, account: account, commodity: kss, shares_owned: 100, purchase_date: '2014-01-01', price: 10.00) }
     let!(:lot2) { FactoryGirl.create(:lot, account: account, commodity: kss, shares_owned: 100, purchase_date: '2014-02-01', price: 12.00) }
+    let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14) }
 
     describe '#holdings' do
       it 'should list summaries of commodities held in the account' do
@@ -470,6 +486,18 @@ describe Account do
         expect(holding.total_shares).to eq(200)
         expect(holding.average_price).to eq(11.00)
         expect(holding).to have(2).lots
+      end
+    end
+
+    describe '#unrealized_gains' do
+      it 'should return the amount that would be earned if all holdings were sold today' do
+        expect(account.unrealized_gains).to eq(600)
+      end
+    end
+
+    describe '#value' do
+      it 'should return the value of the commodity holdings based on the most recent trading price' do
+        expect(account.value).to eq(2_800)
       end
     end
   end
