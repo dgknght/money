@@ -16,6 +16,7 @@ describe Account do
   let!(:salary) { FactoryGirl.create(:income_account, name: 'salary', entity_id: entity.id) }
   let!(:groceries) { FactoryGirl.create(:expense_account, name: 'groceries', entity_id: entity.id) }
   let!(:ira) { FactoryGirl.create(:commodity_account, name: 'IRA', entity: entity) }
+  let!(:opening_balances) { FactoryGirl.create(:equity_account, name: 'opening balances', entity: entity) }
   
   it 'should be creatable from valid attributes' do
     account = Account.new(attributes)
@@ -227,7 +228,7 @@ describe Account do
   
   describe 'equity scope' do
     it 'should return a list of equity accounts' do
-      Account.equity.should == [earnings]
+      Account.equity.should == [earnings, opening_balances]
     end
   end
   
@@ -464,18 +465,42 @@ describe Account do
   end
 
   context 'for a currency account' do
+    let (:savings) { FactoryGirl.create(:asset_account, name: 'savings', entity: entity) }
+    let (:car) { FactoryGirl.create(:asset_account, name: 'car', entity: entity, parent: savings) }
+    let (:reserve) { FactoryGirl.create(:asset_account, name: 'reserve', entity: entity, parent: savings) }
+    let!(:car_opening) { FactoryGirl.create(:transaction, amount: 1_000, debit_account: car, credit_account: opening_balances) }
+    let!(:reserve_opening) { FactoryGirl.create(:transaction, amount: 24_000, debit_account: reserve, credit_account: opening_balances) }
     describe '#value' do
-      it 'should return the balance' do
-        expect(checking.value).to eq(checking.balance)
+      it 'should return the balance_with_children' do
+        expect(savings.value).to eq(25_000)
       end
     end
   end
 
   context 'for a commodity account' do
-    let (:account) { FactoryGirl.create(:commodity_account) }
-    let (:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
-    let!(:lot1) { FactoryGirl.create(:lot, account: account, commodity: kss, shares_owned: 100, purchase_date: '2014-01-01', price: 10.00) }
-    let!(:lot2) { FactoryGirl.create(:lot, account: account, commodity: kss, shares_owned: 100, purchase_date: '2014-02-01', price: 12.00) }
+    let (:account) { FactoryGirl.create(:commodity_account, name: '401k') }
+    let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
+    let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: account, credit_account: opening_balances) }
+    let!(:purchase1) do
+      CommodityTransactionCreator.new(
+        account: account,
+        action: CommodityTransactionCreator.buy,
+        symbol: 'kss',
+        shares: 100,
+        transaction_date: '2014-01-01',
+        value: 1_000
+      ).create!
+    end
+    let!(:purchase2) do
+      CommodityTransactionCreator.new(
+        account: account,
+        action: CommodityTransactionCreator.buy,
+        symbol: 'kss',
+        shares: 100,
+        transaction_date: '2014-02-01',
+        value: 1_200
+      ).create!
+    end
     let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14) }
 
     describe '#holdings' do
@@ -496,8 +521,8 @@ describe Account do
     end
 
     describe '#value' do
-      it 'should return the value of the commodity holdings based on the most recent trading price' do
-        expect(account.value).to eq(2_800)
+      it 'should return the value of the commodity holdings based on the most recent trading price + the cash held in the account' do
+        expect(account.value).to eq(3_600)
       end
     end
   end

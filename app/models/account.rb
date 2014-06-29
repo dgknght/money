@@ -165,10 +165,10 @@ class Account < ActiveRecord::Base
   end
 
   def value
-    return balance if currency?
-    lots.reduce(0) { |sum, lot| sum + lot.current_value }
+    return balance_with_children if currency?
+    balance + lots.reduce(0) { |sum, lot| sum + lot.current_value }
   end
-  
+
   private
     def credit_transaction_items(start_date, end_date)
       result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date)
