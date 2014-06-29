@@ -130,7 +130,9 @@ describe CommodityTransactionCreator do
 
       it 'should create an account to track money used to purchase this commodity, if the account does not exist' do
         CommodityTransactionCreator.new(attributes).create
-        expect(Account.find_by_name('KSS')).not_to be_nil
+        new_account = Account.find_by_name('KSS')
+        expect(new_account).not_to be_nil
+        expect(new_account).to be_commodity
       end
 
       it 'should debit the account dedicated to tracking purchases of this commodity' do
