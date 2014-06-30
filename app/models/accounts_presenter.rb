@@ -67,7 +67,7 @@ class AccountsPresenter
   end
 
   def unrealized_gains
-    amount = @entity.accounts.commodity.reduce(0) { |sum, account| sum + account.unrealized_gains }
+    amount = @entity.accounts.commodities.reduce(0) { |sum, account| sum + account.unrealized_gains }
     DisplayRecord.new('Unrealized gains', amount, 1) unless amount == 0
   end
 end

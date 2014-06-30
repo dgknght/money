@@ -4,7 +4,7 @@ describe AccountsController do
   let (:entity) { FactoryGirl.create(:entity) }
   let!(:checking) { FactoryGirl.create(:account, entity: entity, name: 'checking') }
   let!(:cash) { FactoryGirl.create(:account, entity: entity, name: 'cash') }
-  let (:ira) { FactoryGirl.create(:commodity_account, entity: entity, name: 'IRA') }
+  let (:ira) { FactoryGirl.create(:commodities_account, entity: entity, name: 'IRA') }
   let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
   let (:purchase_attributes) do
     {

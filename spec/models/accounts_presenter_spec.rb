@@ -73,7 +73,7 @@ describe AccountsPresenter do
     end
 
     context 'and investment accounts are present' do
-      let!(:ira) { FactoryGirl.create(:commodity_account, name: 'IRA', entity: entity) }
+      let!(:ira) { FactoryGirl.create(:commodities_account, name: 'IRA', entity: entity) }
       let!(:lt_grains) { FactoryGirl.create(:income_account, name: 'Long-term capital gains', entity: entity) }
       let!(:st_grains) { FactoryGirl.create(:income_account, name: 'Short-term capital gains', entity: entity) }
       let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services', entity: entity) }

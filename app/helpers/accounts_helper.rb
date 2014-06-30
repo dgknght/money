@@ -1,6 +1,6 @@
 module AccountsHelper
   def account_link(account)
-    return account_holdings_path(account) if account.commodity?
+    return account_holdings_path(account) if account.commodities?
     account_transaction_items_path(account)
   end
 

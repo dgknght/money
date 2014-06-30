@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   has_many :transaction_items
   has_many :lots
 
-  CONTENT_TYPES = %w(currency commodity)
+  CONTENT_TYPES = %w(currency commodities)
 
   class << self
     CONTENT_TYPES.each do |type|
@@ -59,7 +59,7 @@ class Account < ActiveRecord::Base
 
   scope :root, -> { where(parent_id: nil).order(:name) }
   scope :asset, -> { root.where(account_type: Account.asset_type) }
-  scope :commodity, -> { asset.where(content_type: Account.commodity_content) }
+  scope :commodities, -> { asset.where(content_type: Account.commodities_content) }
   scope :liability, -> { root.where(account_type: Account.liability_type) }
   scope :equity, -> { root.where(account_type: Account.equity_type) }
   scope :income, -> { root.where(account_type: Account.income_type) }

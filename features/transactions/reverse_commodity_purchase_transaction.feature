@@ -8,7 +8,7 @@ Feature: Reverse a commodity purchase
     And user "john@doe.com" has an entity named "Personal"
     And entity "Personal" has the following accounts
       | Name                     | Account type   | Content type |
-      | 401k                     | asset          | commodity    |
+      | 401k                     | asset          | commodities  |
       | Short-term capital gains | income         | currency     |
       | Long-term capital gains  | income         | currency     |
       | Opening balances         | equity         | currency     |

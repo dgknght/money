@@ -132,7 +132,7 @@ describe CommodityTransactionCreator do
         CommodityTransactionCreator.new(attributes).create
         new_account = Account.find_by_name('KSS')
         expect(new_account).not_to be_nil
-        expect(new_account).to be_commodity
+        expect(new_account).to be_commodities
       end
 
       it 'should debit the account dedicated to tracking purchases of this commodity' do

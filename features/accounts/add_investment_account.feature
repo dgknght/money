@@ -29,7 +29,7 @@ Feature: Add an investment account
     Then I should see "New account" within the page title
 
     When I fill in "Name" with "401k"
-    And I select "commodity" from the "Content type" list
+    And I select "commodities" from the "Content type" list
     And I click "Save"
     Then I should see "The account was successfully created." within the notice area
     And I should see the following accounts table

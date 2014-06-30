@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe TransactionDestroyer do
   let (:entity) { FactoryGirl.create(:entity) }
-  let (:ira) { FactoryGirl.create(:commodity_account, entity: entity) }
+  let (:ira) { FactoryGirl.create(:commodities_account, entity: entity) }
   let!(:st_gains) { FactoryGirl.create(:income_account, entity: entity, name: 'Short-term capital gains') }
   let!(:lt_gains) { FactoryGirl.create(:income_account, entity: entity, name: 'Long-term capital gains') }
   let!(:commodity) { FactoryGirl.create(:commodity, symbol: 'KSS', entity: entity) }

@@ -15,7 +15,7 @@ describe Account do
   let!(:earnings) { FactoryGirl.create(:equity_account, name: 'earnings', entity_id: entity.id) }
   let!(:salary) { FactoryGirl.create(:income_account, name: 'salary', entity_id: entity.id) }
   let!(:groceries) { FactoryGirl.create(:expense_account, name: 'groceries', entity_id: entity.id) }
-  let!(:ira) { FactoryGirl.create(:commodity_account, name: 'IRA', entity: entity) }
+  let!(:ira) { FactoryGirl.create(:commodities_account, name: 'IRA', entity: entity) }
   let!(:opening_balances) { FactoryGirl.create(:equity_account, name: 'opening balances', entity: entity) }
   
   it 'should be creatable from valid attributes' do
@@ -179,8 +179,8 @@ describe Account do
       account.should be_valid
     end
 
-    it 'should accept "commodity"' do
-      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+    it 'should accept "commodities"' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodities_content))
       account.should be_valid
     end
 
@@ -197,20 +197,20 @@ describe Account do
     end
 
     it 'should be false if the account type is not currency' do
-      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodities_content))
       account.should_not be_currency
     end
   end
 
-  describe '#commodity?' do
-    it 'should be true if the account type is commodity' do
-      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
-      account.should be_commodity
+  describe '#commodities?' do
+    it 'should be true if the account type is commodities' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodities_content))
+      account.should be_commodities
     end
 
-    it 'should be false if the account type is not commodity' do
+    it 'should be false if the account type is not commodities' do
       account = entity.accounts.new(attributes.merge(content_type: Account.currency_content))
-      account.should_not be_commodity
+      account.should_not be_commodities
     end
   end
 
@@ -244,9 +244,9 @@ describe Account do
     end
   end
 
-  describe 'commodity scope' do
-    it 'should return a list of commodity accounts' do
-      Account.commodity.should == [ira]
+  describe 'commodities scope' do
+    it 'should return a list of commodities accounts' do
+      Account.commodities.should == [ira]
     end
   end
   
@@ -477,8 +477,8 @@ describe Account do
     end
   end
 
-  context 'for a commodity account' do
-    let (:account) { FactoryGirl.create(:commodity_account, name: '401k') }
+  context 'for a commodities account' do
+    let (:account) { FactoryGirl.create(:commodities_account, name: '401k') }
     let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
     let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: account, credit_account: opening_balances) }
     let!(:purchase1) do

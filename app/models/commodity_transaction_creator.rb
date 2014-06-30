@@ -155,7 +155,7 @@ class CommodityTransactionCreator
   def create_commodity_account(symbol)
     account.children.create!(name: symbol,
                              account_type: Account.asset_type,
-                             content_type: Account.commodity_content,
+                             content_type: Account.commodities_content,
                              entity: account.entity)
   end
 
