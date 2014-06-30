@@ -6,6 +6,7 @@ describe TransactionDestroyer do
   let!(:st_gains) { FactoryGirl.create(:income_account, entity: entity, name: 'Short-term capital gains') }
   let!(:lt_gains) { FactoryGirl.create(:income_account, entity: entity, name: 'Long-term capital gains') }
   let!(:commodity) { FactoryGirl.create(:commodity, symbol: 'KSS', entity: entity) }
+  let (:commodity_account) { Account.find_by_name('KSS') }
   let!(:regular_transaction) { FactoryGirl.create(:transaction, entity: entity) }
   let!(:commodity_purchase_transaction) do
     CommodityTransactionCreator.new(
@@ -56,7 +57,7 @@ describe TransactionDestroyer do
         end
 
         it 'should restore the shares to the lot' do
-          lot = ira.lots.first
+          lot = commodity_account.lots.first
           expect do
             TransactionDestroyer.new(commodity_sale_transaction).destroy
             lot.reload

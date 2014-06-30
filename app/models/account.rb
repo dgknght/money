@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   has_many :transaction_items
   has_many :lots
 
-  CONTENT_TYPES = %w(currency commodities)
+  CONTENT_TYPES = %w(currency commodities commodity)
 
   class << self
     CONTENT_TYPES.each do |type|
@@ -165,8 +165,10 @@ class Account < ActiveRecord::Base
   end
 
   def value
+    # This really wants to be polymorphic, but that feels like overkill here
     return balance_with_children if currency?
-    balance + lots.reduce(0) { |sum, lot| sum + lot.current_value }
+    return lots.reduce(0) { |sum, lot| sum + lot.current_value } if commodity?
+    return children.reduce(balance) { |sum, child| sum + child.value }
   end
 
   private

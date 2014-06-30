@@ -132,7 +132,7 @@ describe CommodityTransactionCreator do
         CommodityTransactionCreator.new(attributes).create
         new_account = Account.find_by_name('KSS')
         expect(new_account).not_to be_nil
-        expect(new_account).to be_commodities
+        expect(new_account).to be_commodity
       end
 
       it 'should debit the account dedicated to tracking purchases of this commodity' do
@@ -164,14 +164,14 @@ describe CommodityTransactionCreator do
 
     context 'with a "sell" action' do
       let!(:lot1) do
-        FactoryGirl.create(:lot, account: ira,
+        FactoryGirl.create(:lot, account: kss_account,
                                   commodity: kss,
                                   price: 8.00,
                                   shares_owned: 100,
                                   purchase_date: '2014-01-01')
       end
       let!(:lot2) do
-        FactoryGirl.create(:lot, account: ira,
+        FactoryGirl.create(:lot, account: kss_account,
                                   commodity: kss,
                                   price: 10.00,
                                   shares_owned: 100,
@@ -341,7 +341,7 @@ describe CommodityTransactionCreator do
 
       context 'that sells shares across lots with mixed long-term and short-term gains' do
         let!(:lot3) do
-          FactoryGirl.create(:lot, account: ira,
+          FactoryGirl.create(:lot, account: kss_account,
                                     commodity: kss,
                                     price: 5.00,
                                     shares_owned: 100,

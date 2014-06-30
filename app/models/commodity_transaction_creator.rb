@@ -155,7 +155,7 @@ class CommodityTransactionCreator
   def create_commodity_account(symbol)
     account.children.create!(name: symbol,
                              account_type: Account.asset_type,
-                             content_type: Account.commodities_content,
+                             content_type: Account.commodity_content,
                              entity: account.entity)
   end
 
@@ -202,7 +202,7 @@ class CommodityTransactionCreator
   end
 
   def process_buy_lot(transaction)
-    lot = account.lots.create!(commodity: commodity,
+    lot = commodity_account.lots.create!(commodity: commodity,
                                shares_owned: shares,
                                price: price,
                                purchase_date: transaction_date)
@@ -227,7 +227,7 @@ class CommodityTransactionCreator
   def process_sell_lots
     shares_to_remove = shares
     result = []
-    lots = fifo? ? account.lots.fifo : account.lots.filo
+    lots = fifo? ? commodity_account.lots.fifo : commodity_account.lots.filo
     lots.each do |lot|
       if shares_to_remove <= lot.shares_owned
         result << OpenStruct.new(shares: shares_to_remove,

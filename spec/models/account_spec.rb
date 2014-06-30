@@ -179,6 +179,11 @@ describe Account do
       account.should be_valid
     end
 
+    it 'should accept "commodity"' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+      account.should be_valid
+    end
+
     it 'should accept "commodities"' do
       account = entity.accounts.new(attributes.merge(content_type: Account.commodities_content))
       account.should be_valid
@@ -199,6 +204,18 @@ describe Account do
     it 'should be false if the account type is not currency' do
       account = entity.accounts.new(attributes.merge(content_type: Account.commodities_content))
       account.should_not be_currency
+    end
+  end
+
+  describe '#commodity?' do
+    it 'should be true if the account type is commodity' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.commodity_content))
+      account.should be_commodity
+    end
+
+    it 'should be false if the account type is not commodities' do
+      account = entity.accounts.new(attributes.merge(content_type: Account.currency_content))
+      account.should_not be_commodity
     end
   end
 
@@ -477,9 +494,10 @@ describe Account do
     end
   end
 
-  context 'for a commodities account' do
+  shared_context 'investment accounts' do
     let (:account) { FactoryGirl.create(:commodities_account, name: '401k') }
     let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
+    let (:kss_account) { Account.find_by_name('kss') }
     let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: account, credit_account: opening_balances) }
     let!(:purchase1) do
       CommodityTransactionCreator.new(
@@ -502,11 +520,25 @@ describe Account do
       ).create!
     end
     let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14) }
+  end
+
+  context 'for a commodity account' do
+    include_context 'investment accounts'
+
+    describe '#value' do
+      it 'should return the current value of the shares of the commodity currently held in the account' do
+        expect(kss_account.value).to eq(2_800)
+      end
+    end
+  end
+
+  context 'for a commodities account' do
+    include_context 'investment accounts'
 
     describe '#holdings' do
       it 'should list summaries of commodities held in the account' do
-        expect(account).to have(1).holding
-        holding = account.holdings.first
+        expect(kss_account).to have(1).holding
+        holding = kss_account.holdings.first
         expect(holding.commodity).to eq(kss)
         expect(holding.total_shares).to eq(200)
         expect(holding.average_price).to eq(11.00)
@@ -516,12 +548,12 @@ describe Account do
 
     describe '#unrealized_gains' do
       it 'should return the amount that would be earned if all holdings were sold today' do
-        expect(account.unrealized_gains).to eq(600)
+        expect(kss_account.unrealized_gains).to eq(600)
       end
     end
 
     describe '#value' do
-      it 'should return the value of the commodity holdings based on the most recent trading price + the cash held in the account' do
+      it 'should return the cash balance plus the value of the child accounts' do
         expect(account.value).to eq(3_600)
       end
     end
