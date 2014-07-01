@@ -65,7 +65,7 @@ namespace :seed_data do
       AccountDef.new('Checking', 'asset'),
       AccountDef.new('Home', 'asset'),
       AccountDef.new('Savings', 'asset', [AccountDef.new('Car', 'asset'), AccountDef.new('Reserve', 'asset')]),
-      AccountDef.new('401k', 'asset', [], 'commodity'),
+      AccountDef.new('401k', 'asset', [], 'commodities'),
       AccountDef.new('Credit Card', 'liability'),
       AccountDef.new('Home Loan', 'liability'),
       AccountDef.new('Opening Balances', 'equity'),

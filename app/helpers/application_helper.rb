@@ -18,4 +18,8 @@ module ApplicationHelper
   def format_price(value)
     number_to_currency(value, unit: '', precision: 4)
   end
+
+  def format_shares(value)
+    number_to_currency(value, unit: '', precision: 4)
+  end
 end

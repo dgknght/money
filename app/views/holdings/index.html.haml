@@ -4,12 +4,14 @@
   %tr
     %th Symbol
     %th.number_column Value
+    %th.number_column Shares
     %th.number_column Cost
     %th.number_column Gain/Loss
   -@holdings.each do |holding|
     %tr
       %td= holding.commodity.symbol
       %td.number_column= format_currency(holding.current_value)
+      %td.number_column= format_shares(holding.total_shares)
       %td.number_column= format_currency(holding.total_cost)
       %td.number_column= format_currency(holding.total_gain_loss)
   %tr
@@ -17,14 +19,17 @@
     %td.number_column= format_currency(@total_current_value)
     %td &nbsp;
     %td &nbsp;
+    %td &nbsp;
   %tr
     %td Cash
     %td.number_column= format_currency(@account.balance)
     %td &nbsp;
     %td &nbsp;
+    %td &nbsp;
   %tr
     %td Total value
     %td.number_column= format_currency(@total_current_value + @account.balance)
+    %td &nbsp;
     %td.number_column= format_currency(@holdings.total_cost)
     %td.number_column= format_currency(@holdings.total_gain_loss)
 .actions

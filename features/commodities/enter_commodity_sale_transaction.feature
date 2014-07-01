@@ -45,11 +45,11 @@ Feature: Enter a commodity sale transaction
     When I click "401k"
     Then I should see "401k Holdings" within the page title
     And I should see the following holdings table
-      | Symbol          |     Value |     Cost | Gain/Loss |
-      | KSS             |  1,000.00 | 1,000.00 |      0.00 |
-      | Commodity total |  1,000.00 |          |           |
-      | Cash            |  9,000.00 |          |           |
-      | Total value     | 10,000.00 | 1,000.00 |      0.00 |
+      | Symbol          |     Value |   Shares |     Cost | Gain/Loss |
+      | KSS             |  1,000.00 | 100.0000 | 1,000.00 |      0.00 |
+      | Commodity total |  1,000.00 |          |          |           |
+      | Cash            |  9,000.00 |          |          |           |
+      | Total value     | 10,000.00 |          | 1,000.00 |      0.00 |
 
     When I click "Add"
     Then I should see "New commodity transaction" within the page title
@@ -64,11 +64,11 @@ Feature: Enter a commodity sale transaction
     Then I should see "The transaction was created successfully." within the notice area
     And I should see "401k Holdings" within the page title
     And I should see the following holdings table
-      | Symbol          |     Value |     Cost | Gain/Loss |
-      | KSS             |    600.00 |   500.00 |    100.00 |
-      | Commodity total |    600.00 |          |           |
-      | Cash            |  9,600.00 |          |           |
-      | Total value     | 10,200.00 |   500.00 |    100.00 |
+      | Symbol          |     Value |  Shares |     Cost | Gain/Loss |
+      | KSS             |    600.00 | 50.0000 |   500.00 |    100.00 |
+      | Commodity total |    600.00 |         |          |           |
+      | Cash            |  9,600.00 |         |          |           |
+      | Total value     | 10,200.00 |         |   500.00 |    100.00 |
 
     When I click "Back"
     Then I should see "Accounts" within the page title
