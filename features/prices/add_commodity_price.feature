@@ -50,7 +50,7 @@ Feature: Add a commodity price
 #    And entity "Personal" has the following accounts
 #      | Account type | Name             | Content type |
 #      | equity       | Opening Balances | currency     |
-#      | asset        | 401k             | commodity    |
+#      | asset        | 401k             | commoditiies  |
 #
 #    And account "401k" has the following commodity transactions
 #      | Date     | Action | Symbol | Shares |   Amount |
