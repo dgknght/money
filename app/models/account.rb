@@ -164,6 +164,10 @@ class Account < ActiveRecord::Base
     lots.reduce(0) { |sum, lot| sum + lot.gain_loss }
   end
 
+  def unrealized_gains_with_children
+    children.reduce(unrealized_gains) { |sum, child| sum + child.unrealized_gains }
+  end
+
   def value
     # This really wants to be polymorphic, but that feels like overkill here
     return balance_with_children if currency?

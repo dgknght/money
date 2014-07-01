@@ -552,6 +552,12 @@ describe Account do
       end
     end
 
+    describe '#unrealized_gains_with_children' do
+      it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
+        expect(account.unrealized_gains_with_children).to eq(600)
+      end
+    end
+
     describe '#value' do
       it 'should return the cash balance plus the value of the child accounts' do
         expect(account.value).to eq(3_600)
