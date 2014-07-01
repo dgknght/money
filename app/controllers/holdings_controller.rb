@@ -6,7 +6,7 @@ class HoldingsController < ApplicationController
 
   def index
     authorize! :show, @account
-    @holdings = @account.holdings
+    @holdings = @account.all_holdings
     @total_current_value = @holdings.reduce(0) { |sum, holding| sum += holding.current_value }
   end
 

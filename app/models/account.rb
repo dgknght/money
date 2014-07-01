@@ -69,6 +69,10 @@ class Account < ActiveRecord::Base
     children.reduce([]) { |array, child| array + child.children }
   end
 
+  def all_holdings
+    children.reduce(HoldingCollection.new) { |list, child| list + child.lots }
+  end
+
   def as_json(options)
     super({ methods: :depth })
   end

@@ -546,6 +546,12 @@ describe Account do
       end
     end
 
+    describe '#all_holdings' do
+      it 'should list summaries of commodities held in the account and all child accounts' do
+        expect(account.all_holdings).to have(1).item
+      end
+    end
+
     describe '#unrealized_gains' do
       it 'should return the amount that would be earned if all holdings were sold today' do
         expect(kss_account.unrealized_gains).to eq(600)

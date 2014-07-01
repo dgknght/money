@@ -1,4 +1,3 @@
-@wip
 Feature: Enter a commodity sale transaction
   As a user,
   In order to account for the sale of a commodity,

@@ -7,6 +7,11 @@ class HoldingCollection
     @aggregation = nil
   end
 
+  def +(new_lots)
+    new_lots.each { |l| self << l }
+    self
+  end
+
   def each
     aggregation.each { |h| yield h }
   end
