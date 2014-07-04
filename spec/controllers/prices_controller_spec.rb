@@ -316,8 +316,15 @@ describe PricesController do
       end
 
       describe 'patch :download' do
-        it 'should redirect to the user home page'
-        it 'should not initiate a price download'
+        it 'should redirect to the user home page' do
+          patch :download, entity_id: entity
+          expect(response).to redirect_to(home_path)
+        end
+
+        it 'should not initiate a price download' do
+          PriceDownloader.stub(:download).never
+          patch :download, entity_id: entity
+        end
       end
     end
   end
@@ -461,8 +468,15 @@ describe PricesController do
     end
 
     describe 'patch :download' do
-      it 'should redirect to the sign in page'
-      it 'should not initiate a price download'
+      it 'should redirect to the sign in page' do
+        patch :download, entity_id: entity
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not initiate a price download' do
+        PriceDownloader.stub(:download).never
+        patch :download, entity_id: entity
+      end
     end
   end
 end

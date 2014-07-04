@@ -6,6 +6,7 @@ class PricesController < ApplicationController
 
   def download
     entity = Entity.find(params[:entity_id])
+    authorize! :update, entity
     PriceDownloader.new(entity).download
     redirect_to entity_commodities_path(entity)
   end
