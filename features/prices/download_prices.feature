@@ -1,4 +1,3 @@
-@wip
 Feature: Download prices
   As a user,
   In order to track that value of my investments,
@@ -65,19 +64,19 @@ Feature: Download prices
     When I click "Download prices"
     Then I should see the following commodities table
       | Name                     | Symbol | Market | Most recent price |
-      | Apple, Inc.              | AAPL   | NASDAQ |             10.75 |
-      | Knight Software Services | KSS    | NYSE   |             28.45 |
+      | Apple, Inc.              | AAPL   | NASDAQ |           28.4500 |
+      | Knight Software Services | KSS    | NYSE   |           10.7500 |
 
     When I click on "Accounts" within the navigation
     Then I should see the following accounts table
-      | Name              |  Balance |
-      | Assets            | 4,920.00 |
-      | 401k              | 4,920.00 |
-      | AAPL              | 2,845.00 |
-      | KSS               | 1,075.00 |
-      | Liabilities       |     0.00 |
-      | Equity            | 4,920.00 |
-      | Opening balances  | 5,000.00 |
-      | Unrealized gaines |   -80.00 |
-      | Income            |     0.00 |
-      | Expense           |     0.00 |
+      | Name             |  Balance |
+      | Assets           | 4,920.00 |
+      | 401k             | 4,920.00 |
+      | AAPL             | 2,845.00 |
+      | KSS              | 1,075.00 |
+      | Liabilities      |     0.00 |
+      | Equity           | 4,920.00 |
+      | Opening balances | 5,000.00 |
+      | Unrealized gains |   -80.00 |
+      | Income           |     0.00 |
+      | Expense          |     0.00 |

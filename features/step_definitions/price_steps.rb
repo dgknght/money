@@ -12,7 +12,6 @@ end
 
 Given /^(#{COMMODITY}) has the following online price history$/ do |commodity, table|
   table.hashes.each do |hash|
-    # TODO Add a mock implementation to handle this data
-    # MockStockQuoteService.put commodity.symbole, hash['Trade date'], hash['Price']
+    PriceDownloader::MemoryDownloadAgent.put(commodity.symbol, hash['Trade date'], hash['Price'])
   end
 end
