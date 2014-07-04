@@ -9,3 +9,10 @@ Given /^(#{COMMODITY}) has the following prices$/ do |commodity, table|
     commodity.prices.create!(trade_date: hash['Trade date'], price: hash['Price'])
   end
 end
+
+Given /^(#{COMMODITY}) has the following online price history$/ do |commodity, table|
+  table.hashes.each do |hash|
+    # TODO Add a mock implementation to handle this data
+    # MockStockQuoteService.put commodity.symbole, hash['Trade date'], hash['Price']
+  end
+end

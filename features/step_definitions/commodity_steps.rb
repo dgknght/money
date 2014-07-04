@@ -12,15 +12,12 @@ end
 
 Given /^(#{ACCOUNT}) has the following commodity transactions$/ do |account, table|
   table.hashes.each do |hash|
-    attributes = {
-      transaction_date: hash['Date'],
-      action: hash['Action'],
-      symbol: hash['Symbol'],
-      price: hash['Price'],
-      shares: hash['Shares'],
-      value: hash['Value']
-    }
-    creator = TransactionCommodityCreator.new(account, attributes)
-    creator.create!
+    CommodityTransactionCreator.new(account: account,
+                                    transaction_date: hash['Date'],
+                                    action: hash['Action'],
+                                    symbol: hash['Symbol'],
+                                    shares: hash['Shares'],
+                                    value: hash['Value'],
+                                    action: CommodityTransactionCreator.buy).create!
   end
 end
