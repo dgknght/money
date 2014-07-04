@@ -13,6 +13,9 @@ describe PriceDownloader do
     before(:each) do
       StockPrices::MemoryDownloadAgent.put('KSS', '2014-01-01', 12.34)
     end
+    after(:each) do
+      StockPrices::MemoryDownloadAgent.reset
+    end
 
     it 'should query the configured service client to get prices for existing entities' do
       expect do

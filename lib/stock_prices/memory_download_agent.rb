@@ -4,8 +4,6 @@
 module StockPrices
   class MemoryDownloadAgent
 
-    PriceRecord = Struct.new(:symbol, :date, :price)
-
     def download_prices(symbol)
       prices[symbol]
     end
@@ -19,7 +17,11 @@ module StockPrices
     end
 
     def self.put(symbol, date, price)
-      prices[symbol] << PriceRecord.new(symbol, date, price)
+      prices[symbol] << StockPrices::PriceRecord.new(symbol, date, price)
+    end
+
+    def self.reset
+      @@prices = nil
     end
   end
 end
