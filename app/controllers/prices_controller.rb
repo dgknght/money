@@ -6,7 +6,7 @@ class PricesController < ApplicationController
 
   def download
     entity = Entity.find(params[:entity_id])
-    PriceDownloader.download
+    PriceDownloader.new(entity).download
     redirect_to entity_commodities_path(entity)
   end
 
