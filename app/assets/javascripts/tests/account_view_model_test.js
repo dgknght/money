@@ -25,6 +25,15 @@ module('AccountViewModel', {
             { id: 2, account_id: 2, action: 'credit', amount: 1000 }
           ]
         },
+        { 
+          id: 2, 
+          transaction_date: '2014-01-15',
+          description: 'Salary',
+          items: [
+            { id: 1, account_id: 1, action: 'debit', amount: 1000 },
+            { id: 2, account_id: 2, action: 'credit', amount: 1000 }
+          ]
+        }
       ]
     });
   },
@@ -54,7 +63,7 @@ asyncTest("validation", function() {
   });
 })
 asyncTest("should have a transaction_items property", function() {
-  expect(6);
+  expect(7);
 
   var app = new MoneyApp();
   app.entities.subscribe(function(entities) {
@@ -70,13 +79,14 @@ asyncTest("should have a transaction_items property", function() {
 
       ok(account.transaction_items, "The account should have a transaction_items property.");
       account.transaction_items.subscribe(function(items) {
-        if (items.length == 0) return;
+        if (items.length != 2) return;
 
-        equal(account.transaction_items().length, 1, "The account should have 1 transaction item.");
+        equal(account.transaction_items().length, 2, "The account should have 2 transaction item.");
         var item = account.transaction_items().first();
         equal(item.id(), 1, "The first transaction item should have the right account_id value.");
         equal(item.action(), 'debit', "The first transaction item should have the right action value.");
         equal(item.polarizedAmount(), 1000, "The first transaction item should have the right amount value.");
+        equal(item.transaction_item.transaction.transaction_date().toLocaleDateString(), '1/15/2014', "The transaction items should be in reverse chronological order.");
         start();
       });
       equal(account.transaction_items().length, 0, "The transaction_items property should not load until accessed.");
