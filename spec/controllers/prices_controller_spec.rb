@@ -155,6 +155,18 @@ describe PricesController do
           end
         end
       end
+
+      describe 'patch :download' do
+        it 'redirect to the commodity list page for the entity' do
+          patch :download, entity_id: entity
+          expect(response).to redirect_to entity_commodities_path(entity)
+        end
+
+        it 'should initiate a price download' do
+          PriceDownloader.stub(:download)
+          patch :download, entity_id: entity
+        end
+      end
     end
 
     context 'that does not own the entity' do
@@ -302,6 +314,11 @@ describe PricesController do
           end
         end
       end
+
+      describe 'patch :download' do
+        it 'should redirect to the user home page'
+        it 'should not initiate a price download'
+      end
     end
   end
 
@@ -441,6 +458,11 @@ describe PricesController do
           end.not_to change(Price, :count)
         end
       end
+    end
+
+    describe 'patch :download' do
+      it 'should redirect to the sign in page'
+      it 'should not initiate a price download'
     end
   end
 end

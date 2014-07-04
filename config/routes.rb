@@ -7,6 +7,11 @@ Money::Application.routes.draw do
     resources :transactions, only: [:index, :new, :create]
     resources :commodities, only: [:index, :new, :create]
     resources :budgets, only: [:index, :new, :create]
+    resources :prices, only: [] do
+      collection do
+        patch :download
+      end
+    end
     member do
       get :reports, to: 'reports#index'
       get :balance_sheet, to: 'reports#balance_sheet'

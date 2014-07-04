@@ -20,3 +20,4 @@
 .actions
   =link_to 'Add', new_entity_commodity_path(@entity), class: 'add_button', title: 'Click here to add a new commodity.'
   =link_to 'Back', entities_path, class: 'back_button', title: 'Click here to return to the list of entities.'
+  =link_to 'Download prices', download_entity_prices_path, method: :patch, class: 'download_button', title: 'Click here to download prices'

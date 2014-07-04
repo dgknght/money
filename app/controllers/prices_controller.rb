@@ -4,6 +4,12 @@ class PricesController < ApplicationController
   before_filter :load_price, only: [:show, :edit, :update, :destroy]
   respond_to :html, :json
 
+  def download
+    entity = Entity.find(params[:entity_id])
+    PriceDownloader.download
+    redirect_to entity_commodities_path(entity)
+  end
+
   def index
     authorize! :show, @commodity
     @prices = @commodity.prices
