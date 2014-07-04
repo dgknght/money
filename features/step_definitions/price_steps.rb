@@ -12,6 +12,6 @@ end
 
 Given /^(#{COMMODITY}) has the following online price history$/ do |commodity, table|
   table.hashes.each do |hash|
-    PriceDownloader::MemoryDownloadAgent.put(commodity.symbol, hash['Trade date'], hash['Price'])
+    StockPrices::MemoryDownloadAgent.put(commodity.symbol, hash['Trade date'], hash['Price'])
   end
 end

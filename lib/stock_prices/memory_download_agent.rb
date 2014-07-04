@@ -1,6 +1,7 @@
-# Download agent implementation that works
+
+# Dowwnload agent implementation that works
 # with in-memory data for testing purposes
-class PriceDownloader
+module StockPrices
   class MemoryDownloadAgent
 
     PriceRecord = Struct.new(:symbol, :date, :price)
