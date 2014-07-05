@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe PriceDownloader do
+describe StockPrices::PriceDownloader do
   let (:entity) { FactoryGirl.create(:entity) }
   let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services', entity: entity) }
 
