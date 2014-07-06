@@ -36,6 +36,13 @@ describe Price do
       expect(price).not_to be_valid
       expect(price).to have(1).error_on(:trade_date)
     end
+
+    it 'should be unique for a given commodity' do
+      commodity.prices.create!(attributes)
+      price = commodity.prices.create(attributes.merge(price: 125))
+      expect(price).not_to be_valid
+      expect(price).to have(1).error_on(:trade_date)
+    end
   end
 
   describe '#price' do
