@@ -310,6 +310,16 @@ table.attributes {
   background-image: url(/assets/prices.png);
 }
 
+.download_button {
+  @extend .any_button;
+  background-image: url(/assets/download.png);
+}
+
+.small_download_button {
+  @extend .any_small_button;
+  background-image: url(/assets/download_small.png);
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;
