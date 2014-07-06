@@ -101,4 +101,13 @@ describe Commodity do
       expect(commodity.latest_price).to eq(p1)
     end
   end
+
+  describe '#lots' do
+    let (:commodity) { FactoryGirl.create(:commodity) }
+    let!(:lot) { FactoryGirl.create(:lot, commodity: commodity) }
+
+    it 'should return the lots for the commodity' do
+      expect(commodity).to have(1).lot
+    end
+  end
 end

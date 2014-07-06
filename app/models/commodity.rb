@@ -24,6 +24,7 @@ class Commodity < ActiveRecord::Base
 
   belongs_to :entity
   has_many :prices
+  has_many :lots
 
   validates :name,  presence: true,
                     uniqueness: { scope: :entity_id }
