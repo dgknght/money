@@ -24,16 +24,16 @@ Feature: Remove transaction item
     Then I should see "Transaction items" within the page title
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
-      |         1/1/2013 | Paycheck    | Salary    |      | 5,000.00 | 5,000.00 |
-      |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
       |         1/2/2013 | Kroger      | Groceries |      |   -36.00 | 4,929.00 |
+      |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
+      |         1/1/2013 | Paycheck    | Salary    |      | 5,000.00 | 5,000.00 |
     
     When I click "Delete" within the 2nd transaction item row
     Then I should see "The transaction was removed successfully." within the notice area
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
-      |         1/1/2013 | Paycheck    | Salary    |      | 5,000.00 | 5,000.00 |
       |         1/2/2013 | Kroger      | Groceries |      |   -36.00 | 4,964.00 |
+      |         1/1/2013 | Paycheck    | Salary    |      | 5,000.00 | 5,000.00 |
   
   Scenario: A user tries to remove a reconciled transaction item
     Given I have reconciled account "Checking" as of 1/2/2013 at a balance of $4,964.00 including the following items
@@ -45,14 +45,14 @@ Feature: Remove transaction item
     Then I should see "Transaction items" within the page title
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
-      |         1/1/2013 | Paycheck    | Salary    |  X   | 5,000.00 | 5,000.00 |
-      |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
       |         1/2/2013 | Kroger      | Groceries |  X   |   -36.00 | 4,929.00 |
+      |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
+      |         1/1/2013 | Paycheck    | Salary    |  X   | 5,000.00 | 5,000.00 |
     
     When I click "Delete" within the 3rd transaction item row
     Then I should see "The transaction item has already been reconciled. Undo the reconciliation, then delete the item." within the error area
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
-      |         1/1/2013 | Paycheck    | Salary    |  X   | 5,000.00 | 5,000.00 |
-      |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
       |         1/2/2013 | Kroger      | Groceries |  X   |   -36.00 | 4,929.00 |
+      |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
+      |         1/1/2013 | Paycheck    | Salary    |  X   | 5,000.00 | 5,000.00 |

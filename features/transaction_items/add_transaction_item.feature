@@ -34,5 +34,5 @@ Feature: Add a transaction item
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following transaction items table
      | Transaction date | Description | Account    | Rec. |   Amount |  Balance |
-     |         1/1/2013 | Paycheck    | Salary     |      | 1,000.00 | 1,000.00 |
      |         2/1/2013 | Kroger      | Groceries  |      |   -43.21 |   956.79 |
+     |         1/1/2013 | Paycheck    | Salary     |      | 1,000.00 | 1,000.00 |
