@@ -19,10 +19,18 @@ describe StockPrices::PriceDownloader do
       StockPrices::MemoryDownloadAgent.reset
     end
 
-    it 'should query the configured service client to get prices for existing entities' do
+    it 'should query the configured service client to get prices for existing commodities' do
       expect do
         StockPrices::PriceDownloader.new(entity).download
       end.to change(Price, :count).by(1)
+    end
+
+    it 'should update the price if a price already exists for a given day' do
+      price = kss.prices.create!(trade_date: '2014-01-01', price: 10)
+      expect do
+        StockPrices::PriceDownloader.new(entity).download
+        price.reload
+      end.to change(price, :price).from(10).to(12.34)
     end
 
     it 'should use the configured agent' do

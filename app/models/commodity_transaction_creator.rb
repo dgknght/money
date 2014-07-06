@@ -160,8 +160,7 @@ class CommodityTransactionCreator
   end
 
   def create_price_record
-    commodity.prices.create!(trade_date: transaction_date,
-                             price: price)
+    Price.put_price(commodity, transaction_date, price)
   end
 
   def create_sell_transaction(sale_results)

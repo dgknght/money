@@ -59,4 +59,31 @@ describe Price do
       expect(price).to have(1).errors_on(:price)
     end
   end
+
+  describe '::put_price' do
+    context 'when no price record exists for the specified date' do
+      it 'should create a price record' do
+        expect do
+          Price.put_price(commodity, '2014-02-27', 100)
+        end.to change(Price, :count).by(1)
+      end
+    end
+
+    context 'when a price record exists for the specified date' do
+      let!(:price) { commodity.prices.create!(trade_date: '2014-02-27', price: 100) }
+
+      it 'should not create a price record if one exists for the specified date' do
+        expect do
+          Price.put_price(commodity, '2014-02-27', 100)
+        end.not_to change(Price, :count).by(1)
+      end
+
+      it 'should update a price record if one exists for the specified date' do
+        expect do
+          Price.put_price(commodity, '2014-02-27', 100)
+          price.reload
+        end.not_to change(price, :price).from(100).to(123.4567)
+      end
+    end
+  end
 end

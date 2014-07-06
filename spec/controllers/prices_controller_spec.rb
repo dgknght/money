@@ -3,10 +3,10 @@ require 'spec_helper'
 describe PricesController do
   let (:entity) { FactoryGirl.create(:entity) }
   let (:commodity) { FactoryGirl.create(:commodity, entity: entity) }
-  let!(:price) { FactoryGirl.create(:price, commodity: commodity) }
+  let!(:price) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-02-27') }
   let (:attributes) do
     {
-      trade_date: Date.today.iso8601,
+      trade_date: '2014-02-28',
       price: '12.3456'
     }
   end

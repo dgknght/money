@@ -26,8 +26,8 @@ module StockPrices
     end
 
     def process_commodity(commodity)
-      agent.download_prices(commodity.symbol).each do |price_record|
-        commodity.prices.create!(trade_date: price_record.date, price: price_record.price)
+      agent.download_prices(commodity.symbol).each do |p|
+        Price.put_price(commodity, p.date, p.price)
       end
     end
   end
