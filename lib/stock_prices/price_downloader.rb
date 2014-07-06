@@ -17,8 +17,12 @@ module StockPrices
       @agent ||= create_agent
     end
 
+    def agent_class
+      StockPrices.configuration.download_agent || MemoryDownloadAgent
+    end
+
     def create_agent
-      MemoryDownloadAgent.new
+      agent_class.new
     end
 
     def process_commodity(commodity)

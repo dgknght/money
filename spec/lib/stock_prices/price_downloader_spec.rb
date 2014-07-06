@@ -9,6 +9,8 @@ describe StockPrices::PriceDownloader do
     expect(downloader).not_to be_nil
   end
 
+  after(:each) { StockPrices.reset }
+
   describe '#download' do
     before(:each) do
       StockPrices::MemoryDownloadAgent.put('KSS', '2014-01-01', 12.34)
@@ -21,6 +23,22 @@ describe StockPrices::PriceDownloader do
       expect do
         StockPrices::PriceDownloader.new(entity).download
       end.to change(Price, :count).by(1)
+    end
+
+    it 'should use the configured agent' do
+      class TestDownloadAgent
+        def download_prices(symbol)
+          [StockPrices::PriceRecord.new(symbol, Date.today, 99.99)]
+        end
+      end
+
+      StockPrices.configure do |config|
+        config.download_agent = TestDownloadAgent
+      end
+
+      downloader = StockPrices::PriceDownloader.new(entity)
+      downloader.download
+      expect(kss.prices.last.price).to eq(99.99)
     end
   end
 end
