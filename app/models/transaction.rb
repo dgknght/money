@@ -21,7 +21,7 @@ class Transaction < ActiveRecord::Base
   validate :items_are_present, :credits_and_debits_are_in_balance
   before_validation :supply_defaults
   
-  default_scope { order(:transaction_date) }
+  default_scope { order(transaction_date: :desc) }
   
   def as_json(options)
     super(options.merge( include: :items ))

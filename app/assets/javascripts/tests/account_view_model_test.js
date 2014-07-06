@@ -17,8 +17,8 @@ module('AccountViewModel', {
       url: 'entities/10/transactions.json?account_id=1',
       responseText: [
         { 
-          id: 1, 
-          transaction_date: '2014-01-01',
+          id: 2,
+          transaction_date: '2014-01-15',
           description: 'Salary',
           items: [
             { id: 1, account_id: 1, action: 'debit', amount: 1000 },
@@ -26,8 +26,8 @@ module('AccountViewModel', {
           ]
         },
         { 
-          id: 2, 
-          transaction_date: '2014-01-15',
+          id: 1,
+          transaction_date: '2014-01-01',
           description: 'Salary',
           items: [
             { id: 1, account_id: 1, action: 'debit', amount: 1000 },
