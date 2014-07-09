@@ -105,10 +105,11 @@ function AccountViewModel(account, entity) {
 
   this.transaction_items = ko.lazyObservableArray(function() {
     entity.getTransactionItems(this, function(transaction_items) {
-      var previousItem = null;
+      var lastItem = null;
       var viewModels = _.map(transaction_items, function(item) {
-        var result = new TransactionItemRollupViewModel(item, previousItem);
-        previousItem = result;
+        var result = new TransactionItemRollupViewModel(item);
+        if (lastItem) lastItem.previousItem(result)
+        lastItem = result;
         return result;
       });
       viewModels.pushAllTo(_self.transaction_items);
@@ -203,9 +204,9 @@ function AccountViewModel(account, entity) {
       this._balance(this._balance() + item.polarizedAmount());
     } else {
       //TODO Need to account for items being entered out of chronological order
-      var previousItem = _.last(this.transaction_items());
+      var previousItem = _.first(this.transaction_items());
       var rollup = new TransactionItemRollupViewModel(item, previousItem);
-      this.transaction_items.push(rollup);
+      this.transaction_items.splice(0, 0, rollup)
     }
   };
 }

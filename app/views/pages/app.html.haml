@@ -41,6 +41,21 @@
         %th.number_column Amount
         %th.number_column Balance
         %th &nbsp;
+
+      %tr{ data: { bind: "with: newTransactionItem"}}
+        %td.number_column
+          %input.date_field{ type: 'text', placeholder: 'Transaction date', data: { bind: "datePicker: formattedTransactionDate" } }
+        %td
+          %input{ type: 'text', placeholder: 'Description', data: { bind: "value: description" } }
+        %td
+          %input{ type: 'text', placeholder: 'Account', data: { bind: "autocomplete: otherAccountPath, source: getAccountPaths" } }
+        %td &nbsp;
+        %td
+          %input.number_field{ type: 'text', placeholder: 'Amount', data: { bind: "value: amount" } }
+        %td &nbsp;
+        %td
+          %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: saveNewTransactionItem" }} Save
+
       <!-- ko foreach: transaction_items -->
       %tr.attachment_drop{ data: { bind: "attr: {'data-id': id}, css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
         %td.number_column{ data: { bind: "inlineDateEditor: formattedTransactionDate, editorClass: 'date_field'" }}
@@ -103,19 +118,6 @@
             Save
       <!-- /ko -->
 
-      %tr{ data: { bind: "with: newTransactionItem"}}
-        %td.number_column
-          %input.date_field{ type: 'text', placeholder: 'Transaction date', data: { bind: "datePicker: formattedTransactionDate" } }
-        %td
-          %input{ type: 'text', placeholder: 'Description', data: { bind: "value: description" } }
-        %td
-          %input{ type: 'text', placeholder: 'Account', data: { bind: "autocomplete: otherAccountPath, source: getAccountPaths" } }
-        %td &nbsp;
-        %td
-          %input.number_field{ type: 'text', placeholder: 'Amount', data: { bind: "value: amount" } }
-        %td &nbsp;
-        %td
-          %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: saveNewTransactionItem" }} Save
   .validation_summary{ data: { bind: "visible: newTransactionItem.isInvalid" }}
     %ul{ data: { bind: "with: newTransactionItem" }}
       %li{ data: { bind: "visible: transaction_date.hasError, text: transaction_date.errorMessage" }}
