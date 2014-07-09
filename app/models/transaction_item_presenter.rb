@@ -3,6 +3,10 @@
 class TransactionItemPresenter
   include Enumerable
 
+  def as_json(options)
+    to_a.map { |i| i.transaction_item }.as_json(options)
+  end
+
   Record = Struct.new(:transaction_item, :balance)
   def each
     Wrapper.new(@account.transaction_items).

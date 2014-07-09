@@ -11,15 +11,15 @@
     %th.actions &nbsp;
   -@transaction_items.each_with_index do |item, index|
     %tr{ class: ((index % 2) == 0) ? '' : 'alt_table_row', onclick: 'toggleEditState' }
-      %td.transaction_date_cell= format_date(item.transaction.transaction_date)
-      %td.description_cell= item.transaction.description
-      %td.account_cell= other_account(item)
-      %td.reconciled_cell.check_column= item.reconciled? ? 'X' : ''
-      %td.amount_cell.number_column= format_currency(item.polarized_amount)
-      %td.balance_cell.number_column= format_currency(@balance += item.polarized_amount)
+      %td.transaction_date_cell= format_date(item.transaction_item.transaction.transaction_date)
+      %td.description_cell= item.transaction_item.transaction.description
+      %td.account_cell= other_account(item.transaction_item)
+      %td.reconciled_cell.check_column= item.transaction_item.reconciled? ? 'X' : ''
+      %td.amount_cell.number_column= format_currency(item.transaction_item.polarized_amount)
+      %td.balance_cell.number_column= format_currency(item.balance)
       %td.actions
-        =link_to 'Edit', edit_transaction_item_path(item), class: 'edit_button', title: 'Click here to edit the transaction.'
-        =render 'shared/delete_form', resource: item, url: transaction_item_url(item)
+        =link_to 'Edit', edit_transaction_item_path(item.transaction_item), class: 'edit_button', title: 'Click here to edit the transaction.'
+        =render 'shared/delete_form', resource: item.transaction_item, url: transaction_item_url(item.transaction_item)
 .actions
   =link_to 'Add', new_account_transaction_item_path(@account), class: 'add_button', title: 'Click here to add a transaction.'
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button', title: 'Click here to return to the account list.'
