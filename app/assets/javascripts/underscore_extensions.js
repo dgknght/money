@@ -37,6 +37,11 @@ _.mixin({
     }
     return new Date(value);
   },
+  sortedIndexDesc: function(list, value, iterator, context) {
+    var reversedCopy = _.toArray(list).reverse();
+    var reversedIndex = _.sortedIndex(reversedCopy, value, iterator, context);
+    return list.length - reversedIndex;
+  },
   toIsoDate: function(date) {
     return date.getFullYear()
       + "-" + _.padLeft((date.getMonth() + 1) + "", 2, "0")

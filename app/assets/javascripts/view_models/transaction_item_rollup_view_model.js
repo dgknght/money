@@ -34,6 +34,10 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     this.attachmentsVisible(!current);
   };
 
+  this.transaction_date = ko.computed(function() {
+    return this.transaction_item.transaction.transaction_date();
+  }, this);
+
   this.formattedTransactionDate = ko.computed({
     read: function() {
       return this.transaction_item.transaction.formattedTransactionDate();

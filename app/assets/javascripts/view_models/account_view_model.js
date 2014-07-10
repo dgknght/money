@@ -203,10 +203,17 @@ function AccountViewModel(account, entity) {
     if (this.transaction_items.state() == 'new') {
       this._balance(this._balance() + item.polarizedAmount());
     } else {
-      //TODO Need to account for items being entered out of chronological order
+      var rollup = new TransactionItemRollupViewModel(item);
+      var index = _.sortedIndexDesc(this.transaction_items(), rollup, function(item) {
+        return item.transaction_item.transaction.transaction_date();
+      });
+
+      if (index != 0)
+        this.transaction_items()[index - 1].previousItem(rollup);
+      if (index != this.transaction_items().length - 1)
+        rollup.previousItem(this.transaction_items()[index + 1]);
       var previousItem = _.first(this.transaction_items());
-      var rollup = new TransactionItemRollupViewModel(item, previousItem);
-      this.transaction_items.splice(0, 0, rollup)
+      this.transaction_items.splice(index, 0, rollup)
     }
   };
 }
