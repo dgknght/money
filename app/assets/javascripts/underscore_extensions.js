@@ -13,6 +13,20 @@ _.mixin({
       return f;
     return function() {};
   },
+  newString: function(character, length) {
+    var result = "";
+    for (var i = 0; i < length; i++) {
+      result += character;
+    }
+    return result;
+  },
+  padLeft: function(value, totalLength, character) {
+    var currentLength = value == null ? 0 : value.length;
+    var padLength = totalLength - currentLength;
+    if (padLength > 0)
+      return _.newString(character || " ", padLength) + value;
+    return value;
+  },
   parseDate: function(value) {
     var match = (/(\d{4})-(\d{2})-(\d{2})/).exec(value);
     if (match) {
@@ -27,19 +41,5 @@ _.mixin({
     return date.getFullYear()
       + "-" + _.padLeft((date.getMonth() + 1) + "", 2, "0")
       + "-" + _.padLeft(date.getDate() + "", 2, "0")
-  },
-  padLeft: function(value, totalLength, character) {
-    var currentLength = value == null ? 0 : value.length;
-    var padLength = totalLength - currentLength;
-    if (padLength > 0)
-      return _.newString(character || " ", padLength) + value;
-    return value;
-  },
-  newString: function(character, length) {
-    var result = "";
-    for (var i = 0; i < length; i++) {
-      result += character;
-    }
-    return result;
   }
 });
