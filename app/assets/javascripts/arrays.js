@@ -35,6 +35,12 @@ Array.prototype.first = function(predicate) {
   return null;
 };
 
+Array.prototype.find = function(id) {
+  return this.first(function(item) {
+    return item.id() == id;
+  });
+};
+
 Array.prototype.groupBy = function(getKey) {
   var result = new Object();
   for (var i = 0; i < this.length; i++) {

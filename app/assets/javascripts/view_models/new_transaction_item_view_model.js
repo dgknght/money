@@ -13,7 +13,7 @@ function NewTransactionItemViewModel(account) {
 
   this.otherAccount = ko.computed(function() {
     if (this.account_id() == null) return null;
-    return this._account.entity.accounts().first(function(a) { return a.id == _self.account_id() });
+    return this._account.entity.accounts().find(this.account_id());
   }, this);
 
   this.otherAccountPath = ko.computed({
@@ -47,6 +47,7 @@ function NewTransactionItemViewModel(account) {
 
     // Build the new transaction object graph and save it
     var otherAccount = _self.otherAccount();
+    if (otherAccount == null) throw 'Unable to find account with id ' + _self.account_id();
     var otherAmount = otherAccount.sameSideAs(_self._account) ? 0 - _self.amount() : _self.amount();
     var transaction = {
       transaction_date: _self.transaction_date(),
