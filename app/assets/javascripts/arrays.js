@@ -37,7 +37,7 @@ Array.prototype.first = function(predicate) {
 
 Array.prototype.find = function(id) {
   return this.first(function(item) {
-    return item.id() == id;
+    return item.id == id;
   });
 };
 
