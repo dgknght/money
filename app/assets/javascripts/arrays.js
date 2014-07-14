@@ -79,6 +79,18 @@ Array.prototype.flatten = function() {
   return result;
 };
 
+Array.prototype.last = function(predicate) {
+  if (predicate == null)
+    predicate = function() { return true; };
+
+  for (var i = this.length - 1; i >= 0; i--) {
+    var item = this[i];
+    if (predicate(item))
+      return item;
+  }
+  return null;
+}
+
 Array.prototype.map = function(transform) {
   return $.map(this, transform);
 }
