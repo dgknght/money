@@ -201,19 +201,26 @@ function AccountViewModel(account, entity) {
 
   this.processNewTransactionItem = function(item) {
     if (this.transaction_items.state() == 'new') {
+      // If the transaction items haven't been loaded, just adjust the balance
       this._balance(this._balance() + item.polarizedAmount());
-    } else {
-      var rollup = new TransactionItemRollupViewModel(item);
-      var index = _.sortedIndexDesc(this.transaction_items(), rollup, function(item) {
-        return item.transaction_item.transaction.transaction_date();
-      });
+      return;
+    }
 
-      if (index != 0)
-        this.transaction_items()[index - 1].previousItem(rollup);
-      if (index != this.transaction_items().length - 1)
-        rollup.previousItem(this.transaction_items()[index + 1]);
-      var previousItem = _.first(this.transaction_items());
-      this.transaction_items.splice(index, 0, rollup)
+    var rollup = new TransactionItemRollupViewModel(item);
+
+    // Calculate the position for the new item in the list
+    var index = _.sortedIndexDesc(this.transaction_items(), rollup, function(item) {
+      return item.transaction_item.transaction.transaction_date();
+    });
+
+    // update the linked list that calculates the running balance
+    // & update the observable array
+    if (index < this.transaction_items().length) {
+      this.transaction_items()[index].insert(rollup);
+      this.transaction_items.splice(index, 0, rollup);
+    } else {
+      this.transaction_items().last().previousItem(rollup);
+      this.transaction_items.push(rollup);
     }
   };
 }

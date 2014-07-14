@@ -169,6 +169,11 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     return _self.transaction_item.transaction;
   };
 
+  this.insert = function(newItem) {
+    newItem.previousItem(this.previousItem());
+    this.previousItem(newItem);
+  };
+
   this.formattedTransactionDate.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
   this.description.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
   this.polarizedAmount.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
