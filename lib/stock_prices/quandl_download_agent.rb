@@ -8,24 +8,12 @@ module StockPrices
   # Downloads stock prices using quandl
   class QuandlDownloadAgent
     def download_prices(symbol)
-      raw_data = get_raw_data(symbol)
-      json = JSON.parse(raw_data)
-      hashes = transform(json)
-
-      hashes.map { |h| PriceRecord.new(symbol, h['Date'], h['Close']) }
+      transformed_data(symbol).map do |hash|
+        PriceRecord.new(symbol, hash['Date'], hash['Close'])
+      end
     end
 
     private
-
-    def get_raw_data(symbol)
-      # TODO add ability to specify the dates
-      date = last_business_date
-      url = "#{BASE_URL}#{symbol}.json?trim_start=#{(date - 3).iso8601}&trim_end=#{date.iso8601}"
-      uri = URI.parse(url)
-      #TODO Add authentication
-      response = Net::HTTP.get_response(uri)
-      response.body
-    end
 
     def last_business_date
       date = Date.today
@@ -33,6 +21,21 @@ module StockPrices
       date = date - 1 if date.saturday?
       date = date - 2 if date.sunday?
       date
+    end
+
+    def parsed_data(symbol)
+      data = raw_data(symbol)
+      JSON.parse(data)
+    end
+
+    def raw_data(symbol)
+      # TODO add ability to specify the dates
+      date = last_business_date
+      url = "#{BASE_URL}#{symbol}.json?trim_start=#{(date - 3).iso8601}&trim_end=#{date.iso8601}"
+      uri = URI.parse(url)
+      #TODO Add authentication
+      response = Net::HTTP.get_response(uri)
+      response.body
     end
 
     def transform(json)
@@ -43,6 +46,11 @@ module StockPrices
         row.each_with_index { |value, index| record[columns[index]] = value }
         record
       end
+    end
+
+    def transformed_data(symbol)
+      data = parsed_data(symbol)
+      hashes = transform(data)
     end
   end
 end
