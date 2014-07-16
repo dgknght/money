@@ -14,19 +14,19 @@
       %td.number_column= format_shares(holding.total_shares)
       %td.number_column= format_currency(holding.total_cost)
       %td.number_column= format_currency(holding.total_gain_loss)
-  %tr
+  %tr.commodity_total_line
     %td Commodity total
     %td.number_column= format_currency(@total_current_value)
     %td &nbsp;
     %td &nbsp;
     %td &nbsp;
-  %tr
+  %tr.cash_total_line
     %td Cash
     %td.number_column= format_currency(@account.balance)
     %td &nbsp;
     %td &nbsp;
     %td &nbsp;
-  %tr
+  %tr.account_total_line
     %td Total value
     %td.number_column= format_currency(@total_current_value + @account.balance)
     %td &nbsp;
