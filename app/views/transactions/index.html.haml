@@ -1,5 +1,8 @@
 %h2#page_subtitle Transactions
 
+.new_transaction_container
+  =form_for([@account || @entity, @transaction]) do |f|
+    =render 'form_fields', f: f, transaction: @transaction, items: @items
 %table#transactions_table.transaction_list{cellspacing: 0, cellpadding:0}
   %tr
     %th Transaction Date
@@ -14,6 +17,3 @@
       %td.action_cell
         = link_to 'Attachments', transaction_attachments_path(transaction), class: 'attachments_button', title: 'Click here to see the attachments for this transaction.'
         = render 'shared/delete_form', resource: transaction, url: transaction_path(transaction)
-.new_transaction_container
-  =form_for([@account || @entity, @transaction]) do |f|
-    =render 'form_fields', f: f, transaction: @transaction, items: @items
