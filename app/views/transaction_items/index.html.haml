@@ -23,4 +23,4 @@
 .actions
   =link_to 'Add', new_account_transaction_item_path(@account), class: 'add_button', title: 'Click here to add a transaction.'
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button', title: 'Click here to return to the account list.'
-  =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button'
+  =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button', title: 'Click here to reconcile this account against a statement.'
