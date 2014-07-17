@@ -1,6 +1,7 @@
 class HoldingsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :load_account
+  include ApplicationHelper
+
+  before_filter :authenticate_user!, :load_account, :set_current_entity
 
   respond_to :html, :json
 
@@ -14,5 +15,9 @@ class HoldingsController < ApplicationController
 
   def load_account
     @account = Account.find(params[:account_id])
+  end
+
+  def set_current_entity
+    self.current_entity = @account.entity
   end
 end
