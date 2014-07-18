@@ -1,7 +1,7 @@
 %h2#page_title #{h @account.name} Transaction items
 -if @account.commodities?
   %ul#nav_3
-    %li= link_to 'Holdings', account_holdings_path(@account), title: 'Click here to view holdings for this account.'
+    %li= link_to 'view Holdings', account_holdings_path(@account), title: 'Click here to view holdings for this account.'
 
 %table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
   %tr
