@@ -46,7 +46,8 @@ describe StockPrices::PriceDownloader do
 
       downloader = StockPrices::PriceDownloader.new(entity)
       downloader.download
-      expect(kss.prices.last.price).to eq(99.99)
+
+      expect(kss.prices.last.price).to eq(BigDecimal.new('99.99'))
     end
   end
 end
