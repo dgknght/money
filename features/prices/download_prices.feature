@@ -33,9 +33,9 @@ Feature: Download prices
       | 2014-01-02 | 28.45 |
 
     And account "401k" has the following commodity transactions
-      | Transaction date | Symbol | Shares | Value |
-      |       2014-01-02 | KSS    |    100 |  1000 |
-      |       2014-01-02 | AAPL   |    100 |  3000 |
+      | Transaction date | Symbol | Action | Shares | Value |
+      |       2014-01-02 | KSS    | buy    |    100 |  1000 |
+      |       2014-01-02 | AAPL   | buy    |    100 |  3000 |
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
