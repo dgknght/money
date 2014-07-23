@@ -21,8 +21,8 @@ Feature: View lots
       | Knight Software Services | KSS    | NYSE   |
     And account "401k" has the following commodity transactions
       |       Date | Action | Symbol | Shares | Value |
-      | 2014-02-01 | buy    | KSS    |    100 | 1,000 |
-      | 2014-03-01 | buy    | KSS    |    100 | 1,200 |
+      | 2014-02-01 | buy    | KSS    |    100 |  1000 |
+      | 2014-03-01 | buy    | KSS    |    100 |  1200 |
       | 2014-04-01 | sell   | KSS    |     50 |   750 |
 
     When I am signed in as "john@doe.com/please01"
@@ -36,8 +36,11 @@ Feature: View lots
     When I click "401k" within the main content
     Then I should see "401k Holdings" within the page title
     And I should see the following holdings table
-      | Symbol |    Value |      Shares |     Cost | Gain/Loss |
-      | KSS    | 2,250.00 |    150.0000 | 1,700.00 |    550.00 |
+      | Symbol          |     Value |      Shares |     Cost | Gain/Loss |
+      | KSS             |  2,250.00 |    150.0000 | 1,700.00 |    550.00 |
+      | Commodity total |  2,250.00 |             |          |           |
+      | Cash            |  8,550.00 |             |          |           |
+      | Total value     | 10,800.00 |             | 1,700.00 |    550.00 |
 
     When I click "KSS" within the main content
     Then I should see "KSS Lots in 401k"

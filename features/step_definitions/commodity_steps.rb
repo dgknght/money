@@ -17,6 +17,7 @@ Given /^(#{ACCOUNT}) has the following commodity transactions$/ do |account, tab
                                     action: hash['Action'],
                                     symbol: hash['Symbol'],
                                     shares: hash['Shares'],
-                                    value: hash['Value']).create!
+                                    value: hash['Value'],
+                                    valuation_method: CommodityTransactionCreator.fifo).create!
   end
 end
