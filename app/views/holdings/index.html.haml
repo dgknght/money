@@ -11,7 +11,7 @@
     %th.number_column Gain/Loss
   -@holdings.each do |holding|
     %tr
-      %td= holding.commodity.symbol
+      %td= link_to holding.commodity.symbol, account_lots_path(@account), title: 'Click here to view the lots for this commidity.'
       %td.number_column= format_currency(holding.current_value)
       %td.number_column= format_shares(holding.total_shares)
       %td.number_column= format_currency(holding.total_cost)
