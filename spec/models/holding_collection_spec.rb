@@ -1,13 +1,17 @@
 require 'spec_helper'
 
 describe HoldingCollection do
-  let (:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services') }
-  let (:msft) { FactoryGirl.create(:commodity, symbol: 'MSFT', name: 'Microsoft') }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:ira) { FactoryGirl.create(:commodities_account, entity: entity) }
+  let (:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services', entity: entity) }
+  let (:kss_account) { FactoryGirl.create(:commodity_account, entity: entity, parent: ira, name: 'KSS') }
+  let (:msft) { FactoryGirl.create(:commodity, symbol: 'MSFT', name: 'Microsoft', entity: entity) }
+  let (:msft_account) { FactoryGirl.create(:commodity_account, entity: entity, parent: ira, name: 'MSFT') }
   let!(:kss_price) { FactoryGirl.create(:price, commodity: kss, price: 15) }
   let!(:msft_price) { FactoryGirl.create(:price, commodity: msft, price: 24) }
-  let (:kss_lot1) { FactoryGirl.create(:lot, commodity: kss, shares_owned: 100, price: 10) }
-  let (:kss_lot2) { FactoryGirl.create(:lot, commodity: kss, shares_owned: 200, price: 12) }
-  let (:msft_lot1) { FactoryGirl.create(:lot, commodity: msft, shares_owned: 10, price: 25) }
+  let (:kss_lot1) { FactoryGirl.create(:lot, commodity: kss, shares_owned: 100, price: 10, account: kss_account) }
+  let (:kss_lot2) { FactoryGirl.create(:lot, commodity: kss, shares_owned: 200, price: 12, account: kss_account) }
+  let (:msft_lot1) { FactoryGirl.create(:lot, commodity: msft, shares_owned: 10, price: 25, account: msft_account) }
 
   describe '#<<' do
     it 'should add a lot to the list of holdings' do

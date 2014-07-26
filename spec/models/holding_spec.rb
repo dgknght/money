@@ -1,14 +1,25 @@
 require 'spec_helper'
 
 describe Holding do
-  let (:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', entity: entity) }
+  let (:ira) { FactoryGirl.create(:commodities_account, entity: entity) }
+  let (:commodity_account) { FactoryGirl.create(:commodity_account, entity: entity, parent: ira) }
   let (:lot1) do
     FactoryGirl.create(:lot, commodity: kss,
+                             account: commodity_account,
                              price: 10.00,
                              shares_owned: 100,
                              purchase_date: '2014-01-01')
   end
   let (:lot2) do
+    FactoryGirl.create(:lot, commodity: kss,
+                             account: commodity_account,
+                             price: 12.00,
+                             shares_owned: 50,
+                             purchase_date: '2014-02-01')
+  end
+  let (:other_account_lot) do
     FactoryGirl.create(:lot, commodity: kss,
                              price: 12.00,
                              shares_owned: 50,
@@ -23,6 +34,21 @@ describe Holding do
   it 'should be creatable with an array of lots' do
     holding = Holding.new([lot1, lot2])
     expect(holding).not_to be_nil
+  end
+
+  context 'when given lots from different accounts' do
+    it 'should raise an exception' do
+      expect do
+        holding = Holding.new([lot1, other_account_lot])
+      end.to raise_error('All lots in the holding must belong to the same account')
+    end
+  end
+
+  describe '#account' do
+    it 'should return the account to which the lots belong' do
+      holding = Holding.new([lot1, lot2])
+      expect(holding.account).to eq(commodity_account)
+    end
   end
 
   describe '#total_shares' do
@@ -96,9 +122,10 @@ describe Holding do
   describe '#+' do
     let (:lot3) do
       FactoryGirl.create(:lot, commodity: kss,
-                              price: 13.00,
-                              shares_owned: 100,
-                              purchase_date: '2014-03-01')
+                               account: commodity_account,
+                               price: 13.00,
+                               shares_owned: 100,
+                               purchase_date: '2014-03-01')
     end
     it 'should add an array of lots to the holding' do
       holding = Holding.new(lot1)
