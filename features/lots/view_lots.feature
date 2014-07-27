@@ -45,6 +45,6 @@ Feature: View lots
     When I click "KSS" within the main content
     Then I should see "KSS Lots in 401k"
     And I should see the following lots table
-      | Purchase date | Shared owned |   Price |    Value |
-      | 2/1/2014      |           50 | 10.0000 |   500.00 |
-      | 3/1/2014      |          100 | 12.0000 | 1,200.00 |
+      | Purchase date | Shares owned |   Price |     Cost | Current value | Gain/loss |
+      | 2/1/2014      |      50.0000 | 10.0000 |   500.00 |        750.00 |    250.00 |
+      | 3/1/2014      |     100.0000 | 12.0000 | 1,200.00 |      1,500.00 |    300.00 |

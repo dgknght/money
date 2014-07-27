@@ -1,2 +1,19 @@
-%h1 Lots#index
-%p Find me in app/views/lots/index.html.haml
+%h2#page_title #{h @account.name} Lots in #{h @account.parent.name}
+%table#lots_table.list{ cellspacing: 0, cellpadding: 0}
+  %tr
+    %th Purchase date
+    %th Shares owned
+    %th Price
+    %th Cost
+    %th Current value
+    %th Gain/loss
+  -@lots.each do |lot|
+    %tr
+      %td.number_column= format_date(lot.purchase_date)
+      %td.number_column= format_shares(lot.shares_owned)
+      %td.number_column= format_price(lot.price)
+      %td.number_column= format_currency(lot.cost)
+      %td.number_column= format_currency(lot.current_value)
+      %td.number_column= format_currency(lot.gain_loss)
+.actions
+  =link_to 'Back', account_holdings_path(@account.parent), class: 'back_button', title: 'Click here to return to the account holdings page.'
