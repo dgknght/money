@@ -31,6 +31,12 @@ function AccountViewModel(account, entity) {
     _self.entity.accounts.remove(_self);
   };
 
+  this.showCommoditiesMenu = ko.observable(false);
+
+  this.showHoldings = ko.observable(false);
+
+  this.showTransactionItems = ko.observable(true);
+
   this.parent = ko.computed(function() {
     if (this.parent_id() == null) return null;
     return this.entity.getAccount(this.parent_id());

@@ -32,7 +32,13 @@
       %span.ui-icon.ui-icon-close{ role: 'presentation', data: { bind: "click: undisplay" }} Remove Tab
   <!-- ko foreach: displayedAccounts -->
   %div{ data: { bind: "attr: {id: 'account_' + id() }" }}
-    %table.register{ cellspacing: 0, cellpadding: 0}
+    %ul.commodities_menu{ data: { bind: "visible: showCommoditiesMenu" }}
+      %li Show Transactions
+      %li Show Holdings
+    %table{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: showHoldings, attr: {id: 'holdings_' + id()}" }}
+      %tr
+        %th Holdings will go here
+    %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: showTransactionItems, attr: {id: 'transactions_' + id() }" }}
       %tr
         %th.number_column Date
         %th Description
