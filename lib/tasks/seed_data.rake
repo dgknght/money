@@ -1,7 +1,5 @@
 namespace :seed_data do
 
-  LOGGER = Logger.new(STDOUT)
-
   # -----
   # Users
   # -----
