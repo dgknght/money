@@ -5,6 +5,11 @@ function AccountViewModel(account, entity) {
   var CREDIT = 'credit';
   var DEBIT = 'debit';
 
+  var COMMODITIES_CONTENT_TYPE = 'commodities';
+  var COMMODITY_CONTENT_TYPE = 'commodity';
+  var CURRENCY_CONTENT_TYPE = 'currency';
+  var CONTENT_TYPES = [COMMODITIES_CONTENT_TYPE, COMMODITY_CONTENT_TYPE, CURRENCY_CONTENT_TYPE];
+
   var _self = this;
   this.entity = entity;
   this.id = ko.observable(account.id);
@@ -12,6 +17,10 @@ function AccountViewModel(account, entity) {
   this.account_type = ko.observable(account.account_type).extend({
     required: "Account type is a required field.",
     includedIn: ['asset', 'liability', 'equity', 'income', 'expense']
+  });
+  this.content_type = ko.observable(account.content_type).extend({
+    required: "Content type is a required field.",
+    includedIn: CONTENT_TYPES
   });
   this._balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
@@ -31,7 +40,9 @@ function AccountViewModel(account, entity) {
     _self.entity.accounts.remove(_self);
   };
 
-  this.showCommoditiesMenu = ko.observable(false);
+  this.showCommoditiesMenu = ko.computed(function() {
+    return this.content_type() == COMMODITIES_CONTENT_TYPE;
+  }, this);
 
   this.showHoldings = ko.observable(false);
 
