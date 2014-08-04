@@ -44,9 +44,30 @@ function AccountViewModel(account, entity) {
     return this.content_type() == COMMODITIES_CONTENT_TYPE;
   }, this);
 
-  this.showHoldings = ko.observable(false);
+  this._showTransactionItems = ko.observable(!this.showCommoditiesMenu());
 
-  this.showTransactionItems = ko.observable(true);
+  this.showTransactionItems = ko.computed({
+    read: function() {
+      return this._showTransactionItems();
+    },
+    write: function(value) {
+      if (this.content_type() != COMMODITIES_CONTENT_TYPE) {
+        return;
+      }
+      this._showTransactionItems(value);
+    },
+    owner: this
+  });
+
+  this.showHoldings = ko.computed({
+    read: function() {
+      return !this.showTransactionItems();
+    },
+    write: function(value) {
+      this.showTransactionItems(!value);
+    },
+    owner: this
+  });
 
   this.parent = ko.computed(function() {
     if (this.parent_id() == null) return null;

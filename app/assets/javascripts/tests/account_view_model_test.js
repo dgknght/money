@@ -88,12 +88,28 @@ asyncTest("transaction_items", function() {
 asyncTest("showCommoditiesMenu", function() {
   expect(2);
 
-  var app = new MoneyApp();
   getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(commoditiesAccount) {
     equal(commoditiesAccount.showCommoditiesMenu(), true, 'Commodities accounts should show the commodities menu');
 
     otherAccount = commoditiesAccount.entity.getAccount(1);
     equal(otherAccount.showCommoditiesMenu(), false, 'Non-commodities accounts should not show the commodities menu');
+    start();
+  });
+});
+asyncTest("showHoldings", function() {
+  expect(6);
+
+  getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(commoditiesAccount) {
+    equal(commoditiesAccount.showHoldings(), true, 'Commodities accounts should show the holdings by default');
+    commoditiesAccount.showTransactionItems(true);
+    equal(commoditiesAccount.showHoldings(), false, 'showHoldings should be false if showTransactionItems is true');
+
+    otherAccount = commoditiesAccount.entity.getAccount(1);
+    equal(otherAccount.showHoldings(), false, 'Non-commodities accounts should not show holdings');
+    equal(otherAccount.showTransactionItems(), true, 'Non-commodities accounts should only show transaction items');
+    otherAccount.showHoldings(true);
+    equal(otherAccount.showHoldings(), false, 'Non-commodities accounts should not show holdings');
+    equal(otherAccount.showTransactionItems(), true, 'Non-commodities accounts should only show transaction items');
     start();
   });
 });
