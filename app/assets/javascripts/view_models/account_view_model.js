@@ -40,31 +40,31 @@ function AccountViewModel(account, entity) {
     _self.entity.accounts.remove(_self);
   };
 
-  this.showCommoditiesMenu = ko.computed(function() {
+  this.commoditiesMenuVisible = ko.computed(function() {
     return this.content_type() == COMMODITIES_CONTENT_TYPE;
   }, this);
 
-  this._showTransactionItems = ko.observable(!this.showCommoditiesMenu());
+  this._transactionItemsVisible = ko.observable(!this.commoditiesMenuVisible());
 
-  this.showTransactionItems = ko.computed({
+  this.transactionItemsVisible = ko.computed({
     read: function() {
-      return this._showTransactionItems();
+      return this._transactionItemsVisible();
     },
     write: function(value) {
       if (this.content_type() != COMMODITIES_CONTENT_TYPE) {
         return;
       }
-      this._showTransactionItems(value);
+      this._transactionItemsVisible(value);
     },
     owner: this
   });
 
-  this.showHoldings = ko.computed({
+  this.holdingsVisible = ko.computed({
     read: function() {
-      return !this.showTransactionItems();
+      return !this.transactionItemsVisible();
     },
     write: function(value) {
-      this.showTransactionItems(!value);
+      this.transactionItemsVisible(!value);
     },
     owner: this
   });

@@ -85,31 +85,31 @@ asyncTest("transaction_items", function() {
     equal(account.transaction_items().length, 0, "The transaction_items property should not load until accessed.");
   });
 });
-asyncTest("showCommoditiesMenu", function() {
+asyncTest("commoditiesMenuVisible", function() {
   expect(2);
 
   getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(commoditiesAccount) {
-    equal(commoditiesAccount.showCommoditiesMenu(), true, 'Commodities accounts should show the commodities menu');
+    equal(commoditiesAccount.commoditiesMenuVisible(), true, 'Commodities accounts should show the commodities menu');
 
     otherAccount = commoditiesAccount.entity.getAccount(1);
-    equal(otherAccount.showCommoditiesMenu(), false, 'Non-commodities accounts should not show the commodities menu');
+    equal(otherAccount.commoditiesMenuVisible(), false, 'Non-commodities accounts should not show the commodities menu');
     start();
   });
 });
-asyncTest("showHoldings", function() {
+asyncTest("holdingsVisible", function() {
   expect(6);
 
   getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(commoditiesAccount) {
-    equal(commoditiesAccount.showHoldings(), true, 'Commodities accounts should show the holdings by default');
-    commoditiesAccount.showTransactionItems(true);
-    equal(commoditiesAccount.showHoldings(), false, 'showHoldings should be false if showTransactionItems is true');
+    equal(commoditiesAccount.holdingsVisible(), true, 'Commodities accounts should show the holdings by default');
+    commoditiesAccount.transactionItemsVisible(true);
+    equal(commoditiesAccount.holdingsVisible(), false, 'holdingsVisible should be false if transactionItemsVisible is true');
 
     otherAccount = commoditiesAccount.entity.getAccount(1);
-    equal(otherAccount.showHoldings(), false, 'Non-commodities accounts should not show holdings');
-    equal(otherAccount.showTransactionItems(), true, 'Non-commodities accounts should only show transaction items');
-    otherAccount.showHoldings(true);
-    equal(otherAccount.showHoldings(), false, 'Non-commodities accounts should not show holdings');
-    equal(otherAccount.showTransactionItems(), true, 'Non-commodities accounts should only show transaction items');
+    equal(otherAccount.holdingsVisible(), false, 'Non-commodities accounts should not show holdings');
+    equal(otherAccount.transactionItemsVisible(), true, 'Non-commodities accounts should only show transaction items');
+    otherAccount.holdingsVisible(true);
+    equal(otherAccount.holdingsVisible(), false, 'Non-commodities accounts should not show holdings');
+    equal(otherAccount.transactionItemsVisible(), true, 'Non-commodities accounts should only show transaction items');
     start();
   });
 });
