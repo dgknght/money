@@ -113,3 +113,23 @@ asyncTest("holdingsVisible", function() {
     start();
   });
 });
+asyncTest("showTransactionItems", function() {
+  expect(2);
+
+  getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(commoditiesAccount) {
+    equal(commoditiesAccount.transactionItemsVisible(), false, 'Commodities accounts should not show the transactions items by default');
+    commoditiesAccount.showTransactionItems();
+    equal(commoditiesAccount.transactionItemsVisible(), true, 'transactionItemsVisible should be true after calling showTransactionItems');
+    start();
+  });
+});
+asyncTest("showHoldings", function() {
+  expect(1);
+
+  getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(commoditiesAccount) {
+    commoditiesAccount.holdingsVisible(false);
+    commoditiesAccount.showHoldings();
+    equal(commoditiesAccount.holdingsVisible(), true, 'transactionItemsVisible should be true after calling showTransactionItems');
+    start();
+  });
+});

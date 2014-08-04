@@ -33,8 +33,8 @@
   <!-- ko foreach: displayedAccounts -->
   %div{ data: { bind: "attr: {id: 'account_' + id() }" }}
     %ul.commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
-      %li Show Transactions
-      %li Show Holdings
+      %li{ data: { bind: "click: showTransactionItems" }} Show Transactions
+      %li{ data: { bind: "click: showHoldings" }} Show Holdings
     %table{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: holdingsVisible, attr: {id: 'holdings_' + id()}" }}
       %tr
         %th Holdings will go here

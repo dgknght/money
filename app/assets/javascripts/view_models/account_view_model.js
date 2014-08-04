@@ -59,6 +59,10 @@ function AccountViewModel(account, entity) {
     owner: this
   });
 
+  this.showTransactionItems = function() {
+    _self.transactionItemsVisible(true);
+  };
+
   this.holdingsVisible = ko.computed({
     read: function() {
       return !this.transactionItemsVisible();
@@ -68,6 +72,10 @@ function AccountViewModel(account, entity) {
     },
     owner: this
   });
+
+  this.showHoldings = function() {
+    _self.holdingsVisible(true);
+  };
 
   this.parent = ko.computed(function() {
     if (this.parent_id() == null) return null;
