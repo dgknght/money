@@ -149,6 +149,8 @@ function AccountViewModel(account, entity) {
     this.entity.accounts.push(this);
   };
 
+  this.holdings = ko.observableArray();
+
   this.transaction_items = ko.lazyObservableArray(function() {
     entity.getTransactionItems(this, function(transaction_items) {
       var lastItem = null;
