@@ -29,6 +29,41 @@
     });
   }, this);
 
+  this.commodities = ko.lazyObservableArray(function() {
+    if (this.id() == null) return;
+
+    var path = "entities/{id}/commodities.json".format({id: this.id()});
+    $.getJSON(path, function(commodities) {
+      var viewModels = _.map(commodities, function(c) { return new CommodityViewModel(c); });
+      viewModels.pushAllTo(_self.commodities);
+    });
+  }, this);
+
+  this.wait(milliseconds, method) {
+    var id = window.setTimeout(function() {
+      throw 'operation timed out';
+    }, milliseconds);
+
+    var result = null;
+    method(function(returnValue) {
+      window.cancelTimeout(id);
+      result = returnValue;
+    });
+
+    return result;
+  }
+
+  this.getCommodity = function(id, callback) {
+    if (this.commodities.state() != 'loaded') {
+      // need to load the list
+    }
+
+    var result = this.commodities().first(function(c) {
+      return c.id() == id;
+    });
+    callback(result);
+  };
+
   this.groupedAccounts = ko.computed(function() {
     var accounts = this.accounts()
     accounts.sort(function(a, b) { return a.path().compareTo(b.path()); });

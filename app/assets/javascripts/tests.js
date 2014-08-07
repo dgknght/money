@@ -11,6 +11,8 @@
 //= require tests/transaction_item_view_model_test.js
 //= require tests/transaction_item_rollup_view_model_test.js
 //= require tests/new_transaction_item_view_model_test.js
+//= require tests/holding_view_model_test.js
+//= require tests/commodity_view_model_test.js
 
 function getFromLazyLoadedCollection(obj, property, id, callback) {
   var timeout = window.setTimeout(function() {
@@ -26,6 +28,12 @@ function getFromLazyLoadedCollection(obj, property, id, callback) {
     }
   });
   obj[property]();
+}
+
+function getHolding(app, keys, callback) {
+  getAccount(app, keys, function(account) {
+    getFromLazyLoadedCollection(account, 'holdings', keys.holding_id, callback);
+  });
 }
 
 function getAccount(app, keys, callback) {

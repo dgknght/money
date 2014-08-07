@@ -149,7 +149,27 @@ function AccountViewModel(account, entity) {
     this.entity.accounts.push(this);
   };
 
-  this.holdings = ko.observableArray();
+  this.holdings = ko.lazyObservableArray(function() {
+    this.getHoldings(function(holdings) {
+      var viewModels = _.map(holdings, function(holding) {
+        return new HoldingViewModel(holding);
+      });
+      viewModels.pushAllTo(_self.holdings);
+    });
+  }, this);
+
+  this.getHoldings = function(callback) {
+    var path = "accounts/{id}/holdings.json".format({id: this.id()});
+
+    console.log("getting " + path);
+
+    $.getJSON(path, function(holdings) {
+
+      console.log("received " + holdings);
+
+      callback(holdings);
+    });
+  };
 
   this.transaction_items = ko.lazyObservableArray(function() {
     entity.getTransactionItems(this, function(transaction_items) {

@@ -1,7 +1,8 @@
 var ACCOUNTS = [
   { id: 1, name: 'Checking', account_type: 'asset', content_type: 'currency' },
   { id: 2, name: 'Salary', account_type: 'income', content_type: 'currency' },
-  { id: 3, name: '401k', account_type: 'asset', content_type: 'commodities' }
+  { id: 3, name: '401k', account_type: 'asset', content_type: 'commodities' },
+  { id: 4, name: 'KSS', account_type: 'asset', content_type: 'commodity' }
 ];
 module('AccountViewModel', {
   setup: function() {
@@ -14,6 +15,23 @@ module('AccountViewModel', {
     $.mockjax({
       url: 'entities/10/accounts.json',
       responseText: ACCOUNTS
+    });
+    $.mockjax({
+      url: 'accounts/3/holdings.json',
+      responseText: [
+        {
+          lots:[
+            {
+              id:1,
+              account_id:4,
+              commodity_id:1,
+              price:10.0,
+              shares_owned:100.0,
+              purchase_date:"2014-07-15"
+            }
+          ]
+        }
+      ]
     });
     $.mockjax({
       url: 'entities/10/transactions.json?account_id=1',
@@ -134,6 +152,17 @@ asyncTest("showHoldings", function() {
   });
 });
 asyncTest("holdings", function() {
-  ok(false, 'need to write the test');
-  start();
+  expect(1);
+
+  getAccount(new MoneyApp(), { entity_id: 10, account_id: 3 }, function(account) {
+    account.holdings.subscribe(function(holdings) {
+      if (holdings.length == 0) return;
+
+      console.log("holdings=" + holdings);
+
+      equal(holdings.length, 1, 'The holdings property should contain information on the commodities held in the account');
+      start();
+    });
+    account.holdings();
+  });
 });

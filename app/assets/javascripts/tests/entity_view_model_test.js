@@ -1,3 +1,6 @@
+var ENTITY_ID = 10;
+var COMMODITY_ID = 1;
+var KSS_ID = 2;
 module('EntityViewModel', {
   setup: function() {
     $.mockjax({
@@ -17,6 +20,12 @@ module('EntityViewModel', {
       url: 'entities/10.json',
       type: 'DELETE',
       responseText: []
+    });
+    $.mockjax({
+      url: 'entities/10/commodities.json',
+      responseText: [
+        { id: KSS_ID, name: 'Knight Software Services', symbol: 'KSS', market: 'NYSE' }
+      ]
     });
   },
   teardown: function() {
@@ -87,5 +96,22 @@ asyncTest("remove", function() {
       start();
     });
     entity.remove(true);
+  });
+});
+
+asyncTest("getCommodity", function() {
+  expect(2);
+
+  getEntity(new MoneyApp(), 10, function(entity) {
+    ok(entity.getCommodity, 'entity should have a method called "getCommodity"');
+
+    if (entity.getCommodity) {
+      entity.getCommodity(COMMODITY_ID, function(commodity) {
+        ok(commodity, 'it should return the specified commodity');
+        start();
+      });
+    } else {
+      start();
+    }
   });
 });
