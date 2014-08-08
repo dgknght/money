@@ -39,20 +39,6 @@
     });
   }, this);
 
-  this.wait(milliseconds, method) {
-    var id = window.setTimeout(function() {
-      throw 'operation timed out';
-    }, milliseconds);
-
-    var result = null;
-    method(function(returnValue) {
-      window.cancelTimeout(id);
-      result = returnValue;
-    });
-
-    return result;
-  }
-
   this.getCommodity = function(id, callback) {
     if (this.commodities.state() != 'loaded') {
       // need to load the list
