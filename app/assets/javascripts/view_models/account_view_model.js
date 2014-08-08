@@ -160,13 +160,7 @@ function AccountViewModel(account, entity) {
 
   this.getHoldings = function(callback) {
     var path = "accounts/{id}/holdings.json".format({id: this.id()});
-
-    console.log("getting " + path);
-
     $.getJSON(path, function(holdings) {
-
-      console.log("received " + holdings);
-
       callback(holdings);
     });
   };
