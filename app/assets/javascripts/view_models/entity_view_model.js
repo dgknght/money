@@ -34,20 +34,13 @@
 
     var path = "entities/{id}/commodities.json".format({id: this.id()});
     $.getJSON(path, function(commodities) {
-      var viewModels = _.map(commodities, function(c) { return new CommodityViewModel(c); });
+      var viewModels = _.map(commodities, function(c) { return new CommodityViewModel(c, _self); });
       viewModels.pushAllTo(_self.commodities);
     });
   }, this);
 
   this.getCommodity = function(id, callback) {
-    if (this.commodities.state() != 'loaded') {
-      // need to load the list
-    }
-
-    var result = this.commodities().first(function(c) {
-      return c.id() == id;
-    });
-    callback(result);
+    return _.getFromLazyLoadedArray(this.commodities, id, callback);
   };
 
   this.groupedAccounts = ko.computed(function() {
