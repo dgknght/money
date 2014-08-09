@@ -46,5 +46,36 @@ _.mixin({
     return date.getFullYear()
       + "-" + _.padLeft((date.getMonth() + 1) + "", 2, "0")
       + "-" + _.padLeft(date.getDate() + "", 2, "0")
+  },
+  findByMethod: function(list, methodName, value) {
+    return _.find(list, function(item) {
+      return item[methodName]() == value;
+    });
+  },
+  findById: function(list, id) {
+    return _.findByMethod(list, 'id', id);
+  },
+  getFromLazyLoadedArray: function(array, id, callback) {
+    if (array.state() == 'loaded') {
+      var result = _.findById(array(), id);
+      callback(result);
+      return;
+    }
+
+    var subscription = null;
+    var timeoutId = window.setTimeout(function() {
+      if (subscription != null) subscription.dispose();
+      callback(null);
+    }, 2000);
+
+    subscription = array.subscribe(function(values) {
+      var result = _.findById(values, id);
+      if (result != null) {
+        window.clearTimeout(timeoutId);
+        subscription.dispose();
+        callback(result);
+      }
+    });
+    array();
   }
 });
