@@ -152,7 +152,7 @@ function AccountViewModel(account, entity) {
   this.holdings = ko.lazyObservableArray(function() {
     this.getHoldings(function(holdings) {
       var viewModels = _.map(holdings, function(holding) {
-        return new HoldingViewModel(holding);
+        return new HoldingViewModel(holding, _self.entity);
       });
       viewModels.pushAllTo(_self.holdings);
     });
