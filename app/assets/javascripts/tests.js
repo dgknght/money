@@ -16,7 +16,7 @@
 
 function getFromLazyLoadedCollection(obj, property, id, callback) {
   var timeout = window.setTimeout(function() {
-    throw "getFromLazyLoadedCollection failed: unable to find item with id=" + id + " in the collection.";
+    throw "getFromLazyLoadedCollection failed: unable to find item with id=" + id + " in the " + property + " collection.";
   }, 2000);
 
   var subscription = obj[property].subscribe(function(values) {
@@ -28,6 +28,12 @@ function getFromLazyLoadedCollection(obj, property, id, callback) {
     }
   });
   obj[property]();
+}
+
+function getCommodity(app, keys, callback) {
+  getEntity(app, keys.entity_id, function(entity) {
+    getFromLazyLoadedCollection(entity, 'commodities', keys.commodity_id, callback);
+  });
 }
 
 function getHolding(app, keys, callback) {
