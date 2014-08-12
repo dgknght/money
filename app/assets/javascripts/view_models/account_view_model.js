@@ -281,7 +281,9 @@ function AccountViewModel(account, entity) {
       this.transaction_items()[index].insert(rollup);
       this.transaction_items.splice(index, 0, rollup);
     } else {
-      this.transaction_items().last().previousItem(rollup);
+      var last = this.transaction_items().last();
+      if (last)
+        this.transaction_items().last().previousItem(rollup);
       this.transaction_items.push(rollup);
     }
   };
