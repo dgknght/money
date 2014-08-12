@@ -20,7 +20,7 @@ module('HoldingViewModel', {
       ]
     });
     $.mockjax({
-      url: 'accounts/' + IRA_ID + '/holdings.json',
+      url: 'accounts/' + KSS_ACCOUNT_ID + '/holdings.json',
       responseText: [
         { id: HOLDING_ID, lots: { id: LOT_ID, account_id: KSS_ACCOUNT_ID, commodity_id: KSS_ID, purchase_date: '2014-01-01', shares_owned: 100, price: 10 } },
       ]

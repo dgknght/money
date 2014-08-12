@@ -13,13 +13,14 @@ function HoldingViewModel(holding, entity) {
   this._commodity = ko.observable();
   this.commodity = ko.computed(function() {
     if (this._commodity() != null) return this._commodity();
+
     this.entity.getCommodity(this.commodity_id(), function(commodity) {
       _self._commodity(commodity);
     });
   }, this);
 
   this.symbol = ko.computed(function() {
-    var commodity = this.commodity();
+    var commodity = this._commodity();
     return commodity == null ? null : commodity.symbol();
   }, this);
 }
