@@ -17,6 +17,7 @@
 //= require view_models/new_transaction_item_view_model.js
 //= require view_models/holding_view_model.js
 //= require view_models/commodity_view_model.js
+//= require view_models/lot_view_model.js
 
 /*
  * Constructor for the client-side application
