@@ -8,9 +8,15 @@ function HoldingViewModel(holding, entity) {
   this.entity = entity;
 
   this.id           = ko.observable(holding.id);
-  this.commodity_id = ko.observable(holding.commodity_id);
+  this.lots         = ko.observableArray(_.map(holding.lots, function(lot) {
+    return new LotViewModel(lot);
+  }));
 
   this._commodity = ko.observable();
+  this.commodity_id = ko.computed(function() {
+    var firstLot = _.first(this.lots);
+    return firstLot ? firstList.commodity_id() : null;
+  }, this);
   this.commodity = ko.computed(function() {
     if (this._commodity() != null) return this._commodity();
 

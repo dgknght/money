@@ -39,7 +39,7 @@ module('HoldingViewModel', {
 asyncTest("symbol", function() {
   expect(2);
 
-  var keys = {entity_id: ENTITY_ID, account_id: IRA_ID, holding_id: HOLDING_ID};
+  var keys = {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, holding_id: HOLDING_ID};
   getHolding(new MoneyApp(), keys, function(holding) {
     ok(holding.symbol, 'should have a "symbol" property');
     if (holding.symbol) {
