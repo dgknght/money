@@ -14,6 +14,7 @@
 //= require tests/holding_view_model_test.js
 //= require tests/commodity_view_model_test.js
 //= require tests/lot_view_model_test.js
+//= require tests/price_view_model_test.js
 
 function getFromLazyLoadedCollection(obj, property, id, callback) {
   var timeout = window.setTimeout(function() {
