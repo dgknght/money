@@ -1,6 +1,8 @@
 (function() {
   var ENTITY_ID = 1;
   var COMMODITY_ID = 2;
+  var PRICE1_ID = 3;
+  var PRICE2_ID = 4;
   module('CommodityViewModel', {
     setup: function() {
       $.mockjax({
@@ -13,6 +15,13 @@
         url: 'entities/' + ENTITY_ID + '/commodities.json',
         responseText: [
           { id: COMMODITY_ID, name: 'Knight Software Services', symbol: 'KSS', market: 'NYSE' }
+        ]
+      });
+      $.mockjax({
+        url: 'commodities/' + COMMODITY_ID + '/prices.json',
+        responseText: [
+          { id: PRICE1_ID, trade_date: '2014-01-01', price: 10 },
+          { id: PRICE2_ID, trace_date: '2014-02-01', price: 12 }
         ]
       });
     }
@@ -51,6 +60,50 @@
         equal(commodity.market(), 'NYSE', 'The market property should have the correct value');
       }
       start();
+    });
+  });
+
+  asyncTest('prices', function() {
+    expect(2);
+
+    getCommodity(new MoneyApp(), { entity_id: ENTITY_ID, commodity_id: COMMODITY_ID }, function(commodity) {
+      ok(commodity.prices, 'The commodity should have a property named "prices"');
+      if (commodity.prices) {
+        var id = window.setTimeout(function() {
+          start();
+        }, 2000);
+        commodity.prices.subscribe(function(prices) {
+          if (prices.length == 2) {
+            ok(true, 'Should contain the prices for the commodity');
+            window.clearTimeout(id);
+            start();
+          }
+        });
+        commodity.prices();
+      } else {
+        start();
+      }
+    });
+  });
+
+  asyncTest('latestPrice', function() {
+    expect(2);
+
+    getCommodity(new MoneyApp(), { entity_id: ENTITY_ID, commodity_id: COMMODITY_ID }, function(commodity) {
+      ok(commodity.latestPrice, 'The commodity should have a property named "latestPrice"');
+      if (commodity.latestPrice) {
+        var id = window.setTimeout(function() {
+          start();
+        }, 2000);
+        commodity.latestPrice.subscribe(function(price) {
+          equal(price.trade_date().toLocaleDateString(), '2/1/2014', 'The price should have the correct transaction date value');
+          equal(price.price(), 12, 'The price should have the correct price value');
+          start();
+        });
+        commodity.latestPrice();
+      } else {
+        start();
+      }
     });
   });
 })()
