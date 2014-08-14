@@ -28,7 +28,7 @@ function CommodityViewModel(commodity) {
       return null;
     } else {
       // the list should be maintained in descending date order
-      return this.prices().last();
+      return this.prices().first();
     }
   }, this);
 }

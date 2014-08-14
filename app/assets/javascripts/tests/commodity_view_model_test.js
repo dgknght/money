@@ -20,8 +20,8 @@
       $.mockjax({
         url: 'commodities/' + COMMODITY_ID + '/prices.json',
         responseText: [
-          { id: PRICE1_ID, trade_date: '2014-01-01', price: 10 },
-          { id: PRICE2_ID, trace_date: '2014-02-01', price: 12 }
+          { id: PRICE2_ID, trade_date: '2014-02-01', price: 12 },
+          { id: PRICE1_ID, trade_date: '2014-01-01', price: 10 }
         ]
       });
     }
@@ -87,17 +87,28 @@
   });
 
   asyncTest('latestPrice', function() {
-    expect(2);
+    expect(3);
 
     getCommodity(new MoneyApp(), { entity_id: ENTITY_ID, commodity_id: COMMODITY_ID }, function(commodity) {
       ok(commodity.latestPrice, 'The commodity should have a property named "latestPrice"');
       if (commodity.latestPrice) {
         var id = window.setTimeout(function() {
+
+          console.log("calling start in timeout flow");
+
           start();
         }, 2000);
+        var priceFound = false;
         commodity.latestPrice.subscribe(function(price) {
+          if (priceFound) return;
+
+          priceFound = true;
           equal(price.trade_date().toLocaleDateString(), '2/1/2014', 'The price should have the correct transaction date value');
           equal(price.price(), 12, 'The price should have the correct price value');
+          window.clearTimeout(id);
+
+          console.log("calling start in normal flow");
+
           start();
         });
         commodity.latestPrice();
