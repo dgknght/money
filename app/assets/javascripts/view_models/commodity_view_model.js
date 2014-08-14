@@ -10,7 +10,7 @@ function CommodityViewModel(commodity) {
   this.market = ko.observable(commodity.market);
   this.prices = ko.lazyObservableArray(function() {
     this._getPrices(function(prices) {
-      var viewModels = _.map(prices, function(p) { new PriceViewModel(p); });
+      var viewModels = _.map(prices, function(p) { return new PriceViewModel(p, _self); });
       viewModels.pushAllTo(_self.prices);
     });
   }, this);
@@ -18,7 +18,7 @@ function CommodityViewModel(commodity) {
   this._getPrices = function(callback) {
     var path = "commodities/{id}/prices.json".format({id: this.id()});
     $.getJSON(path, callback);
-  }
+  };
 
   this.latestPrice = ko.computed(function() {
     if (this.prices.state == 'new') {

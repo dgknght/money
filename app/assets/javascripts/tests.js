@@ -32,6 +32,12 @@ function getFromLazyLoadedCollection(obj, property, id, callback) {
   obj[property]();
 }
 
+function getPrice(app, keys, callback) {
+  getCommodity(app, keys, function(commodity) {
+    getFromLazyLoadedCollection(commodity, 'prices', keys.price_id, callback);
+  });
+}
+
 function getCommodity(app, keys, callback) {
   getEntity(app, keys.entity_id, function(entity) {
     getFromLazyLoadedCollection(entity, 'commodities', keys.commodity_id, callback);
