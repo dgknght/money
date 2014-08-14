@@ -13,13 +13,13 @@ function HoldingViewModel(holding, entity) {
   }));
 
   this._commodity = ko.observable();
+
   this.commodity_id = ko.computed(function() {
-    var firstLot = _.first(this.lots);
-    return firstLot ? firstList.commodity_id() : null;
+    var firstLot = _.first(this.lots());
+    return firstLot ? firstLot.commodity_id() : null;
   }, this);
   this.commodity = ko.computed(function() {
     if (this._commodity() != null) return this._commodity();
-
     this.entity.getCommodity(this.commodity_id(), function(commodity) {
       _self._commodity(commodity);
     });
@@ -28,5 +28,18 @@ function HoldingViewModel(holding, entity) {
   this.symbol = ko.computed(function() {
     var commodity = this._commodity();
     return commodity == null ? null : commodity.symbol();
+  }, this);
+
+  this.value = ko.computed(function() {
+    return 0;
+//    return this.shares() * this.commodity().latest_price();
+  }, this);
+
+  this.shares = ko.computed(function() {
+    return this.lots().sum(function(lot) { return lot.shares_owned();});
+  }, this);
+
+  this.cost = ko.computed(function() {
+    return this.lots().sum(function(lot) { return lot.price() * lot.shares_owned(); });
   }, this);
 }
