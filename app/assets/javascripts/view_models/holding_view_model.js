@@ -30,13 +30,23 @@ function HoldingViewModel(holding, entity) {
     return commodity == null ? null : commodity.symbol();
   }, this);
 
-  this.value = ko.computed(function() {
+  this.latestPrice = function() {
+    var commodity = this.commodity();
+    if (commodity) {
+      var latestPrice = commodity.latestPrice();
+      if (latestPrice) {
+        return latestPrice.price();
+      }
+    }
     return 0;
-//    return this.shares() * this.commodity().latest_price();
-  }, this);
+  };
 
   this.shares = ko.computed(function() {
     return this.lots().sum(function(lot) { return lot.shares_owned();});
+  }, this);
+
+  this.value = ko.computed(function() {
+    return this.shares() * this.latestPrice();
   }, this);
 
   this.cost = ko.computed(function() {
