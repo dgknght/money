@@ -121,7 +121,20 @@
     });
   });
   asyncTest("gain_loss", function() {
-    ok(false, "Need to write the test");
-    start();
+    expect(2);
+
+    var keys = {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, holding_id: HOLDING_ID};
+    getHolding(new MoneyApp(), keys, function(holding) {
+      ok(holding.gain_loss, 'should have a "gain_loss" property');
+      if (holding.gain_loss) {
+        var id = window.setTimeout(start, 5000);
+        holding.gain_loss.subscribe(function(gain_loss) {
+          equal(gain_loss, 600, 'The "gain_loss" property should have the correct value');
+          window.clearTimeout(id);
+          start();
+        });
+        holding.gain_loss();
+      }
+    });
   });
 })();

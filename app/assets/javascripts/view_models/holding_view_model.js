@@ -52,4 +52,8 @@ function HoldingViewModel(holding, entity) {
   this.cost = ko.computed(function() {
     return this.lots().sum(function(lot) { return lot.price() * lot.shares_owned(); });
   }, this);
+
+  this.gain_loss = ko.computed(function() {
+    return this.value() - this.cost();
+  }, this);
 }
