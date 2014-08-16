@@ -36,7 +36,7 @@
       %ul.nav#commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
         %li.clickable{ data: { bind: "click: showTransactionItems" }} Show Transactions
         %li.clickable{ data: { bind: "click: showHoldings" }} Show Holdings
-    %table{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: holdingsVisible, attr: {id: 'holdings_' + id()}" }}
+    %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: holdingsVisible, attr: {id: 'holdings_' + id()}" }}
       %tr
         %th Symbol
         %th Value
@@ -46,6 +46,10 @@
       <!-- ko foreach: holdings -->
       %tr
         %td{ data: { bind: "text: symbol" }}
+        %td.number_column{ data: { bind: "text: formattedValue" }}
+        %td.number_column{ data: { bind: "text: formattedShares" }}
+        %td.number_column{ data: { bind: "text: formattedCost" }}
+        %td.number_column{ data: { bind: "text: formattedGainLoss" }}
       <!-- /ko -->
     %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: transactionItemsVisible, attr: {id: 'transactions_' + id() }" }}
       %tr

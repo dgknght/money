@@ -13,6 +13,11 @@ _.mixin({
       return f;
     return function() {};
   },
+  ensureNumber: function(value, defaultValue) {
+    if (value == null) return defaultValue;
+    if (typeof value === "number") return value;
+    return parseFloat(value);
+  },
   newString: function(character, length) {
     var result = "";
     for (var i = 0; i < length; i++) {

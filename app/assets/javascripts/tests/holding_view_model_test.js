@@ -93,6 +93,27 @@
           window.clearTimeout(id);
           start();
         });
+      } else {
+        start();
+      }
+    });
+  });
+  asyncTest("formattedValue", function() {
+    expect(2);
+
+    var keys = {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, holding_id: HOLDING_ID};
+    getHolding(new MoneyApp(), keys, function(holding) {
+      ok(holding.formattedValue, 'should have a "formattedValue" property');
+      if (holding.formattedValue) {
+        var id = window.setTimeout(start, 5000);
+        holding.formattedValue.subscribe(function(formattedValue) {
+          equal(formattedValue, "2,800.00", 'The "formattedValue" property should have the correct formattedValue');
+          window.clearTimeout(id);
+          start();
+        });
+        holding.formattedValue();
+      } else {
+        start();
       }
     });
   });
@@ -108,6 +129,18 @@
       start();
     });
   });
+  asyncTest("formattedShares", function() {
+    expect(2);
+
+    var keys = {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, holding_id: HOLDING_ID};
+    getHolding(new MoneyApp(), keys, function(holding) {
+      ok(holding.formattedShares, 'should have a "formattedShares" property');
+      if (holding.formattedShares) {
+        equal(holding.formattedShares(), "200.0000", 'should have the correct formattedShares');
+      }
+      start();
+    });
+  });
   asyncTest("cost", function() {
     expect(2);
 
@@ -116,6 +149,18 @@
       ok(holding.cost, 'should have a "cost" property');
       if (holding.cost) {
         equal(holding.cost(), 2200, 'should have the correct cost');
+      }
+      start();
+    });
+  });
+  asyncTest("formattedCost", function() {
+    expect(2);
+
+    var keys = {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, holding_id: HOLDING_ID};
+    getHolding(new MoneyApp(), keys, function(holding) {
+      ok(holding.formattedCost, 'should have a "formattedCost" property');
+      if (holding.formattedCost) {
+        equal(holding.formattedCost(), "2,200.00", 'should have the correct formattedCost');
       }
       start();
     });
@@ -134,6 +179,27 @@
           start();
         });
         holding.gain_loss();
+      } else {
+        start();
+      }
+    });
+  });
+  asyncTest("formattedGainLoss", function() {
+    expect(2);
+
+    var keys = {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, holding_id: HOLDING_ID};
+    getHolding(new MoneyApp(), keys, function(holding) {
+      ok(holding.formattedGainLoss, 'should have a "formattedGainLoss" property');
+      if (holding.formattedGainLoss) {
+        var id = window.setTimeout(start, 5000);
+        holding.formattedGainLoss.subscribe(function(formattedGainLoss) {
+          equal(formattedGainLoss, "600.00", 'The "formattedGainLoss" property should have the correct value');
+          window.clearTimeout(id);
+          start();
+        });
+        holding.formattedGainLoss();
+      } else {
+        start();
       }
     });
   });

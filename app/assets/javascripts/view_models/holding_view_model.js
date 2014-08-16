@@ -42,18 +42,34 @@ function HoldingViewModel(holding, entity) {
   };
 
   this.shares = ko.computed(function() {
-    return this.lots().sum(function(lot) { return lot.shares_owned();});
+    return this.lots().sum(function(lot) { return lot.shares_owned(); });
+  }, this);
+
+  this.formattedShares = ko.computed(function() {
+    return accounting.formatNumber(this.shares(), 4);
   }, this);
 
   this.value = ko.computed(function() {
     return this.shares() * this.latestPrice();
   }, this);
 
+  this.formattedValue = ko.computed(function() {
+    return accounting.formatNumber(this.value(), 2);
+  }, this);
+
   this.cost = ko.computed(function() {
     return this.lots().sum(function(lot) { return lot.price() * lot.shares_owned(); });
   }, this);
 
+  this.formattedCost = ko.computed(function() {
+    return accounting.formatNumber(this.cost(), 2);
+  }, this);
+
   this.gain_loss = ko.computed(function() {
     return this.value() - this.cost();
+  }, this);
+
+  this.formattedGainLoss = ko.computed(function() {
+    return accounting.formatNumber(this.gain_loss(), 2);
   }, this);
 }
