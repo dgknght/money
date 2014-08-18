@@ -29,16 +29,16 @@ Feature: Delete a price
     Then I should see "KSS Prices" within the page title
     And I should see the following prices table
       | Trade date |  Price |
-      |   1/1/2014 | 7.7777 |
-      |   1/2/2014 | 8.8888 |
       |   1/3/2014 | 9.9999 |
+      |   1/2/2014 | 8.8888 |
+      |   1/1/2014 | 7.7777 |
 
-    When I click "Delete" within the 3rd price row
+    When I click "Delete" within the 1st price row
     Then I should see "The price was deleted successfully." within the notice area
     And I should see the following prices table
       | Trade date |  Price |
-      |   1/1/2014 | 7.7777 |
       |   1/2/2014 | 8.8888 |
+      |   1/1/2014 | 7.7777 |
 
     When I click "Back"
     Then I should see the following commodities table

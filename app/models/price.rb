@@ -17,6 +17,8 @@ class Price < ActiveRecord::Base
   validates_uniqueness_of :trade_date, scope: :commodity_id
   validates :price, presence: true, numericality: { greater_than: 0 }
 
+  default_scope { order('trade_date DESC') }
+
   def self.put_price(commodity, trade_date, price)
     raise 'commodity must be specified' unless commodity
     raise 'commodity must have a prices method' unless commodity.respond_to?(:prices)

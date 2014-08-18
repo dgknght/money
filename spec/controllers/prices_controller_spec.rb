@@ -23,6 +23,7 @@ describe PricesController do
         end
 
         context 'in json' do
+          let!(:price_2) { FactoryGirl.create(:price, commodity: commodity, trade_date: '2014-03-01') }
           it 'should be successful' do
             get :index, commodity_id: commodity, format: :json
             expect(response).to be_success
@@ -30,7 +31,7 @@ describe PricesController do
 
           it 'should return the list of prices' do
             get :index, commodity_id: commodity, format: :json
-            expect(response.body).to eq([price].to_json)
+            expect(response.body).to eq([price_2, price].to_json)
           end
         end
       end
