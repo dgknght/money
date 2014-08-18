@@ -51,6 +51,15 @@
         %td.number_column{ data: { bind: "text: formattedCost" }}
         %td.number_column{ data: { bind: "text: formattedGainLoss" }}
       <!-- /ko -->
+      %tr.commodity_total_line
+        %td Commodity total
+        %td.number_column{ data: { bind: "text: formattedChildrenBalance" }}
+      %tr.cash_total_line
+        %td Cash
+        %td.number_column{ data: { bind: "text: formattedBalance" }}
+      %tr.account_total_line
+        %td Total value
+        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren" }}
     %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: transactionItemsVisible, attr: {id: 'transactions_' + id() }" }}
       %tr
         %th.number_column Date

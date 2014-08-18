@@ -4,6 +4,8 @@
   var SALARY_ID = 2;
   var FOUR_OH_ONE_K_ID = 3;
   var KSS_ACCOUNT_ID = 4
+  var PRICE_ID = 5;
+  var KSS_ID = 6;
   var ACCOUNTS = [
     { id: CHECKING_ID, name: 'Checking', account_type: 'asset', content_type: 'currency' },
     { id: SALARY_ID, name: 'Salary', account_type: 'income', content_type: 'currency' },
@@ -30,13 +32,19 @@
               {
                 id:1,
                 account_id: KSS_ACCOUNT_ID,
-                commodity_id:1,
+                commodity_id: KSS_ID,
                 price:10.0,
                 shares_owned:100.0,
                 purchase_date:"2014-07-15"
               }
             ]
           }
+        ]
+      });
+      $.mockjax({
+        url: 'commodity/' + KSS_ID + '/prices.json',
+        responseText: [
+          { id: PRICE_ID, trade_date: '2014-01-01', price: 12 }
         ]
       });
       $.mockjax({
@@ -167,6 +175,22 @@
         start();
       });
       account.holdings();
+    });
+  });
+  asyncTest("formattedChildrenBalance
+    expect(1);
+
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(false, 'need to write the test');
+      start();
+    });
+  });
+  asyncTest("childrenBalance", function() {
+    expect(1);
+
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(false, 'need to write the test');
+      start();
     });
   });
 })();
