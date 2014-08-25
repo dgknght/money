@@ -165,32 +165,59 @@
       start();
     });
   });
-  asyncTest("holdings", function() {
-    expect(1);
-
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
-      account.holdings.subscribe(function(holdings) {
-        if (holdings.length == 0) return;
-        equal(holdings.length, 1, 'The holdings property should contain information on the commodities held in the account');
+  asyncTest("value for a COMMODITY account", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID }, function(account) {
+      ok(account.value, 'The object should have a "value" method');
+      if (account.value) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the "value"');
+          start();
+        }, 2000);
+        account.value.subscribe(function(value) {
+          window.clearTimeout(timeoutId);
+          equal(value, 1200, 'The value method should return the correct value');
+          start();
+        });
+        account.value();
+      } else {
         start();
-      });
-      account.holdings();
+      }
     });
   });
-  asyncTest("formattedChildrenBalance", function() {
+  asyncTest("formattedValue", function() {
     expect(1);
-
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
-      ok(false, 'need to write the test');
-      start();
-    });
+    ok(false, 'need to write the test');
+    start();
   });
-  asyncTest("childrenBalance", function() {
+  asyncTest("cost", function() {
     expect(1);
-
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
-      ok(false, 'need to write the test');
-      start();
-    });
+    ok(false, 'need to write the test');
+    start();
+  });
+  asyncTest("formattedCost", function() {
+    expect(1);
+    ok(false, 'need to write the test');
+    start();
+  });
+  asyncTest("shares", function() {
+    expect(1);
+    ok(false, 'need to write the test');
+    start();
+  });
+  asyncTest("formattedShares", function() {
+    expect(1);
+    ok(false, 'need to write the test');
+    start();
+  });
+  asyncTest("gainLoss", function() {
+    expect(1);
+    ok(false, 'need to write the test');
+    start();
+  });
+  asyncTest("formattedGainLoss", function() {
+    expect(1);
+    ok(false, 'need to write the test');
+    start();
   });
 })();

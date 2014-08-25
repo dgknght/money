@@ -77,6 +77,10 @@ function AccountViewModel(account, entity) {
     _self.holdingsVisible(true);
   };
 
+  this.value = ko.computed(function() {
+    return 0;
+  }, this);
+
   this.parent = ko.computed(function() {
     if (this.parent_id() == null) return null;
     return this.entity.getAccount(this.parent_id());

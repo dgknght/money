@@ -43,9 +43,9 @@
         %th Shares
         %th Cost
         %th Gain/loss
-      <!-- ko foreach: holdings -->
+      <!-- ko foreach: children -->
       %tr
-        %td{ data: { bind: "text: symbol" }}
+        %td{ data: { bind: "text: name" }}
         %td.number_column{ data: { bind: "text: formattedValue" }}
         %td.number_column{ data: { bind: "text: formattedShares" }}
         %td.number_column{ data: { bind: "text: formattedCost" }}
