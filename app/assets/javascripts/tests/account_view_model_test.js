@@ -177,7 +177,7 @@
       account.holdings();
     });
   });
-  asyncTest("formattedChildrenBalance
+  asyncTest("formattedChildrenBalance", function() {
     expect(1);
 
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
