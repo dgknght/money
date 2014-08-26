@@ -44,9 +44,9 @@ function getCommodity(app, keys, callback) {
   });
 }
 
-function getHolding(app, keys, callback) {
+function getLot(app, keys, callback) {
   getAccount(app, keys, function(account) {
-    getFromLazyLoadedCollection(account, 'holdings', keys.holding_id, callback);
+    getFromLazyLoadedCollection(account, 'lots', keys.lot_id, callback);
   });
 }
 
