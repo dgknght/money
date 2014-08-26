@@ -77,8 +77,29 @@ function AccountViewModel(account, entity) {
     _self.holdingsVisible(true);
   };
 
+  this.lots = ko.lazyObservableArray(function() {
+    this.getLots(function(lots) {
+      _.map(lots, function(lot) { return new LotViewModel(lot, _self.entity); })
+        .pushAllTo(_self.lots);
+    });
+  }, this);
+
+  this.getLots = function(callback) {
+    var path = "accounts/{id}/lots.json".format({id: this.id()});
+    $.getJSON(path, callback);
+  };
+
+  this.sumOfLotValues = ko.computed(function() {
+    var result = _.reduce(this.lots(), function(sum, lot) { return sum + lot.currentValue(); }, 0);
+    return result;
+  }, this);
+
   this.value = ko.computed(function() {
-    return 0;
+    if (this.content_type() == COMMODITY_CONTENT_TYPE) {
+      return this.sumOfLotValues();
+    } else {
+      return 0;
+    }
   }, this);
 
   this.parent = ko.computed(function() {
@@ -151,22 +172,6 @@ function AccountViewModel(account, entity) {
       }
     }
     this.entity.accounts.push(this);
-  };
-
-  this.holdings = ko.lazyObservableArray(function() {
-    this.getHoldings(function(holdings) {
-      var viewModels = _.map(holdings, function(holding) {
-        return new HoldingViewModel(holding, _self.entity);
-      });
-      viewModels.pushAllTo(_self.holdings);
-    });
-  }, this);
-
-  this.getHoldings = function(callback) {
-    var path = "accounts/{id}/holdings.json".format({id: this.id()});
-    $.getJSON(path, function(holdings) {
-      callback(holdings);
-    });
   };
 
   this.transaction_items = ko.lazyObservableArray(function() {

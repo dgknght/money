@@ -25,27 +25,27 @@
         responseText: ACCOUNTS
       });
       $.mockjax({
-        url: 'accounts/' + KSS_ACCOUNT_ID + '/holdings.json',
+        url: 'accounts/' + KSS_ACCOUNT_ID + '/lots.json',
         responseText: [
           {
-            lots:[
-              {
-                id:1,
-                account_id: KSS_ACCOUNT_ID,
-                commodity_id: KSS_ID,
-                price:10.0,
-                shares_owned:100.0,
-                purchase_date:"2014-07-15"
-              }
-            ]
+            id:1,
+            account_id: KSS_ACCOUNT_ID,
+            commodity_id: KSS_ID,
+            price:10.0,
+            shares_owned:100.0,
+            purchase_date:"2014-07-15"
           }
         ]
       });
       $.mockjax({
-        url: 'commodity/' + KSS_ID + '/prices.json',
+        url: 'entities/' + ENTITY_ID + '/commodities.json',
         responseText: [
-          { id: PRICE_ID, trade_date: '2014-01-01', price: 12 }
+          { id: KSS_ID, name: 'Knight Software Services', symbol: 'KSS', market: 'NYSE' }
         ]
+      });
+      $.mockjax({
+        url: 'commodities/' + KSS_ID + '/prices.json',
+        responseText: [ ]
       });
       $.mockjax({
         url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + CHECKING_ID,
@@ -161,7 +161,7 @@
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(commoditiesAccount) {
       commoditiesAccount.holdingsVisible(false);
       commoditiesAccount.showHoldings();
-      equal(commoditiesAccount.holdingsVisible(), true, 'transactionItemsVisible should be true after calling showTransactionItems');
+      equal(commoditiesAccount.holdingsVisible(), true, 'holdingsVisible should be true after calling showHoldings');
       start();
     });
   });
