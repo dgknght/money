@@ -5,6 +5,7 @@
   var KSS_ID = 4;
   var HOLDING_ID = 5;
   var LOT_ID = 6;
+  var PRICE_ID = 7;
 
   module('LotViewModel', {
     setup: function() {
@@ -22,19 +23,32 @@
         ]
       });
       $.mockjax({
-        url: 'accounts/' + KSS_ACCOUNT_ID + '/holdings.json',
+        url: 'accounts/' + IRA_ID + '/lots.json',
+        responseText: []
+      });
+      $.mockjax({
+        url: 'accounts/' + KSS_ACCOUNT_ID + '/lots.json',
         responseText: [
-          { id: HOLDING_ID, lots: [
-              {
-                id: LOT_ID,
-                account_id: KSS_ACCOUNT_ID,
-                commodity_id: KSS_ID,
-                price: 10,
-                shares_owned: 100,
-                purchase_date: '2014-02-01'
-              }
-            ]
+          {
+            id: LOT_ID,
+            account_id: KSS_ACCOUNT_ID,
+            commodity_id: KSS_ID,
+            price: 10,
+            shares_owned: 100,
+            purchase_date: '2014-02-01'
           }
+        ]
+      });
+      $.mockjax({
+        url: 'entities/' + ENTITY_ID + '/commodities.json',
+        responseText: [
+          { id: KSS_ID, name: 'Knight Software Services', symbol: 'KSS', market: 'NYSE' }
+        ]
+      });
+      $.mockjax({
+        url: 'commodities/' + KSS_ID + '/prices.json',
+        responseText: [
+          { id: PRICE_ID, trade_date: '2014-08-01', price: 12 }
         ]
       });
     },
@@ -92,6 +106,26 @@
         equal(lot.shares_owned(), 100, 'The shares_owned property should have the correct value');
       }
       start();
+    });
+  });
+  asyncTest('currentValue', function() {
+    expect(2);
+
+    getLot(new MoneyApp(), {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, lot_id: LOT_ID}, function(lot) {
+      ok(lot.currentValue, 'The object should have a "currentValue" method');
+      if (lot.currentValue) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'never received the event');
+          start();
+        }, 2000);
+        lot.currentValue.subscribe(function(currentValue) {
+          window.clearTimeout(timeoutId);
+          equal(currentValue, 1200, 'The method should return the correct value');
+          start();
+        });
+      } else {
+        start();
+      }
     });
   });
 })()
