@@ -14,6 +14,7 @@
   ];
   module('AccountViewModel', {
     setup: function() {
+      $.mockjaxClear();
       $.mockjax({
         url: 'entities.json',
         responseText: [
@@ -45,7 +46,9 @@
       });
       $.mockjax({
         url: 'commodities/' + KSS_ID + '/prices.json',
-        responseText: [ ]
+        responseText: [
+          { id: PRICE_ID, trade_date: '2014-08-01', price: 12 }
+        ]
       });
       $.mockjax({
         url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + CHECKING_ID,
@@ -72,7 +75,6 @@
       });
     },
     teardown: function() {
-      $.mockjaxClear();
     }
   });
   asyncTest("validation", function() {
@@ -171,13 +173,15 @@
       ok(account.value, 'The object should have a "value" method');
       if (account.value) {
         var timeoutId = window.setTimeout(function() {
-          ok(false, 'Never received the "value"');
+          ok(false, 'Never received the correct "value"');
           start();
         }, 2000);
         account.value.subscribe(function(value) {
-          window.clearTimeout(timeoutId);
-          equal(value, 1200, 'The value method should return the correct value');
-          start();
+          if (value == 1200) {
+            window.clearTimeout(timeoutId);
+            ok(true);
+            start();
+          }
         });
         account.value();
       } else {

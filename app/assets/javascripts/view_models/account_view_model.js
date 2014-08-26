@@ -90,8 +90,7 @@ function AccountViewModel(account, entity) {
   };
 
   this.sumOfLotValues = ko.computed(function() {
-    var result = _.reduce(this.lots(), function(sum, lot) { return sum + lot.currentValue(); }, 0);
-    return result;
+    return _.reduce(this.lots(), function(sum, lot) { return sum + lot.currentValue(); }, 0);
   }, this);
 
   this.value = ko.computed(function() {

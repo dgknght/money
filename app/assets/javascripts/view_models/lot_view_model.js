@@ -10,12 +10,12 @@ function LotViewModel(lot, entity) {
 
   this._commodity = ko.observable();
   this.commodity = ko.computed(function() {
-    if (this._commodity() != null) {
-      return this._commodity();
+    if (this._commodity() == null) {
+      this.entity.getCommodity(this.commodity_id(), function(commodity) {
+        _self._commodity(commodity);
+      });
     }
-    this.entity.getCommodity(this.commodity_id(), function(commodity) {
-      _self._commodity(commodity);
-    });
+    return this._commodity();
   }, this);
 
   this.latestPrice = ko.computed(function() {
@@ -27,7 +27,8 @@ function LotViewModel(lot, entity) {
 
   this.workingPrice = ko.computed(function() {
     var latestPrice = this.latestPrice();
-    return latestPrice ? latestPrice.price() : this.price();
+    var result = latestPrice ? latestPrice.price() : this.price();
+    return result;
   }, this);
 
   this.currentValue = ko.computed(function() {
