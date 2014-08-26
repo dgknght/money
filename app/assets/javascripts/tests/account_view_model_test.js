@@ -6,11 +6,17 @@
   var KSS_ACCOUNT_ID = 4
   var PRICE_ID = 5;
   var KSS_ID = 6;
+  var SAVINGS_ID = 7;
+  var CAR_SAVINGS_ID = 8;
+  var RESERVE_SAVINGS_ID = 9;
   var ACCOUNTS = [
-    { id: CHECKING_ID, name: 'Checking', account_type: 'asset', content_type: 'currency' },
-    { id: SALARY_ID, name: 'Salary', account_type: 'income', content_type: 'currency' },
-    { id: FOUR_OH_ONE_K_ID, name: '401k', account_type: 'asset', content_type: 'commodities' },
-    { id: KSS_ACCOUNT_ID, name: 'KSS', account_type: 'asset', content_type: 'commodity' }
+    { id: CHECKING_ID, name: 'Checking', account_type: 'asset', content_type: 'currency', balance: 200 },
+    { id: SALARY_ID, name: 'Salary', account_type: 'income', content_type: 'currency', balance: 0 },
+    { id: FOUR_OH_ONE_K_ID, name: '401k', account_type: 'asset', content_type: 'commodities', balance: 1000 },
+    { id: KSS_ACCOUNT_ID, name: 'KSS', account_type: 'asset', content_type: 'commodity', balance: 1000 },
+    { id: SAVINGS_ID, name: 'Savings', account_type: 'asset', content_type: 'currency', balance: 0 },
+    { id: CAR_SAVINGS_ID, name: 'Car', account_type: 'asset', content_type: 'currency', balance: 15000, parent_id: SAVINGS_ID },
+    { id: RESERVE_SAVINGS_ID, name: 'Reserver', account_type: 'asset', content_type: 'currency', balance: 24000, parent_id: SAVINGS_ID }
   ];
   module('AccountViewModel', {
     setup: function() {
@@ -187,6 +193,16 @@
       } else {
         start();
       }
+    });
+  });
+  asyncTest("value for a CURRENCY account", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: SAVINGS_ID }, function(account) {
+      ok(account.value, 'The object should have a "value" method');
+      if (account.value) {
+        equal(account.value(), 39000, 'The method should return the correct value');
+      }
+      start();
     });
   });
   asyncTest("formattedValue", function() {

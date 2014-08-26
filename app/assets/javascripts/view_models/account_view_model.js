@@ -93,14 +93,6 @@ function AccountViewModel(account, entity) {
     return _.reduce(this.lots(), function(sum, lot) { return sum + lot.currentValue(); }, 0);
   }, this);
 
-  this.value = ko.computed(function() {
-    if (this.content_type() == COMMODITY_CONTENT_TYPE) {
-      return this.sumOfLotValues();
-    } else {
-      return 0;
-    }
-  }, this);
-
   this.parent = ko.computed(function() {
     if (this.parent_id() == null) return null;
     return this.entity.getAccount(this.parent_id());
@@ -199,6 +191,16 @@ function AccountViewModel(account, entity) {
       result += child.balanceWithChildren();
     });
     return result;
+  }, this);
+
+  this.value = ko.computed(function() {
+    if (this.content_type() == COMMODITY_CONTENT_TYPE) {
+      return this.sumOfLotValues();
+    } else if (this.content_type() == CURRENCY_CONTENT_TYPE) {
+      return this.balanceWithChildren();
+    } else {
+      return 0;
+    }
   }, this);
   
   this.formattedBalance = ko.computed(function() {
