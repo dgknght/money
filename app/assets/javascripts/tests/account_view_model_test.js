@@ -2,7 +2,7 @@
   var ENTITY_ID = 10;
   var CHECKING_ID = 1;
   var SALARY_ID = 2;
-  var FOUR_OH_ONE_K_ID = 3;
+  var IRA_ID = 3;
   var KSS_ACCOUNT_ID = 4
   var PRICE_ID = 5;
   var KSS_ID = 6;
@@ -12,7 +12,7 @@
   var ACCOUNTS = [
     { id: CHECKING_ID, name: 'Checking', account_type: 'asset', content_type: 'currency', balance: 200 },
     { id: SALARY_ID, name: 'Salary', account_type: 'income', content_type: 'currency', balance: 0 },
-    { id: FOUR_OH_ONE_K_ID, name: '401k', account_type: 'asset', content_type: 'commodities', balance: 1000 },
+    { id: IRA_ID, name: 'IRA', account_type: 'asset', content_type: 'commodities', balance: 1000 },
     { id: KSS_ACCOUNT_ID, name: 'KSS', account_type: 'asset', content_type: 'commodity', balance: 1000 },
     { id: SAVINGS_ID, name: 'Savings', account_type: 'asset', content_type: 'currency', balance: 0 },
     { id: CAR_SAVINGS_ID, name: 'Car', account_type: 'asset', content_type: 'currency', balance: 15000, parent_id: SAVINGS_ID },
@@ -168,7 +168,7 @@
   asyncTest("commoditiesMenuVisible", function() {
     expect(2);
 
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(commoditiesAccount) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(commoditiesAccount) {
       equal(commoditiesAccount.commoditiesMenuVisible(), true, 'Commodities accounts should show the commodities menu');
 
       otherAccount = commoditiesAccount.entity.getAccount(1);
@@ -179,7 +179,7 @@
   asyncTest("holdingsVisible", function() {
     expect(6);
 
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(commoditiesAccount) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(commoditiesAccount) {
       equal(commoditiesAccount.holdingsVisible(), true, 'Commodities accounts should show the holdings by default');
       commoditiesAccount.transactionItemsVisible(true);
       equal(commoditiesAccount.holdingsVisible(), false, 'holdingsVisible should be false if transactionItemsVisible is true');
@@ -196,7 +196,7 @@
   asyncTest("showTransactionItems", function() {
     expect(2);
 
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(commoditiesAccount) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(commoditiesAccount) {
       equal(commoditiesAccount.transactionItemsVisible(), false, 'Commodities accounts should not show the transactions items by default');
       commoditiesAccount.showTransactionItems();
       equal(commoditiesAccount.transactionItemsVisible(), true, 'transactionItemsVisible should be true after calling showTransactionItems');
@@ -206,7 +206,7 @@
   asyncTest("showHoldings", function() {
     expect(1);
 
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(commoditiesAccount) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(commoditiesAccount) {
       commoditiesAccount.holdingsVisible(false);
       commoditiesAccount.showHoldings();
       equal(commoditiesAccount.holdingsVisible(), true, 'holdingsVisible should be true after calling showHoldings');
@@ -216,7 +216,7 @@
   asyncTest("value for a COMMODITIES account", function() {
     // should be the amount of cash in the account, same as balance
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(account) {
       ok(account.value, 'The object should have a "value" method');
       if (account.value) {
         ok(account.value(), 1000, 'The method should return the correct value');
@@ -271,7 +271,7 @@
   });
   asyncTest("valueWithChildren for a COMMODITIES account", function() {
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(account) {
       ok(account.valueWithChildren, 'The object should have a "valueWithChildren" method');
       if (account.valueWithChildren) {
         var timeoutId = window.setTimeout(function() {
@@ -316,7 +316,7 @@
   });
   asyncTest("formattedValue", function() {
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
       ok(account.formattedValue, 'The object should have a "formattedValue" method');
       if (account.formattedValue) {
         equal(account.formattedValue(), "1,000.00", 'The method should return the correct value');
@@ -326,7 +326,7 @@
   });
   asyncTest("formattedValueWithChildren", function() {
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
       ok(account.formattedValueWithChildren, 'The object should have a "formattedValueWithChildren" method');
       if (account.formattedValueWithChildren) {
         var timeoutId = window.setTimeout(function() {
@@ -462,7 +462,7 @@
   });
   asyncTest("childrenValue", function() {
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
       ok(account.childrenValue, 'The object should have a "childrenValue" method');
       if (account.childrenValue) {
         var timeoutId = window.setTimeout(function() {
@@ -484,7 +484,7 @@
   });
   asyncTest("formattedChildrenValue", function() {
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
       ok(account.formattedChildrenValue, 'The object should have a "formattedChildrenValue" method');
       if (account.formattedChildrenValue) {
         var timeoutId = window.setTimeout(function() {
