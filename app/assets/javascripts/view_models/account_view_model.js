@@ -185,32 +185,72 @@ function AccountViewModel(account, entity) {
     return this.transaction_items().sum(function(item) { return item.polarizedAmount(); });
   }, this);
 
-  this.balanceWithChildren = ko.computed(function() {
-    var result = this.balance();
-    $.each(this.children(), function(index, child) {
-      result += child.balanceWithChildren();
-    });
-    return result;
-  }, this);
-
-  this.value = ko.computed(function() {
-    if (this.content_type() == COMMODITY_CONTENT_TYPE) {
-      return this.sumOfLotValues();
-    } else if (this.content_type() == CURRENCY_CONTENT_TYPE) {
-      return this.balanceWithChildren();
-    } else {
-      return 0;
-    }
-  }, this);
-  
   this.formattedBalance = ko.computed(function() {
     return accounting.formatMoney(this.balance());
+  }, this);
+
+  this._withChildren = function(methodName) {
+    return _.reduce(this.children(), function(sum, c) { return sum + c[methodName + "WithChildren"](); }, this[methodName]());
+  };
+
+  this.balanceWithChildren = ko.computed(function() {
+    return this._withChildren("balance");
   }, this);
   
   this.formattedBalanceWithChildren = ko.computed(function() {
     return accounting.formatMoney(this.balanceWithChildren());
   }, this);
   
+  this.value = ko.computed(function() {
+    return (this.content_type() == COMMODITY_CONTENT_TYPE)
+      ? this.sumOfLotValues()
+      : this.balance();
+  }, this);
+
+  this.formattedValue = ko.computed(function() {
+    return accounting.formatNumber(this.value(), 2);
+  }, this);
+
+  this.valueWithChildren = ko.computed(function() {
+    return this._withChildren("value");
+  }, this);
+
+  this.formattedValueWithChildren = ko.computed(function() {
+    return accounting.formatNumber(this.valueWithChildren(), 2);
+  }, this);
+
+  this.cost = ko.computed(function() {
+    return _.reduce(this.lots(), function(sum, l) { return sum + l.cost(); }, 0);
+  }, this);
+
+  this.formattedCost = ko.computed(function() {
+    return accounting.formatNumber(this.cost(), 2);
+  }, this);
+
+  this.shares = ko.computed(function() {
+    return _.reduce(this.lots(), function(sum, l) { return sum + l.shares_owned(); }, 0);
+  }, this);
+
+  this.formattedShares = ko.computed(function() {
+    return accounting.formatNumber(this.shares(), 4);
+  }, this);
+  
+  this.gainLoss = ko.computed(function() {
+    return this.value() - this.cost();
+  }, this);
+
+  this.formattedGainLoss = ko.computed(function() {
+    return accounting.formatNumber(this.gainLoss(), 2);
+  }, this);
+
+  this.childrenValue = ko.computed(function() {
+    return _.reduce(this.children(), function(sum, c) { return sum + c.value(); }, 0);
+  }, this);
+
+  this.formattedChildrenValue = ko.computed(function() {
+    return accounting.formatNumber(this.childrenValue(), 2);
+  }, this);
+
   this.newTransactionItem = new NewTransactionItemViewModel(this);
 
   this.saveNewTransaction = function() {

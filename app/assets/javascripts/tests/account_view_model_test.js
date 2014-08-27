@@ -16,7 +16,7 @@
     { id: KSS_ACCOUNT_ID, name: 'KSS', account_type: 'asset', content_type: 'commodity', balance: 1000 },
     { id: SAVINGS_ID, name: 'Savings', account_type: 'asset', content_type: 'currency', balance: 0 },
     { id: CAR_SAVINGS_ID, name: 'Car', account_type: 'asset', content_type: 'currency', balance: 15000, parent_id: SAVINGS_ID },
-    { id: RESERVE_SAVINGS_ID, name: 'Reserver', account_type: 'asset', content_type: 'currency', balance: 24000, parent_id: SAVINGS_ID }
+    { id: RESERVE_SAVINGS_ID, name: 'Reserve', account_type: 'asset', content_type: 'currency', balance: 24000, parent_id: SAVINGS_ID }
   ];
   module('AccountViewModel', {
     setup: function() {
@@ -106,6 +106,46 @@
       start();
     });
   })
+  asyncTest("balance", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      ok(account.balance, 'The object should have a "balance" method');
+      if (account.balance) {
+        equal(account.balance(), 200, 'The method should return the correct value');
+      }
+      start();
+    });
+  });
+  asyncTest("formattedBalance", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      ok(account.formattedBalance, 'The object should have a "formattedBalance" method');
+      if (account.formattedBalance) {
+        equal(account.formattedBalance(), "$200.00", 'The method should return the correct value');
+      }
+      start();
+    });
+  });
+  asyncTest("balanceWithChildren", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: SAVINGS_ID}, function(account) {
+      ok(account.balanceWithChildren, 'The object should have a "balanceWithChildren" method');
+      if (account.balanceWithChildren) {
+        equal(account.balanceWithChildren(), 39000, 'The method should return the correct value');
+      }
+      start();
+    });
+  });
+  asyncTest("formattedBalanceWithChildren", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: SAVINGS_ID}, function(account) {
+      ok(account.formattedBalanceWithChildren, 'The object should have a "formattedBalanceWithChildren" method');
+      if (account.formattedBalanceWithChildren) {
+        equal(account.formattedBalanceWithChildren(), "$39,000.00", 'The method should return the correct value');
+      }
+      start();
+    });
+  });
   asyncTest("transaction_items", function() {
     expect(7);
 
@@ -173,7 +213,19 @@
       start();
     });
   });
+  asyncTest("value for a COMMODITIES account", function() {
+    // should be the amount of cash in the account, same as balance
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(account) {
+      ok(account.value, 'The object should have a "value" method');
+      if (account.value) {
+        ok(account.value(), 1000, 'The method should return the correct value');
+      }
+      start();
+    });
+  });
   asyncTest("value for a COMMODITY account", function() {
+    // should be the number of shares held multiplied by the current commodity price
     expect(2);
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID }, function(account) {
       ok(account.value, 'The object should have a "value" method');
@@ -196,48 +248,259 @@
     });
   });
   asyncTest("value for a CURRENCY account", function() {
+    // should be the same as the balance
     expect(2);
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: SAVINGS_ID }, function(account) {
       ok(account.value, 'The object should have a "value" method');
       if (account.value) {
-        equal(account.value(), 39000, 'The method should return the correct value');
+        equal(account.value(), 0, 'The method should return the correct value');
       }
       start();
     });
   });
+  asyncTest("valueWithChildren for a CURRENCY account", function() {
+    // should be the same as the balanceWithChildren
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: SAVINGS_ID }, function(account) {
+      ok(account.valueWithChildren, 'The object should have a "valueWithChildren" method');
+      if (account.valueWithChildren) {
+        equal(account.valueWithChildren(), 39000, 'The method should return the correct value');
+      }
+      start();
+    });
+  });
+  asyncTest("valueWithChildren for a COMMODITIES account", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID }, function(account) {
+      ok(account.valueWithChildren, 'The object should have a "valueWithChildren" method');
+      if (account.valueWithChildren) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the correct value');
+          start();
+        }, 2000);
+        account.valueWithChildren.subscribe(function(value) {
+          if (value == 2200) {
+            window.clearTimeout(timeoutId);
+            ok(true);
+            start();
+          }
+        });
+        account.valueWithChildren();
+      } else {
+        start();
+      }
+    });
+  });
+  asyncTest("valueWithChildren for a COMMODITY account", function() {
+    // should be the same as value, as COMMODITY accounts don't have children
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID }, function(account) {
+      ok(account.valueWithChildren, 'The object should have a "valueWithChildren" method');
+      if (account.valueWithChildren) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the correct value');
+          start();
+        }, 2000);
+        account.valueWithChildren.subscribe(function(value) {
+          if (value == 1200) {
+            window.clearTimeout(timeoutId);
+            ok(true);
+            start();
+          }
+        });
+        account.valueWithChildren();
+      } else {
+        start();
+      }
+    });
+  });
   asyncTest("formattedValue", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+      ok(account.formattedValue, 'The object should have a "formattedValue" method');
+      if (account.formattedValue) {
+        equal(account.formattedValue(), "1,000.00", 'The method should return the correct value');
+      }
+      start();
+    });
+  });
+  asyncTest("formattedValueWithChildren", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+      ok(account.formattedValueWithChildren, 'The object should have a "formattedValueWithChildren" method');
+      if (account.formattedValueWithChildren) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the event');
+          start();
+        }, 2000);
+        account.formattedValueWithChildren.subscribe(function(value) {
+          window.clearTimeout(timeoutId);
+          equal(value, "2,200.00", 'The method should return the correct value');
+        });
+      } else {
+        start();
+      }
+    });
   });
   asyncTest("cost", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(account.cost, 'The object should have a "cost" method');
+      if (account.cost) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the event');
+          start();
+        }, 2000);
+        account.cost.subscribe(function(value) {
+          window.clearTimeout(timeoutId);
+          equal(value, 1000, 'The method should return the correct value');
+          start();
+        });
+      } else {
+        start();
+      }
+    });
   });
   asyncTest("formattedCost", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(account.formattedCost, 'The object should have a "formattedCost" method');
+      if (account.formattedCost) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the event');
+          start();
+        }, 2000);
+        account.formattedCost.subscribe(function(value) {
+          window.clearTimeout(timeoutId);
+          equal(value, "1,000.00", 'The method should return the correct value');
+          start();
+        });
+      } else {
+        start();
+      }
+    });
   });
   asyncTest("shares", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(account.shares, 'The object should have a "shares" method');
+      if (account.shares) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the event');
+          start();
+        }, 2000);
+        account.shares.subscribe(function(value) {
+          window.clearTimeout(timeoutId);
+          equal(value, 100, 'The method should return the correct value');
+          start();
+        });
+      } else {
+        start();
+      }
+    });
   });
   asyncTest("formattedShares", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(account.formattedShares, 'The object should have a "formattedShares" method');
+      if (account.formattedShares) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never received the event');
+          start();
+        }, 2000);
+        account.formattedShares.subscribe(function(value) {
+          window.clearTimeout(timeoutId);
+          equal(value, "100.0000", 'The method should return the correct value');
+          start();
+        });
+      } else {
+        start();
+      }
+    });
   });
   asyncTest("gainLoss", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(account.gainLoss, 'The object should have a "gainLoss" method');
+      if (account.gainLoss) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never correct value was never recieved');
+          start();
+        }, 2000);
+        account.gainLoss.subscribe(function(value) {
+          if (value == 200) {
+            window.clearTimeout(timeoutId);
+            equal(value, 200, 'The method should return the correct value');
+            start();
+          }
+        });
+      } else {
+        start();
+      }
+    });
   });
   asyncTest("formattedGainLoss", function() {
-    expect(1);
-    ok(false, 'need to write the test');
-    start();
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
+      ok(account.formattedGainLoss, 'The object should have a "formattedGainLoss" method');
+      if (account.formattedGainLoss) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'Never correct value was never recieved');
+          start();
+        }, 2000);
+        account.formattedGainLoss.subscribe(function(value) {
+          if (value == '200.00') {
+            window.clearTimeout(timeoutId);
+            equal(value, '200.00', 'The method should return the correct value');
+            start();
+          }
+        });
+      } else {
+        start();
+      }
+    });
+  });
+  asyncTest("childrenValue", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+      ok(account.childrenValue, 'The object should have a "childrenValue" method');
+      if (account.childrenValue) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'The correct value was never recieved');
+          start();
+        }, 2000);
+        account.childrenValue.subscribe(function(value) {
+          if (value == 1200) {
+            window.clearTimeout(timeoutId);
+            equal(value, 1200, 'The method should return the correct value');
+            start();
+          }
+        });
+        account.childrenValue();
+      } else {
+        start();
+      }
+    });
+  });
+  asyncTest("formattedChildrenValue", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: FOUR_OH_ONE_K_ID}, function(account) {
+      ok(account.formattedChildrenValue, 'The object should have a "formattedChildrenValue" method');
+      if (account.formattedChildrenValue) {
+        var timeoutId = window.setTimeout(function() {
+          ok(false, 'The correct value was never recieved');
+          start();
+        }, 2000);
+        account.formattedChildrenValue.subscribe(function(value) {
+          if (value == '1,200.00') {
+            window.clearTimeout(timeoutId);
+            equal(value, '1,200.00', 'The method should return the correct value');
+            start();
+          }
+        });
+      } else {
+        start();
+      }
+    });
   });
 })();
