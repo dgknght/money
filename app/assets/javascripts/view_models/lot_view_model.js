@@ -34,4 +34,8 @@ function LotViewModel(lot, entity) {
   this.currentValue = ko.computed(function() {
     return this.workingPrice() * this.shares_owned();
   }, this);
+
+  this.cost = ko.computed(function() {
+    return this.shares_owned() * this.price();
+  }, this);
 }

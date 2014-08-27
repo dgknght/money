@@ -99,6 +99,17 @@
       start();
     });
   });
+  asyncTest('cost', function() {
+    expect(2);
+
+    getLot(new MoneyApp(), {entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID, lot_id: LOT_ID}, function(lot) {
+      ok(lot.cost, 'The lot should have an cost property');
+      if (lot.cost) {
+        equal(lot.cost(), 1000, 'The cost property should have the correct value');
+      }
+      start();
+    });
+  });
   asyncTest('currentValue', function() {
     expect(2);
 
