@@ -100,12 +100,24 @@ describe Account do
     end
   end
   
-  describe '#balance_with_children' do
+  shared_context 'groceries' do
     let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 11) }
     let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 12) }
+  end
+
+  describe '#balance_with_children' do
+    include_context 'groceries'
     
     it 'should be the balance of the account plus the sum of the balances of the child accounts' do
       groceries.balance_with_children.should == 23
+    end
+  end
+
+  describe '#children_value' do
+    include_context 'groceries'
+
+    it 'should return the sum of the #value results of the children' do
+      expect(groceries.children_value).to eq(23)
     end
   end
   

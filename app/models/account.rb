@@ -107,6 +107,10 @@ class Account < ActiveRecord::Base
     children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
   
+  def children_value
+    children.reduce(0) { |sum, child| sum + child.value }
+  end
+
   # Adjusts the balance of the account by the specified amount
   def credit(amount)
     self.balance += (amount * polarity(TransactionItem.credit))
