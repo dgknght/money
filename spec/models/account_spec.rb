@@ -268,31 +268,31 @@ describe Account do
   end
   
   describe '#debit' do
-    it 'should increase the value of an asset account' do
+    it 'should increase the balance of an asset account' do
       lambda do
         checking.debit(1)
       end.should change(checking, :balance).by(1)
     end
     
-    it 'should decrease the value of a liability account' do
+    it 'should decrease the balance of a liability account' do
       lambda do
         credit_card.debit(1)
       end.should change(credit_card, :balance).by(-1)
     end
     
-    it 'should decrease the value of an equity account' do
+    it 'should decrease the balance of an equity account' do
       lambda do
         earnings.debit(1)
       end.should change(earnings, :balance).by(-1)
     end
     
-    it 'should increase the value of an expense account' do
+    it 'should increase the balance of an expense account' do
       lambda do
         groceries.debit(1)
       end.should change(groceries, :balance).by(1)
     end
     
-    it 'should decrease the value of an income account' do
+    it 'should decrease the balance of an income account' do
       lambda do
         salary.debit(1)
       end.should change(salary, :balance).by(-1)
@@ -301,31 +301,31 @@ describe Account do
   end
   
   describe '#credit' do
-    it 'should decrease the value of an asset account' do
+    it 'should decrease the balance of an asset account' do
       lambda do
         checking.credit(1)
       end.should change(checking, :balance).by(-1)
     end
     
-    it 'should increase the value of a liability account' do
+    it 'should increase the balance of a liability account' do
       lambda do
         credit_card.credit(1)
       end.should change(credit_card, :balance).by(1)
     end
     
-    it 'should increase the value of an equity account' do
+    it 'should increase the balance of an equity account' do
       lambda do
         earnings.credit(1)
       end.should change(earnings, :balance).by(1)
     end
     
-    it 'should decrease the value of an expense account' do
+    it 'should decrease the balance of an expense account' do
       lambda do
         groceries.credit(1)
       end.should change(groceries, :balance).by(-1)
     end
     
-    it 'should increase the value of an income account' do
+    it 'should increase the balance of an income account' do
       lambda do
         salary.credit(1)
       end.should change(salary, :balance).by(1)
