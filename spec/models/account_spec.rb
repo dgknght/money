@@ -15,9 +15,36 @@ describe Account do
   let!(:earnings) { FactoryGirl.create(:equity_account, name: 'earnings', entity_id: entity.id) }
   let!(:salary) { FactoryGirl.create(:income_account, name: 'salary', entity_id: entity.id) }
   let!(:groceries) { FactoryGirl.create(:expense_account, name: 'groceries', entity_id: entity.id) }
-  let!(:ira) { FactoryGirl.create(:commodities_account, name: 'IRA', entity: entity) }
   let!(:opening_balances) { FactoryGirl.create(:equity_account, name: 'opening balances', entity: entity) }
   
+  shared_context 'investment accounts' do
+    let (:ira) { FactoryGirl.create(:commodities_account, name: '401k') }
+    let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
+    let (:kss_account) { Account.find_by_name('kss') }
+    let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: ira, credit_account: opening_balances) }
+    let!(:purchase1) do
+      CommodityTransactionCreator.new(
+        account: ira,
+        action: CommodityTransactionCreator.buy,
+        symbol: 'kss',
+        shares: 100,
+        transaction_date: '2014-01-01',
+        value: 1_000
+      ).create!
+    end
+    let!(:purchase2) do
+      CommodityTransactionCreator.new(
+        account: ira,
+        action: CommodityTransactionCreator.buy,
+        symbol: 'kss',
+        shares: 100,
+        transaction_date: '2014-02-01',
+        value: 1_200
+      ).create!
+    end
+    let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14) }
+  end
+
   it 'should be creatable from valid attributes' do
     account = Account.new(attributes)
     account.should be_valid
@@ -120,7 +147,7 @@ describe Account do
       expect(groceries.children_value).to eq(23)
     end
   end
-  
+
   describe '#parent' do
     let(:parent) { FactoryGirl.create(:asset_account) }
     
@@ -244,6 +271,8 @@ describe Account do
   end
 
   describe 'asset scope' do
+    include_context 'investment accounts'
+
     it 'should return a list of asset accounts' do
       Account.asset.should == [ira, checking]
     end
@@ -274,6 +303,8 @@ describe Account do
   end
 
   describe 'commodities scope' do
+    include_context 'investment accounts'
+
     it 'should return a list of commodities accounts' do
       Account.commodities.should == [ira]
     end
@@ -506,34 +537,6 @@ describe Account do
     end
   end
 
-  shared_context 'investment accounts' do
-    let (:account) { FactoryGirl.create(:commodities_account, name: '401k') }
-    let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
-    let (:kss_account) { Account.find_by_name('kss') }
-    let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: account, credit_account: opening_balances) }
-    let!(:purchase1) do
-      CommodityTransactionCreator.new(
-        account: account,
-        action: CommodityTransactionCreator.buy,
-        symbol: 'kss',
-        shares: 100,
-        transaction_date: '2014-01-01',
-        value: 1_000
-      ).create!
-    end
-    let!(:purchase2) do
-      CommodityTransactionCreator.new(
-        account: account,
-        action: CommodityTransactionCreator.buy,
-        symbol: 'kss',
-        shares: 100,
-        transaction_date: '2014-02-01',
-        value: 1_200
-      ).create!
-    end
-    let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14) }
-  end
-
   context 'for a commodity account' do
     include_context 'investment accounts'
 
@@ -559,8 +562,10 @@ describe Account do
     end
 
     describe '#all_holdings' do
+      include_context 'investment accounts'
+
       it 'should list summaries of commodities held in the account and all child accounts' do
-        expect(account.all_holdings).to have(1).item
+        expect(ira.all_holdings).to have(1).item
       end
     end
 
@@ -572,13 +577,15 @@ describe Account do
 
     describe '#unrealized_gains_with_children' do
       it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
-        expect(account.unrealized_gains_with_children).to eq(600)
+        expect(ira.unrealized_gains_with_children).to eq(600)
       end
     end
 
     describe '#value' do
+      include_context 'investment accounts'
+
       it 'should return the cash balance plus the value of the child accounts' do
-        expect(account.value).to eq(3_600)
+        expect(ira.value).to eq(3_600)
       end
     end
   end
