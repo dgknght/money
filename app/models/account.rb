@@ -185,6 +185,10 @@ class Account < ActiveRecord::Base
     balance
   end
 
+  def value_with_children
+    return children.reduce(value) { |sum, child| sum + child.value_with_children }
+  end
+
   private
     def credit_transaction_items(start_date, end_date)
       result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date)

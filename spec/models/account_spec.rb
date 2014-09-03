@@ -595,4 +595,12 @@ describe Account do
       end
     end
   end
+
+  describe '#value_with_children' do
+    include_context 'investment accounts'
+
+    it 'should return the sum of the current value and all children values' do
+      expect(ira.value_with_children).to eq(3_600)
+    end
+  end
 end

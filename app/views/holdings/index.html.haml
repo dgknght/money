@@ -30,7 +30,7 @@
     %td &nbsp;
   %tr.account_total_line
     %td Total value
-    %td.number_column= format_currency(@total_current_value + @account.balance)
+    %td.number_column= format_currency(@account.value_with_children)
     %td &nbsp;
     %td.number_column= format_currency(@holdings.total_cost)
     %td.number_column= format_currency(@holdings.total_gain_loss)
