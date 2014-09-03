@@ -17,6 +17,14 @@ describe Account do
   let!(:groceries) { FactoryGirl.create(:expense_account, name: 'groceries', entity_id: entity.id) }
   let!(:opening_balances) { FactoryGirl.create(:equity_account, name: 'opening balances', entity: entity) }
   
+  shared_context 'savings accounts' do
+    let (:savings) { FactoryGirl.create(:asset_account, name: 'savings', entity: entity) }
+    let (:car) { FactoryGirl.create(:asset_account, name: 'car', entity: entity, parent: savings) }
+    let (:reserve) { FactoryGirl.create(:asset_account, name: 'reserve', entity: entity, parent: savings) }
+    let!(:car_opening) { FactoryGirl.create(:transaction, amount: 1_000, debit_account: car, credit_account: opening_balances) }
+    let!(:reserve_opening) { FactoryGirl.create(:transaction, amount: 24_000, debit_account: reserve, credit_account: opening_balances) }
+  end
+
   shared_context 'investment accounts' do
     let (:ira) { FactoryGirl.create(:commodities_account, name: '401k') }
     let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
@@ -525,11 +533,8 @@ describe Account do
   end
 
   context 'for a currency account' do
-    let (:savings) { FactoryGirl.create(:asset_account, name: 'savings', entity: entity) }
-    let (:car) { FactoryGirl.create(:asset_account, name: 'car', entity: entity, parent: savings) }
-    let (:reserve) { FactoryGirl.create(:asset_account, name: 'reserve', entity: entity, parent: savings) }
-    let!(:car_opening) { FactoryGirl.create(:transaction, amount: 1_000, debit_account: car, credit_account: opening_balances) }
-    let!(:reserve_opening) { FactoryGirl.create(:transaction, amount: 24_000, debit_account: reserve, credit_account: opening_balances) }
+    include_context 'savings accounts'
+
     describe '#value' do
       it 'should return the balance_with_children' do
         expect(savings.value).to eq(25_000)
