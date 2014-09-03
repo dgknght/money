@@ -107,8 +107,21 @@ class Account < ActiveRecord::Base
     children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
   
+  def children_cost
+    children.reduce(0) { |sum, child| sum + child.cost }
+  end
+
   def children_value
     children.reduce(0) { |sum, child| sum + child.value }
+  end
+
+  def cost
+    return lots.reduce(0) { |sum, lot| sum + lot.cost } if commodity?
+    balance
+  end
+
+  def cost_with_children
+    return children.reduce(cost) { |sum, child| sum + child.cost_with_children }
   end
 
   # Adjusts the balance of the account by the specified amount

@@ -32,7 +32,7 @@
     %td Total value
     %td.number_column= format_currency(@account.value_with_children)
     %td &nbsp;
-    %td.number_column= format_currency(@holdings.total_cost)
+    %td.number_column= format_currency(@account.children_cost)
     %td.number_column= format_currency(@holdings.total_gain_loss)
 .actions
   =link_to 'Add', new_purchase_account_path(@account), class: 'add_button', title: 'Click here to purchase shares of a commodity.'

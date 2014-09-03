@@ -541,6 +541,12 @@ describe Account do
         expect(car.value).to eq(1_000)
       end
     end
+
+    describe '#cost' do
+      it 'should return the balance' do
+        expect(car.cost).to eq(1_000)
+      end
+    end
   end
 
   context 'for a commodity account' do
@@ -549,6 +555,14 @@ describe Account do
     describe '#value' do
       it 'should return the current value of the shares of the commodity currently held in the account' do
         expect(kss_account.value).to eq(2_800)
+      end
+    end
+
+    describe '#cost' do
+      include_context 'investment accounts'
+
+      it 'should return the sum of the lot costs' do
+        expect(kss_account.cost).to eq(2_200)
       end
     end
   end
@@ -594,6 +608,14 @@ describe Account do
         expect(ira.value).to eq(800)
       end
     end
+
+    describe '#cost' do
+      include_context 'investment accounts'
+
+      it 'should return the cash value' do
+        expect(ira.cost).to eq(800)
+      end
+    end
   end
 
   describe '#value_with_children' do
@@ -601,6 +623,22 @@ describe Account do
 
     it 'should return the sum of the current value and all children values' do
       expect(ira.value_with_children).to eq(3_600)
+    end
+  end
+
+  describe '#cost_with_children' do
+    include_context 'investment accounts'
+
+    it 'should return the sum of the cost of all children and the instance cost' do
+      expect(ira.cost_with_children).to eq(3_000)
+    end
+  end
+
+  describe '#children_cost' do
+    include_context 'investment accounts'
+
+    it 'should return the sum of the cost of all the children' do
+      expect(ira.children_cost).to eq(2_200)
     end
   end
 end
