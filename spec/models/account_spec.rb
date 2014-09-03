@@ -553,6 +553,12 @@ describe Account do
         expect(reserve.gains).to eq(0)
       end
     end
+
+    describe '#shares' do
+      it 'should return zero' do
+        expect(reserve.shares).to eq(0)
+      end
+    end
   end
 
   context 'for a commodity account' do
@@ -575,6 +581,12 @@ describe Account do
     describe '#gains' do
       it 'should return the difference between the current value and the cost of the account contents' do
         expect(kss_account.gains).to eq(600)
+      end
+    end
+
+    describe '#shares' do
+      it 'should return the total number of shares held in the account' do
+        expect(kss_account.shares).to eq(200)
       end
     end
   end
@@ -620,6 +632,12 @@ describe Account do
 
       it 'should return the cash value' do
         expect(ira.cost).to eq(800)
+      end
+    end
+
+    describe '#shares' do
+      it 'should return 0' do
+        expect(ira.shares).to eq(0)
       end
     end
   end

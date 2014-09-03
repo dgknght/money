@@ -189,6 +189,10 @@ class Account < ActiveRecord::Base
     save!
   end
 
+  def shares
+    lots.reduce(0) { |sum, lot| sum + lot.shares_owned }
+  end
+
   # Value is the current value of the account. For cash accounts
   # this will always be the same as the balance. For commodity
   # accounts, this will be the sum of the values of the lots

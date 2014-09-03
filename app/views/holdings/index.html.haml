@@ -9,13 +9,13 @@
     %th.number_column Shares
     %th.number_column Cost
     %th.number_column Gain/Loss
-  -@holdings.each do |holding|
+  -@account.children.each do |child|
     %tr
-      %td= link_to holding.commodity.symbol, account_lots_path(holding.account), title: 'Click here to view the lots for this commidity.'
-      %td.number_column= format_currency(holding.current_value)
-      %td.number_column= format_shares(holding.total_shares)
-      %td.number_column= format_currency(holding.total_cost)
-      %td.number_column= format_currency(holding.total_gain_loss)
+      %td= link_to child.name, account_lots_path(child), title: 'Click here to view the lots for this commidity.'
+      %td.number_column= format_currency(child.value)
+      %td.number_column= format_shares(child.shares)
+      %td.number_column= format_currency(child.cost)
+      %td.number_column= format_currency(child.gains)
   %tr.commodity_total_line
     %td Commodity total
     %td.number_column= format_currency(@account.children_value)
