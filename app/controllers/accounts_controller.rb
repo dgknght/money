@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :new, :create]
-  before_filter :load_account, only: [:show, :edit, :update, :destroy, :new_purchase, :create_purchase]
+  before_filter :load_account, except: [:index, :new, :create]
   before_filter :set_current_entity
   respond_to :html, :json
   
@@ -47,12 +47,16 @@ class AccountsController < ApplicationController
     @creator = CommodityTransactionCreator.new purchase_params
 
     flash[:notice] = "The transaction was created successfully." if @creator.create
-    respond_with @creator, location: account_holdings_path(@account),
+    respond_with @creator, location: holdings_account_path(@account),
                             action: :new_purchase
   end
 
   def edit
     authorize! :update, @account
+  end
+
+  def holdings
+    authorize! :show, @account
   end
 
   def update

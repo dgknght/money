@@ -1,4 +1,3 @@
-@wip
 Feature: View lots
   As a user,
   In order to see a break down of my holdings by purchase,

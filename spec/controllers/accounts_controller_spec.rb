@@ -149,7 +149,7 @@ describe AccountsController do
       describe 'post :create_purchase' do
         it 'should redirect to the holdings page' do
           post :create_purchase, id: ira, purchase: purchase_attributes
-          expect(response).to redirect_to account_holdings_path(ira)
+          expect(response).to redirect_to holdings_account_path(ira)
         end
 
         it 'should create a new commodity transaction' do
@@ -187,6 +187,13 @@ describe AccountsController do
               post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
             end.to change(Lot, :count).by(1)
           end
+        end
+      end
+
+      describe 'get :holdings' do
+        it 'should be successful' do
+          get :holdings, id: ira
+          expect(response).to be_success
         end
       end
     end
@@ -298,6 +305,13 @@ describe AccountsController do
               post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
             end.not_to change(Lot, :count)
           end
+        end
+      end
+
+      describe 'get :holdings' do
+        it 'should redirect to the user home page' do
+          get :holdings, id: ira
+          expect(response).to redirect_to home_path
         end
       end
     end
@@ -451,6 +465,13 @@ describe AccountsController do
             post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
           end.not_to change(Lot, :count)
         end
+      end
+    end
+
+    describe 'get :holdings' do
+      it 'should redirect to the sign in page' do
+        get :holdings, id: ira
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end

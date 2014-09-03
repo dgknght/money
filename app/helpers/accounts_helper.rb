@@ -1,7 +1,11 @@
 module AccountsHelper
   def account_link(account)
-    return account_holdings_path(account) if account.commodities?
+    return holdings_account_path(account) if account.commodities?
     account_transaction_items_path(account)
+  end
+
+  def active_children(account)
+    account.children.select { |c| c.shares > 0 }
   end
 
   def available_parent_accounts(account)

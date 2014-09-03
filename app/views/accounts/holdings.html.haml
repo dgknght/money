@@ -9,7 +9,7 @@
     %th.number_column Shares
     %th.number_column Cost
     %th.number_column Gain/Loss
-  -@account.children.each do |child|
+  -active_children(@account).each do |child|
     %tr
       %td= link_to child.name, account_lots_path(child), title: 'Click here to view the lots for this commidity.'
       %td.number_column= format_currency(child.value)
