@@ -536,8 +536,9 @@ describe Account do
     include_context 'savings accounts'
 
     describe '#value' do
-      it 'should return the balance_with_children' do
-        expect(savings.value).to eq(25_000)
+      it 'should return the balance' do
+        expect(savings.value).to eq(0)
+        expect(car.value).to eq(1_000)
       end
     end
   end
@@ -589,8 +590,8 @@ describe Account do
     describe '#value' do
       include_context 'investment accounts'
 
-      it 'should return the cash balance plus the value of the child accounts' do
-        expect(ira.value).to eq(3_600)
+      it 'should return the cash balance' do
+        expect(ira.value).to eq(800)
       end
     end
   end

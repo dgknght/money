@@ -176,11 +176,13 @@ class Account < ActiveRecord::Base
     children.reduce(unrealized_gains) { |sum, child| sum + child.unrealized_gains }
   end
 
+  # Value is the current value of the account. For cash accounts
+  # this will always be the same as the balance. For commodity
+  # accounts, this will be the sum of the values of the lots
   def value
     # This really wants to be polymorphic, but that feels like overkill here
-    return balance_with_children if currency?
     return lots.reduce(0) { |sum, lot| sum + lot.current_value } if commodity?
-    return children.reduce(balance) { |sum, child| sum + child.value }
+    balance
   end
 
   private
