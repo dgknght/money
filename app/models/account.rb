@@ -149,6 +149,14 @@ class Account < ActiveRecord::Base
     parent ? parent.depth + 1 : 0
   end
 
+  def gains
+    value - cost
+  end
+
+  def gains_with_children
+    children.reduce(gains) { |sum, child| sum + child.gains_with_children }
+  end
+
   def holdings
     HoldingCollection.new(lots)
   end
@@ -179,14 +187,6 @@ class Account < ActiveRecord::Base
     credit_total = transaction_items.credits.sum(:amount);
     self.balance = (debit_total * polarity(TransactionItem.debit)) + (credit_total * polarity(TransactionItem.credit))
     save!
-  end
-
-  def unrealized_gains
-    lots.reduce(0) { |sum, lot| sum + lot.gain_loss }
-  end
-
-  def unrealized_gains_with_children
-    children.reduce(unrealized_gains) { |sum, child| sum + child.unrealized_gains }
   end
 
   # Value is the current value of the account. For cash accounts

@@ -4,7 +4,7 @@ class AccountRecordAdapter
   end
 
   def balance
-    @account.value
+    @account.value_with_children
   end
 
   def caption

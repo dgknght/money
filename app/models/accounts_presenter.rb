@@ -50,10 +50,6 @@ class AccountsPresenter
     DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
   end
 
-  def sum(items)
-    items.reduce(0) { |sum, item| sum + item.balance_with_children }
-  end
-
   def summary(method, caption) 
     accounts = @entity.accounts.send(method)
     records = accounts_to_adapters(accounts)
@@ -67,7 +63,7 @@ class AccountsPresenter
   end
 
   def unrealized_gains
-    amount = @entity.accounts.commodities.reduce(0) { |sum, account| sum + account.unrealized_gains_with_children }
+    amount = @entity.accounts.commodities.reduce(0) { |sum, account| sum + account.gains_with_children }
     DisplayRecord.new('Unrealized gains', amount, 1) unless amount == 0
   end
 end

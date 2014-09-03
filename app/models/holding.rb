@@ -43,7 +43,7 @@ class Holding
   end
 
   def total_gain_loss
-    sum(:gain_loss)
+    sum(:gains)
   end
 
   def total_shares

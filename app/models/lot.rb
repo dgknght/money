@@ -33,7 +33,7 @@ class Lot < ActiveRecord::Base
     (most_recent_price(as_of) || price) * shares_owned
   end
 
-  def gain_loss
+  def gains
     current_value - cost
   end
 

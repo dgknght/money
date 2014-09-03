@@ -14,6 +14,6 @@
       %td.number_column= format_price(lot.price)
       %td.number_column= format_currency(lot.cost)
       %td.number_column= format_currency(lot.current_value)
-      %td.number_column= format_currency(lot.gain_loss)
+      %td.number_column= format_currency(lot.gains)
 .actions
   =link_to 'Back', account_holdings_path(@account.parent), class: 'back_button', title: 'Click here to return to the account holdings page.'

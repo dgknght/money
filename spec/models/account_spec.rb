@@ -547,6 +547,12 @@ describe Account do
         expect(car.cost).to eq(1_000)
       end
     end
+
+    describe '#gains' do
+      it 'should return zero' do
+        expect(reserve.gains).to eq(0)
+      end
+    end
   end
 
   context 'for a commodity account' do
@@ -563,6 +569,12 @@ describe Account do
 
       it 'should return the sum of the lot costs' do
         expect(kss_account.cost).to eq(2_200)
+      end
+    end
+
+    describe '#gains' do
+      it 'should return the difference between the current value and the cost of the account contents' do
+        expect(kss_account.gains).to eq(600)
       end
     end
   end
@@ -589,15 +601,9 @@ describe Account do
       end
     end
 
-    describe '#unrealized_gains' do
-      it 'should return the amount that would be earned if all holdings were sold today' do
-        expect(kss_account.unrealized_gains).to eq(600)
-      end
-    end
-
-    describe '#unrealized_gains_with_children' do
-      it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
-        expect(ira.unrealized_gains_with_children).to eq(600)
+    describe '#gains' do
+      it 'should return the zero' do
+        expect(ira.gains).to eq(0)
       end
     end
 
@@ -639,6 +645,14 @@ describe Account do
 
     it 'should return the sum of the cost of all the children' do
       expect(ira.children_cost).to eq(2_200)
+    end
+  end
+
+  describe '#gains_with_children' do
+    include_context 'investment accounts'
+
+    it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
+      expect(ira.gains_with_children).to eq(600)
     end
   end
 end
