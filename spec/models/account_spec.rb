@@ -594,25 +594,6 @@ describe Account do
   context 'for a commodities account' do
     include_context 'investment accounts'
 
-    describe '#holdings' do
-      it 'should list summaries of commodities held in the account' do
-        expect(kss_account).to have(1).holding
-        holding = kss_account.holdings.first
-        expect(holding.commodity).to eq(kss)
-        expect(holding.total_shares).to eq(200)
-        expect(holding.average_price).to eq(11.00)
-        expect(holding).to have(2).lots
-      end
-    end
-
-    describe '#all_holdings' do
-      include_context 'investment accounts'
-
-      it 'should list summaries of commodities held in the account and all child accounts' do
-        expect(ira.all_holdings).to have(1).item
-      end
-    end
-
     describe '#gains' do
       it 'should return the zero' do
         expect(ira.gains).to eq(0)

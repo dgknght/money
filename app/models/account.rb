@@ -69,10 +69,6 @@ class Account < ActiveRecord::Base
     children.reduce([]) { |array, child| array + child.children }
   end
 
-  def all_holdings
-    children.reduce(HoldingCollection.new) { |list, child| list + child.lots }
-  end
-
   def as_json(options)
     super({ methods: :depth })
   end
@@ -155,10 +151,6 @@ class Account < ActiveRecord::Base
 
   def gains_with_children
     children.reduce(gains) { |sum, child| sum + child.gains_with_children }
-  end
-
-  def holdings
-    HoldingCollection.new(lots)
   end
 
   def infer_action(amount)
