@@ -232,7 +232,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.costWithChildren = ko.computed(function() {
-    return _.reduce(this.children(), function(sum, c) { return sum + c.costWithChildren(); }, this.cost());
+    return this._withChildren("cost");
   }, this);
 
   this.formattedCostWithChildren = ko.computed(function() {
@@ -259,15 +259,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.gainLossWithChildren = ko.computed(function() {
-
-    console.log(this.name() + " gainLoss=" + this.gainLoss());
-
-    return _.reduce(this.children(), function(sum, child) {
-
-      console.log(child.name() + " gainLoss=" + child.gainLoss());
-
-      return sum + child.gainLoss();
-    }, this.gainLoss());
+    return this._withChildren("gainLoss");
   }, this);
 
   this.formattedGainLossWithChildren = ko.computed(function() {
