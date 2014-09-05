@@ -371,6 +371,46 @@
       }
     });
   });
+//  asyncTest("costWithChildren", function() {
+//    expect(2);
+//    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
+//      ok(account.costWithChildren, 'The object should have a "costWithChildren" method');
+//      if (account.costWithChildren) {
+//        var timeoutId = window.setTimeout(function() {
+//          ok(false, 'Never received the event');
+//          start();
+//        }, 2000);
+//        account.costWithChildren.subscribe(function(value) {
+//          window.clearTimeout(timeoutId);
+//          equal(value, 1000, 'The method should return the correct value');
+//          start();
+//        });
+//        account.costWithChildren();
+//      } else {
+//        start();
+//      }
+//    });
+//  });
+//  asyncTest("formattedCostWithChildren", function() {
+//    expect(2);
+//    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
+//      ok(account.formattedCostWithChildren, 'The object should have a "formattedCostWithChildren" method');
+//      if (account.formattedCostWithChildren) {
+//        var timeoutId = window.setTimeout(function() {
+//          ok(false, 'Never received the event');
+//          start();
+//        }, 2000);
+//        account.formattedCostWithChildren.subscribe(function(value) {
+//          window.clearTimeout(timeoutId);
+//          equal(value, "1,000.00", 'The method should return the correct value');
+//          start();
+//        });
+//        account.formattedCostWithChildren();
+//      } else {
+//        start();
+//      }
+//    });
+//  });
   asyncTest("shares", function() {
     expect(2);
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: KSS_ACCOUNT_ID}, function(account) {
@@ -415,7 +455,7 @@
       ok(account.gainLoss, 'The object should have a "gainLoss" method');
       if (account.gainLoss) {
         var timeoutId = window.setTimeout(function() {
-          ok(false, 'Never correct value was never recieved');
+          ok(false, 'The correct value was never recieved');
           start();
         }, 2000);
         account.gainLoss.subscribe(function(value) {
@@ -436,7 +476,7 @@
       ok(account.formattedGainLoss, 'The object should have a "formattedGainLoss" method');
       if (account.formattedGainLoss) {
         var timeoutId = window.setTimeout(function() {
-          ok(false, 'Never correct value was never recieved');
+          ok(false, 'The correct value was never recieved');
           start();
         }, 2000);
         account.formattedGainLoss.subscribe(function(value) {
@@ -471,4 +511,49 @@
       start();
     });
   });
+//  asyncTest("gainLossWithChildren", function() {
+//    expect(2);
+//    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
+//      ok(account.gainLossWithChildren, 'The object should have a "gainLossWithChildren" method');
+//      if (account.gainLossWithChildren) {
+//        var timeoutId = window.setTimeout(function() {
+//          ok(false, 'The correct value was never recieved');
+//          start();
+//        }, 2000);
+//        account.gainLossWithChildren.subscribe(function(value) {
+//          if (value == 200) {
+//            window.clearTimeout(timeoutId);
+//            equal(value, 200, 'The method should return the correct value');
+//            start();
+//          }
+//        });
+//      } else {
+//        start();
+//      }
+//    });
+//  });
+//  asyncTest("formattedGainLossWithChildren", function() {
+//    expect(2);
+//    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
+//      ok(account.formattedGainLossWithChildren, 'The object should have a "formattedGainLossWithChildren" method');
+//      if (account.formattedGainLossWithChildren) {
+//        var timeoutId = window.setTimeout(function() {
+//          ok(false, 'The correct value was never recieved');
+//          start();
+//        }, 2000);
+//        account.formattedGainLossWithChildren.subscribe(function(value) {
+//
+//          console.log("formattedGainLossWithChildren " + value);
+//
+//          if (value == '200.00') {
+//            window.clearTimeout(timeoutId);
+//            equal(value, 200, 'The method should return the correct value');
+//            start();
+//          }
+//        });
+//      } else {
+//        start();
+//      }
+//    });
+//  });
 })();

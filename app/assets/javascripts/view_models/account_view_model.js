@@ -85,6 +85,8 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.getLots = function(callback) {
+    if (this.id() == null) return [];
+
     var path = "accounts/{id}/lots.json".format({id: this.id()});
     $.getJSON(path, callback);
   };
@@ -220,11 +222,21 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.cost = ko.computed(function() {
-    return _.reduce(this.lots(), function(sum, l) { return sum + l.cost(); }, 0);
+    if (this.content_type() == COMMODITY_CONTENT_TYPE)
+      return _.reduce(this.lots(), function(sum, l) { return sum + l.cost(); }, 0);
+    return this.balance();
   }, this);
 
   this.formattedCost = ko.computed(function() {
     return accounting.formatNumber(this.cost(), 2);
+  }, this);
+
+  this.costWithChildren = ko.computed(function() {
+    return _.reduce(this.children(), function(sum, c) { return sum + c.costWithChildren(); }, this.cost());
+  }, this);
+
+  this.formattedCostWithChildren = ko.computed(function() {
+    return accounting.formatNumber(this.costWithChildren(), 2);
   }, this);
 
   this.shares = ko.computed(function() {
@@ -236,11 +248,30 @@ function AccountViewModel(account, entity) {
   }, this);
   
   this.gainLoss = ko.computed(function() {
+
+    console.log(this.name() + " value " + this.value() + " - cost " + this.cost() + " = " + (this.value() - this.cost()));
+
     return this.value() - this.cost();
   }, this);
 
   this.formattedGainLoss = ko.computed(function() {
     return accounting.formatNumber(this.gainLoss(), 2);
+  }, this);
+
+  this.gainLossWithChildren = ko.computed(function() {
+
+    console.log(this.name() + " gainLoss=" + this.gainLoss());
+
+    return _.reduce(this.children(), function(sum, child) {
+
+      console.log(child.name() + " gainLoss=" + child.gainLoss());
+
+      return sum + child.gainLoss();
+    }, this.gainLoss());
+  }, this);
+
+  this.formattedGainLossWithChildren = ko.computed(function() {
+    return accounting.formatNumber(this.gainLossWithChildren(), 2);
   }, this);
 
   this.childrenValue = ko.computed(function() {
