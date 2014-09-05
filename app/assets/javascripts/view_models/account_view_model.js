@@ -187,8 +187,13 @@ function AccountViewModel(account, entity) {
     return this.transaction_items().sum(function(item) { return item.polarizedAmount(); });
   }, this);
 
+  this._formatted = function(methodName, decimalPlaces) {
+    if (decimalPlaces == null) decimalPlaces = 2;
+    return accounting.formatNumber(this[methodName](), decimalPlaces);
+  };
+
   this.formattedBalance = ko.computed(function() {
-    return accounting.formatMoney(this.balance());
+    return this._formatted("balance");
   }, this);
 
   this._withChildren = function(methodName) {
@@ -200,7 +205,7 @@ function AccountViewModel(account, entity) {
   }, this);
   
   this.formattedBalanceWithChildren = ko.computed(function() {
-    return accounting.formatMoney(this.balanceWithChildren());
+    return this._formatted("balanceWithChildren");
   }, this);
   
   this.value = ko.computed(function() {
@@ -210,7 +215,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedValue = ko.computed(function() {
-    return accounting.formatNumber(this.value(), 2);
+    return this._formatted("value");
   }, this);
 
   this.valueWithChildren = ko.computed(function() {
@@ -218,7 +223,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedValueWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.valueWithChildren(), 2);
+    return this._formatted("valueWithChildren");
   }, this);
 
   this.cost = ko.computed(function() {
@@ -228,7 +233,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedCost = ko.computed(function() {
-    return accounting.formatNumber(this.cost(), 2);
+    return this._formatted("cost");
   }, this);
 
   this.costWithChildren = ko.computed(function() {
@@ -236,7 +241,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedCostWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.costWithChildren(), 2);
+    return this._formatted("costWithChildren");
   }, this);
 
   this.shares = ko.computed(function() {
@@ -244,7 +249,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedShares = ko.computed(function() {
-    return accounting.formatNumber(this.shares(), 4);
+    return this._formatted("shares", 4);
   }, this);
   
   this.gainLoss = ko.computed(function() {
@@ -255,7 +260,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedGainLoss = ko.computed(function() {
-    return accounting.formatNumber(this.gainLoss(), 2);
+    return this._formatted("gainLoss");
   }, this);
 
   this.gainLossWithChildren = ko.computed(function() {
@@ -263,7 +268,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedGainLossWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.gainLossWithChildren(), 2);
+    return this._formatted("gainLossWithChildren");
   }, this);
 
   this.childrenValue = ko.computed(function() {
@@ -271,7 +276,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedChildrenValue = ko.computed(function() {
-    return accounting.formatNumber(this.childrenValue(), 2);
+    return this._formatted("childrenValue");
   }, this);
 
   this.newTransactionItem = new NewTransactionItemViewModel(this);
