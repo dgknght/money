@@ -3,28 +3,8 @@
     <!-- ko foreach: notifications -->
     %div{ data: { bind: "css: type, html: message" }}
     <!-- /ko -->
-  #entity_container
-    .actions
-      %a.small_add_button{ href: "#", data: { bind: "click: newEntity" }}
-      %a.small_edit_button{ href: "#", data: { bind: "click: editSelectedEntity" }}
-      %a.small_delete_button{ href: "#", data: { bind: "click: removeSelectedEntity" }}
-    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
-  #account_container{ data: { bind: "with: selectedEntity()" }}
-    %table.list#accounts_table{ cellspacing: 0, cellpadding: 0}
-      %tr
-        %th Name
-        %th Balance
-        %th
-          %a.small_header_add_button{ href: '#', title: 'Click here to add a new account.', data: { bind: "click: newAccount" } }Add
-      <!-- ko foreach: groupedAccounts -->
-      %tr{ data: { bind: "css: cssClass" }}
-        %td{ data: { bind: "click: display" }}
-          %span{ data: { bind: "text: name, css: cssClass" }}
-        %td.number_column{ data: { bind: "text: formattedBalanceWithChildren,click: display" }}
-        %td.action_cell
-          %a.small_edit_button{ data: { bind: "visible: canEdit(), click: edit" }, href: '#', title: 'Click here to edit this account.' } Edit
-          %a.small_delete_button{ data: { bind: "visible: canDestroy(), click: destroy" }, href: '#', title: 'Click here to delete this account.' } Delete
-      <!-- /ko -->
+  =render 'pages/app/entities'
+  =render 'pages/app/accounts'
 #transactions
   %ul{ data: { bind: "foreach: displayedAccounts" }}
     %li
