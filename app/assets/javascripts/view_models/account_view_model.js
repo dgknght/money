@@ -253,9 +253,6 @@ function AccountViewModel(account, entity) {
   }, this);
   
   this.gainLoss = ko.computed(function() {
-
-    console.log(this.name() + " value " + this.value() + " - cost " + this.cost() + " = " + (this.value() - this.cost()));
-
     return this.value() - this.cost();
   }, this);
 
