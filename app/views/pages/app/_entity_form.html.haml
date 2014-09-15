@@ -1,0 +1,7 @@
+#entity_form.dialog{ title: 'Entity', data: { bind: "with: editEntity"}}
+  %form
+    %div
+      %label{ for: 'entity_name' } Name
+      %span.validation_message{ data: { bind: "visible: name.hasError, text: name.errorMessage" }}
+      %br
+      %input#entity_name{ type: 'text', data: { bind: "value: name" }}

@@ -1,0 +1,6 @@
+.validation_summary{ data: { bind: "visible: newTransactionItem.isInvalid" }}
+  %ul{ data: { bind: "with: newTransactionItem" }}
+    %li{ data: { bind: "visible: transaction_date.hasError, text: transaction_date.errorMessage" }}
+    %li{ data: { bind: "visible: description.hasError, text: description.errorMessage" }}
+    %li{ data: { bind: "visible: account_id.hasError, text: account_id.errorMessage" }}
+    %li{ data: { bind: "visible: amount.hasError, text: amount.errorMessage" }}

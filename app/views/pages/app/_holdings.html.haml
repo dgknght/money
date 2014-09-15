@@ -1,0 +1,33 @@
+%table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: holdingsVisible, attr: {id: 'holdings_' + id()}" }}
+  %tr
+    %th Symbol
+    %th Value
+    %th Shares
+    %th Cost
+    %th Gain/loss
+  <!-- ko foreach: children -->
+  %tr
+    %td{ data: { bind: "text: name" }}
+    %td.number_column{ data: { bind: "text: formattedValue" }}
+    %td.number_column{ data: { bind: "text: formattedShares" }}
+    %td.number_column{ data: { bind: "text: formattedCost" }}
+    %td.number_column{ data: { bind: "text: formattedGainLoss" }}
+  <!-- /ko -->
+  %tr.commodity_total_line
+    %td Commodity total
+    %td.number_column{ data: { bind: "text: formattedChildrenValue" }}
+    %td &nbsp;
+    %td &nbsp;
+    %td &nbsp;
+  %tr.cash_total_line
+    %td Cash
+    %td.number_column{ data: { bind: "text: formattedValue" }}
+    %td &nbsp;
+    %td &nbsp;
+    %td &nbsp;
+  %tr.account_total_line
+    %td Total value
+    %td.number_column{ data: { bind: "text: formattedValueWithChildren" }}
+    %td &nbsp;
+    %td.number_column{ data: { bind: "text: formattedCostWithChildren" }}
+    %td.number_column{ data: { bind: "text: formattedGainLossWithChildren" }}

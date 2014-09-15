@@ -1,8 +1,5 @@
 #entity_and_account
-  #notifications
-    <!-- ko foreach: notifications -->
-    %div{ data: { bind: "css: type, html: message" }}
-    <!-- /ko -->
+  =render 'pages/app/notifications'
   =render 'pages/app/entities'
   =render 'pages/app/accounts'
 #account_details
@@ -16,170 +13,15 @@
       %ul.nav#commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
         %li.clickable{ data: { bind: "click: showTransactionItems" }} Show Transactions
         %li.clickable{ data: { bind: "click: showHoldings" }} Show Holdings
-    %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: holdingsVisible, attr: {id: 'holdings_' + id()}" }}
-      %tr
-        %th Symbol
-        %th Value
-        %th Shares
-        %th Cost
-        %th Gain/loss
-      <!-- ko foreach: children -->
-      %tr
-        %td{ data: { bind: "text: name" }}
-        %td.number_column{ data: { bind: "text: formattedValue" }}
-        %td.number_column{ data: { bind: "text: formattedShares" }}
-        %td.number_column{ data: { bind: "text: formattedCost" }}
-        %td.number_column{ data: { bind: "text: formattedGainLoss" }}
-      <!-- /ko -->
-      %tr.commodity_total_line
-        %td Commodity total
-        %td.number_column{ data: { bind: "text: formattedChildrenValue" }}
-        %td &nbsp;
-        %td &nbsp;
-        %td &nbsp;
-      %tr.cash_total_line
-        %td Cash
-        %td.number_column{ data: { bind: "text: formattedValue" }}
-        %td &nbsp;
-        %td &nbsp;
-        %td &nbsp;
-      %tr.account_total_line
-        %td Total value
-        %td.number_column{ data: { bind: "text: formattedValueWithChildren" }}
-        %td &nbsp;
-        %td.number_column{ data: { bind: "text: formattedCostWithChildren" }}
-        %td.number_column{ data: { bind: "text: formattedGainLossWithChildren" }}
-    %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: transactionItemsVisible, attr: {id: 'transactions_' + id() }" }}
-      %tr
-        %th.number_column Date
-        %th Description
-        %th Account
-        %th.boolean_column Rec.
-        %th.number_column Amount
-        %th.number_column Balance
-        %th &nbsp;
-
-      %tr{ data: { bind: "with: newTransactionItem"}}
-        %td.number_column
-          %input.date_field{ type: 'text', placeholder: 'Transaction date', data: { bind: "datePicker: formattedTransactionDate" } }
-        %td
-          %input{ type: 'text', placeholder: 'Description', data: { bind: "value: description" } }
-        %td
-          %input{ type: 'text', placeholder: 'Account', data: { bind: "autocomplete: otherAccountPath, source: getAccountPaths" } }
-        %td &nbsp;
-        %td
-          %input.number_field{ type: 'text', placeholder: 'Amount', data: { bind: "value: amount" } }
-        %td &nbsp;
-        %td
-          %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: saveNewTransactionItem" }} Save
-
-      <!-- ko foreach: transaction_items -->
-      %tr.attachment_drop{ data: { bind: "attr: {'data-id': id}, css: $index() % 2 == 0 ? 'table_row' : 'alt_table_row'" }}
-        %td.number_column{ data: { bind: "inlineDateEditor: formattedTransactionDate, editorClass: 'date_field'" }}
-        %td{ data: { bind: "inlineEditor: description" }}
-        %td
-          %span.ui-icon.account-toggle{ data: { bind: "click: toggleDetails, css: toggleCss" }} &nbsp;
-          %span{ data: { bind: "inlineEditor: otherAccountPath, editorClass: 'account_field', autocompleteLookup: getAccountPaths" }}
-        %td.boolean_column{ data: { bind: "text: reconciled() ? 'X' : ''" }}
-        %td.number_column{ data: { bind: "inlineEditor: formattedPolarizedAmount, editorClass: 'number_field'" }}
-          %span.validation_message{ data: { bind: "visible: polarizedAmount.hasError, text: polarizedAmount.errorMessage" }}
-        %td.number_column{ data: { bind: "text: formattedBalance" }}
-        %td.action_cell
-          %a.small_delete_button{ href: '#', title: 'Click here to delete this transaction.', data: { bind: "click: destroy" }} Delete
-          %a.small_attachments_button{ href: '#', title: 'Click here to show or hide the attachment.', data: { bind: "click: toggleAttachmentsVisible" }}
-          %sub{ data: { bind: "text: attachments().length" }}
-          .attachment_container{ data: { bind: "visible: attachmentsVisible" }}
-            %table.nested_table{ cellspacing: 0, cellpadding: 0 }
-              %tr
-                %th Name
-                %th Type
-                %th &nbsp;
-              <!-- ko foreach: attachments -->
-              %tr
-                %td{ data: { bind: "text: name" } }
-                %td{ data: { bind: "text: content_type" } }
-                %td.action_cell
-                  %a.small_show_button{ href: '#', title: 'Click here to view the attachment.', data: { bind: "click: show" } }
-                  %a.small_delete_button{ href: '#', title: 'Click here to delete the attachment.', data: { bind: "click: function() { destroy(); }" }}
-              <!-- /ko -->
-            .actions
-              %a.small_add_button{ href: '#', title: 'Click here to add an attachment.', data: { bind: "click: newAttachment" }}
-
-      %tr{ data: { bind: "if: showDetails" }}
-        %td.detail_cell{ colspan: 6, data: { bind: "with: transaction" }} 
-          %table.detail{cellpadding: 0, cellspacing: 0}
-            %tr
-              %th Account
-              %th.number_column Debit
-              %th.number_column Credit
-              %th &nbsp;
-            <!-- ko foreach: items-->
-            %tr
-              %td
-                %input{ type: 'text', data: { bind: "autocomplete: accountPath, source: getAccountPaths" }}
-              %td.number_column
-                %input.number_field{ type: 'text', data: { bind: "value: formattedDebitAmount" }}
-              %td.number_column
-                %input.number_field{ type: 'text', data: { bind: "value: formattedCreditAmount" }}
-              %td.action_cell
-                %a.small_delete_button{ href: '#', title: 'Click here to delete this item.', data: { bind: "click: remove" }}
-            <!-- /ko -->
-            %tr
-              %td
-                %a.small_add_button{ href: '#', data: { bind: "click: addTransactionItem" }} Add
-              %td.number_column{ data: { bind: "text: formattedDebitAmount" }}
-              %td.number_column{ data: { bind: "text: formattedCreditAmount" }}
-              %td &nbsp;
-        %td{ data: { bind: "with: transaction" }}
-          %button.small_save_button{ data: { bind: "click: save" }, title: 'Click here to save the transaction.'}
-            Save
-      <!-- /ko -->
-
-  .validation_summary{ data: { bind: "visible: newTransactionItem.isInvalid" }}
-    %ul{ data: { bind: "with: newTransactionItem" }}
-      %li{ data: { bind: "visible: transaction_date.hasError, text: transaction_date.errorMessage" }}
-      %li{ data: { bind: "visible: description.hasError, text: description.errorMessage" }}
-      %li{ data: { bind: "visible: account_id.hasError, text: account_id.errorMessage" }}
-      %li{ data: { bind: "visible: amount.hasError, text: amount.errorMessage" }}
+    =render 'pages/app/holdings'
+    =render 'pages/app/transactions'
+  =render 'pages/app/validation'
   <!-- /ko -->
 
-<!-- Entity Form -->
-#entity_form.dialog{ title: 'Entity', data: { bind: "with: editEntity"}}
-  %form
-    %div
-      %label{ for: 'entity_name' } Name
-      %span.validation_message{ data: { bind: "visible: name.hasError, text: name.errorMessage" }}
-      %br
-      %input#entity_name{ type: 'text', data: { bind: "value: name" }}
-
-<!-- Account Form -->
-#account_form.dialog{ title: 'Account', data: { bind: "with: editAccount"}}
-  %form
-    %div
-      %label{ for: 'account_account_type' } Account type
-      %br
-      %select#account_account_type{ data: { bind: "options: $root.accountTypes, value: account_type" }}
-    %div
-      %label{ for: 'account_parent' } Parent
-      %br
-      %select#account_parent{ data: { bind: "options: availableParents, optionsCaption: 'None', optionsText: function(a) { return a.name(); }, optionsValue: function(a) { return a.id; }, value: parent_id" }}
-    %div
-      %label{ for: 'account_name' } Name
-      %span.validation_message{ data: { bind: "visible: name.hasError, text: name.errorMessage" }}
-      %br
-      %input#account_name{ type: 'text', data: { bind: "value: name" }}
-
-<!-- Attachment Form -->
-#attachment_form.dialog{ title: 'Attachment', data: { bind: "with: editAttachment"}}
-  %form
-    %div
-      %label{ for: 'attachment_name' } Name
-      %br
-      %input#attachment_name{ data: { bind: "value: name" }}
-    %div
-      %label{ for: 'attachment_file' } File
-      %br
-      %input#attachment_file{ type: 'file', data: { bind: "file: raw_file" }}
+<!-- forms -->
+=render 'pages/app/entity_form'
+=render 'pages/app/account_form'
+=render 'pages/app/attachment_form'
 
 :javascript  
   $.event.props.push("dataTransfer");
