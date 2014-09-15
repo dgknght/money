@@ -5,7 +5,7 @@
     <!-- /ko -->
   =render 'pages/app/entities'
   =render 'pages/app/accounts'
-#transactions
+#account_details
   %ul{ data: { bind: "foreach: displayedAccounts" }}
     %li
       %a{ data: { bind: "text: name, attr: {href: '#account_' + id() }" }}
@@ -189,7 +189,7 @@
     ko.applyBindings(app);
     
     // Initialize the tab panel and refresh when new tabs are added
-    var tabs = $('#transactions').tabs();
+    var tabs = $('#account_details').tabs();
     app.displayedAccounts.subscribe(function(accounts) {
       tabs.tabs('refresh');
       window.setTimeout(bindAttachmentDrops, 500);
@@ -234,7 +234,7 @@
 
     // Select the tab based on a click on an account in the account list
     app.selectedAccountIndex.subscribe(function(index) {
-      $('#transactions').tabs('option', 'active', index);
+      $('#account_details').tabs('option', 'active', index);
     });
 
     // global method delegates

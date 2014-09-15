@@ -21,7 +21,7 @@ table.nested_table {
   }
 }
 
-#entity_and_account, #transactions {
+#entity_and_account, #account_details {
   display: inline-block;
 }
 
@@ -90,7 +90,7 @@ table.nested_table {
   }
 }
 
-#transactions {
+#account_details {
   margin: {
     left: 1em;
   }
