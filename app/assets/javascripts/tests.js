@@ -14,6 +14,7 @@
 //= require tests/commodity_view_model_test.js
 //= require tests/lot_view_model_test.js
 //= require tests/price_view_model_test.js
+//= require tests/new_commodity_transaction_view_model_test.js
 
 $.mockjaxSettings.throwUnmocked = true;
 $.mockjaxSettings.responseTime = 50;

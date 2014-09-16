@@ -276,6 +276,8 @@ function AccountViewModel(account, entity) {
     return this._formatted("childrenValue");
   }, this);
 
+  this.newCommodityTransaction = new NewCommodityTransactionViewModel(this);
+
   this.newTransactionItem = new NewTransactionItemViewModel(this);
 
   this.saveNewTransaction = function() {

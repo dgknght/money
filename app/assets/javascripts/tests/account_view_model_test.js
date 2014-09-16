@@ -95,9 +95,6 @@
         url: 'transactions/*/attachments.json',
         responseText: []
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
   asyncTest("validation", function() {
@@ -525,6 +522,12 @@
       if (account.formattedChildrenValue) {
         equal(account.formattedChildrenValue(), '39,000.00', 'The method should return the correct value');
       }
+      start();
+    });
+  });
+  asyncTest("newCommodityTransaction", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(account) {
+      ok(account.newCommodityTransaction, 'The object should have a "newCommodityTransaction" method');
       start();
     });
   });
