@@ -52,6 +52,10 @@
         type: 'PUT',
         responseText: []
       });
+      $.mockjax({
+        url: 'entities/*/commodities.json',
+        responseText: []
+      });
     },
     teardown: function() {
       $.mockjaxClear();
