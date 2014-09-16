@@ -121,7 +121,7 @@
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
       ok(account.formattedBalance, 'The object should have a "formattedBalance" method');
       if (account.formattedBalance) {
-        equal(account.formattedBalance(), "$200.00", 'The method should return the correct value');
+        equal(account.formattedBalance(), "200.00", 'The method should return the correct value');
       }
       start();
     });
@@ -141,7 +141,7 @@
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: SAVINGS_ID}, function(account) {
       ok(account.formattedBalanceWithChildren, 'The object should have a "formattedBalanceWithChildren" method');
       if (account.formattedBalanceWithChildren) {
-        equal(account.formattedBalanceWithChildren(), "$39,000.00", 'The method should return the correct value');
+        equal(account.formattedBalanceWithChildren(), "39,000.00", 'The method should return the correct value');
       }
       start();
     });
