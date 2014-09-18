@@ -10,6 +10,7 @@
 
   module('AttachmentViewModel', {
     setup: function() {
+      $.mockjaxClear();
       $.mockjax({
         url: 'entities.json',
         responseText: [
@@ -42,6 +43,10 @@
         responseText: [
           { id: ATTACHMENT_ID, name: 'paystub', content_type: 'image/png' },
         ]
+      });
+      $.mockjax({
+        url: 'accounts/*/lots.json',
+        responseText: []
       });
     },
     teardown: function() {
