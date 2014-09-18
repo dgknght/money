@@ -1,13 +1,17 @@
+(function() {
+
+var ENTITY_ID = 10;
+
 module('TransactionItemViewModel', {
   setup: function() {
     $.mockjax({
       url: 'entities.json',
       responseText: [
-        { id: 10, name: 'First Entity' }
+        { id: ENTITY_ID, name: 'First Entity' }
       ]
     });
     $.mockjax({
-      url: 'entities/10/accounts.json',
+      url: 'entities/' + ENTITY_ID + '/accounts.json',
       responseText: [
         { id: 101, name: 'Checking', account_type: 'asset' },
         { id: 102, name: 'Salary', account_type: 'income' }
@@ -19,7 +23,7 @@ module('TransactionItemViewModel', {
       ]
     });
     $.mockjax({
-      url: 'entities/10/transactions.json?account_id=101',
+      url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=101',
       responseText: [
         { 
           id: 1001, 
@@ -32,6 +36,10 @@ module('TransactionItemViewModel', {
         },
       ]
     });
+    $.mockjax({
+      url: 'account/*/lots.json',
+      responseText: []
+    });
   },
   teardown: function() {
     $.mockjaxClear();
@@ -41,7 +49,7 @@ asyncTest("amount", function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 101 }, function(account) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: 101 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(item) {
       ok(_.isNumber(item.transaction_item.amount() + 1), "The amount should be a number");
       start();
@@ -52,7 +60,7 @@ asyncTest("accountPath", function() {
   expect(2);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 101 }, function(account) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: 101 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(item) {
       var transactionItem = item.transaction_item;
       ok(transactionItem.accountPath, "The object should have an accountPath property accessor");
@@ -66,7 +74,7 @@ asyncTest("remove", function() {
   expect(4);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 101 }, function(account) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: 101 }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', 10001, function(item) {
       var transaction = item.transaction_item.transaction;
       item.transaction_item.remove();
@@ -92,3 +100,5 @@ asyncTest("remove", function() {
     });
   });
 });
+
+})();
