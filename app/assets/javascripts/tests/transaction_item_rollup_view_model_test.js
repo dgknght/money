@@ -1,19 +1,35 @@
+(function() {
+
+var ENTITY_ID = 10;
+var CHECKING_ID = 1;
+var SALARY_ID = 2;
+var INCOME_TAX_ID = 3;
+var CREDIT_CARD_ID = 4;
+var DINING_ID = 5;
+var MOOYAH_TRANSACTION_ID = 11;
+var MOOYAH_ITEM_1_ID = 101;
+var MOOYAH_ITEM_2_ID = 202;
+var PAYCHECK_TRANSACTION_ID = 12;
+var PAYCHECK_ITEM_1_ID = 100;
+var PAYCHECK_ITEM_2_ID = 200;
+
 module('TransactionItemRollupViewModel', {
   setup: function() {
+    $.mockjaxSettings.throwUnmocked = true;
     $.mockjax({
       url: 'entities.json',
       responseText: [
-        { id: 10, name: 'First Entity' }
+        { id: ENTITY_ID, name: 'First Entity' }
       ]
     });
     $.mockjax({
-      url: 'entities/10/accounts.json',
+      url: 'entities/' + ENTITY_ID + '/accounts.json',
       responseText: [
-        { id: 1, name: 'Checking', account_type: 'asset' },
-        { id: 2, name: 'Salary', account_type: 'income' },
-        { id: 3, name: 'Income Tax', account_type: 'expense' },
-        { id: 4, name: 'Credit Card', account_type: 'liability' },
-        { id: 5, name: 'Dining', account_type: 'expense' }
+        { id: CHECKING_ID, name: 'Checking', account_type: 'asset' },
+        { id: SALARY_ID, name: 'Salary', account_type: 'income' },
+        { id: INCOME_TAX_ID, name: 'Income Tax', account_type: 'expense' },
+        { id: CREDIT_CARD_ID, name: 'Credit Card', account_type: 'liability' },
+        { id: DINING_ID, name: 'Dining', account_type: 'expense' }
       ]
     });
     $.mockjax({
@@ -22,38 +38,46 @@ module('TransactionItemRollupViewModel', {
       responseText: []
     });
     $.mockjax({
-      url: 'entities/10/transactions.json?account_id=2',
+      url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + SALARY_ID,
       responseText: [
         {
-          id: 10,
+          id: PAYCHECK_TRANSACTION_ID,
           transaction_date: '2014-01-13',
           description: 'Paycheck',
           items: [
-            { id: 100, account_id: 1, action: 'debit', amount: 1000, reconciled: true },
-            { id: 200, account_id: 2, action: 'credit', amount: 1000, reconciled: false }
+            { id: PAYCHECK_ITEM_1_ID, account_id: CHECKING_ID, action: 'debit', amount: 1000, reconciled: true },
+            { id: PAYCHECK_ITEM_2_ID, account_id: SALARY_ID, action: 'credit', amount: 1000, reconciled: false }
           ]
         }
       ]
     });
     $.mockjax({
-      url: 'entities/10/transactions.json?account_id=5',
+      url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + DINING_ID,
       responseText: [
         {
-          id: 11,
+          id: MOOYAH_TRANSACTION_ID,
           transaction_date: '2014-01-14',
           description: 'Mooyah',
           items: [
-            { id: 101, account_id: 5, action: 'debit', amount: 19, reconciled: true },
-            { id: 202, account_id: 4, action: 'credit', amount: 19, reconciled: false }
+            { id: MOOYAH_ITEM_1_ID, account_id: DINING_ID, action: 'debit', amount: 19, reconciled: true },
+            { id: MOOYAH_ITEM_2_ID, account_id: CREDIT_CARD_ID, action: 'credit', amount: 19, reconciled: false }
           ]
         }
       ]
     });
     $.mockjax({
-      url: 'transactions/10/attachments.json',
+      url: 'transactions/' + PAYCHECK_TRANSACTION_ID + '/attachments.json',
       responseText: [
-        { id: 1001, transaction_id: 10, name: 'Paystub', content_type: 'image/png' }
+        { id: 1001, transaction_id: ENTITY_ID, name: 'Paystub', content_type: 'image/png' }
       ]
+    });
+    $.mockjax({
+      url: 'transactions/' + MOOYAH_TRANSACTION_ID + '/attachments.json',
+      responseText: []
+    });
+    $.mockjax({
+      url: 'accounts/*/lots.json',
+      responseText: []
     });
   },
   teardown: function() {
@@ -64,8 +88,8 @@ asyncTest('formattedTransactionDate', function() {
   expect(2);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.formattedTransactionDate(), '1/13/2014', 'should have the correct value.');
 
       item.formattedTransactionDate('1/1/2014');
@@ -82,8 +106,8 @@ asyncTest('description', function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.description(), 'Paycheck', 'should have the correct value.');
       start();
     });
@@ -93,8 +117,8 @@ asyncTest('otherAccountPath', function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.otherAccountPath(), 'Checking', 'should have the correct value.');
       start();
     });
@@ -104,8 +128,8 @@ asyncTest('reconciled', function() {
   expect(2);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.reconciled(), false, 'should have the correct value.');
       equal(item.otherItem().reconciled(), true, 'should have the correct value.');
       start();
@@ -116,8 +140,8 @@ asyncTest('formattedPolarizedAmount', function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.formattedPolarizedAmount(), '1,000.00', 'should have the correct value.');
       start();
     });
@@ -127,8 +151,8 @@ asyncTest("polarizedAmount setter", function() {
   expect(2);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       item.polarizedAmount(1001);
       _.each(item.transaction_item.transaction.items(), function(i) {
         equal(i.amount(), 1001, "each item should have the new amount.");
@@ -141,8 +165,8 @@ asyncTest("polarizedAmount setter - expense and liability accounts", function() 
   expect(2);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 5 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 101, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: DINING_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', MOOYAH_ITEM_1_ID, function(item) {
       item.polarizedAmount(33);
       equal(item.otherItem().polarizedAmount(), 33, "Setting a positive amount on the expense side should result in a positive value on the liability side.");
       ok(item.transaction_item.transaction.validate(), "The transaction should be in a valid state after the adjustment.");
@@ -154,8 +178,8 @@ asyncTest("otherAccountPath setter - expense and asset accounts", function() {
   expect(2);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 5 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 101, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: DINING_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', MOOYAH_ITEM_1_ID, function(item) {
       item.otherAccountPath("Checking");
       equal(item.otherItem().polarizedAmount(), -19, "Setting a positive amount on the expense side should result in a negative value on the asset side.");
       ok(item.transaction_item.transaction.validate(), "The transaction should be in a valid state after the adjustment.");
@@ -167,9 +191,9 @@ asyncTest("otherAccountPath setter - expense and asset accounts", function() {
 //  expect(2);
 //
 //  var app = new MoneyApp();
-//  getAccount(app, { entity_id: 10, account_id: 2 }, function(salary) {
+//  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(salary) {
 //    var checking = app.entities().first().accounts().first(function(a) { return a.id() == 1; });
-//    getFromLazyLoadedCollection(salary, 'transaction_items', 200, function(item) {
+//    getFromLazyLoadedCollection(salary, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
 //      checking.balance.subscribe(function(balance) {
 //        equal(balance, 1001, "The balance of the other account should update to reflect the change.");
 //        start();
@@ -188,8 +212,8 @@ asyncTest("polarizedAmount setter - negative", function() {
   expect(3);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.action(), 'credit', "The action should be credit initially.");
 
       item.polarizedAmount(-1000);
@@ -203,8 +227,8 @@ asyncTest("formattedPolarizedAmount", function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.formattedPolarizedAmount(), "1,000.00", "should have the correct value.");
       start();
     });
@@ -214,8 +238,8 @@ asyncTest("formattedPolarizedAmount setter", function() {
   expect(1);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       item.formattedPolarizedAmount("123.45");
       equal(item.transaction_item.amount(), 123.45, "should update the underlying amount.");
       start();
@@ -226,8 +250,8 @@ asyncTest("toggleDetails", function() {
   expect(6);
 
   var app = new MoneyApp();
-  getAccount(app, { entity_id: 10, account_id: 2 }, function(account) {
-    getFromLazyLoadedCollection(account, 'transaction_items', 200, function(item) {
+  getAccount(app, { entity_id: ENTITY_ID, account_id: SALARY_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', PAYCHECK_ITEM_2_ID, function(item) {
       equal(item.details().length, 0, "The details should be empty by default.");
       equal(item.showDetails(), false, "The details should be hidden by default.");
       equal(item.toggleCss(), 'ui-icon-triangle-1-e', "The indicator should point right when details are hidden.");
@@ -244,9 +268,9 @@ asyncTest("formattedBalance", function() {
 
   var app = new MoneyApp();
   var ids = {
-    entity_id: 10,
-    account_id: 2,
-    transaction_item_id: 200
+    entity_id: ENTITY_ID,
+    account_id: SALARY_ID,
+    transaction_item_id: PAYCHECK_ITEM_2_ID
   };
   getTransactionItemRollup(app, ids, function(item) {
     equal(item.formattedBalance(), "1,000.00", "should have the correct value.");
@@ -258,9 +282,9 @@ asyncTest("destroy", function() {
 
   var app = new MoneyApp();
   var ids = {
-    entity_id: 10,
-    account_id: 2,
-    transaction_item_id: 200
+    entity_id: ENTITY_ID,
+    account_id: SALARY_ID,
+    transaction_item_id: PAYCHECK_ITEM_2_ID
   };
   getTransactionItemRollup(app, ids, function(item) {
     ok(item.destroy); //TODO Would like to verify that the ajax method is called correctly
@@ -272,17 +296,21 @@ asyncTest("hasAttachment", function() {
 
   var app = new MoneyApp();
   var ids = {
-    entity_id: 10,
-    account_id: 2,
-    transaction_item_id: 200
+    entity_id: ENTITY_ID,
+    account_id: SALARY_ID,
+    transaction_item_id: PAYCHECK_ITEM_2_ID
   };
   getTransactionItemRollup(app, ids, function(item) {
     ok(item.hasAttachment, "should be a property on the object");
-    item.hasAttachment.subscribe(function(hasAttachment) {
-      ok(hasAttachment, "should be true if the transaction has an attachment");
+    if (item.hasAttachment) {
+      item.hasAttachment.subscribe(function(hasAttachment) {
+        ok(hasAttachment, "should be true if the transaction has an attachment");
+        start();
+      });
+      ok(item.hasAttachment() == false, "should be false until the attachments are loaded");
+    } else {
       start();
-    });
-    ok(item.hasAttachment() == false, "should be false until the attachments are loaded");
+    }
   });
 });
 asyncTest("toggleAttachmentsVisible", function() {
@@ -290,9 +318,9 @@ asyncTest("toggleAttachmentsVisible", function() {
 
   var app = new MoneyApp();
   var ids = {
-    entity_id: 10,
-    account_id: 2,
-    transaction_item_id: 200
+    entity_id: ENTITY_ID,
+    account_id: SALARY_ID,
+    transaction_item_id: PAYCHECK_ITEM_2_ID
   };
   getTransactionItemRollup(app, ids, function(item) {
     ok(item.toggleAttachmentsVisible, "should be a method on the object");
@@ -305,3 +333,5 @@ asyncTest("toggleAttachmentsVisible", function() {
     start();
   });
 });
+
+ })();
