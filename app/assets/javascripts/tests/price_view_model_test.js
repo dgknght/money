@@ -28,9 +28,6 @@
         url: 'entities/' + ENTITY_ID + '/accounts.json',
         responseText: []
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
   asyncTest('trade_date', function() {

@@ -30,9 +30,6 @@
         url: 'entities/*/accounts.json',
         responseText: []
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
 

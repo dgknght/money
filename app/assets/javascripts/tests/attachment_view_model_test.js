@@ -48,9 +48,6 @@
         url: 'accounts/*/lots.json',
         responseText: []
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
   asyncTest('name', function() {

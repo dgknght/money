@@ -51,9 +51,6 @@
           { id: PRICE_ID, trade_date: '2014-08-01', price: 12 }
         ]
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
   asyncTest('account_id', function() {

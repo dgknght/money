@@ -56,9 +56,6 @@
         url: 'entities/*/commodities.json',
         responseText: []
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
   asyncTest("transaction_date", function() {

@@ -20,9 +20,6 @@ module('MoneyApp', {
       url: 'entities/' + ENTITY_ID + '/accounts.json',
       responseText: []
     });
-  },
-  teardown: function() {
-    $.mockjaxClear();
   }
 });
 test("should be creatable", function() {

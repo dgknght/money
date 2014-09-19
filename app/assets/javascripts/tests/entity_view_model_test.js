@@ -50,9 +50,6 @@
         url: 'commodities/*/prices.json',
         responseText: []
       });
-    },
-    teardown: function() {
-      $.mockjaxClear();
     }
   });
   test("should be creatable with valid data and a MoneyApp instance", function() {

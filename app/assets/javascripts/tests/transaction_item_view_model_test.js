@@ -47,9 +47,6 @@ module('TransactionItemViewModel', {
       responseText: []
     });
     $.mockjaxSettings.throwUnmocked = true;
-  },
-  teardown: function() {
-    $.mockjaxClear();
   }
 });
 asyncTest("amount", function() {

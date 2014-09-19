@@ -48,9 +48,6 @@ module('NewTransactionItemViewModel', {
       url: 'accounts/*/lots.json',
       responseText: []
     });
-  },
-  teardown: function() {
-    $.mockjaxClear();
   }
 });
 asyncTest('formattedTransactionDate', function() {

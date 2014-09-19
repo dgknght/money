@@ -79,9 +79,6 @@ module('TransactionItemRollupViewModel', {
       url: 'accounts/*/lots.json',
       responseText: []
     });
-  },
-  teardown: function() {
-    $.mockjaxClear();
   }
 });
 asyncTest('formattedTransactionDate', function() {
