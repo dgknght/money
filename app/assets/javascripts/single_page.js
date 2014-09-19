@@ -15,7 +15,6 @@
 //= require view_models/transaction_item_rollup_view_model
 //= require view_models/notification_view_model.js
 //= require view_models/new_transaction_item_view_model.js
-//= require view_models/holding_view_model.js
 //= require view_models/commodity_view_model.js
 //= require view_models/lot_view_model.js
 //= require view_models/price_view_model.js

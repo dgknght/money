@@ -11,10 +11,12 @@
 //= require tests/transaction_item_view_model_test.js
 //= require tests/transaction_item_rollup_view_model_test.js
 //= require tests/new_transaction_item_view_model_test.js
-//= require tests/holding_view_model_test.js
 //= require tests/commodity_view_model_test.js
 //= require tests/lot_view_model_test.js
 //= require tests/price_view_model_test.js
+
+$.mockjaxSettings.throwUnmocked = true;
+$.mockjaxSettings.responseTime = 50;
 
 function getFromLazyLoadedCollection(obj, property, id, callback) {
   var timeout = window.setTimeout(function() {
