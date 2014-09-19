@@ -267,12 +267,13 @@ ko.extenders.numeric = function(target, message) {
 
 ko.extenders.includedIn = function(target, list) {
   target.extend({ errable: this });
+  var message = message ? message : ("The value must be one of these values: " + list.join(", ") + ".")
 
   function validate(value) {
-    var message = _.include(list, value) 
+    var errorMessage = _.include(list, value) 
       ? null 
-      : "The value must be one of the specified values.";
-    target.errorMessage(message);
+      : message;
+    target.errorMessage(errorMessage);
   }
 
   validate(target());
