@@ -1,10 +1,12 @@
 (function() {
+
   var ENTITY_ID = 1;
   var COMMODITY_ID = 2;
   var PRICE1_ID = 3;
   var PRICE2_ID = 4;
   module('CommodityViewModel', {
     setup: function() {
+      $.mockjaxSettings.throwUnmocked = true;
       $.mockjax({
         url: 'entities.json',
         responseText: [
@@ -23,6 +25,10 @@
           { id: PRICE2_ID, trade_date: '2014-02-01', price: 12 },
           { id: PRICE1_ID, trade_date: '2014-01-01', price: 10 }
         ]
+      });
+      $.mockjax({
+        url: 'entities/*/accounts.json',
+        responseText: []
       });
     }
   });
@@ -93,9 +99,6 @@
       ok(commodity.latestPrice, 'The commodity should have a property named "latestPrice"');
       if (commodity.latestPrice) {
         var id = window.setTimeout(function() {
-
-          console.log("calling start in timeout flow");
-
           start();
         }, 2000);
         var priceFound = false;
@@ -106,9 +109,6 @@
           equal(price.trade_date().toLocaleDateString(), '2/1/2014', 'The price should have the correct transaction date value');
           equal(price.price(), 12, 'The price should have the correct price value');
           window.clearTimeout(id);
-
-          console.log("calling start in normal flow");
-
           start();
         });
         commodity.latestPrice();
@@ -117,4 +117,4 @@
       }
     });
   });
-})()
+})();
