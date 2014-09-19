@@ -1,3 +1,5 @@
+(function() {
+
 module('ServiceEntity');
 test("errorMessages", function() {
   function ViewModel(id) {
@@ -22,3 +24,4 @@ test("errorMessages", function() {
   deepEqual(viewModel.errorMessages(), ["name: Name is required.", "children - name: Name is required."], "The errorMessage property should list each property that is in error.");
 });
 
+})();
