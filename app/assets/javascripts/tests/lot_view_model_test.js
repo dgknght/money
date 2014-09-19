@@ -1,13 +1,14 @@
 (function() {
-  var ENTITY_ID = 1;
-  var IRA_ID = 2;
-  var KSS_ACCOUNT_ID = 3;
-  var KSS_ID = 4;
-  var LOT_ID = 6;
-  var PRICE_ID = 7;
+  var ENTITY_ID = 658263;
+  var IRA_ID = 2348956;
+  var KSS_ACCOUNT_ID = 89723467;
+  var KSS_ID = 234234;
+  var LOT_ID = 98789;
+  var PRICE_ID = 56756;
 
   module('LotViewModel', {
     setup: function() {
+      $.mockjaxClear();
       $.mockjax({
         url: 'entities.json',
         responseText: [

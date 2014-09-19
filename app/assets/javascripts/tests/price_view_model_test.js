@@ -1,10 +1,11 @@
 (function() {
-  var ENTITY_ID = 1;
-  var KSS_ID = 2;
-  var PRICE_ID = 3;
+  var ENTITY_ID = 76512456;
+  var KSS_ID = 123453;
+  var PRICE_ID = 987;
 
   module('PriceViewModel', {
     setup: function() {
+      $.mockjaxClear();
       $.mockjax({
         url: 'entities.json',
         responseText: [
@@ -22,6 +23,10 @@
         responseText: [
           { id: PRICE_ID, trade_date: '2014-02-01', price: 12 }
         ]
+      });
+      $.mockjax({
+        url: 'entities/' + ENTITY_ID + '/accounts.json',
+        responseText: []
       });
     },
     teardown: function() {

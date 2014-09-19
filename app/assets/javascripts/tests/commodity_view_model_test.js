@@ -1,12 +1,12 @@
 (function() {
 
-  var ENTITY_ID = 1;
-  var COMMODITY_ID = 2;
-  var PRICE1_ID = 3;
-  var PRICE2_ID = 4;
+  var ENTITY_ID = 2348;
+  var COMMODITY_ID = 82946;
+  var PRICE1_ID = 33476;
+  var PRICE2_ID = 91824;
   module('CommodityViewModel', {
     setup: function() {
-      $.mockjaxSettings.throwUnmocked = true;
+      $.mockjaxClear();
       $.mockjax({
         url: 'entities.json',
         responseText: [
@@ -30,6 +30,9 @@
         url: 'entities/*/accounts.json',
         responseText: []
       });
+    },
+    teardown: function() {
+      $.mockjaxClear();
     }
   });
 

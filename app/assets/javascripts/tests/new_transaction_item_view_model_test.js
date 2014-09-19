@@ -1,15 +1,15 @@
 (function() {
 
-var ENTITY_ID = 10;
-var CHECKING_ID = 101;
-var DINING_ID = 102;
-var TRANSACTION_ID = 1000;
-var TRANSACTION_ITEM_1_ID = 10000;
-var TRANSACTION_ITEM_2_ID = 10001;
+var ENTITY_ID = 676545;
+var CHECKING_ID = 65456345;
+var DINING_ID = 234876;
+var TRANSACTION_ID = 675645;
+var TRANSACTION_ITEM_1_ID = 890890;
+var TRANSACTION_ITEM_2_ID = 12123;
 
 module('NewTransactionItemViewModel', {
   setup: function() {
-    $.mockjaxSettings.throwUnmocked = true;
+    $.mockjaxClear();
     $.mockjax({
       url: 'entities.json',
       responseText: [

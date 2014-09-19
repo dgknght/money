@@ -1,14 +1,23 @@
+(function() {
+
+var ENTITY_ID = 287634;
+
 module('MoneyApp', {
   setup: function() {
+    $.mockjaxClear();
     $.mockjax({
       url: 'entities.json',
       responseText: [
-        { id: 1, name: 'First Entity' }
+        { id: ENTITY_ID, name: 'First Entity' }
       ]
     });
     $.mockjax({
-      url: 'entities/1.json',
+      url: 'entities/' + ENTITY_ID + '.json',
       type: 'DELETE',
+      responseText: []
+    });
+    $.mockjax({
+      url: 'entities/' + ENTITY_ID + '/accounts.json',
       responseText: []
     });
   },
@@ -39,11 +48,11 @@ asyncTest("editSelectedEntity", function() {
   var app = new MoneyApp();
   ok(app.editSelectedEntity, "should be a method on the object");
 
-  getEntity(app, 1, function(entity) {
+  getEntity(app, ENTITY_ID, function(entity) {
     app.selectedEntity(entity);
     app.editSelectedEntity();
     ok(app.editEntity(), "should set the value of editEntity");
-    equal(app.editEntity().id(), 1, "should set the value of editEntity to the same entity as selectedEntity");
+    equal(app.editEntity().id(), ENTITY_ID, "should set the value of editEntity to the same entity as selectedEntity");
 
     start();
   });
@@ -54,14 +63,14 @@ asyncTest("removeSelectedEntity", function() {
   var app = new MoneyApp();
   ok(app.removeSelectedEntity, "should be a method on the object");
 
-  getEntity(app, 1, function(entity) {
+  getEntity(app, ENTITY_ID, function(entity) {
     app.selectedEntity(entity);
 
     var before = app.entities().length;
     app.entities.subscribe(function(entities) {
       var after = app.entities().length;
       equal(after - before, -1, "should reduce the number of entities by 1");
-      var absent = _.every(app.entities(), function(e) { return e.id() != 1; });
+      var absent = _.every(app.entities(), function(e) { return e.id() != ENTITY_ID; });
       ok(absent, "should remove the entity from the entities collection");
       start();
     });
@@ -85,3 +94,5 @@ asyncTest("entities", 4, function() {
 
   equal(app.entities(), 0, "The entities should not load until accessed.");
 })
+
+})();

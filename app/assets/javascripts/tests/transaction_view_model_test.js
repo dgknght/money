@@ -1,11 +1,11 @@
 (function() {
-  var ENTITY_ID = 10;
-  var CHECKING_ID = 1;
-  var SALARY_ID = 2;
-  var INCOME_TAX_ID = 3;
-  var TRANSACTION_ID = 1001;
-  var TRANSACTION_ITEM_1_ID = 10001;
-  var TRANSACTION_ITEM_2_ID = 10002;
+  var ENTITY_ID = 867675;
+  var CHECKING_ID = 45123890;
+  var SALARY_ID = 34986;
+  var INCOME_TAX_ID = 234986;
+  var TRANSACTION_ID = 98078967;
+  var TRANSACTION_ITEM_1_ID = 76465;
+  var TRANSACTION_ITEM_2_ID = 92346;
 
   module('TransactionViewModel', {
     setup: function() {
@@ -64,7 +64,7 @@
   asyncTest("transaction_date", function() {
     var app = new MoneyApp();
     getAccount(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
-      getFromLazyLoadedCollection(account, "transaction_items", 10001, function(item) {
+      getFromLazyLoadedCollection(account, "transaction_items", TRANSACTION_ITEM_1_ID, function(item) {
         ok(item.transaction_item, "The item rollup should reference the underlying transaction item.")
         ok(item.transaction_item.transaction, "The transaction item should reference the transaction.")
 
@@ -223,14 +223,14 @@
     expect(3);
 
     var app = new MoneyApp();
-    getTransaction(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID, transaction_item_id: 10001 }, function(transaction) {
+    getTransaction(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID, transaction_item_id: TRANSACTION_ITEM_1_ID }, function(transaction) {
       ok(transaction.addTransactionItem, "The object should have a method called 'addTransactionItem'");
       if (transaction.addTransactionItem) {
         var before = transaction.items().length;
         var newItem = transaction.addTransactionItem();
         ok(newItem, "It should not return null.");
         var after = transaction.items().length;
-        equal(after - before, CHECKING_ID, "It should add an item to the items collection.");
+        equal(after - before, 1, "It should add an item to the items collection.");
       }
       start()
     });
@@ -239,7 +239,7 @@
     expect(3);
 
     var app = new MoneyApp();
-    getTransaction(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID, transaction_item_id: 10001 }, function(transaction) {
+    getTransaction(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID, transaction_item_id: TRANSACTION_ITEM_1_ID }, function(transaction) {
       ok(transaction.newAttachment, 'The object should have a method called "newAttachment"');
       if (transaction.newAttachment) {
       transaction.newAttachment();

@@ -1,12 +1,12 @@
 (function() {
 
-  var ENTITY_ID = 11;
-  var CHECKING_ID = 21;
-  var SALARY_ID = 22;
-  var TRANSACTION_ID = 31;
-  var ITEM_1_ID = 41;
-  var ITEM_2_ID = 42;
-  var ATTACHMENT_ID = 51;
+  var ENTITY_ID = 573465;
+  var CHECKING_ID = 2349876;
+  var SALARY_ID = 8376;
+  var TRANSACTION_ID = 4826;
+  var ITEM_1_ID = 583726;
+  var ITEM_2_ID = 4857;
+  var ATTACHMENT_ID = 2945786;
 
   module('AttachmentViewModel', {
     setup: function() {
@@ -25,7 +25,7 @@
         ]
       });
       $.mockjax({
-        url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=21',
+        url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + CHECKING_ID,
         responseText: [
           { 
             id: TRANSACTION_ID,

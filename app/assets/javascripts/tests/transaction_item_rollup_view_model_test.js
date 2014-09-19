@@ -1,21 +1,21 @@
 (function() {
 
-var ENTITY_ID = 10;
-var CHECKING_ID = 1;
-var SALARY_ID = 2;
-var INCOME_TAX_ID = 3;
-var CREDIT_CARD_ID = 4;
-var DINING_ID = 5;
-var MOOYAH_TRANSACTION_ID = 11;
-var MOOYAH_ITEM_1_ID = 101;
-var MOOYAH_ITEM_2_ID = 202;
-var PAYCHECK_TRANSACTION_ID = 12;
-var PAYCHECK_ITEM_1_ID = 100;
-var PAYCHECK_ITEM_2_ID = 200;
+var ENTITY_ID = 87678657;
+var CHECKING_ID = 2439086;
+var SALARY_ID = 23876;
+var INCOME_TAX_ID = 78956;
+var CREDIT_CARD_ID = 592375;
+var DINING_ID = 2349876;
+var MOOYAH_TRANSACTION_ID = 879567345;
+var MOOYAH_ITEM_1_ID = 123987;
+var MOOYAH_ITEM_2_ID = 89234768;
+var PAYCHECK_TRANSACTION_ID = 9234;
+var PAYCHECK_ITEM_1_ID = 23234342;
+var PAYCHECK_ITEM_2_ID = 67459082567;
 
 module('TransactionItemRollupViewModel', {
   setup: function() {
-    $.mockjaxSettings.throwUnmocked = true;
+    $.mockjaxClear();
     $.mockjax({
       url: 'entities.json',
       responseText: [

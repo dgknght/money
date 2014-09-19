@@ -1,32 +1,54 @@
 (function() {
-  var ENTITY_ID = 10;
-  var COMMODITY_ID = 1;
+
+  var ENTITY_ID = 763548;
+  var COMMODITY_ID = 23487;
+  var CHECKING_ID = 9874365;
+  var SALARY_ID = 97256;
+
   module('EntityViewModel', {
     setup: function() {
+      $.mockjaxClear();
+      $.mockjaxSettings.throwUnmocked = true;
       $.mockjax({
         url: 'entities.json',
         responseText: [
-          { id: 10, name: 'First Entity' }
+          { id: ENTITY_ID, name: 'First Entity' }
         ]
       });
       $.mockjax({
-        url: 'entities/10/accounts.json',
+        url: 'entities/' + ENTITY_ID + '/accounts.json',
         responseText: [
-          { id: 1, name: 'Checking', account_type: 'asset' },
-          { id: 2, name: 'Salary', account_type: 'income' },
+          { id: CHECKING_ID, name: 'Checking', account_type: 'asset' },
+          { id: SALARY_ID, name: 'Salary', account_type: 'income' },
         ]
       });
       $.mockjax({
-        url: 'entities/10.json',
+        url: 'entities/' + ENTITY_ID + '.json',
+        responseText: []
+      });
+      $.mockjax({
+        url: 'entities/1/accounts.json',
+        responseText: []
+      });
+      $.mockjax({
+        url: 'entities/' + ENTITY_ID + '/.json',
         type: 'DELETE',
         responseText: []
       });
       $.mockjax({
-        url: 'entities/10/commodities.json',
+        url: 'entities/' + ENTITY_ID + '/commodities.json',
         responseText: [
           { id: 99, name: 'other', symbol: 'O', market: 'NYSE' },
           { id: COMMODITY_ID, name: 'Knight Software Services', symbol: 'KSS', market: 'NYSE' }
         ]
+      });
+      $.mockjax({
+        url: 'accounts/*/lots.json',
+        responseText: []
+      });
+      $.mockjax({
+        url: 'commodities/*/prices.json',
+        responseText: []
       });
     },
     teardown: function() {
@@ -74,10 +96,10 @@
   })
   asyncTest("edit", function() {
     var app = new MoneyApp();
-    getEntity(app, 10, function(entity) {
+    getEntity(app, ENTITY_ID, function(entity) {
       ok(entity.edit, "should be a method on the object");
       entity.edit();
-      ok(app.editEntity() && app.editEntity().id() == 10, "should set the 'editEntity' on the application object");
+      ok(app.editEntity() && app.editEntity().id() == ENTITY_ID, "should set the 'editEntity' on the application object");
 
       start();
     });
@@ -86,13 +108,13 @@
     expect(3);
 
     var app = new MoneyApp();
-    getEntity(app, 10, function(entity) {
+    getEntity(app, ENTITY_ID, function(entity) {
       ok(entity.remove, "should be a method on the object");
       var before = app.entities().length;
       app.entities.subscribe(function(entities) {
         var after = app.entities().length;
         equal(after - before, -1, "should reduce the number of entities by 1")
-        var absent = _.every(app.entities(), function(e) { return e.id() != 10; });
+        var absent = _.every(app.entities(), function(e) { return e.id() != ENTITY_ID; });
         ok(absent, "should remove the entity from the entities collection");
         start();
       });
@@ -103,7 +125,7 @@
   asyncTest("getCommodity", function() {
     expect(3);
 
-    getEntity(new MoneyApp(), 10, function(entity) {
+    getEntity(new MoneyApp(), ENTITY_ID, function(entity) {
       ok(entity.getCommodity, 'entity should have a method called "getCommodity"');
       if (entity.getCommodity) {
         entity.getCommodity(COMMODITY_ID, function(commodity) {

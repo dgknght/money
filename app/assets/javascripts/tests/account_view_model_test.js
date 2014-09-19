@@ -1,14 +1,22 @@
 (function() {
-  var ENTITY_ID = 10;
-  var CHECKING_ID = 1;
-  var SALARY_ID = 2;
-  var IRA_ID = 3;
-  var KSS_ACCOUNT_ID = 4
-  var PRICE_ID = 5;
-  var KSS_ID = 6;
-  var SAVINGS_ID = 7;
-  var CAR_SAVINGS_ID = 8;
-  var RESERVE_SAVINGS_ID = 9;
+  var ENTITY_ID = 57263;
+  var CHECKING_ID = 223457;
+  var SALARY_ID = 93735;
+  var IRA_ID = 3824;
+  var KSS_ACCOUNT_ID = 73635;
+  var PRICE_ID = 2963;
+  var KSS_ID = 465;
+  var SAVINGS_ID = 8275635;
+  var CAR_SAVINGS_ID = 395836;
+  var RESERVE_SAVINGS_ID = 82746;
+  var LOT_ID = 59837;
+  var TRANSACTION_1_ID = 354895;
+  var TRANSACTION_2_ID = 89776567;
+  var TRANSACTION_ITEM_1_ID = 39126;
+  var TRANSACTION_ITEM_2_ID = 3856;
+  var TRANSACTION_ITEM_3_ID = 8765;
+  var TRANSACTION_ITEM_4_ID = 19347;
+
   var ACCOUNTS = [
     { id: CHECKING_ID, name: 'Checking', account_type: 'asset', content_type: 'currency', balance: 200 },
     { id: SALARY_ID, name: 'Salary', account_type: 'income', content_type: 'currency', balance: 0 },
@@ -35,7 +43,7 @@
         url: 'accounts/' + KSS_ACCOUNT_ID + '/lots.json',
         responseText: [
           {
-            id:1,
+            id: LOT_ID,
             account_id: KSS_ACCOUNT_ID,
             commodity_id: KSS_ID,
             price:10.0,
@@ -60,34 +68,43 @@
         url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + CHECKING_ID,
         responseText: [
           { 
-            id: 2,
+            id: TRANSACTION_1_ID,
             transaction_date: '2014-01-15',
             description: 'Paycheck',
             items: [
-              { id: 1, account_id: CHECKING_ID, action: 'debit', amount: 1000 },
-              { id: 2, account_id: SALARY_ID, action: 'credit', amount: 1000 }
+              { id: TRANSACTION_ITEM_1_ID, account_id: CHECKING_ID, action: 'debit', amount: 1000 },
+              { id: TRANSACTION_ITEM_2_ID, account_id: SALARY_ID, action: 'credit', amount: 1000 }
             ]
           },
           { 
-            id: 1,
+            id: TRANSACTION_2_ID,
             transaction_date: '2014-01-01',
             description: 'Paycheck',
             items: [
-              { id: 1, account_id: CHECKING_ID, action: 'debit', amount: 1000 },
-              { id: 2, account_id: SALARY_ID, action: 'credit', amount: 1000 }
+              { id: TRANSACTION_ITEM_3_ID, account_id: CHECKING_ID, action: 'debit', amount: 1000 },
+              { id: TRANSACTION_ITEM_4_ID, account_id: SALARY_ID, action: 'credit', amount: 1000 }
             ]
           }
         ]
       });
+      $.mockjax({
+        url: 'accounts/*/lots.json',
+        responseText: []
+      });
+      $.mockjax({
+        url: 'transactions/*/attachments.json',
+        responseText: []
+      });
     },
     teardown: function() {
+      $.mockjaxClear();
     }
   });
   asyncTest("validation", function() {
     expect(4);
 
     var app = new MoneyApp();
-    getEntity(app, 10, function(entity) {
+    getEntity(app, ENTITY_ID, function(entity) {
       var account = new AccountViewModel({}, entity);
       account.name('Test');
       account.account_type('asset');
@@ -149,14 +166,14 @@
   asyncTest("transaction_items", function() {
     expect(7);
 
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: 1}, function(account) {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
       ok(account.transaction_items, "The account should have a transaction_items property.");
       account.transaction_items.subscribe(function(items) {
         if (items.length != 2) return;
 
-        equal(account.transaction_items().length, 2, "The account should have 2 transaction item.");
+        equal(account.transaction_items().length, 2, "The account should have 2 transaction items.");
         var item = account.transaction_items().first();
-        equal(item.id(), 1, "The first transaction item should have the right account_id value.");
+        equal(item.id(), TRANSACTION_ITEM_1_ID, "The first transaction item should have the right account_id value.");
         equal(item.action(), 'debit', "The first transaction item should have the right action value.");
         equal(item.polarizedAmount(), 1000, "The first transaction item should have the right amount value.");
         equal(item.transaction_item.transaction.transaction_date().toLocaleDateString(), '1/15/2014', "The transaction items should be in reverse chronological order.");
@@ -171,7 +188,7 @@
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID }, function(commoditiesAccount) {
       equal(commoditiesAccount.commoditiesMenuVisible(), true, 'Commodities accounts should show the commodities menu');
 
-      otherAccount = commoditiesAccount.entity.getAccount(1);
+      otherAccount = commoditiesAccount.entity.getAccount(CHECKING_ID);
       equal(otherAccount.commoditiesMenuVisible(), false, 'Non-commodities accounts should not show the commodities menu');
       start();
     });
@@ -184,7 +201,7 @@
       commoditiesAccount.transactionItemsVisible(true);
       equal(commoditiesAccount.holdingsVisible(), false, 'holdingsVisible should be false if transactionItemsVisible is true');
 
-      otherAccount = commoditiesAccount.entity.getAccount(1);
+      otherAccount = commoditiesAccount.entity.getAccount(CHECKING_ID);
       equal(otherAccount.holdingsVisible(), false, 'Non-commodities accounts should not show holdings');
       equal(otherAccount.transactionItemsVisible(), true, 'Non-commodities accounts should only show transaction items');
       otherAccount.holdingsVisible(true);
