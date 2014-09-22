@@ -1,4 +1,31 @@
-.holding_form{ data: { bind: "with: newHolding" }}
-  %select{ data: { bind: "value: action" }}
-    %option buy
-    %option sell
+%fieldset
+  %legend New commodity transaction
+  .holding_form{ data: { bind: "with: newCommodityTransaction" }}
+    %div
+      %label{ for: 'new_commodity_transaction_transaction_date' } Symbol
+      %br
+      %input#new_commodity_transaction_transaction_date.date_field{ type: 'text', data: { bind: "value: formattedTransactionDate" }}
+    %div
+      %label{ for: 'new_commodity_transaction_action' } Action
+      %br
+      %select#new_commodity_transaction_action{ data: { bind: "value: action" }}
+        %option buy
+        %option sell
+    %div
+      %label{ for: 'new_commodity_transaction_symbol' } Symbol
+      %br
+      %input#new_commodity_transaction_symbol{ data: { bind: "value: symbol" }}
+    %div
+      %label{ for: 'new_commodity_transaction_shares' } Shares
+      %br
+      %input#new_commodity_transaction_shares.number_field{ data: { bind: "value: shares" }}
+    %div
+      %label{ for: 'new_commodity_transaction_value' } Value
+      %br
+      %input#new_commodity_transaction_value.number_field{ data: { bind: "value: value" }}
+    %div
+      %label{ for: 'new_commodity_transaction_price' } Price per share
+      %br
+      %span#new_commodity_transaction_price{ data: { bind: "text: price" }}
+    .actions
+      %button{ data: { bind: "click: save" }} Save

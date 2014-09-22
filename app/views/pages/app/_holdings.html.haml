@@ -1,4 +1,3 @@
-=render 'pages/app/holding_form.html.haml'
 %table.register{ cellspacing: 0, cellpadding: 0, data: { bind: "visible: holdingsVisible, attr: {id: 'holdings_' + id()}" }}
   %tr
     %th Symbol
@@ -32,3 +31,4 @@
     %td &nbsp;
     %td.number_column{ data: { bind: "text: formattedCostWithChildren" }}
     %td.number_column{ data: { bind: "text: formattedGainLossWithChildren" }}
+=render 'pages/app/holding_form.html.haml'

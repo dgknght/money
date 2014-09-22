@@ -34,8 +34,13 @@
     var tabs = $('#account_details').tabs();
     app.displayedAccounts.subscribe(function(accounts) {
       tabs.tabs('refresh');
-      window.setTimeout(bindAttachmentDrops, 500);
+      window.setTimeout(initNewHtml, 500);
     });
+
+    function initNewHtml() {
+      bindAttachmentDrops();
+      $('.date_field').datepicker();
+    }
 
     function bindAttachmentDialogs() {
       $('.attachment_container').dialog({
@@ -156,5 +161,4 @@
         }
       }
     });
-
   });
