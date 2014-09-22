@@ -19,6 +19,13 @@
         url: 'accounts/' + ACCOUNT_ID + '/lots.json',
         responseText: []
       });
+      $.mockjax({
+        url: 'accounts/' + ACCOUNT_ID + '/new_purchase.json',
+        type: 'POST',
+        responseText: {
+          message: 'this is a test'
+        }
+      });
     },
     teardown: function() {}
   });
@@ -137,6 +144,39 @@
       }
 
       start();
+    });
+  });
+  asyncTest('save - when purchasing', function() {
+    expect(1);
+
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: ACCOUNT_ID }, function(account) {
+      var viewModel = account.newCommodityTransaction;
+      viewModel.symbol('KSS');
+      viewModel.shares(100);
+      viewModel.value(1200);
+
+      ok(viewModel.save, 'The instance should have a "save" method');
+      if (viewModel.save) {
+        var timeout = window.setTimeout(function() {
+          ok(false, 'The save operation never completed');
+          start();
+        }, 5000);
+
+        viewModel.save(
+          function() {
+            window.clearTimeout(timeout);
+            equal(account.lots().length, 1, 'should create a new lot');
+            start();
+          },
+          function(error) {
+            window.clearTimeout(timeout);
+            ok(false, error);
+            start();
+          }
+        );
+      } else {
+        start();
+      }
     });
   });
 })();
