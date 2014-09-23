@@ -6,6 +6,11 @@
 ko.lazyObservableArray = function(callback, context) {
   var value = ko.observableArray();
   var result = lazyComputed(callback, value, context);
+  var _refresh = result.refresh;
+  result.refresh = function() {
+    value.removeAll();
+    _refresh();
+  };
   
   ko.utils.arrayForEach(["remove", "removeAll", "destroy", "destroyAll", "indexOf", "replace", "pop", "push", "reverse", "shift", "sort", "splice", "unshift", "slice"], function(methodName) {
     result[methodName] = function() {

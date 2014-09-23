@@ -33,25 +33,27 @@ function NewCommodityTransactionViewModel(account) {
     return _.every(props, function(prop) { return prop.hasError == null || !prop.hasError(); });
   };
 
-  this.save = function(success, error, complete) {
-    console.log("_self");
-    console.log(_self);
-    console.log("_postUrl()");
-    console.log(_self._postUrl());
+  this.reset = function() {
+    this.symbol(null);
+    this.shares(null);
+    this.value(null);
+  };
 
+  this.save = function(success, error, complete) {
+    success = _.ensureFunction(success);
+    error = _.ensureFunction(error);
+    complete = _.ensureFunction(complete);
     $.ajax({
       url: _self._postUrl(),
       type: 'POST',
       dataType: 'json',
       data: _self._postData(),
       success: function(data) {
-        console.log("success!");
-        console.log(data);
+        _self._account.lots.refresh();
+        _self.reset();
         success(data);
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        console.log("error!");
-        console.log(errorThrown);
         error(errorThrown);
       },
       complete: complete
@@ -59,16 +61,18 @@ function NewCommodityTransactionViewModel(account) {
   };
 
   this._postUrl = function() {
-    return "accounts/{id}/new_purchase.json".format({ id: _self._account.id() });
+    return "accounts/{id}/create_purchase.json".format({ id: _self._account.id() });
   };
 
   this._postData = function() {
     return {
-      transaction_date: _self.formattedTransactionDate(),
-      action: _self.action(),
-      symbol: _self.symbol(),
-      shares: _self.shares(),
-      value: _self.value()
+      purchase: {
+        transaction_date: _self.transaction_date().toISOString(),
+        action: _self.action(),
+        symbol: _self.symbol(),
+        shares: _self.shares(),
+        value: _self.value()
+      }
     };
   };
 }
