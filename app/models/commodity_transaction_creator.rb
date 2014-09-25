@@ -48,7 +48,10 @@ class CommodityTransactionCreator
   end
 
   def as_json(options)
-    { transaction: @transaction.as_json(options) }
+    {
+      transaction: @transaction.as_json(options),
+      lots: lots.as_json(options)
+    }
   end
 
   def commodity
@@ -187,6 +190,10 @@ class CommodityTransactionCreator
     @long_term_gains_account
   end
 
+  def lots
+    @lots ||= []
+  end
+
   def held_more_than_one_year?(purchase_date)
     one_year_later = Date.new(purchase_date.year + 1,
                               purchase_date.month,
@@ -196,7 +203,7 @@ class CommodityTransactionCreator
 
   def process_buy
     transaction = create_buy_transaction
-    process_buy_lot(transaction)
+    lots << process_buy_lot(transaction)
     transaction
   end
 
@@ -209,10 +216,12 @@ class CommodityTransactionCreator
     lot_transaction = lot.transactions.create!(transaction: transaction, 
                                                shares_traded: shares,
                                                price: price)
+    lot
   end
 
   def process_sell
     sale_results = process_sell_lots
+    sale_results.each{ |r| lots << r.lot }
     transaction = create_sell_transaction(sale_results)
     sale_results.each do |result|
       result.lot.transactions.create!(transaction: transaction,

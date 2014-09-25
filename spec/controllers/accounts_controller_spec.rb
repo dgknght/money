@@ -158,34 +158,82 @@ describe AccountsController do
           end.to change(Transaction, :count).by(1)
         end
 
-        it 'should create a new lot' do
-          expect do
-            post :create_purchase, id: ira, purchase: purchase_attributes
-          end.to change(Lot, :count).by(1)
-        end
-
-        context 'in json' do
-          it 'should be successful' do
-            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
-            expect(response).to be_success
-          end
-
-          it 'should return the new transaction' do
-            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
-            json = JSON.parse(response.body)
-            expect(json).to include('transaction')
-          end
-
-          it 'should create a new commodity transaction' do
-            expect do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
-            end.to change(Transaction, :count).by(1)
-          end
-
+        context 'for a purchase' do
           it 'should create a new lot' do
             expect do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              post :create_purchase, id: ira, purchase: purchase_attributes
             end.to change(Lot, :count).by(1)
+          end
+
+          context 'in json' do
+            it 'should be successful' do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              expect(response).to be_success
+            end
+
+            it 'should return the new transaction' do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              json = JSON.parse(response.body)
+              expect(json).to include('transaction')
+            end
+
+            it 'should return the new lot' do
+              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              json = JSON.parse(response.body)
+              lots = json['lots']
+              expect(lots).not_to be_nil
+              expect(lots).to have(1).item
+            end
+
+            it 'should create a new commodity transaction' do
+              expect do
+                post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              end.to change(Transaction, :count).by(1)
+            end
+
+            it 'should create a new lot' do
+              expect do
+                post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              end.to change(Lot, :count).by(1)
+            end
+
+          end
+
+          context 'for a sale' do
+            let!(:ltg) { FactoryGirl.create(:income_account, name: 'Long-term capital gains', entity: entity) }
+            let!(:stg) { FactoryGirl.create(:income_account, name: 'Short-term capital gains', entity: entity) }
+            let!(:purchase1) do
+              CommodityTransactionCreator.new(account: ira,
+                                              action: CommodityTransactionCreator.buy,
+                                              transaction_date: 2.days.ago,
+                                              symbol: 'KSS',
+                                              shares: 100,
+                                              value: 1_000).create!
+            end
+            let!(:purchase2) do
+              CommodityTransactionCreator.new(account: ira,
+                                              action: CommodityTransactionCreator.buy,
+                                              transaction_date: 1.day.ago,
+                                              symbol: 'KSS',
+                                              shares: 100,
+                                              value: 1_200).create!
+            end
+            let (:sale_attributes) do
+              {
+                symbol: 'KSS',
+                action: CommodityTransactionCreator.sell,
+                shares: 150,
+                value: 2_100
+              }
+            end
+
+            it 'should return any affected lots for a sale' do
+              post :create_purchase, id: ira, purchase: sale_attributes, format: :json
+              json = JSON.parse(response.body)
+              lots = json['lots']
+              expect(lots).not_to be_nil
+              expect(lots).to have(2).items
+            end
           end
         end
       end
