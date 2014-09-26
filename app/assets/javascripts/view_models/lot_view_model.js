@@ -38,4 +38,8 @@ function LotViewModel(lot, entity) {
   this.cost = ko.computed(function() {
     return this.shares_owned() * this.price();
   }, this);
+
+  this.updateAttributes = function(data) {
+    this.shares_owned(data.shares_owned);
+  };
 }

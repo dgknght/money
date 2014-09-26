@@ -49,8 +49,8 @@ function NewCommodityTransactionViewModel(account) {
       dataType: 'json',
       data: _self._postData(),
       success: function(data) {
-        _self._account.lots.refresh();
         _self.reset();
+        _self._updateModels(data);
         success(data);
       },
       error: function(jqXHR, textStatus, errorThrown) {
@@ -74,5 +74,21 @@ function NewCommodityTransactionViewModel(account) {
         value: _self.value()
       }
     };
+  };
+
+  this._updateModels = function(data) {
+    _self._account.entity.transactions.push(new TransactionViewModel(data.transaction, _self._account.entity));
+    _.each(data.lots, _self._updateLot);
+  };
+
+  this._updateLot = function(lot) {
+    var account = _self._account.entity.getAccount(lot.account_id);
+    var existingLot = _.findById(account.lots(), lot.id);
+    if (existingLot == null) {
+      var viewModel = new LotViewModel(lot, _self._account.entity);
+      account.lots.push(viewModel);
+    } else {
+      existingLot.updateAttributes(lot);
+    }
   };
 }
