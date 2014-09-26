@@ -61,7 +61,7 @@ function NewCommodityTransactionViewModel(account) {
   };
 
   this._postUrl = function() {
-    return "accounts/{id}/create_purchase.json".format({ id: _self._account.id() });
+    return "accounts/{id}/create_commodity_transaction.json".format({ id: _self._account.id() });
   };
 
   this._postData = function() {

@@ -35,6 +35,6 @@
     %td.number_column= format_currency(@account.children_cost)
     %td.number_column= format_currency(@account.gains_with_children)
 .actions
-  =link_to 'Add', new_purchase_account_path(@account), class: 'add_button', title: 'Click here to purchase shares of a commodity.'
+  =link_to 'Add', new_commodity_transaction_account_path(@account), class: 'add_button', title: 'Click here to purchase shares of a commodity.'
   =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'
   =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button', title: 'Click here to reconcile this account against a statement.'

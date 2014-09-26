@@ -30,7 +30,7 @@ class AccountsController < ApplicationController
     @account = @entity.accounts.new
   end
 
-  def new_purchase
+  def new_commodity_transaction
     authorize! :update, @account
     @creator = CommodityTransactionCreator.new account: @account
   end
@@ -42,13 +42,13 @@ class AccountsController < ApplicationController
     respond_with @account, location: entity_accounts_path(@entity)
   end
 
-  def create_purchase
+  def create_commodity_transaction
     authorize! :update, @account
     @creator = CommodityTransactionCreator.new purchase_params
 
     flash[:notice] = "The transaction was created successfully." if @creator.create
     respond_with @creator, location: holdings_account_path(@account),
-                            action: :new_purchase
+                            action: :new_commodity_transaction
   end
 
   def edit

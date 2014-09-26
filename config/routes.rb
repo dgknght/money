@@ -25,8 +25,8 @@ Money::Application.routes.draw do
     resources :transaction_items, only: [ :index, :create, :new ]
     resources :lots, only: [ :index ]
     member do
-      get :new_purchase
-      post :create_purchase
+      get :new_commodity_transaction
+      post :create_commodity_transaction
       get :holdings
     end
   end

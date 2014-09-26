@@ -20,7 +20,7 @@
         responseText: []
       });
       $.mockjax({
-        url: 'accounts/' + ACCOUNT_ID + '/new_purchase.json',
+        url: 'accounts/' + ACCOUNT_ID + '/create_commodity_transaction.json',
         type: 'POST',
         responseText: {
           message: 'this is a test'

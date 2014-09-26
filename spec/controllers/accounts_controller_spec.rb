@@ -139,46 +139,46 @@ describe AccountsController do
         end
       end
 
-      describe 'get :new_purchase' do
+      describe 'get :new_commodity_transaction' do
         it 'be successful' do
-          get :new_purchase, id: ira
+          get :new_commodity_transaction, id: ira
           expect(response).to be_success
         end
       end
 
-      describe 'post :create_purchase' do
+      describe 'post :create_commodity_transaction' do
         it 'should redirect to the holdings page' do
-          post :create_purchase, id: ira, purchase: purchase_attributes
+          post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           expect(response).to redirect_to holdings_account_path(ira)
         end
 
         it 'should create a new commodity transaction' do
           expect do
-            post :create_purchase, id: ira, purchase: purchase_attributes
+            post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           end.to change(Transaction, :count).by(1)
         end
 
         context 'for a purchase' do
           it 'should create a new lot' do
             expect do
-              post :create_purchase, id: ira, purchase: purchase_attributes
+              post :create_commodity_transaction, id: ira, purchase: purchase_attributes
             end.to change(Lot, :count).by(1)
           end
 
           context 'in json' do
             it 'should be successful' do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               expect(response).to be_success
             end
 
             it 'should return the new transaction' do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               json = JSON.parse(response.body)
               expect(json).to include('transaction')
             end
 
             it 'should return the new lot' do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               json = JSON.parse(response.body)
               lots = json['lots']
               expect(lots).not_to be_nil
@@ -187,13 +187,13 @@ describe AccountsController do
 
             it 'should create a new commodity transaction' do
               expect do
-                post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+                post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               end.to change(Transaction, :count).by(1)
             end
 
             it 'should create a new lot' do
               expect do
-                post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+                post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               end.to change(Lot, :count).by(1)
             end
 
@@ -228,7 +228,7 @@ describe AccountsController do
             end
 
             it 'should return any affected lots for a sale' do
-              post :create_purchase, id: ira, purchase: sale_attributes, format: :json
+              post :create_commodity_transaction, id: ira, purchase: sale_attributes, format: :json
               json = JSON.parse(response.body)
               lots = json['lots']
               expect(lots).not_to be_nil
@@ -311,46 +311,46 @@ describe AccountsController do
         end
       end
 
-      describe 'get :new_purchase' do
+      describe 'get :new_commodity_transaction' do
         it 'should redirect to the user home page' do
-          get :new_purchase, id: ira
+          get :new_commodity_transaction, id: ira
           expect(response).to redirect_to home_path
         end
       end
 
-      describe 'post :create_purchase' do
+      describe 'post :create_commodity_transaction' do
         it 'should redirect to the user home page' do
-          post :create_purchase, id: ira, purchase: purchase_attributes
+          post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           expect(response).to redirect_to home_path
         end
 
         it 'should not create a new commodity transaction' do
           expect do
-            post :create_purchase, id: ira, purchase: purchase_attributes
+            post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           end.not_to change(Transaction, :count)
         end
 
         it 'should not create a new lot' do
           expect do
-            post :create_purchase, id: ira, purchase: purchase_attributes
+            post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           end.not_to change(Lot, :count)
         end
 
         context 'in json' do
           it 'should return "resource not found"' do
-            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
             expect(response.response_code).to eq(404)
           end
 
           it 'should not create a new commodity transaction' do
             expect do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
             end.not_to change(Transaction, :count)
           end
 
           it 'should not create a new lot' do
             expect do
-              post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+              post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
             end.not_to change(Lot, :count)
           end
         end
@@ -471,46 +471,46 @@ describe AccountsController do
       end
     end
 
-    describe 'get :new_purchase' do
+    describe 'get :new_commodity_transaction' do
       it 'should redirect to the sign in page' do
-        get :new_purchase, id: ira
+        get :new_commodity_transaction, id: ira
         expect(response).to redirect_to(new_user_session_path)
       end
     end
 
-    describe 'post :create_purchase' do
+    describe 'post :create_commodity_transaction' do
       it 'should redirect to the sign in page' do
-        post :create_purchase, id: ira, purchase: purchase_attributes
+        post :create_commodity_transaction, id: ira, purchase: purchase_attributes
         expect(response).to redirect_to(new_user_session_path)
       end
 
       it 'should not create a new commodity transaction' do
         expect do
-          post :create_purchase, id: ira, purchase: purchase_attributes
+          post :create_commodity_transaction, id: ira, purchase: purchase_attributes
         end.not_to change(Transaction, :count)
       end
 
       it 'should not create a new lot' do
         expect do
-          post :create_purchase, id: ira, purchase: purchase_attributes
+          post :create_commodity_transaction, id: ira, purchase: purchase_attributes
         end.not_to change(Lot, :count)
       end
 
       context 'in json' do
         it 'should return "access denied"' do
-          post :create_purchase, id:ira, purchase: purchase_attributes, format: :json
+          post :create_commodity_transaction, id:ira, purchase: purchase_attributes, format: :json
           expect(response.response_code).to eq(401)
         end
 
         it 'should not create a new commodity transaction' do
           expect do
-            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
           end.not_to change(Transaction, :count)
         end
 
         it 'should not create a new lot' do
           expect do
-            post :create_purchase, id: ira, purchase: purchase_attributes, format: :json
+            post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
           end.not_to change(Lot, :count)
         end
       end

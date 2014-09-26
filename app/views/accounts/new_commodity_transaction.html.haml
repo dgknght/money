@@ -1,7 +1,7 @@
 %h2#page_title New commodity transaction
 
 =render 'shared/errors', resource: @creator
-=form_tag(create_purchase_account_path(@account), {method: :post}) do
+=form_tag(create_commodity_transaction_account_path(@account), {method: :post}) do
   =fields_for(:purchase, @creator) do |f|
     %div
       =f.label :transaction_date
