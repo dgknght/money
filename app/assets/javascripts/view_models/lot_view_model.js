@@ -40,6 +40,6 @@ function LotViewModel(lot, entity) {
   }, this);
 
   this.updateAttributes = function(data) {
-    this.shares_owned(data.shares_owned);
+    this.shares_owned(_.ensureNumber(data.shares_owned));
   };
 }
