@@ -9,7 +9,7 @@
     %tr{ data: { bind: "css: cssClass" }}
       %td{ data: { bind: "click: display" }}
         %span{ data: { bind: "text: name, css: cssClass" }}
-      %td.number_column{ data: { bind: "text: formattedBalanceWithChildren,click: display" }}
+      %td.number_column{ data: { bind: "text: formattedValueWithChildren,click: display" }}
       %td.action_cell
         %a.small_edit_button{ data: { bind: "visible: canEdit(), click: edit" }, href: '#', title: 'Click here to edit this account.' } Edit
         %a.small_delete_button{ data: { bind: "visible: canDestroy(), click: destroy" }, href: '#', title: 'Click here to delete this account.' } Delete

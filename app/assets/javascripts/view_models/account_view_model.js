@@ -376,18 +376,18 @@ function AccountGroupViewModel(name, accounts) {
   this.accounts = ko.observableArray(accounts);
   this.cssClass = "account_category";
   
-  this.balanceWithChildren = ko.computed(function() {
+  this.valueWithChildren = ko.computed(function() {
     var children = this.accounts().where(function(account) {
       return account.parent_id() == null;
     });
     
-    return children.sum(function(a) { return a.balanceWithChildren(); });
+    return children.sum(function(a) { return a.valueWithChildren(); });
   }, this);
   
   this.display = function() {};
   
-  this.formattedBalanceWithChildren = ko.computed(function() {
-    return accounting.formatMoney(this.balanceWithChildren());
+  this.formattedValueWithChildren = ko.computed(function() {
+    return accounting.formatMoney(this.valueWithChildren());
   }, this);
 
   this.canEdit = function() { return false; };
