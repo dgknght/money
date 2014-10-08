@@ -77,7 +77,9 @@ function NewCommodityTransactionViewModel(account) {
   };
 
   this._updateModels = function(data) {
-    _self._account.entity.transactions.push(new TransactionViewModel(data.transaction, _self._account.entity));
+    var transaction = new TransactionViewModel(data.transaction, _self._account.entity);
+    _self._account.entity.transactions.push(transaction);
+    _.each(transaction.items(), function(item) { item.account().processNewTransactionItem(item); });
     _.each(data.lots, _self._updateLot);
   };
 
