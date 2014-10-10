@@ -240,7 +240,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.formattedShares = ko.computed(function() {
-    return accounting.formatNumber(this.shares(), 2);
+    return accounting.formatNumber(this.shares(), 4);
   }, this);
   
   this.gainLoss = ko.computed(function() {
