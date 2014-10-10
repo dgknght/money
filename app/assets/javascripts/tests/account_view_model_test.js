@@ -531,6 +531,16 @@
       start();
     });
   });
+  asyncTest("reconile", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
+      ok(account.reconcile, 'The object should have a "reconcile" method');
+      if (account.reconcile) {
+        var reconciliation = account.reconcile();
+        ok(reconciliation, 'The reconcile method should not return null');
+      }
+      start();
+    });
+  });
 //  asyncTest("gainLossWithChildren", function() {
 //    expect(2);
 //    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {

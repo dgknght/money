@@ -355,6 +355,10 @@ function AccountViewModel(account, entity) {
       this.transaction_items.push(rollup);
     }
   };
+
+  this.reconcile = function() {
+    return new ReconciliationViewModel(this);
+  };
 }
 
 AccountViewModel.prototype = new ServiceEntity();
