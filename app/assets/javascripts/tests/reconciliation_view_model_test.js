@@ -76,6 +76,10 @@
         ]
       });
       $.mockjax({
+        url: 'accounts/' + CHECKING_ID + '/reconciliations/new.json',
+        responseText: { previous_balance: 1000 }
+      });
+      $.mockjax({
         url: 'accounts/*/lots.json',
         responseText: []
       });
@@ -87,18 +91,43 @@
   });
   asyncTest("closing_balance", function() {
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
-      var reconciliation = account.reconcile();
-      ok(reconciliation.closing_balance, 'The instance should have a closing_balance method');
-      if (reconciliation.closing_balance) {
-        equal(reconciliation.closing_balance(), 0, 'The closing_balance method should return 0 by default');
-      }
-      start();
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.closing_balance, 'The instance should have a closing_balance method');
+        if (reconciliation.closing_balance) {
+          equal(reconciliation.closing_balance(), 0, 'The closing_balance method should return 0 by default');
+        }
+        start();
+      });
+    });
+  });
+  asyncTest("previous_balance", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.previous_balance, 'The instance should have a previous_balance method');
+        if (reconciliation.previous_balance) {
+          equal(reconciliation.previous_balance(), 1000, 'The previous_balance method should return the correct value');
+        }
+        start();
+      });
+    });
+  });
+  asyncTest("reconciliation_date", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.reconciliation_date, 'The instance should have a reconciliation_date method');
+        if (reconciliation.reconciliation_date) {
+          equal(reconciliation.reconciliation_date().toLocaleDateString(), new Date().toLocaleDateString(), 'The reconciliation_date method should return the current date by default');
+        }
+        start();
+      });
     });
   });
   asyncTest("validation", function() {
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
-      var reconciliation = account.reconcile();
-      ok(false, 'need to write the test');
+      account.reconcile(function(reconciliation) {
+        ok(false, 'need to write the test');
+        start();
+      });
     });
   });
 })();

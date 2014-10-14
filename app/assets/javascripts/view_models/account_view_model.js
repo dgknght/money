@@ -356,8 +356,16 @@ function AccountViewModel(account, entity) {
     }
   };
 
-  this.reconcile = function() {
-    return new ReconciliationViewModel(this);
+  this.reconcile = function(callback) {
+    $.ajax({
+      url: 'accounts/{id}/reconciliations/new.json'.format({id: this.id()}),
+      success: function(data, textStatus, jqXHR) {
+        callback(new ReconciliationViewModel(data));
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log("Unable to get the new reconciliation " + textStatus + ": " + errorThrown);
+      }
+    });
   };
 }
 
