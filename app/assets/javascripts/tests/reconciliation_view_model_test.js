@@ -30,7 +30,7 @@
     { id: CAR_SAVINGS_ID, name: 'Car', account_type: 'asset', content_type: 'currency', balance: 15000, parent_id: SAVINGS_ID },
     { id: RESERVE_SAVINGS_ID, name: 'Reserve', account_type: 'asset', content_type: 'currency', balance: 24000, parent_id: SAVINGS_ID }
   ];
-  module('ReconiliationViewModel', {
+  module('ReconciliationViewModel', {
     setup: function() {
       $.mockjaxClear();
       $.mockjax({
@@ -77,7 +77,10 @@
       });
       $.mockjax({
         url: 'accounts/' + CHECKING_ID + '/reconciliations/new.json',
-        responseText: { previous_balance: 1000 }
+        responseText: {
+          previous_balance: 1000,
+          previous_reconciliation_date: '2014-01-01'
+        }
       });
       $.mockjax({
         url: 'accounts/*/lots.json',
@@ -111,12 +114,45 @@
       });
     });
   });
+  asyncTest("previous_reconciliation_date", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.previous_reconciliation_date, 'The instance should have a previous_reconciliation_date method');
+        if (reconciliation.previous_reconciliation_date) {
+          equal(reconciliation.previous_reconciliation_date().toLocaleDateString(), '1/1/2014', 'The previous_reconciliation_date method should return the current date by default');
+        }
+        start();
+      });
+    });
+  });
   asyncTest("reconciliation_date", function() {
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
       account.reconcile(function(reconciliation) {
         ok(reconciliation.reconciliation_date, 'The instance should have a reconciliation_date method');
         if (reconciliation.reconciliation_date) {
           equal(reconciliation.reconciliation_date().toLocaleDateString(), new Date().toLocaleDateString(), 'The reconciliation_date method should return the current date by default');
+        }
+        start();
+      });
+    });
+  });
+  asyncTest("items", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.items, 'The instance should have an items method');
+        if (reconciliation.items) {
+          equal(reconciliation.items().length, 0, 'The items method should return an empty array by default');
+        }
+        start();
+      });
+    });
+  });
+  asyncTest("reconciled_balance", function() {
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.reconciled_balance, 'The instance should have a reconciled_balance method');
+        if (reconciliation.reconciled_balance) {
+          equal(reconciliation.reconciled_balance(), 0, 'The reconciled_balance method should return 0 by default');
         }
         start();
       });
