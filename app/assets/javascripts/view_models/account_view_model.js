@@ -359,6 +359,8 @@ function AccountViewModel(account, entity) {
   this.reconcile = function(callback) {
     $.ajax({
       url: 'accounts/{id}/reconciliations/new.json'.format({id: this.id()}),
+      type: 'GET',
+      dataType: 'json',
       success: function(data, textStatus, jqXHR) {
         callback(new ReconciliationViewModel(data));
       },
