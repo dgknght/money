@@ -1,5 +1,8 @@
 _.mixin({
   ensureDate: function(value) {
+    if (typeof value == 'undefined' || value == null) {
+      return null;
+    }
     if (_.isDate(value)) {
       return value;
     }
