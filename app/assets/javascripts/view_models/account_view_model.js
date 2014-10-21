@@ -25,6 +25,7 @@ function AccountViewModel(account, entity) {
   this._balance = ko.observable(account.balance * 1);
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
+  this.reconciliation = ko.observable();
 
   this.entityDescription = function() {
     return this.name();
@@ -357,12 +358,15 @@ function AccountViewModel(account, entity) {
   };
 
   this.reconcile = function(callback) {
+    callback = _.ensureFunction(callback);
     $.ajax({
       url: 'accounts/{id}/reconciliations/new.json'.format({id: this.id()}),
       type: 'GET',
       dataType: 'json',
       success: function(data, textStatus, jqXHR) {
-        callback(new ReconciliationViewModel(data));
+        var viewModel = new ReconciliationViewModel(data);
+        _self.reconciliation(viewModel);
+        callback(viewModel);
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.log("Unable to get the new reconciliation " + textStatus + ": " + errorThrown);

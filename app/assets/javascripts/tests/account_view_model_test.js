@@ -53,6 +53,15 @@
         ]
       });
       $.mockjax({
+        url: 'accounts/' + CHECKING_ID + '/reconciliations/new.json',
+        responseText: [
+          {
+            previous_balance: 0,
+            previous_reconciliation_date: '2014-02-27'
+          }
+        ]
+      });
+      $.mockjax({
         url: 'entities/' + ENTITY_ID + '/commodities.json',
         responseText: [
           { id: KSS_ID, name: 'Knight Software Services', symbol: 'KSS', market: 'NYSE' }
@@ -532,15 +541,35 @@
     });
   });
   asyncTest("reconile", function() {
+    expect(2);
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
       ok(account.reconcile, 'The object should have a "reconcile" method');
       if (account.reconcile) {
-        var reconciliation = account.reconcile();
-        ok(reconciliation, 'The reconcile method should not return null');
+        account.reconcile(function(reconciliation) {
+          ok(reconciliation, 'The reconcile method should not return null');
+          start();
+        });
+      } else {
+        start();
       }
-      start();
     });
   });
+  asyncTest("reconiliation", function() {
+    expect(3)
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
+      ok(account.reconciliation, 'The object should have a "reconciliation" method');
+      if (account.reconciliation) {
+        equal(null, account.reconciliation(), 'The reconciliation method should return null before reconcile is called.');
+        account.reconcile(function(_) {
+          ok(account.reconciliation(), 'The reconciliation method should not return null after reconcile is called.');
+          start();
+        });
+      } else {
+        start();
+      }
+    });
+  });
+
 //  asyncTest("gainLossWithChildren", function() {
 //    expect(2);
 //    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: IRA_ID}, function(account) {
