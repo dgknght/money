@@ -16,6 +16,10 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     owner: this
   });
 
+  this.account = ko.computed(function() {
+    return this.transaction_item.account();
+  }, this);
+
   this.attachments = ko.computed(function() {
     return this.transaction_item.transaction.attachments();
   }, this);
@@ -178,4 +182,12 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
   this.description.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
   this.polarizedAmount.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
   this.otherAccountPath.subscribe(function() { _self.transaction_item.transaction.requestSave(); });
+
+  this.reconcile = function(callback) {
+    callback = _.ensureFunction(callback);
+    transaction_item.account().reconcile(function(reconciliation) {
+      var viewModel = reconciliation.addTransactionItem(_self.transaction_item);
+      callback(viewModel);
+    });
+  };
 }

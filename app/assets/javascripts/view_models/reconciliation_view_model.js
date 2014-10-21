@@ -13,4 +13,8 @@ function ReconciliationViewModel(reconciliation) {
       return sum + item.polarizedAmount();
     }, 0);
   }, this);
+
+  this.addTransactionItem = function(transaction_item) {
+    return null;
+  };
 }

@@ -66,6 +66,20 @@ module('TransactionItemRollupViewModel', {
       ]
     });
     $.mockjax({
+      url: 'entities/' + ENTITY_ID + '/transactions.json?account_id=' + CHECKING_ID,
+      responseText: [
+        {
+          id: PAYCHECK_TRANSACTION_ID,
+          transaction_date: '2014-01-13',
+          description: 'Paycheck',
+          items: [
+            { id: PAYCHECK_ITEM_1_ID, account_id: CHECKING_ID, action: 'debit', amount: 1000, reconciled: true },
+            { id: PAYCHECK_ITEM_2_ID, account_id: SALARY_ID, action: 'credit', amount: 1000, reconciled: false }
+          ]
+        }
+      ]
+    });
+    $.mockjax({
       url: 'transactions/' + PAYCHECK_TRANSACTION_ID + '/attachments.json',
       responseText: [
         { id: 1001, transaction_id: ENTITY_ID, name: 'Paystub', content_type: 'image/png' }
@@ -78,6 +92,12 @@ module('TransactionItemRollupViewModel', {
     $.mockjax({
       url: 'accounts/*/lots.json',
       responseText: []
+    });
+    $.mockjax({
+      url: 'accounts/' + CHECKING_ID + '/reconciliations/new.json',
+      responseText: {
+        previous_balance: 0
+      }
     });
   }
 });
@@ -330,5 +350,24 @@ asyncTest("toggleAttachmentsVisible", function() {
     start();
   });
 });
+asyncTest('reconcile', function() {
+  expect(2);
+  var ids = {
+    entity_id: ENTITY_ID,
+    account_id: CHECKING_ID,
+    transaction_item_id: PAYCHECK_ITEM_1_ID
+  };
+  getTransactionItemRollup(new MoneyApp(), ids, function(item) {
+    ok(item.reconcile, "should be a method on the object");
+    if (item.reconcile) {
+      item.reconcile(function(reconciliationItem) {
+        ok(reconciliationItem, 'should not return null');
+        start();
+      });
+    } else {
+      start();
+    }
+  });
+});
 
- })();
+})();

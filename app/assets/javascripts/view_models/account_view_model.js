@@ -357,8 +357,7 @@ function AccountViewModel(account, entity) {
     }
   };
 
-  this.reconcile = function(callback) {
-    callback = _.ensureFunction(callback);
+  this._createReconciliation = function(callback) {
     $.ajax({
       url: 'accounts/{id}/reconciliations/new.json'.format({id: this.id()}),
       type: 'GET',
@@ -372,6 +371,15 @@ function AccountViewModel(account, entity) {
         console.log("Unable to get the new reconciliation " + textStatus + ": " + errorThrown);
       }
     });
+  };
+
+  this.reconcile = function(callback) {
+    callback = _.ensureFunction(callback);
+    if (_self.reconciliation() == null) {
+      _self._createReconciliation(callback);
+    } else {
+      callback(_self.reconciliation());
+    }
   };
 }
 

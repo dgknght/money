@@ -158,6 +158,18 @@
       });
     });
   });
+  asyncTest("addTransactionItem", function() {
+    expect(2);
+    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
+      account.reconcile(function(reconciliation) {
+        ok(reconciliation.addTransactionItem, 'The instance should have an addTransactionItem method');
+        if (reconciliation.addTransactionItem) {
+          ok(reconciliation.addTransactionItem(), 'The addTransactionItem method should not return null');
+        }
+        start();
+      });
+    });
+  });
   asyncTest("validation", function() {
     getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
       account.reconcile(function(reconciliation) {
