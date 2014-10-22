@@ -10,11 +10,13 @@ function ReconciliationViewModel(reconciliation) {
   this.items = ko.observableArray();
   this.reconciled_balance = ko.computed(function() {
     return _.reduce(this.items(), function(sum, item) {
-      return sum + item.polarizedAmount();
+      return sum + item.transaction_item.polarizedAmount();
     }, 0);
   }, this);
 
   this.addTransactionItem = function(transaction_item) {
-    return null;
+    var reconciliationItem = new ReconciliationItemViewModel(transaction_item);
+    this.items.push(reconciliationItem);
+    return reconciliationItem;
   };
 }

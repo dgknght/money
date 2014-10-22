@@ -160,11 +160,11 @@
   });
   asyncTest("addTransactionItem", function() {
     expect(2);
-    getAccount(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID}, function(account) {
-      account.reconcile(function(reconciliation) {
+    getTransactionItemRollup(new MoneyApp(), { entity_id: ENTITY_ID, account_id: CHECKING_ID, transaction_item_id: TRANSACTION_ITEM_1_ID }, function(rollup) {
+      rollup.transaction_item.account().reconcile(function(reconciliation) {
         ok(reconciliation.addTransactionItem, 'The instance should have an addTransactionItem method');
         if (reconciliation.addTransactionItem) {
-          ok(reconciliation.addTransactionItem(), 'The addTransactionItem method should not return null');
+          ok(reconciliation.addTransactionItem(rollup.transaction_item), 'The addTransactionItem method should not return null');
         }
         start();
       });
