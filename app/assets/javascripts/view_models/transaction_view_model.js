@@ -1,4 +1,7 @@
 function TransactionViewModel(transaction, entity) {
+  if (typeof transaction == 'undefined' || transaction == null)
+    throw 'Argument cannot be null: transaction';
+
   var _self = this;
   this.entity = entity;
   this.id = ko.observable(transaction.id);
