@@ -15,9 +15,9 @@
           %ul.nav#commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
             %li.clickable{ data: { bind: "click: showTransactionItems" }} Show Transactions
             %li.clickable{ data: { bind: "click: showHoldings" }} Show Holdings
+        =render 'pages/app/reconcile'
         =render 'pages/app/holdings'
         =render 'pages/app/transactions'
-        =render 'pages/app/reconcile'
       =render 'pages/app/validation'
       <!-- /ko -->
 

@@ -22,6 +22,11 @@ class Reconciliation < ActiveRecord::Base
   
   default_scope { order(:reconciliation_date) }
   
+  def as_json(options = {})
+    super(options).merge(previous_reconciliation_date: previous_reconciliation_date,
+                         previous_balance: previous_balance)
+  end
+
   def balance_difference
     (closing_balance || previous_balance) - reconciled_balance
   end

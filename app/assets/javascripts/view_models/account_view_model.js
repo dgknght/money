@@ -368,7 +368,7 @@ function AccountViewModel(account, entity) {
         callback(viewModel);
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        console.log("Unable to get the new reconciliation " + textStatus + ": " + errorThrown);
+        console.log("Unable to get the new reconciliation: " + textStatus + ": " + errorThrown);
       }
     });
   };
@@ -381,6 +381,10 @@ function AccountViewModel(account, entity) {
       callback(_self.reconciliation());
     }
   };
+
+  this.showReconciliation = ko.computed(function() {
+    return this.reconciliation() != null;
+  }, this);
 }
 
 AccountViewModel.prototype = new ServiceEntity();

@@ -25,6 +25,30 @@ describe ReconciliationsController do
           get :new, account_id: checking
           response.should be_success
         end
+
+        context 'in JSON' do
+          it 'should be successful' do
+            get :new, account_id: checking, format: :json
+            response.should be_success
+          end
+
+          it 'should return the new reconciliation information' do
+            Timecop.freeze(Time.parse('2014-02-27 12:00:00 UTC')) do
+              get :new, account_id: checking, format: :json
+              content = JSON.parse(response.body)
+              content.should == {
+                'id' => nil,
+                'account_id' => checking.id,
+                'reconciliation_date' => '2014-02-27',
+                'closing_balance' => nil,
+                'created_at' => nil,
+                'updated_at' => nil,
+                'previous_reconciliation_date' => nil,
+                'previous_balance' => 0
+              }
+            end
+          end
+        end
       end
 
       describe "post :create" do
@@ -63,6 +87,18 @@ describe ReconciliationsController do
           get :new, account_id: checking
           response.should redirect_to home_path
         end
+
+        context 'in JSON' do
+          it 'should return "resource not found"' do
+            get :new, account_id: checking, format: :json
+            response.response_code.should == 404
+          end
+
+          it 'should not return any data' do
+            get :new, account_id: checking, format: :json
+            response.body.should == [].to_json
+          end
+        end
       end
 
       describe "post :create" do
@@ -99,6 +135,20 @@ describe ReconciliationsController do
         get :new, account_id: checking
         response.should redirect_to new_user_session_path
       end
+
+        context 'in JSON' do
+          it 'should return "access denied"' do
+            get :new, account_id: checking, format: :json
+            response.response_code.should == 401
+          end
+
+          it 'should return an error' do
+            get :new, account_id: checking, format: :json
+            content = JSON.parse(response.body)
+            content.delete('error').should_not be_nil
+            content.should be_empty
+          end
+        end
     end
 
     describe "post :create" do
