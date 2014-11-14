@@ -12,6 +12,7 @@ gem 'haml'
 gem 'haml-rails'
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
+gem 'simple-navigation'
 gem 'cancan'
 
 group :test, :development do

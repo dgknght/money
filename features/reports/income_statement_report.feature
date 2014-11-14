@@ -47,9 +47,9 @@ Feature: Income statement report
     And I am signed in as "john@doe.com/please01"
 
     When I am on the "Personal" entity page
-    Then I should see "Reports" within the secondary navigation
+    Then I should see "Reports" within the navigation
 
-    When I click on "Reports" within the secondary navigation
+    When I click on "Reports" within the navigation
     Then I should see "Reports" within the page title
     And I should see "Income Statement" within the main content
 

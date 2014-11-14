@@ -8,9 +8,9 @@ Feature: View transactions
     
     When I am signed in as "john@doe.com/please01"
     And I am on the "Business" entity page
-    Then I should see "Transactions" within the secondary navigation
+    Then I should see "Transactions" within the navigation
     
-    When I click "Transactions" within the secondary navigation
+    When I click "Transactions" within the navigation
     Then I should see "Transactions" within the page subtitle
     And I should see the following transactions table
       | Transaction Date | Description | Amount |

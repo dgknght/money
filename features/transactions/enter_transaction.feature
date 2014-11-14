@@ -14,7 +14,7 @@ Feature: Enter a transaction
     And I am signed in as "john@doe.com/please01"
 
     When I am on the "Personal" entity page
-    Then I should see "Transactions" within the secondary navigation
+    Then I should see "Transactions" within the navigation
     And I should see the following accounts table
       | Name             | Balance |
       | Assets           | 100.00  |
@@ -26,7 +26,7 @@ Feature: Enter a transaction
       | Expense          |   0.00  |
       | Groceries        |   0.00  |
 
-    When I click "Transactions" within the secondary navigation
+    When I click "Transactions" within the navigation
     Then I should see "Transactions" within the page subtitle
 
     When I fill in "description" with "Kroger"
