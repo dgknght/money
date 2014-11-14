@@ -10,6 +10,8 @@ gem 'sqlite3'
 gem 'devise'
 gem 'haml'
 gem 'haml-rails'
+gem 'bootstrap-sass', '~> 3.3.1'
+gem 'autoprefixer-rails'
 gem 'cancan'
 
 group :test, :development do

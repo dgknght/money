@@ -31,8 +31,12 @@ GEM
       rake (>= 0.8.7)
     arel (4.0.1)
     atomic (1.1.14)
+    autoprefixer-rails (4.0.0)
+      execjs
     bcrypt-ruby (3.1.2)
     bcrypt-ruby (3.1.2-x86-mingw32)
+    bootstrap-sass (3.3.1.0)
+      sass (~> 3.2)
     builder (3.1.4)
     cancan (1.6.10)
     capybara (2.2.1)
@@ -184,6 +188,8 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
+  autoprefixer-rails
+  bootstrap-sass (~> 3.3.1)
   cancan
   coffee-rails
   cucumber-rails
