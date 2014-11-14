@@ -22,24 +22,23 @@ table.nested_table {
 }
 
 #entity_and_account, #account_details {
-  display: inline-block;
 }
 
 #entity_and_account {
-  float: left;
+}
+
+.container {
+  padding: {
+    top: 1em;
+    bottom: 1em;
+  }
+  margin-bottom: 1em;
+  border: 1px solid black;
+  border-radius: 1em;
 }
 
 #entity_container {
-  border: 1px solid black;
-  border-radius: 1em;
-  padding: .5em;
-  .actions {
-    float: right;
-    height: 100%;
-    a {
-      vertical-align: middle;
-    }
-  }
+  @extend .container;
   select {
     font-size: 125%;
     font-weight: bold;
@@ -47,29 +46,25 @@ table.nested_table {
 }
 
 #account_container {
-  padding: 1em;
-  margin: {
-    top: 1em;
-    bottom: 1em;
-  }
-  border: 1px solid black;
-  border-radius: 1em;
-  min-width: 10em;
+  @extend .container;
+
   table.list {
-    border:none;
-  }
-  table.list th {
-    padding: {
-      left: .2em;
-      right: 1em;
-    }
-    &:first-of-type {
-      border-top-left-radius: .6em;
-      border-bottom-left-radius: .6em;
-    }
-    &:last-of-type {
-      border-top-right-radius: .6em;
-      border-bottom-right-radius: .6em;
+    border: none;
+
+    th {
+      padding: {
+        left: .4em;
+        right: 1em;
+      }
+      border: none;
+      &:first-of-type {
+        border-top-left-radius: .6em;
+        border-bottom-left-radius: .6em;
+      }
+      &:last-of-type {
+        border-top-right-radius: .6em;
+        border-bottom-right-radius: .6em;
+      }
     }
   }
 }

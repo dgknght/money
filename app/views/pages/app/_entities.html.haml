@@ -1,6 +1,7 @@
-#entity_container
-  .actions
-    %a.small_add_button{ href: "#", data: { bind: "click: newEntity" }}
-    %a.small_edit_button{ href: "#", data: { bind: "click: editSelectedEntity" }}
-    %a.small_delete_button{ href: "#", data: { bind: "click: removeSelectedEntity" }}
-  %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
+#entity_container.row
+  .col-md-8
+    %select{ data: { bind: "options: entities, optionsText: 'name', value: selectedEntity" } }
+  .col-md-4
+    %a.small_add_button{ href: "#", data: { bind: "click: newEntity" }, title: 'Click here to add a new entity' }
+    %a.small_edit_button{ href: "#", data: { bind: "click: editSelectedEntity" }, title: 'Click here to entity this entity' }
+    %a.small_delete_button{ href: "#", data: { bind: "click: removeSelectedEntity" }, title: 'Click here to remove this entity' }

@@ -1,22 +1,24 @@
-#entity_and_account
-  =render 'pages/app/notifications'
-  =render 'pages/app/entities'
-  =render 'pages/app/accounts'
-#account_details
-  %ul{ data: { bind: "foreach: displayedAccounts" }}
-    %li
-      %a{ data: { bind: "text: name, attr: {href: '#account_' + id() }" }}
-      %span.ui-icon.ui-icon-close{ role: 'presentation', data: { bind: "click: undisplay" }} Remove Tab
-  <!-- ko foreach: displayedAccounts -->
-  %div{ data: { bind: "attr: {id: 'account_' + id() }" }}
-    %nav{ role: 'navigation' }
-      %ul.nav#commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
-        %li.clickable{ data: { bind: "click: showTransactionItems" }} Show Transactions
-        %li.clickable{ data: { bind: "click: showHoldings" }} Show Holdings
-    =render 'pages/app/holdings'
-    =render 'pages/app/transactions'
-  =render 'pages/app/validation'
-  <!-- /ko -->
+.row
+  #entity_and_account.col-md-3
+    =render 'pages/app/notifications'
+    =render 'pages/app/entities'
+    =render 'pages/app/accounts'
+  .col-md-9
+    #account_details
+      %ul{ data: { bind: "foreach: displayedAccounts" }}
+        %li
+          %a{ data: { bind: "text: name, attr: {href: '#account_' + id() }" }}
+          %span.ui-icon.ui-icon-close{ role: 'presentation', data: { bind: "click: undisplay" }} Remove Tab
+      <!-- ko foreach: displayedAccounts -->
+      %div{ data: { bind: "attr: {id: 'account_' + id() }" }}
+        %nav{ role: 'navigation' }
+          %ul.nav#commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
+            %li.clickable{ data: { bind: "click: showTransactionItems" }} Show Transactions
+            %li.clickable{ data: { bind: "click: showHoldings" }} Show Holdings
+        =render 'pages/app/holdings'
+        =render 'pages/app/transactions'
+      =render 'pages/app/validation'
+      <!-- /ko -->
 
 <!-- forms -->
 =render 'pages/app/entity_form'
