@@ -12,9 +12,10 @@
       <!-- ko foreach: displayedAccounts -->
       %div{ data: { bind: "attr: {id: 'account_' + id() }" }}
         %nav{ role: 'navigation' }
-          %ul.nav#commodities_menu{ data: { bind: "visible: commoditiesMenuVisible" }}
-            %li.clickable{ data: { bind: "click: showTransactionItems" }} Show Transactions
-            %li.clickable{ data: { bind: "click: showHoldings" }} Show Holdings
+          %ul.nav#commodities_menu
+            %li.clickable{ data: { bind: "click: reconcile" }} Reconcile
+            %li.clickable{ data: { bind: "click: showTransactionItems, visible: commoditiesMenuVisible" }} Show Transactions
+            %li.clickable{ data: { bind: "click: showHoldings, visible: commoditiesMenuVisible" }} Show Holdings
         =render 'pages/app/reconcile'
         =render 'pages/app/holdings'
         =render 'pages/app/transactions'
