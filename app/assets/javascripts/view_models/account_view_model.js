@@ -363,7 +363,7 @@ function AccountViewModel(account, entity) {
       type: 'GET',
       dataType: 'json',
       success: function(data, textStatus, jqXHR) {
-        var viewModel = new ReconciliationViewModel(data);
+        var viewModel = new ReconciliationViewModel(data, _self);
         _self.reconciliation(viewModel);
         callback(viewModel);
       },

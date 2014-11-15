@@ -1,12 +1,27 @@
-function ReconciliationViewModel(reconciliation) {
+function ReconciliationViewModel(reconciliation, account) {
 
   if (reconciliation == null)
     throw "Argument cannot be null: reconciliation";
 
   var _self = this;
+  this.account = account;
   this.closing_balance = ko.observable(0);
   this.reconciliation_date = ko.observable(new Date());
-  this.items = ko.observableArray();
+
+  this.items = ko.observableArray(
+    _.chain(account.transaction_items())
+      .filter(function(i) { return !i.reconciled(); })
+      .map(function(i) { return new ReconciliationItemViewModel(i); })
+      .value()
+    );
+
+  this.debit_items = ko.computed(function() {
+    return _.filter(this.items(), function(i) { return i.action() == "debit"; });
+  }, this);
+
+  this.credit_items = ko.computed(function() {
+    return _.filter(this.items(), function(i) { return i.action() == "credit"; });
+  }, this);
 
   // read-only properties
   this.previous_balance = reconciliation.previous_balance

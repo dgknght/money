@@ -18,6 +18,7 @@
         .form-group
           %label{ for: 'closing_balance_text' } Closing balance
           %input#closing_balance_text.form-control{ type: 'text', data: { bind: 'value: closing_balance' } }
+      .col-md-4
         .form-group
           %label Reconcilied balance
           %br
@@ -29,5 +30,33 @@
     .row
       .col-md-6
         Debits
+        %table.table.table-striped
+          %tr
+            %th Date
+            %th Description
+            %th Amount
+            %th Reconciled
+          <!-- ko foreach: debit_items -->
+          %tr
+            %td.number_column{ data: { bind: "text: formatted_transaction_date" } }
+            %td{ data: { bind: "text: description" } }
+            %td.number_column{ data: { bind: "text: formatted_amount" } }
+            %td
+              %input{ type: "checkbox", data: { bind: "value: selected" } }
+          <!-- /ko -->
       .col-md-6
         Credits
+        %table.table.table-striped
+          %tr
+            %th Date
+            %th Description
+            %th Amount
+            %th Reconciled
+          <!-- ko foreach: credit_items -->
+          %tr
+            %td.number_column{ data: { bind: "text: formatted_transaction_date" } }
+            %td{ data: { bind: "text: description" } }
+            %td.number_column{ data: { bind: "text: formatted_amount" } }
+            %td
+              %input{ type: "checkbox", data: { bind: "value: selected" } }
+          <!-- /ko -->
