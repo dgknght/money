@@ -1,2 +1,33 @@
-#reconile{ data: { bind: "attr: { id: 'reconciliation_' + id() }, visible: showReconciliation" } }
-  %h3 Reconcile
+.panel.panel-default{ data: { bind: "attr: { id: 'reconciliation_' + id() }, visible: showReconciliation" } }
+  .panel-heading Reconcile
+  .panel-body{ data: { bind: "with: reconciliation" } }
+    .row
+      .col-md-4
+        .form-group
+          %label Previous reconciliation date
+          %br
+          %span{ data: { bind: 'text: previous_reconciliation_date' } }
+        .form-group
+          %label{ for: 'reconciliation_date_text' } Reconciliation date
+          %input#reconciliation_date_text.form-control{ type: 'text', data: { bind: 'value: formatted_reconciliation_date' }  }
+      .col-md-4
+        .form-group
+          %label Previous balance
+          %br
+          %span{ data: { bind: 'text: previous_balance' }  }
+        .form-group
+          %label{ for: 'closing_balance_text' } Closing balance
+          %input#closing_balance_text.form-control{ type: 'text', data: { bind: 'value: closing_balance' } }
+        .form-group
+          %label Reconcilied balance
+          %br
+          %span{ data: { bind: 'text: reconciled_balance' } }
+        .form-group
+          %label Difference
+          %br
+          %span{ data: { bind: 'text: formatted_difference' } }
+    .row
+      .col-md-6
+        Debits
+      .col-md-6
+        Credits
