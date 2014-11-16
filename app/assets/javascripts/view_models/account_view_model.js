@@ -368,6 +368,7 @@ function AccountViewModel(account, entity) {
         callback(viewModel);
       },
       error: function(jqXHR, textStatus, errorThrown) {
+        this.account.entity._app.notify("Unable to complete the reconciliation: " + errorThrown, "error");
         console.log("Unable to get the new reconciliation: " + textStatus + ": " + errorThrown);
       }
     });
