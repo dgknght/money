@@ -203,3 +203,13 @@ input.number_field, input.date_field {
     border-collapse: collapse;
   }
 }
+
+.invalid {
+  color: $red;
+  font-weight: bold;
+}
+
+.valid {
+  color: $green;
+  font-weight: bold;
+}

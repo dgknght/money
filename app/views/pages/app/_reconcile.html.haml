@@ -26,7 +26,7 @@
         .form-group
           %label Difference
           %br
-          %span{ data: { bind: 'text: formatted_difference' } }
+          %span{ data: { bind: 'text: formatted_difference, css: { invalid: !valid(), valid: valid() }' } }
     .row
       .col-md-6
         Debits

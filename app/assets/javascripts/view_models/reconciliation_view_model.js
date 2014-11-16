@@ -66,7 +66,7 @@ function ReconciliationViewModel(reconciliation, account) {
   }, this);
 
   this.formatted_difference = ko.computed(function() {
-    return accounting.formatNumber(this.difference());
+    return accounting.formatNumber(this.difference(), 2);
   }, this);
 
   this.formatted_reconciliation_date = ko.computed({
@@ -77,6 +77,10 @@ function ReconciliationViewModel(reconciliation, account) {
             this.reconciliation_date(new Date(value));
            }
   });
+
+  this.valid = ko.computed(function() {
+    return this.difference() == 0;
+  }, this);
 
   // methods
   this.addTransactionItem = function(transaction_item) {
