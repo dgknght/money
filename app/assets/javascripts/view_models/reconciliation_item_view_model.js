@@ -20,8 +20,12 @@ function ReconciliationItemViewModel(transaction_item) {
     return this.transaction_item.transaction().description();
   }, this);
 
+  this.amount = ko.computed(function() {
+    return this.transaction_item.polarizedAmount();
+  }, this);
+
   this.formatted_amount = ko.computed(function() {
-    return this.transaction_item.formattedPolarizedAmount();
+    return accounting.formatNumber(this.amount());
   }, this);
 
   this.selected = ko.observable(false);

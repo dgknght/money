@@ -24,17 +24,41 @@ function ReconciliationViewModel(reconciliation, account) {
   }, this);
 
   // read-only properties
-  this.previous_balance = reconciliation.previous_balance
-    ? accounting.formatNumber(reconciliation.previous_balance)
+  this.previous_balance = _.ensureNumber(reconciliation.previous_balance);
+  this.formatted_previous_balance = this.previous_balance
+    ? accounting.formatNumber(this.previous_balance)
     : 0;
   var prd = _.ensureDate(reconciliation.previous_reconciliation_date);
   this.previous_reconciliation_date = prd ? prd.toLocaleDateString() : null;
 
+  // computed properties
+  this.formatted_closing_balance = ko.computed({
+    read: function() {
+            return accounting.formatNumber(_self.closing_balance());
+          },
+    write: function(value) {
+             _self.closing_balance(_.ensureNumber(value));
+           }
+  });
 
   this.reconciled_balance = ko.computed(function() {
-    return _.reduce(this.items(), function(sum, item) {
-      return sum + item.transaction_item.polarizedAmount();
-    }, 0);
+    return _.chain(this.items())
+      .filter(function(i) { return i.selected(); })
+      .reduce(function(sum, i) { return sum + i.amount(); }, _self.previous_balance)
+      .value();
+  }, this);
+
+
+  this.formatted_reconciliation_date = ko.computed({
+    read: function() {
+            return _self.reconciliation_date().toLocaleDateString();
+          },
+    write: function(value) {
+            this.reconciliation_date(new Date(value));
+           }
+  });
+  this.formatted_reconciled_balance = ko.computed(function() {
+    return accounting.formatNumber(this.reconciled_balance());
   }, this);
 
   this.difference = ko.computed(function() {
@@ -45,12 +69,6 @@ function ReconciliationViewModel(reconciliation, account) {
     return accounting.formatNumber(this.difference());
   }, this);
 
-  this.addTransactionItem = function(transaction_item) {
-    var reconciliationItem = new ReconciliationItemViewModel(transaction_item);
-    this.items.push(reconciliationItem);
-    return reconciliationItem;
-  };
-
   this.formatted_reconciliation_date = ko.computed({
     read: function() {
             return _self.reconciliation_date().toLocaleDateString();
@@ -59,4 +77,11 @@ function ReconciliationViewModel(reconciliation, account) {
             this.reconciliation_date(new Date(value));
            }
   });
+
+  // methods
+  this.addTransactionItem = function(transaction_item) {
+    var reconciliationItem = new ReconciliationItemViewModel(transaction_item);
+    this.items.push(reconciliationItem);
+    return reconciliationItem;
+  };
 }
