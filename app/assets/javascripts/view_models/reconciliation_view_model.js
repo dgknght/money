@@ -90,7 +90,7 @@ function ReconciliationViewModel(reconciliation, account) {
   };
 
   this.cancel = function() {
-    console.log("cancel");
+    this.account.reconciliation(null);
   };
 
   this.submit = function() {
