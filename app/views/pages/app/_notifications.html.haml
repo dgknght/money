@@ -1,4 +1,4 @@
 #notifications
   <!-- ko foreach: notifications -->
-  %div{ data: { bind: "css: type, html: message" }}
+  .alert{ data: { bind: "css: 'alert-' + type, html: message" }}
   <!-- /ko -->
