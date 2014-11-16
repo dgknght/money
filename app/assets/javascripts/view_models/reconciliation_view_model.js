@@ -93,7 +93,40 @@ function ReconciliationViewModel(reconciliation, account) {
     this.account.reconciliation(null);
   };
 
+  this._markItemsReconciled = function() {
+    _.chain(_self.items())
+      .filter(function(i) { return i.selected(); })
+      .each(function(i) { i.transaction_item.transaction_item.reconciled(true); });
+  };
+
+  this._getPostData = function() {
+    return {
+      reconciliation: {
+        account_id: _self.account.id(),
+        reconciliation_date: _.toIsoDate(_self.reconciliation_date()),
+        closing_balance: _self.closing_balance(),
+        items_attributes: _.chain(_self.items())
+          .filter(function(i) { return i.selected(); })
+          .map(function(i) { return { transaction_item_id: i.transaction_item.transaction_item.id() }; })
+          .value()
+      }
+    }
+  };
+
   this.submit = function() {
-    console.log("submit");
+    $.ajax({
+      url: 'accounts/{id}/reconciliations.json'.format({id: this.account.id()}),
+      type: 'POST',
+      dataType: 'json',
+      data: _self._getPostData(),
+      success: function(data, textStatus, jqXHR) {
+        _self._markItemsReconciled();
+        _self.account.reconciliation(null);
+        _self.account.entity._app.notify("The reconciliation has been completed successfully.", "notice");
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        _self.account.entity._app.notify("Unable to complete the reconciliation: " + errorThrown, "error");
+      }
+    });
   };
 }
