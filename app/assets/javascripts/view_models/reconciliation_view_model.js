@@ -88,4 +88,12 @@ function ReconciliationViewModel(reconciliation, account) {
     this.items.push(reconciliationItem);
     return reconciliationItem;
   };
+
+  this.cancel = function() {
+    console.log("cancel");
+  };
+
+  this.submit = function() {
+    console.log("submit");
+  };
 }

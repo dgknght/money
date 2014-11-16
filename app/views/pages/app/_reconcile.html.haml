@@ -60,3 +60,7 @@
             %td
               %input{ type: "checkbox", data: { bind: "checked: selected" } }
           <!-- /ko -->
+    .row
+      .col-md-12
+        %a.save_button{ data: { bind: "click: submit, visible: valid" }, title: 'Click here to complete the reconciliation.', href: '#' } Submit
+        %a.back_button{ data: { bind: "click: cancel" }, title: 'Click here to cancel the reconciliation.', href: '#' } Cancel
