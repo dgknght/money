@@ -1,5 +1,5 @@
 -budget.periods.each_with_index do |period, index|
-  %div.method_direct
+  .form-group.method_direct
     =form.label "amounts_#{index}", period.start_date.strftime('%b %Y')
     %br
-    =number_field_tag "distributor[options][amounts[#{index}]]", distributor.amounts[index], class: 'method_total', id: "distributor_options_amounts_#{index}"
+    =number_field_tag "distributor[options][amounts[#{index}]]", distributor.amounts[index], class: 'form-control', id: "distributor_options_amounts_#{index}"

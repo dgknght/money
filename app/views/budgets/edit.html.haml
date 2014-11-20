@@ -1,6 +1,9 @@
 %h2#page_title Edit budget
 
 =render "shared/errors", :resource => @budget
-=form_for(@budget) do |f|  
-  =render "form_fields", budget: @budget, f: f
+
+.row
+  .col-md-3
+    =form_for(@budget) do |f|  
+      =render "form_fields", budget: @budget, f: f
   

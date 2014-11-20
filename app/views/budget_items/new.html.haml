@@ -1,8 +1,11 @@
 %h2#page_title New budget item
 
 =render "shared/errors", :resource => @budget_item
-=form_for([@budget, @budget_item]) do |f|
-  =render 'form_fields', f: f, budget_item: @budget_item, distributor: @distributor
-  .actions
-    =f.submit 'Save', class: 'save_button', title: 'Click here to save the budget item.'
-    =link_to 'Back', budget_budget_items_path(@budget), class: 'back_button', title: 'Click here to return the list of budget items.'
+
+.row
+  .col-md-3
+    =form_for([@budget, @budget_item]) do |f|
+      =render 'form_fields', f: f, budget_item: @budget_item, distributor: @distributor
+      .actions
+        =f.submit 'Save', class: 'save_button', title: 'Click here to save the budget item.'
+        =link_to 'Back', budget_budget_items_path(@budget), class: 'back_button', title: 'Click here to return the list of budget items.'

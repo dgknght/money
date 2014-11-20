@@ -1,18 +1,20 @@
 %h2#page_title Budgets
 
-%table#budgets_table.list{cellspacing: 0, cellpadding: 0}
-  %tr
-    %th Name
-    %th Start date
-    %th End date
-    %th.action_cell &nbsp;
-  -@budgets.each do |budget|
-    %tr{id: "budget_#{budget.id}" }
-      %td= link_to budget.name, budget_budget_items_path(budget)
-      %td= format_date(budget.start_date)
-      %td= format_date(budget.end_date)
-      %td.action_cell
-        =link_to "Edit", edit_budget_path(budget), class: 'edit_button', title: 'Click here to edit the budget.'
-        =render "shared/delete_form", resource: budget, url: budget_url(budget)
-.actions
-  =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget.'
+.row
+  .col-md-3
+    %table#budgets_table.table{cellspacing: 0, cellpadding: 0}
+      %tr
+        %th Name
+        %th Start date
+        %th End date
+        %th.action_cell &nbsp;
+      -@budgets.each do |budget|
+        %tr{id: "budget_#{budget.id}" }
+          %td= link_to budget.name, budget_budget_items_path(budget)
+          %td= format_date(budget.start_date)
+          %td= format_date(budget.end_date)
+          %td.action_cell
+            =link_to "Edit", edit_budget_path(budget), class: 'edit_button', title: 'Click here to edit the budget.'
+            =render "shared/delete_form", resource: budget, url: budget_url(budget)
+    .actions
+      =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget.'
