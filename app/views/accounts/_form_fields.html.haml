@@ -1,19 +1,19 @@
-%div
+.form-group
   =f.label :account_type
   %br
-  =f.select :account_type, options_for_select(Account::ACCOUNT_TYPES, account.account_type), :autofocus => true
-%div
+  =f.select :account_type, options_for_select(Account::ACCOUNT_TYPES, account.account_type), {}, :autofocus => true, :class => 'form-control'
+.form-group
   =f.label :content_type
   %br
-  =f.select :content_type, options_for_select(Account::CONTENT_TYPES, account.content_type)
-%div
+  =f.select :content_type, options_for_select(Account::CONTENT_TYPES, account.content_type), {}, :class => 'form-control'
+.form-group
   =f.label :parent_id
   %br
-  =f.select :parent_id, grouped_options_for_select(available_parent_accounts(account), account.parent_id), include_blank: true
-%div
+  =f.select :parent_id, grouped_options_for_select(available_parent_accounts(account), account.parent_id), { include_blank: true }, :class => 'form-control'
+.form-group
   =f.label :name
   %br
-  =f.text_field :name
+  =f.text_field :name, :class => 'form-control'
 .actions
   =f.submit "Save", class: 'save_button', title: 'Click here to save the account.'
   =link_to 'Back', entity_accounts_path(account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'

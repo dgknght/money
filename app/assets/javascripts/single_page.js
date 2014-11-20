@@ -1,5 +1,4 @@
 //= require lib/accounting.min
-//= require lib/jquery-ui-1.10.3.custom.min
 //= require lib/underscore.js
 //= require strings
 //= require arrays

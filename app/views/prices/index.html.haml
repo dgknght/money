@@ -1,16 +1,19 @@
 %h2#page_title #{h @commodity.symbol} Prices
-%table#prices_table.list{ cellspacing: 0, cellpadding: 0}
-  %tr
-    %th.number_column Trade date
-    %th.number_column Price
-    %th.action_cell &nbsp;
-  -@prices.each do |price|
-    %tr
-      %td.number_column= format_date(price.trade_date)
-      %td.number_column= format_price(price.price)
-      %td.action_cell
-        =link_to 'Edit', edit_price_path(price), class: 'edit_button', title: 'Click here to edit this price.'
-        =render 'shared/delete_form', resource: price, url: price_url(price)
-.actions
-  =link_to 'Add', new_commodity_price_path(@commodity), class: 'add_button', title: 'Click here to add a new price.'
-  =link_to 'Back', entity_commodities_path(@commodity.entity), class: 'back_button', title: 'Click here to return to the list of commodities.'
+
+.row
+  .col-md-3
+    %table#prices_table.table{ cellspacing: 0, cellpadding: 0}
+      %tr
+        %th.number_column Trade date
+        %th.number_column Price
+        %th.action_cell &nbsp;
+      -@prices.each do |price|
+        %tr
+          %td.number_column= format_date(price.trade_date)
+          %td.number_column= format_price(price.price)
+          %td.action_cell
+            =link_to 'Edit', edit_price_path(price), class: 'edit_button', title: 'Click here to edit this price.'
+            =render 'shared/delete_form', resource: price, url: price_url(price)
+    .actions
+      =link_to 'Add', new_commodity_price_path(@commodity), class: 'add_button', title: 'Click here to add a new price.'
+      =link_to 'Back', entity_commodities_path(@commodity.entity), class: 'back_button', title: 'Click here to return to the list of commodities.'

@@ -1,5 +1,8 @@
 %h2#page_title New commodity price
 
 =render 'shared/errors', resource: @price
-=form_for([@commodity, @price]) do |f|
-  =render 'form_fields', f: f
+
+.row
+  .col-md-3
+    =form_for([@commodity, @price]) do |f|
+      =render 'form_fields', f: f

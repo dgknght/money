@@ -1,7 +1,7 @@
 class PricesController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_commodity, only: [:index, :new, :create]
   before_filter :load_price, only: [:show, :edit, :update, :destroy]
+  before_filter :load_commodity, only: [:index, :new, :create, :edit]
   respond_to :html, :json
 
   def download
@@ -54,7 +54,7 @@ class PricesController < ApplicationController
   private
 
     def load_commodity
-      @commodity = Commodity.find(params[:commodity_id])
+      @commodity = @price ? @price.commodity :  Commodity.find(params[:commodity_id])
     end
 
     def load_price

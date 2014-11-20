@@ -1,5 +1,8 @@
 %h2#page_title New entity
 
 =render "shared/errors", :resource => @entity
-=form_for(@entity) do |f|  
-  =render 'form_fields', entity: @entity, f: f
+
+.row
+  .col-md-3
+    =form_for(@entity) do |f|  
+      =render 'form_fields', entity: @entity, f: f
