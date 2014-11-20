@@ -1,13 +1,13 @@
 %tr{ data: { bind: "with: newTransactionItem"}}
   %td.number_column
-    %input.date_field{ type: 'text', placeholder: 'Transaction date', data: { bind: "datePicker: formattedTransactionDate" } }
+    %input.date_field.form-control{ type: 'text', placeholder: 'Transaction date', data: { bind: "datePicker: formattedTransactionDate" } }
   %td
-    %input{ type: 'text', placeholder: 'Description', data: { bind: "value: description" } }
+    %input.form-control{ type: 'text', placeholder: 'Description', data: { bind: "value: description" } }
   %td
-    %input{ type: 'text', placeholder: 'Account', data: { bind: "autocomplete: otherAccountPath, source: getAccountPaths" } }
+    %input.form-control{ type: 'text', placeholder: 'Account', data: { bind: "autocomplete: otherAccountPath, source: getAccountPaths" } }
   %td &nbsp;
   %td
-    %input.number_field{ type: 'text', placeholder: 'Amount', data: { bind: "value: amount" } }
+    %input.form-control.number_field{ type: 'text', placeholder: 'Amount', data: { bind: "value: amount" } }
   %td &nbsp;
   %td
     %button.small_save_button{ title: 'Click here to save the new transaction.', data: { bind: "click: saveNewTransactionItem" }} Save
