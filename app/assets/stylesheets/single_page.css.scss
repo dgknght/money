@@ -1,3 +1,5 @@
+//=require holdings
+
 $shadow-color: #CCC;
 
 $white: #FFF;
@@ -155,9 +157,8 @@ span.account_depth_2 {
   display: none;
 }
 
-input.number_field, input.date_field {
+input.number_field {
   text-align: right;
-  width: 6em;
 }
 
 .validation_message {

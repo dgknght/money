@@ -93,6 +93,10 @@
       return app.getAccountPaths(request, callback);
     };
 
+    window.getCommoditySymbols = function(request, callback) {
+      return app.getCommoditySymbols(request, callback);
+    };
+
     window.saveNewTransactionItem = function(item) {
       item.save();
       window.setTimeout(function() {

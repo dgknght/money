@@ -112,4 +112,19 @@ function MoneyApp() {
     callback(result);
   };
 
+  this.getCommoditySymbols = function(request, callback) {
+    var entity = _self.selectedEntity();
+    if (entity == null) {
+      callback([]);
+      return;
+    }
+
+    var text = request.term.toUpperCase();
+    var result = _.chain(entity.commodities())
+      .map(function(c) { return c.symbol(); })
+      .filter(function(s) { return s.toUpperCase().indexOf(text) >= 0; })
+      .value();
+    callback(result);
+  };
+
 };
