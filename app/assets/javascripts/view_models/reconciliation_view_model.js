@@ -34,7 +34,7 @@ function ReconciliationViewModel(reconciliation, account) {
   // computed properties
   this.formatted_closing_balance = ko.computed({
     read: function() {
-            return accounting.formatNumber(_self.closing_balance());
+            return accounting.formatNumber(_self.closing_balance(), 2);
           },
     write: function(value) {
              _self.closing_balance(_.ensureNumber(value));
@@ -58,7 +58,7 @@ function ReconciliationViewModel(reconciliation, account) {
            }
   });
   this.formatted_reconciled_balance = ko.computed(function() {
-    return accounting.formatNumber(this.reconciled_balance());
+    return accounting.formatNumber(this.reconciled_balance(), 2);
   }, this);
 
   this.difference = ko.computed(function() {

@@ -25,7 +25,7 @@ function ReconciliationItemViewModel(transaction_item) {
   }, this);
 
   this.formatted_amount = ko.computed(function() {
-    return accounting.formatNumber(this.amount());
+    return accounting.formatNumber(this.amount(), 2);
   }, this);
 
   this.selected = ko.observable(false);
