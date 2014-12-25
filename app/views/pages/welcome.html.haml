@@ -1,4 +1,6 @@
 %h2#page_title Welcome!
 
 -if user_signed_in?
-  =render 'entities/entity_list', entities: current_user.entities
+  :javascript
+    window.location.href = "/app";
+
