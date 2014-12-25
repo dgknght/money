@@ -14,6 +14,7 @@ gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
 gem 'simple-navigation'
 gem 'cancan'
+gem 'rails-footnotes', '~> 4.0'
 
 group :test, :development do
   gem 'rspec-rails'

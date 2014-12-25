@@ -130,6 +130,8 @@ GEM
       activesupport (>= 3.0)
       choice (~> 0.1.6)
       ruby-graphviz (~> 1.0.4)
+    rails-footnotes (4.1.4)
+      rails (>= 3.2)
     railties (4.0.0)
       actionpack (= 4.0.0)
       activesupport (= 4.0.0)
@@ -205,6 +207,7 @@ DEPENDENCIES
   launchy
   rails (= 4.0.0)
   rails-erd
+  rails-footnotes (~> 4.0)
   rspec-rails
   sass-rails
   simple-navigation
