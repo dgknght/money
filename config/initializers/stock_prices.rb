@@ -4,7 +4,7 @@ StockPrices.configure do |config|
                               StockPrices::DreamDownloadAgent
                             when Rails.env.test?
                               StockPrices::MemoryDownloadAgent
-                            when rails.env.production?
+                            when Rails.env.production?
                               StockPrices::QuandlDownloadAgent
                             end
 end
