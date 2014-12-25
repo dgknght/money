@@ -6,7 +6,6 @@ gem 'rails', '4.0.0'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
 gem 'devise'
 gem 'haml'
 gem 'haml-rails'
@@ -25,6 +24,10 @@ group :test, :development do
   gem 'faker'
   gem 'launchy'
   gem 'timecop'
+end
+
+group :test do
+  gem 'sqlite3'
 end
 
 group :development do
