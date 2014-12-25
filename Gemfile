@@ -15,6 +15,7 @@ gem 'autoprefixer-rails'
 gem 'simple-navigation'
 gem 'cancan'
 gem 'rails-footnotes', '~> 4.0'
+gem 'pg'
 
 group :test, :development do
   gem 'rspec-rails'

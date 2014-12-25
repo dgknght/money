@@ -113,6 +113,8 @@ GEM
     nokogiri (1.6.1-x86-mingw32)
       mini_portile (~> 0.5.0)
     orm_adapter (0.5.0)
+    pg (0.17.1)
+    pg (0.17.1-x86-mingw32)
     polyglot (0.3.3)
     rack (1.5.2)
     rack-test (0.6.2)
@@ -205,6 +207,7 @@ DEPENDENCIES
   haml-rails
   jquery-rails
   launchy
+  pg
   rails (= 4.0.0)
   rails-erd
   rails-footnotes (~> 4.0)
