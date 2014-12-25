@@ -1,6 +1,6 @@
 module ApplicationHelper
   def current_entity
-    @current_entity
+    @current_entity ||= lookup_current_entity
   end
   
   def current_entity=(entity)
@@ -21,5 +21,9 @@ module ApplicationHelper
 
   def format_shares(value)
     number_to_currency(value, unit: '', precision: 4)
+  end
+
+  def lookup_current_entity
+    Entity.find(cookies[:entity_id]) if cookies[:entity_id]
   end
 end

@@ -55,7 +55,12 @@ class BudgetsController < ApplicationController
     end
     
     def load_entity
-      @entity = current_user.entities.find(params[:entity_id])
+      if params[:entity_id]
+        @entity = current_user.entities.find(params[:entity_id])
+        set_current_entity
+      else
+        @entity = current_entity
+      end
     end
     
     def budget_params

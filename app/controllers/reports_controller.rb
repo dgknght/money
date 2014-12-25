@@ -38,7 +38,7 @@ class ReportsController < ApplicationController
     end
     
     def load_entity
-      @entity = Entity.find(params[:id])
+      @entity = current_user.entities.find(params[:id])
       self.current_entity = @entity
       redirect_to entities_path unless @entity
       authorize! :show, @entity

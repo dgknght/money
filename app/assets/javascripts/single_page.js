@@ -36,6 +36,32 @@ function MoneyApp() {
       $.map(entities, function(entity, index) {
         return new EntityViewModel(entity, _self);
       }).pushAllTo(_self.entities);
+
+      // select the entity based on the current cookie
+      var cookie_id = /entity_id=(\d+)/.exec(document.cookie);
+      if (cookie_id) {
+        cookie_id = parseInt(cookie_id[1]);
+        var foundEntity = _.find(_self.entities(), function(e) {
+          return e.id() == cookie_id;
+        });
+        if (foundEntity) {
+          _self.selectedEntity(foundEntity);
+        }
+      }
+
+
+      // listed for changes so we can update the cookie
+      _self.selectedEntity.subscribe(function(entity) {
+        // Set a cookie to remember the selected entity
+        var id = entity.id();
+        document.cookie = "entity_id=" + id;
+
+        // replace the links in the navigation
+        $('#ajax_nav ul li a').each(function() {
+          this.href = this.href.replace(/entities\/\d*/, "entities/" + id);
+        });
+      });
+
     });
   }, this);
   this.accountTypes = ko.observableArray(['asset', 'liability', 'equity', 'income', 'expense']);
