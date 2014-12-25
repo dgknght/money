@@ -12,7 +12,10 @@
     .container-fluid
       #header
         %nav{role: "navigation"}
-          =render_navigation
+          #html_nav
+            =render_navigation
+          #ajax_nav{ style: "display: none;" }
+            =render_navigation context: :ajax
       #content
         = render "shared/flash", :flash => flash
         = yield
