@@ -3,9 +3,9 @@
 .filter
   =form_tag(income_statement_entity_path(@entity), method: :get) do
     =label_tag :from
-    =text_field_tag :from, @filter.from, placeholder: 'From'
+    =text_field_tag :from, @filter.from, placeholder: 'From', class: 'date_field'
     =label_tag :to
-    =text_field_tag :to, @filter.to, placeholder: 'To'
+    =text_field_tag :to, @filter.to, placeholder: 'To', class: 'date_field'
     =submit_tag 'Show'
     
 .report
