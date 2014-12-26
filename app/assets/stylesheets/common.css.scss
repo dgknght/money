@@ -218,102 +218,102 @@ table.attributes {
 
 .add_button {
   @extend .any_button;
-  background-image: url(/assets/add.png)
+  background-image: image-url("add.png")
 }
 
 .small_add_button {
   @extend .any_small_button;
-  background-image: url(/assets/add_small.png)
+  background-image: image-url("add_small.png")
 }
 
 .small_header_add_button {
   @extend .any_small_button;
-  background-image: url(/assets/add_small_inverted.png)
+  background-image: image-url("add_small_inverted.png")
 }
 
 .save_button {
   @extend .any_form_button;
-  background-image: url(/assets/save.png)
+  background-image: image-url("save.png")
 }
 
 .small_save_button {
   @extend .any_small_form_button;
-  background-image: url(/assets/save_small.png)
+  background-image: image-url("save_small.png")
 }
 
 .back_button {
   @extend .any_button;
-  background-image: url(/assets/back.png)
+  background-image: image-url("back.png")
 }
 
 .edit_button {
   @extend .any_button;
-  background-image: url(/assets/edit.png)
+  background-image: image-url("edit.png")
 }
 
 .small_edit_button {
   @extend .any_small_button;
-  background-image: url(/assets/edit_small.png)
+  background-image: image-url("edit_small.png")
 }
 
 .show_button {
   @extend .any_form_button;
-  background-image: url(/assets/show.png)
+  background-image: image-url("show.png")
 }
 
 .small_show_button {
   @extend .any_small_button;
-  background-image: url(/assets/show_small.png);
+  background-image: image-url("show_small.png");
 }
 
 .delete_button {
   @extend .any_form_button;
-  background-image: url(/assets/delete.png)
+  background-image: image-url("delete.png")
 }
 
 .small_delete_button {
   @extend .any_small_button;
-  background-image: url(/assets/delete_small.png)
+  background-image: image-url("delete_small.png")
 }
 
 .reconcile_button {
   @extend .any_button;
-  background-image: url(/assets/wrench.png)
+  background-image: image-url("wrench.png")
 }
 
 .attachments_button {
   @extend .any_button;
-  background-image: url(/assets/attachment.png);
+  background-image: image-url("attachment.png");
 }
 
 .small_attachments_button {
   @extend .any_small_button;
-  background-image: url(/assets/attachment_small.png);
+  background-image: image-url("attachment_small.png");
 }
 
 .add_attachment_button {
   @extend .any_button;
-  background-image: url(/assets/add_attachment.png);
+  background-image: image-url("add_attachment.png");
 }
 
 .small_add_attachment_button {
   @extend .any_small_button;
-  background-image: url(/assets/add_attachment_small.png);
+  background-image: image-url("add_attachment_small.png");
 }
 
 .prices_button {
   @extend .any_button;
-  background-image: url(/assets/prices.png);
+  background-image: image-url("prices.png");
 }
 
 .download_button {
   @extend .any_button;
-  background-image: url(/assets/download.png);
+  background-image: image-url("download.png");
 }
 
 .small_download_button {
   @extend .any_small_button;
-  background-image: url(/assets/download_small.png);
+  background-image: image-url("download_small.png");
 }
 
 .standard_button {
