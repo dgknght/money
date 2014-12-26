@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def entity_id_cookie_value
-    value = /\A\d+\z/.matchcookies[:entity_id]
-    return Integer(value) if value
+    match = /\A\d+\z/.match(cookies[:entity_id])
+    return Integer(match[0]) if match
   end
 end
