@@ -24,6 +24,11 @@ module ApplicationHelper
   end
 
   def lookup_current_entity
-    Entity.find(cookies[:entity_id]) if cookies[:entity_id]
+    Entity.where(id: cookies[:entity_id]).first if entity_id_cookie_value
+  end
+
+  def entity_id_cookie_value
+    value = /\A\d+\z/.matchcookies[:entity_id]
+    return Integer(value) if value
   end
 end
