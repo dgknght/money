@@ -38,30 +38,22 @@ function MoneyApp() {
       }).pushAllTo(_self.entities);
 
       // select the entity based on the current cookie
+      var workingEntity = null;
       var cookie_id = /entity_id=(\d+)/.exec(document.cookie);
       if (cookie_id) {
         cookie_id = parseInt(cookie_id[1]);
-        var foundEntity = _.find(_self.entities(), function(e) {
+        workingEntity = _.find(_self.entities(), function(e) {
           return e.id() == cookie_id;
         });
-        if (foundEntity) {
-          _self.selectedEntity(foundEntity);
-        }
       }
+      if (workingEntity == null) workingEntity = _.first(_self.entities());
+      _self.selectedEntity(workingEntity);
+      if (_self.selectedEntity())
+        _self._registerEntity(_self.selectedEntity());
 
 
       // listed for changes so we can update the cookie
-      _self.selectedEntity.subscribe(function(entity) {
-        // Set a cookie to remember the selected entity
-        var id = entity.id();
-        document.cookie = "entity_id=" + id;
-
-        // replace the links in the navigation
-        $('#ajax_nav ul li a').each(function() {
-          this.href = this.href.replace(/entities\/\d*/, "entities/" + id);
-        });
-      });
-
+      _self.selectedEntity.subscribe(_self._registerEntity);
     });
   }, this);
   this.accountTypes = ko.observableArray(['asset', 'liability', 'equity', 'income', 'expense']);
@@ -77,6 +69,30 @@ function MoneyApp() {
     this.selectedEntity(result);
     return result;
   };
+
+  this._registerEntity = function(entity) {
+    // handle null or new entity
+    if (entity == null || entity.id() == null) {
+      if (entity && entity.id() == null) {
+        var s = entity.id.subscribe(function(id) {
+          _self._registerEntity(entity);
+          s.dispose();
+        });
+      }
+      return;
+    }
+
+    // Set a cookie to remember the selected entity
+    var id = entity.id();
+    if (id) {
+      document.cookie = "entity_id=" + id;
+
+      // replace the links in the navigation
+      $('#ajax_nav ul li a').each(function() {
+        this.href = this.href.replace(/entities\/\d*/, "entities/" + id);
+      });
+    }
+  }
 
   this.editSelectedEntity = function() {
     _self.editEntity(_self.selectedEntity());
