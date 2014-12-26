@@ -8,6 +8,7 @@ $light-grey: #CCC;
 $green: #00A000;
 $yellow: #A0A000;
 $red: #A00000;
+$blue: #337AB7;
 
 $black: #000;
 
@@ -355,4 +356,14 @@ ul.devise_actions {
     }
     padding: 0;    
   }
+}
+
+.current_user {
+  display: inline-block;
+  background-color: $blue;
+  color: $white;
+  border-radius: .5em;
+  padding: .5em;
+  margin: .5em;
+  font-weight: bold;
 }

@@ -10,12 +10,18 @@
     = csrf_meta_tags
   %body
     .container-fluid
-      #header
-        %nav{role: "navigation"}
-          #html_nav
-            =render_navigation
-          #ajax_nav{ style: "display: none;" }
-            =render_navigation context: :ajax
+      .row#header
+        .col-md-6
+          %nav{role: "navigation"}
+            #html_nav
+              =render_navigation
+            #ajax_nav{ style: "display: none;" }
+              =render_navigation context: :ajax
+        .col-md-1
+          -if user_signed_in?
+            .current_user
+              =current_user.email
+
       #content
         = render "shared/flash", :flash => flash
         = yield
