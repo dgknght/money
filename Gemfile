@@ -24,6 +24,7 @@ group :test, :development do
   gem 'faker'
   gem 'launchy'
   gem 'timecop'
+  gem 'lunchy'
 end
 
 group :test do
