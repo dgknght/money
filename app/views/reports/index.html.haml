@@ -1,5 +1,13 @@
-%h2#page_title Reports
+.row
+  .col-md-6
+    %h2#page_title Reports
 
-%ul
-  -@reports.each do |name, path|
-    %li= link_to name, path
+    %ul
+      -@reports.each do |name, path|
+        %li= link_to name, path
+  .col-md-6
+    .budget_monitor{ data: { budget: 500, current: 510, days_available: 31, days_past: 25 }}
+:javascript
+  $(function() {
+    $('.budget_monitor').budget_monitor();
+  });
