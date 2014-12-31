@@ -6,8 +6,16 @@
       -@reports.each do |name, path|
         %li= link_to name, path
   .col-md-6
-    .budget_monitor{ data: { budget: 500, current: 510, days_available: 31, days_past: 25 }}
+    .budget_monitor_container
+      Groceries/Food
+      .budget_monitor{ data: { budget: 350, current: 174 }}
+    .budget_monitor_container
+      Dining
+      .budget_monitor{ data: { budget: 500, current: 475 }}
+    .budget_monitor_container
+      Entertainment/Recreation
+      .budget_monitor{ data: { budget: 200, current: 210 }}
 :javascript
   $(function() {
-    $('.budget_monitor').budget_monitor();
+    $('.budget_monitor').budget_monitor({daysAvailable: 31, daysPast: 25 });
   });
