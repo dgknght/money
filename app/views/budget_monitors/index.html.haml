@@ -1,2 +1,10 @@
-%h1 BudgetMonitors#index
-%p Find me in app/views/budget_monitors/index.html.haml
+.row
+  .col-md-6.col-md-offset-3
+    %h2#page_title Budget monitors
+
+.row
+  .col-md-6.col-md-offset-3.budget_monitors
+
+.row
+  .col-md-6.col-md-offset-3
+    =link_to 'Add', new_entity_budget_monitor_path(@entity), class: 'add_button', title: 'Click here to add a new budget monitor.'

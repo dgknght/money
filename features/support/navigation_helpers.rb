@@ -5,7 +5,7 @@ module NavigationHelpers
 
   def locator_for(section)
     case section
-      when /the (notice|error) area/ then ".#{$1}"
+      when /the (.*) area/ then ".#{underscore($1)}"
       when /the page title/ then "#page_title"
       when /the page subtitle/ then "#page_subtitle"
       when /the main content/ then "#content"
@@ -68,4 +68,5 @@ module NavigationHelpers
       words.gsub(/\s/, "_").pluralize
     end
 end
+
 World(NavigationHelpers)
