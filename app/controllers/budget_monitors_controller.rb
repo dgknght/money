@@ -1,9 +1,13 @@
 class BudgetMonitorsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :load_entity, only: [:index]
+  before_filter :load_entity, only: [:index, :new]
 
   def index
     authorize! :show, @entity
+  end
+
+  def new
+
   end
 
   private

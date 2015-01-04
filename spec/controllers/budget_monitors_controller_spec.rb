@@ -13,6 +13,13 @@ describe BudgetMonitorsController do
           expect(response).to be_success
         end
       end
+
+      describe 'get :new' do
+        it 'should be successful' do
+          get :new, entity_id: entity
+          expect(response).to be_success
+        end
+      end
     end
 
     context 'that does not own the entity' do
@@ -25,6 +32,13 @@ describe BudgetMonitorsController do
           expect(response).to redirect_to home_path
         end
       end
+
+      describe 'get :new' do
+        it 'should redirect to the user home page' do
+          get :new, entity_id: entity
+          expect(response).to redirect_to home_path
+        end
+      end
     end
   end
 
@@ -32,6 +46,13 @@ describe BudgetMonitorsController do
     describe 'get :index' do
       it 'should redirect to the sign in page' do
         get :index, entity_id: entity
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+
+    describe 'get :new' do
+      it 'should redirect to the sign in page' do
+        get :new, entity_id: entity
         expect(response).to redirect_to new_user_session_path
       end
     end
