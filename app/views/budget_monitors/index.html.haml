@@ -1,11 +1,14 @@
+:javascript
+  $(function() {
+    $('.budget_monitor').budget_monitor({daysAvailable: #{budget_days_available}, daysPast: #{budget_days_past}});
+  });
+
 .budget_monitors
   .row
     .col-md-6.col-md-offset-3
       %h2#page_title Budget monitors
 
-  .row
-    .col-md-6.col-md-offset-3
-
-  .row
-    .col-md-6.col-md-offset-3
-      =link_to 'Add', new_entity_budget_monitor_path(@entity), class: 'add_button', title: 'Click here to add a new budget monitor.'
+      -@budget_monitors.each do |budget_monitor|
+        =render 'graph', budget_monitor: budget_monitor
+      .actions
+        =link_to 'Add', new_entity_budget_monitor_path(@entity), class: 'add_button', title: 'Click here to add a new budget monitor.'

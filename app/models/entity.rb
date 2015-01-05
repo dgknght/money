@@ -16,5 +16,6 @@ class Entity < ActiveRecord::Base
   has_many :accounts
   has_many :transactions
   has_many :budgets
+  has_many :budget_monitors
   has_many :commodities
 end

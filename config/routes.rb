@@ -7,7 +7,7 @@ Money::Application.routes.draw do
     resources :transactions, only: [:index, :new, :create]
     resources :commodities, only: [:index, :new, :create]
     resources :budgets, only: [:index, :new, :create]
-    resources :budget_monitors, only: [:index, :new]
+    resources :budget_monitors, only: [:index, :new, :create]
     resources :prices, only: [] do
       collection do
         patch :download

@@ -1,4 +1,3 @@
-@wip
 Feature: Add a budget monitor
   As a user
   In order to see up-to-the-day budget progress
