@@ -8,13 +8,16 @@ module AccountsHelper
     account.children.select { |c| c.shares > 0 }
   end
 
-  def available_parent_accounts(account)
+  def all_accounts(opts = {})
+    except = (opts || {}).fetch(:except, [])
+    except = Array(except)
+    except = except.map{|a| a.is_a?(Account) ? a.id : a}
     {
-      'Assets'      => to_array(Account.asset, account.id),
-      'Liabilities' => to_array(Account.liability, account.id),
-      'Equity'      => to_array(Account.equity, account.id),
-      'Income'      => to_array(Account.income, account.id),
-      'Expense'     => to_array(Account.expense, account.id)
+      'Assets'      => to_array(Account.asset, except),
+      'Liabilities' => to_array(Account.liability, except),
+      'Equity'      => to_array(Account.equity, except),
+      'Income'      => to_array(Account.income, except),
+      'Expense'     => to_array(Account.expense, except)
     }
   end
   
@@ -31,7 +34,7 @@ module AccountsHelper
     def to_array(accounts, except = nil)
       # Currently, this is enforcing a "one-level deep" rule
       # for the accounts. That's something we may want to change in the future
-      list = except ? accounts.reject { |a| a.id == except } : accounts
+      list = except ? accounts.reject { |a| except.include?(a.id) } : accounts
       list.map { |a| [a.name, a.id]}
     end
 end
