@@ -5,7 +5,7 @@ module NavigationHelpers
 
   def locator_for(section)
     case section
-      when /the (.*) area/ then ".#{underscore($1)}"
+      when /the (notice|error) area/ then ".#{$1}"
       when /the page title/ then "#page_title"
       when /the page subtitle/ then "#page_subtitle"
       when /the main content/ then "#content"
@@ -16,6 +16,7 @@ module NavigationHelpers
       when /the budget row for "([^"]+)"/ then "#budget_#{budget_id($1)}"
       when /the budget item row for "([^"]+)"/ then "#budget_item_#{budget_item_id($1)}"
       when /the (\d+)(?:st|nd|rd|th) (.+) row/ then "##{underscore($2)}_table tr:nth-child(#{$1.to_i + 1})"
+      when /the (.*) area/ then ".#{underscore($1)}"
       else raise "Unrecognized section \"#{section}\""
     end
   end
