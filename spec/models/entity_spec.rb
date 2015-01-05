@@ -57,4 +57,12 @@ describe Entity do
       entity.budgets.should == [budget]
     end
   end
+
+  describe 'budget_monitors' do
+    let!(:budget_monitor) { FactoryGirl.create(:budget_monitor, entity: entity) }
+
+    it 'should list the budget monitors defined for the entity' do
+      expect(entity).to have(1).budget_monitor
+    end
+  end
 end
