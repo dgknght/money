@@ -7,7 +7,7 @@ class BudgetMonitorsController < ApplicationController
   end
 
   def new
-
+    @budget_monitor = @entity.budget_monitors.new
   end
 
   private

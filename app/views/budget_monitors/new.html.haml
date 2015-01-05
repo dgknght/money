@@ -2,5 +2,8 @@
   .col-md-6.col-md-offset-3
     %h2#page_title New Budget monitor
 
-
-
+.row
+  .col-md-6.col-md-offset-3
+    =form_for(@budget_monitor) do |f|
+      .form_group
+        =f.select :account_id, grouped_options_for_select(all_accounts), {}, class: 'form-control'
