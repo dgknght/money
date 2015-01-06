@@ -35,8 +35,18 @@ class Budget < ActiveRecord::Base
   
   after_update :sync_budget_item_periods
   
+  def self.current
+    today = Date.today
+    where(['start_date <= ?', today]).select{|b| b.end_date > today}.first
+  end
+
   def end_date
     end_date_at(period_count-1)
+  end
+
+  def item_for(account)
+    id = account.is_a?(Account) ? account.id : account
+    items.where(account_id: id).first
   end
 
   Period = Struct.new("Period", :start_date, :end_date)

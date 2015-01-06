@@ -95,4 +95,27 @@ describe Budget do
       budget.items.should == [item1, item2]
     end
   end
+
+  describe '::current' do
+    let!(:b2014) { FactoryGirl.create(:budget, entity: entity, name: '2014', start_date: Date.parse('2014-01-01')) }
+    let!(:b2015) { FactoryGirl.create(:budget, entity: entity, name: '2015', start_date: Date.parse('2015-01-01')) }
+    let!(:b2016) { FactoryGirl.create(:budget, entity: entity, name: '2016', start_date: Date.parse('2016-01-01')) }
+    it 'should return the budget applicable to the current date' do
+      Timecop.freeze(Date.parse('2015-02-27')) do
+        expect(Budget.current).to eq(b2015)
+      end
+    end
+  end
+
+  describe '#item_for' do
+    let (:budget) { FactoryGirl.create(:budget, entity: entity) }
+    let (:dining) { FactoryGirl.create(:account, name: 'Dining', entity: entity, account_type: Account.expense_type) }
+    let (:rent) { FactoryGirl.create(:account, name: 'Rent', entity: entity, account_type: Account.expense_type) }
+    let!(:item1) { FactoryGirl.create(:budget_item, budget: budget, account: dining) }
+    let!(:item2) { FactoryGirl.create(:budget_item, budget: budget, account: rent) }
+
+    it 'should return the budget item associated with the specified account' do
+      expect(budget.item_for(dining)).to eq(item1)
+    end
+  end
 end
