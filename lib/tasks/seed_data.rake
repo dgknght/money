@@ -97,10 +97,12 @@ namespace :seed_data do
   task :budget => :accounts do
     entity = Entity.first
 
-    if entity.budgets.find_by_name('2013')
-      LOGGER.info "Budget 2013 already exists"
+    today = Date.today
+    budget_name = today.year.to_s
+    if entity.budgets.find_by_name(budget_name)
+      LOGGER.info "Budget #{budget_name} already exists"
     else
-      budget = entity.budgets.create!(name: '2013', start_date: '2013-01-01', period: Budget.month, period_count: 12)
+      budget = entity.budgets.create!(name: budget_name, start_date: "#{today.year}-01-01", period: Budget.month, period_count: 12)
       create_budget_item(budget, 'Salary', 10_000)
       create_budget_item(budget, 'Federal', 1_500)
       create_budget_item(budget, 'Social Security', 620)
