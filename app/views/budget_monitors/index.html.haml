@@ -1,7 +1,8 @@
-:javascript
-  $(function() {
-    $('.budget_monitor').budget_monitor({daysAvailable: #{budget_days_available}, daysPast: #{budget_days_past}});
-  });
+-if @first
+  :javascript
+    $(function() {
+      $('.budget_monitor').budget_monitor({daysAvailable: #{@first.total_days}, daysPast: #{@first.days_past}});
+    });
 
 .budget_monitors
   .row

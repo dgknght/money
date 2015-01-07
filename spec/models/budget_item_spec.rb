@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BudgetItem do
   let(:entity) { FactoryGirl.create(:entity) }
-  let(:budget) { FactoryGirl.create(:budget, entity: entity) }
+  let(:budget) { FactoryGirl.create(:budget, entity: entity, start_date: Date.parse('2015-01-01')) }
   let(:salary) { FactoryGirl.create(:income_account, entity: entity) }
   let(:groceries) { FactoryGirl.create(:expense_account, entity: entity) }
   let(:attributes) do
@@ -56,8 +56,8 @@ describe BudgetItem do
     it 'should contain a list of the periods within the budget' do
       item = budget.items.create(attributes)
       item.periods.should_not be_nil
-      item.should have(12).periods
-      item.periods.map { |p| p.start_date }.should == (1..12).map { |month| Date.civil(2014, month, 1) }
+      start_dates = 1..12.map{|m| Date.parse("#{m}/d/2015")}
+      expect(item.periods.map{|p| p.start_date}).to eq(start_dates)
     end
   end
   
@@ -74,6 +74,15 @@ describe BudgetItem do
     describe 'expense' do
       it 'should return budget items for expense accounts' do
         budget.items.expense.should == [groceries_item]
+      end
+    end
+  end
+
+  describe '#current_period' do
+    let (:budget_item) { FactoryGirl.create(:budget_item, budget: budget, account: groceries) }
+    it 'should return the period within the budget item in which the current date falls' do
+      Timecop.freeze(Date.parse('2015-02-27')) do
+        expect(budget_item.current_period.start_date).to eq(Date.parse('2015-02-01'))
       end
     end
   end

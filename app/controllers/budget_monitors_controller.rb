@@ -5,6 +5,7 @@ class BudgetMonitorsController < ApplicationController
   def index
     authorize! :show, @entity
     @budget_monitors = @entity.budget_monitors
+    @first = @budget_monitors.first
   end
 
   def new
