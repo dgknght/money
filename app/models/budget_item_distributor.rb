@@ -47,8 +47,10 @@ class BudgetItemDistributor
     send full_method_name
   end
   
-  def initialize(budget_item)
+  def initialize(budget_item, method = average, options = {})
     @budget_item = budget_item
+    self.method = method
+    self.options = options
   end
 
   # Gets the total amount of money applied to the budget item
