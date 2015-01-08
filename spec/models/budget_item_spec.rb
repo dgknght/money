@@ -56,7 +56,7 @@ describe BudgetItem do
     it 'should contain a list of the periods within the budget' do
       item = budget.items.create(attributes)
       item.periods.should_not be_nil
-      start_dates = 1..12.map{|m| Date.parse("#{m}/d/2015")}
+      start_dates = (1..12).map{|m| Date.parse("2015-%02d-01" % m)}
       expect(item.periods.map{|p| p.start_date}).to eq(start_dates)
     end
   end
@@ -82,7 +82,14 @@ describe BudgetItem do
     let (:budget_item) { FactoryGirl.create(:budget_item, budget: budget, account: groceries) }
     it 'should return the period within the budget item in which the current date falls' do
       Timecop.freeze(Date.parse('2015-02-27')) do
+        expect(budget_item.current_period).not_to be_nil
         expect(budget_item.current_period.start_date).to eq(Date.parse('2015-02-01'))
+      end
+    end
+
+    it 'should return nil if the budget to which the item belongs is not current' do
+      Timecop.freeze(Date.parse('2001-02-27')) do
+        expect(budget_item.current_period).to be_nil
       end
     end
   end

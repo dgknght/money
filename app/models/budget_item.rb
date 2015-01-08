@@ -21,6 +21,11 @@ class BudgetItem < ActiveRecord::Base
   
   scope :income, -> { joins(:account).where('accounts.account_type=?', Account.income_type) }
   scope :expense, -> { joins(:account).where('accounts.account_type=?', Account.expense_type) }
+
+  def current_period
+    @current_period ||= get_current_period
+  end
+
   def sync_periods
     return unless budget
     
@@ -32,5 +37,17 @@ class BudgetItem < ActiveRecord::Base
         period.start_date = p.start_date
       end
     end
+  end
+
+  private
+
+  def current_period_index
+    now = Date.today
+    budget.periods.find_index{|p| p.start_date <= now && p.end_date >= now}
+  end
+
+  def get_current_period
+    index = current_period_index
+    index ? periods[index] : nil
   end
 end
