@@ -47,7 +47,7 @@ class BudgetItemDistributor
     send full_method_name
   end
   
-  def initialize(budget_item, method = average, options = {})
+  def initialize(budget_item, method = BudgetItemDistributor.average, options = {})
     @budget_item = budget_item
     self.method = method
     self.options = options
