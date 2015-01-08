@@ -2,15 +2,16 @@ require 'spec_helper'
 
 describe BudgetMonitor do
   let (:entity) { FactoryGirl.create(:entity) }
-  let (:account) { FactoryGirl.create(:account, entity: entity, name: 'Dining') }
+  let (:dining) { FactoryGirl.create(:account, entity: entity, name: 'Dining', account_type: Account.expense_type) }
+  let (:checking) { FactoryGirl.create(:account, entity: entity, name: 'Checking') }
   let (:attributes) do
     {
-      account_id: account.id
+      account_id: dining.id
     }
   end
-  let (:budget) { FactoryGirl.create(:budget, entity: entity, start_date: Date.parse('2015-01-01')) }
-  let (:budget_monitor) { FactoryGirl.create(:budget_monitor, account: account, entity: entity) }
-  let (:budget_item) { FactoryGirl.create(:budget_item, budget: budget, account: account) }
+  let (:budget) { FactoryGirl.create(:budget, entity: entity, name: '2015', start_date: Date.parse('2015-01-01')) }
+  let (:budget_monitor) { FactoryGirl.create(:budget_monitor, account: dining, entity: entity) }
+  let!(:budget_item) { FactoryGirl.create(:budget_item, budget: budget, account: dining, budget_amount: 500) }
 
   it 'should be creatable from valid attributes' do
     monitor = entity.budget_monitors.new(attributes)
@@ -26,22 +27,19 @@ describe BudgetMonitor do
   end
 
   describe '#budget_amount' do
-    before(:each) do
-      BudgetItemDistributor.new(budget_item,
-                                BudgetItemDistributor.average,
-                                amount: 500).distribute
-      puts "before :each #{budget_item.periods.map{|p| p.budget_amount.to_s}}"
-    end
-
     it 'should return the amount budget for the period, prorated for the number of days that have passed' do
-      Timecop.freeze(Date.parse('2015-02-14')) do
+      Timecop.freeze(Time.parse('2015-02-14 12:00:00 CST')) do
         expect(budget_monitor.budget_amount).to eq(250)
       end
     end
   end
 
   describe '#current_amount' do
-    it 'should return the amount spent so far this period'
+    let!(:transaction) { FactoryGirl.create(:transaction, transaction_date: '2015-02-01', description: 'Nick and Sams', amount: 100, debit_account: dining, credit_account: checking) }
+    let!(:transaction) { FactoryGirl.create(:transaction, transaction_date: '2015-02-07', description: 'III Forks', amount: 100, debit_account: dining, credit_account: checking) }
+    it 'should return the amount spent so far this period' do
+      expect(budget_monitor.current_amount).to eq(200)
+    end
   end
 
   describe '#available_days' do

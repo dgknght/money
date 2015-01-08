@@ -5,38 +5,39 @@ class BudgetMonitor < ActiveRecord::Base
   validates_presence_of :account_id, :entity_id
 
   def budget_amount
-    puts "full_budget_amount=#{full_budget_amount}"
-    puts "progress=#{progress}"
-
-    full_budget_amount * progress
+    period.budget_amount * progress
   end
 
   def current_amount
-    50
+    account.transaction_items.
+      where(['transaction_date >= ? and transaction_date <= ?', start_date, end_date]).
+      reduce(0) { |sum, item| sum + item.polarized_amount }
   end
 
   private
 
-  def full_budget_amount
-    @full_budget_amount ||= get_budget_amount
+  def end_date
+    period.end_date
   end
 
-  def get_budget_amount
+  def get_period
     budget = Budget.current
-
-    puts "#{budget.items.length} item(s)"
-    puts "account=#{budget.items[0].account.name}"
-    puts "period amounts #{budget.items[0].periods.map{|p| p.budget_amount.to_s}}"
-
     budget.
       item_for(account).
-      current_period.
-      budget_amount
+      current_period
+  end
+
+  def period
+    @period ||= get_period
   end
 
   def progress
     today = Date.today
     days_in_month = Time.days_in_month(today.month, today.year)
     today.day.to_f / days_in_month.to_f
+  end
+
+  def start_date
+    period.start_date
   end
 end
