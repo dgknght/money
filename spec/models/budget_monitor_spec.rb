@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BudgetMonitor do
   let (:entity) { FactoryGirl.create(:entity) }
-  let (:account) { FactoryGirl.create(:account, entity: entity) }
+  let (:account) { FactoryGirl.create(:account, entity: entity, name: 'Dining') }
   let (:attributes) do
     {
       account_id: account.id
@@ -11,7 +11,6 @@ describe BudgetMonitor do
   let (:budget) { FactoryGirl.create(:budget, entity: entity, start_date: Date.parse('2015-01-01')) }
   let (:budget_monitor) { FactoryGirl.create(:budget_monitor, account: account, entity: entity) }
   let (:budget_item) { FactoryGirl.create(:budget_item, budget: budget, account: account) }
-  let!(:budget_item_period) { FactoryGirl.create(:budget_item_period, budget_item: budget_item, start_date: Date.parse('2015-02-01'), budget_amount: 500) }
 
   it 'should be creatable from valid attributes' do
     monitor = entity.budget_monitors.new(attributes)
@@ -27,6 +26,13 @@ describe BudgetMonitor do
   end
 
   describe '#budget_amount' do
+    before(:each) do
+      BudgetItemDistributor.new(budget_item,
+                                BudgetItemDistributor.average,
+                                amount: 500).distribute
+      puts "before :each #{budget_item.periods.map{|p| p.budget_amount.to_s}}"
+    end
+
     it 'should return the amount budget for the period, prorated for the number of days that have passed' do
       Timecop.freeze(Date.parse('2015-02-14')) do
         expect(budget_monitor.budget_amount).to eq(250)
