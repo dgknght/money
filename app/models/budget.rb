@@ -40,6 +40,10 @@ class Budget < ActiveRecord::Base
     where(['start_date <= ?', today]).select{|b| b.end_date > today}.first
   end
 
+  def current?
+    Date.today >= start_date && Date.today <= end_date
+  end
+
   def end_date
     end_date_at(period_count-1)
   end

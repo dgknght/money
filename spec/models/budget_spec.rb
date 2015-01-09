@@ -107,6 +107,22 @@ describe Budget do
     end
   end
 
+  describe '#current?' do
+    let!(:b2014) { FactoryGirl.create(:budget, entity: entity, name: '2014', start_date: Date.parse('2014-01-01')) }
+    let!(:b2015) { FactoryGirl.create(:budget, entity: entity, name: '2015', start_date: Date.parse('2015-01-01')) }
+    it 'should return true if the budget is current' do
+      Timecop.freeze(Time.parse('2015-02-27 12:00:00 CST')) do
+        expect(b2015).to be_current
+      end
+    end
+
+    it 'should return false if the budget is not current' do
+      Timecop.freeze(Time.parse('2015-02-27 12:00:00 CST')) do
+        expect(b2014).not_to be_current
+      end
+    end
+  end
+
   describe '#item_for' do
     let (:budget) { FactoryGirl.create(:budget, entity: entity) }
     let (:dining) { FactoryGirl.create(:account, name: 'Dining', entity: entity, account_type: Account.expense_type) }
