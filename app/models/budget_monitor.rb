@@ -21,13 +21,20 @@ class BudgetMonitor < ActiveRecord::Base
     (Date.today - start_date) + 1
   end
 
+  def period
+    @period ||= get_period
+  end
+
   private
 
   def get_period
     budget = Budget.current
-    budget.
-      item_for(account).
-      current_period
+    return nil unless budget
+
+    item = budget.item_for(account)
+    return nil unless item
+
+    item.current_period
   end
 
   def items
@@ -36,10 +43,6 @@ class BudgetMonitor < ActiveRecord::Base
       where(['transaction_date >= ? and transaction_date <= ?',
              start_date,
              Date.today])
-  end
-
-  def period
-    @period ||= get_period
   end
 
   def progress
