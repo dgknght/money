@@ -1,7 +1,7 @@
 -if @first
   :javascript
     $(function() {
-      $('.budget_monitor').budget_monitor({daysAvailable: #{@first.total_days}, daysPast: #{@first.days_past}});
+      $('.budget_monitor').budget_monitor({daysAvailable: #{@first.available_days}, daysPast: #{@first.past_days}});
     });
 
 .budget_monitors
