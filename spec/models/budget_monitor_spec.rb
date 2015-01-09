@@ -35,18 +35,30 @@ describe BudgetMonitor do
   end
 
   describe '#current_amount' do
-    let!(:transaction) { FactoryGirl.create(:transaction, transaction_date: '2015-02-01', description: 'Nick and Sams', amount: 100, debit_account: dining, credit_account: checking) }
-    let!(:transaction) { FactoryGirl.create(:transaction, transaction_date: '2015-02-07', description: 'III Forks', amount: 100, debit_account: dining, credit_account: checking) }
+    let!(:t1) { FactoryGirl.create(:transaction, transaction_date: '2015-01-31', description: 'III Forks', amount: 100, debit_account: dining, credit_account: checking) }
+    let!(:t2) { FactoryGirl.create(:transaction, transaction_date: '2015-02-01', description: 'Nick and Sams', amount: 100, debit_account: dining, credit_account: checking) }
+    let!(:t3) { FactoryGirl.create(:transaction, transaction_date: '2015-02-07', description: 'III Forks', amount: 100, debit_account: dining, credit_account: checking) }
+    let!(:t4) { FactoryGirl.create(:transaction, transaction_date: '2015-02-15', description: 'III Forks', amount: 100, debit_account: dining, credit_account: checking) }
     it 'should return the amount spent so far this period' do
-      expect(budget_monitor.current_amount).to eq(200)
+      Timecop.freeze(Time.parse('2015-02-14 12:00:00 CST')) do
+        expect(budget_monitor.current_amount).to eq(200)
+      end
     end
   end
 
   describe '#available_days' do
-    it 'should return the total number of days in the period'
+    it 'should return the total number of days in the period' do
+      Timecop.freeze(Time.parse('2015-02-14 12:00:00 CST')) do
+        expect(budget_monitor.available_days).to eq(28)
+      end
+    end
   end
 
   describe '#past_days' do
-    it 'should return the number of days in the period that have already past'
+    it 'should return the number of days in the period that have already past' do
+      Timecop.freeze(Time.parse('2015-02-14 12:00:00 CST')) do
+        expect(budget_monitor.past_days).to eq(14)
+      end
+    end
   end
 end
