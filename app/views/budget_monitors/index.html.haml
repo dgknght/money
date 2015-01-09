@@ -6,10 +6,16 @@
 
 .budget_monitors
   .row
-    .col-md-6.col-md-offset-3
+    .col-md-4.col-md-offset-4
       %h2#page_title Budget monitors
 
+  .row
+    .col-md-4.col-md-offset-4
       -@budget_monitors.each do |budget_monitor|
         =render 'graph', budget_monitor: budget_monitor
       .actions
         =link_to 'Add', new_entity_budget_monitor_path(@entity), class: 'add_button', title: 'Click here to add a new budget monitor.'
+    .col-md-2
+      These monitors could not be displayed because there are no budget amounts for this accounts
+      -@nil_monitors.each do |monitor|
+        .nil_monitor=monitor.account.name

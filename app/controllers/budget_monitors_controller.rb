@@ -4,7 +4,7 @@ class BudgetMonitorsController < ApplicationController
 
   def index
     authorize! :show, @entity
-    @budget_monitors = @entity.budget_monitors
+    @budget_monitors, @nil_monitors = @entity.budget_monitors.partition{|m| !!m.period}
     @first = @budget_monitors.first
   end
 
