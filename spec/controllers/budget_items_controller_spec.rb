@@ -72,7 +72,7 @@ describe BudgetItemsController do
       describe "post :create" do
         it "should redirect to the budget item detail page" do
           post :create, budget_id: budget, budget_item: attributes, distributor: distributor
-          response.should redirect_to budget_item_path(BudgetItem.last)
+          response.should redirect_to budget_budget_items_path(budget)
         end
         
         it 'should create a new budget item' do

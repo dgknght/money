@@ -70,9 +70,9 @@ describe BudgetsController do
           end.should change(Budget, :count).by(1)
         end
         
-        it 'should redirect to the budget detail page' do
+        it 'should redirect to the budgets page' do
           post :create, entity_id: entity, budget: attributes
-          response.should redirect_to budget_path(Budget.last)
+          response.should redirect_to entity_budgets_path(entity)
         end
         
         context 'in json' do
