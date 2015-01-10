@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: budget_monitors
+#
+#  id         :integer          not null, primary key
+#  entity_id  :integer          not null
+#  account_id :integer          not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class BudgetMonitor < ActiveRecord::Base
   belongs_to :entity
   belongs_to :account
