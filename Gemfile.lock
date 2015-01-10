@@ -219,6 +219,7 @@ DEPENDENCIES
   rails-erd
   rails-footnotes (~> 4.0)
   rails_12factor
+  rake
   rspec-rails
   sass-rails
   simple-navigation
