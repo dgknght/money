@@ -36,7 +36,7 @@ $.widget("dgknght.budget_monitor", {
     ctx.fillRect(padding, padding, percentOfBudgetSpent * width, height);
 
     // outer box
-    ctx.strokeStyle = "#000";
+    ctx.strokeStyle = this._boxColor();
     ctx.lineWidth = 2;
     ctx.strokeRect(padding, padding, width, height);
     
@@ -47,7 +47,7 @@ $.widget("dgknght.budget_monitor", {
     ctx.moveTo(paceX, 0);
     ctx.lineTo(paceX, c.height);
     ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = "#33F";
+    ctx.strokeStyle = this._progressLineColor();
     ctx.stroke();
   },
 
@@ -73,5 +73,13 @@ $.widget("dgknght.budget_monitor", {
 
   _dangerFillColor: function() {
     return this.options.dangerFillColor || "#F33";
+  },
+
+  _progressLineColor: function() {
+    return this.options.progressLineColor || "#33F";
+  },
+
+  _boxColor: function() {
+    return this.options.boxColor || "#000";
   }
 });

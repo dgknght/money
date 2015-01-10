@@ -1,7 +1,11 @@
 -if @first
   :javascript
     $(function() {
-      $('.budget_monitor').budget_monitor({daysAvailable: #{@first.available_days}, daysPast: #{@first.past_days}});
+      $('.budget_monitor').budget_monitor({daysAvailable: #{@first.available_days},
+        daysPast: #{@first.past_days},
+        safeFillColor: "#00A000",
+        dangerFillColor: "#A00000",
+        progressLineColor: "#337AB7"});
     });
 
 .budget_monitors
@@ -15,7 +19,8 @@
         =render 'graph', budget_monitor: budget_monitor
       .actions
         =link_to 'Add', new_entity_budget_monitor_path(@entity), class: 'add_button', title: 'Click here to add a new budget monitor.'
-    .col-md-2
-      These monitors could not be displayed because there are no budget amounts for this accounts
-      -@nil_monitors.each do |monitor|
-        .nil_monitor=monitor.account.name
+    -if @nil_monitors.any?
+      .col-md-2
+        These monitors could not be displayed because there are no budget amounts for this accounts
+        -@nil_monitors.each do |monitor|
+          .nil_monitor=monitor.account.name
