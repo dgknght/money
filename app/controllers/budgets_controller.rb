@@ -22,7 +22,7 @@ class BudgetsController < ApplicationController
   def create
     @budget = @entity.budgets.new(budget_params)
     flash[:notice] = "The budget was created successfully." if @budget.save
-    respond_with @budget
+    respond_with @budget, location: entity_budgets_path(@entity)
   end
 
   def edit

@@ -31,7 +31,7 @@ class BudgetItemsController < ApplicationController
     authorize! :create, @budget_item
     distribute
     flash[:notice] = "The budget item was created successfully." if @budget_item.save
-    respond_with @budget_item
+    respond_with @budget_item, location: budget_budget_items_path(@budget)
   end
 
   def edit
