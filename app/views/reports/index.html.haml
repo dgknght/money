@@ -1,21 +1,7 @@
 .row
-  .col-md-6
+  .col-md-4.col-md-offset-4
     %h2#page_title Reports
 
     %ul
       -@reports.each do |name, path|
         %li= link_to name, path
-  .col-md-6
-    .budget_monitor_container
-      Groceries/Food
-      .budget_monitor{ data: { budget: 350, current: 174 }}
-    .budget_monitor_container
-      Dining
-      .budget_monitor{ data: { budget: 500, current: 475 }}
-    .budget_monitor_container
-      Entertainment/Recreation
-      .budget_monitor{ data: { budget: 200, current: 210 }}
-:javascript
-  $(function() {
-    $('.budget_monitor').budget_monitor({daysAvailable: 31, daysPast: 25 });
-  });
