@@ -5,3 +5,9 @@
 require File.expand_path('../config/application', __FILE__)
 
 Money::Application.load_tasks
+
+
+task default: [:full_test]
+
+desc 'Run RSpec and Cucumber tests'
+task full_test: [:spec, :cucumber]
