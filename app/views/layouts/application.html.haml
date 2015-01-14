@@ -8,6 +8,13 @@
     = javascript_include_tag params[:controller]
     %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
     = csrf_meta_tags
+    -unless suppress_ajax_redirect?
+      :javascript
+        $(function() {
+          // If javascript is enabled, hide the HTML only nav and show the ajax nav
+          $('#html_nav').hide();
+          $('#ajax_nav').show();
+        });
   %body
     .container-fluid
       .row#header

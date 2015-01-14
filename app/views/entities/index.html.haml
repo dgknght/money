@@ -1,6 +1,7 @@
 %h2#page_title Entities
 
-:javascript
-  window.location.href = "/app";
+-unless suppress_ajax_redirect?
+  :javascript
+    window.location.href = "/app";
 
 =render 'entity_list', entities: @entities

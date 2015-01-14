@@ -31,4 +31,20 @@ module ApplicationHelper
     match = /\A\d+\z/.match(cookies[:entity_id])
     return Integer(match[0]) if match
   end
+
+  def suppress_ajax_redirect?
+    return cookies[:no_ajax].present? unless params[:no_ajax].present?
+
+    if html_true?(params[:no_ajax])
+      cookies[:no_ajax] = 1
+      true
+    else
+      cookies.delete(:no_ajax)
+      false
+    end
+  end
+
+  def html_true?(value)
+    %w(1 true yes).include?(value)
+  end
 end
