@@ -1,3 +1,4 @@
+@wip
 Feature: Enter a transaction
   Scenario: A user enters a transaction:
     Given there is a user with email address "john@doe.com" and password "please01"
@@ -30,6 +31,8 @@ Feature: Enter a transaction
     Then I should see "Transactions" within the page subtitle
 
     When I fill in "description" with "Kroger"
+    And I fill in "memo" with "Food for dinner party"
+    And I fill in "confirmation" with "123456"
 
     And I fill in the 1st transaction items amount field with "56.65"
     And I select "credit" from the 1st transaction items action list
@@ -40,6 +43,13 @@ Feature: Enter a transaction
 
     And I click "Save"
     Then I should see "The transaction was created successfully." within the notice area
+    And I should see the following transactions table
+      | Transaction date | Description     | Amount | Memo                  | Confirmation |
+      |         1/1/2014 | Opening balance | 100.00 |                       |              |
+      |         1/2/2014 | Kroger          |  56.65 | Food for dinner party | 123456       |
+
+    When I click "Back"
+    Then I should see "Transactions" within the page title
 
     When I click "Back"
     Then I should see the following accounts table
