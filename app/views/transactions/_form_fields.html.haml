@@ -6,6 +6,9 @@
   
 =f.text_field :transaction_date, class: 'date_field transaction_date_field', autofocus: true
 =f.text_field :description, class: 'transaction_description_field', placeholder: 'description'
+=f.text_field :memo, class: 'transaction_memo_field', placeholder: 'memo'
+=f.text_field :confirmation, class: 'transaction_confirmation_field', placholde: 'confirmation'
+
 .new_transaction_items_container
   %table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
     %tr
