@@ -9,7 +9,7 @@ CREDIT_ACCOUNT = Transform(/^crediting "([^"]+)"$/) do |name|
 end
  
 DATE_VALUE = Transform(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/) do |month, day, year|
-  Date.new(year.to_i, month.to_i, day.to_i)
+  Time.parse("#{day}/#{month}/#{year} Central Time (US & Canada)")
 end
 
 DEBIT_ACCOUNT = Transform(/^debiting "([^"]+)"$/) do |name|

@@ -32,28 +32,35 @@ table.transaction_list {
 .transaction_date_column {
   width: 10em;
 }
-.transaction_date_field {
+@mixin transaction_field($left-margin) {
   margin: {
     top: -1px;
-    left: 0px;
+    left: $left-margin;
     right: 0;
     bottom: 0;
   }
   width: 9.75em;
+}
+.transaction_date_field {
   @extend .any_form_field;
+  @include transaction_field(0);
 }
 .transaction_description_column {
   width: 10em;
 }
 .transaction_description_field {
-  margin: {
-    top: -1px;
-    left: -5px;
-    right: 0;
-    bottom: 0;
-  }
-  width: 9.75em;
   @extend .any_form_field;
+  @include transaction_field(-5px);
+}
+
+.transaction_memo_field {
+  @extend .any_form_field;
+  @include transaction_field(-5px);
+}
+
+.transaction_confirmation_field {
+  @extend .any_form_field;
+  @include transaction_field(-5px);
 }
 
 .new_transaction_items_container {

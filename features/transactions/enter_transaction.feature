@@ -1,8 +1,10 @@
 @wip
+@timecop
 Feature: Enter a transaction
   Scenario: A user enters a transaction:
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
+    And today is 1/2/2014
     
     And entity "Personal" has the following accounts
       | Name             | Account type |
@@ -44,9 +46,9 @@ Feature: Enter a transaction
     And I click "Save"
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following transactions table
-      | Transaction date | Description     | Amount | Memo                  | Confirmation |
-      |         1/1/2014 | Opening balance | 100.00 |                       |              |
-      |         1/2/2014 | Kroger          |  56.65 | Food for dinner party | 123456       |
+      | Transaction Date | Description     | Memo                  | Confirmation | Amount |
+      |         1/2/2014 | Kroger          | Food for dinner party | 123456       |  56.65 |
+      |         1/1/2014 | Opening balance |                       |              | 100.00 |
 
     When I click "Back"
     Then I should see "Transactions" within the page title
