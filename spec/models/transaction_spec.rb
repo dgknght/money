@@ -31,7 +31,7 @@ describe Transaction do
     groceries.balance.should ==  BigDecimal.new('34.43')    
   end
 
-  describe 'transaction_date' do
+  describe '#transaction_date' do
     it "should default to today's date" do
       transaction = Transaction.new(attributes.without(:transaction_date))
       transaction.should be_valid
@@ -39,21 +39,21 @@ describe Transaction do
     end
   end
   
-  describe 'description' do
+  describe '#description' do
     it 'should be required' do
       transaction = Transaction.new(attributes.without(:description))
       transaction.should_not be_valid
     end
   end
   
-  describe 'entity_id' do
+  describe '#entity_id' do
     it 'should be required' do
       transaction = Transaction.new(attributes.without(:entity_id))
       transaction.should_not be_valid
     end
   end
   
-  describe 'items' do
+  describe '#items' do
     let(:transaction) { FactoryGirl.create(:transaction) }
     let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
     let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries') }
@@ -76,7 +76,7 @@ describe Transaction do
     end
   end
 
-  describe 'attachments' do
+  describe '#attachments' do
     let (:transaction) { FactoryGirl.create(:transaction) }
 
     it 'should contain a list of attachments for the transaction' do
@@ -84,7 +84,7 @@ describe Transaction do
     end
   end
 
-  describe 'lot_transactions' do
+  describe '#lot_transactions' do
     it 'should list the lot transactions for the instance' do
       transaction = Transaction.new(attributes)
       expect(transaction.lot_transactions).to be_empty
