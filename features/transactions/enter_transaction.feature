@@ -30,7 +30,7 @@ Feature: Enter a transaction
       | Groceries        |   0.00  |
 
     When I click "Transactions" within the navigation
-    Then I should see "Transactions" within the page subtitle
+    Then I should see "Transactions" within the page title
 
     When I fill in "description" with "Kroger"
     And I fill in "memo" with "Food for dinner party"
@@ -44,14 +44,12 @@ Feature: Enter a transaction
     And I select "debit" from the 2nd transaction items action list
 
     And I click "Save"
-    Then I should see "The transaction was created successfully." within the notice area
+    Then I should see "Transactions" within the page title
+    And I should see "The transaction was created successfully." within the notice area
     And I should see the following transactions table
       | Transaction Date | Description     | Memo                  | Confirmation | Amount |
       |         1/2/2014 | Kroger          | Food for dinner party | 123456       |  56.65 |
       |         1/1/2014 | Opening balance |                       |              | 100.00 |
-
-    When I click "Back"
-    Then I should see "Transactions" within the page title
 
     When I click "Back"
     Then I should see the following accounts table
