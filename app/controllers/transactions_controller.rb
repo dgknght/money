@@ -79,12 +79,12 @@ class TransactionsController < ApplicationController
     def transaction_params
       params.require(:transaction).permit(:transaction_date,
                                           :description,
-                                          :memo,
-                                          :confirmation,
                                           :items_attributes => [ :id,
                                                                  :_destroy,
                                                                  :account_id,
                                                                  :amount,
+                                                                 :memo,
+                                                                 :confirmation,
                                                                  :action ])
     end
 end
