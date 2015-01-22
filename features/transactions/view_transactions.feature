@@ -11,7 +11,7 @@ Feature: View transactions
     Then I should see "Transactions" within the navigation
     
     When I click "Transactions" within the navigation
-    Then I should see "Transactions" within the page subtitle
+    Then I should see "Transactions" within the page title
     And I should see the following transactions table
       | Transaction Date | Description | Amount |
       | 1/1/2013         | Office Max  | 100.00 |
