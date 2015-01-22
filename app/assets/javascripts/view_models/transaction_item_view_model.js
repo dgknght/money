@@ -13,6 +13,8 @@ function TransactionItemViewModel(transaction_item, transaction) {
     numeric: "The amount must be a valid number.",
     propertyName: 'amount'
   });
+  this.memo = ko.observable(transaction_item.memo);
+  this.confirmation = ko.observable(transaction_item.confirmation);
   this.reconciled = ko.observable(transaction_item.reconciled);
   this.destroyed = ko.observable(false);
 
@@ -128,6 +130,8 @@ function TransactionItemViewModel(transaction_item, transaction) {
       id: this.id(),
       action: this.action(),
       amount: this.amount(),
+      memo: this.memo(),
+      confirmation: this.confirmation(),
       account_id: this.account_id()
     };
 

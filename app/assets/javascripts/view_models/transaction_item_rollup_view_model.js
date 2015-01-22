@@ -37,6 +37,13 @@ function TransactionItemRollupViewModel(transaction_item, previousItem) {
     var current = this.attachmentsVisible();
     this.attachmentsVisible(!current);
   };
+  this.memo = function() {
+    return this.transaction_item.memo;
+  };
+
+  this.confirmation = function() {
+    return this.transaction_item.confirmation;
+  };
 
   this.transaction_date = ko.computed(function() {
     return this.transaction_item.transaction.transaction_date();

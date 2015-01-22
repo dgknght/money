@@ -36,7 +36,7 @@ module('TransactionItemViewModel', {
           transaction_date: '2014-01-01',
           description: 'Salary',
           items: [
-            { id: TRANSACTION_ITEM_1_ID, account_id: CHECKING_ID, action: 'debit', amount: "1000" },
+            { id: TRANSACTION_ITEM_1_ID, account_id: CHECKING_ID, action: 'debit', amount: "1000", memo: "memo1", confirmation: "123456" },
             { id: TRANSACTION_ITEM_2_ID, account_id: SALARY_ID, action: 'credit', amount: "1000" }
           ]
         },
@@ -56,6 +56,34 @@ asyncTest("amount", function() {
   getAccount(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
     getFromLazyLoadedCollection(account, 'transaction_items', TRANSACTION_ITEM_1_ID, function(item) {
       ok(_.isNumber(item.transaction_item.amount() + 1), "The amount should be a number");
+      start();
+    });
+  });
+});
+asyncTest("memo", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', TRANSACTION_ITEM_1_ID, function(item) {
+      ok(item.transaction_item.memo, "The item should have a memo method")
+      if (item.transaction_item.memo) {
+        equal("memo1", item.transaction_item.memo());
+      }
+      start();
+    });
+  });
+});
+asyncTest("confirmation", function() {
+  expect(2);
+
+  var app = new MoneyApp();
+  getAccount(app, { entity_id: ENTITY_ID, account_id: CHECKING_ID }, function(account) {
+    getFromLazyLoadedCollection(account, 'transaction_items', TRANSACTION_ITEM_1_ID, function(item) {
+      ok(item.transaction_item.confirmation, "The item should have a confirmation method");
+      if (item.transaction_item.confirmation) {
+        equal("123456", item.transaction_item.confirmation());
+      }
       start();
     });
   });

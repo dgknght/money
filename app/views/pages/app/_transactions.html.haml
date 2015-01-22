@@ -31,6 +31,8 @@
       %table.detail{cellpadding: 0, cellspacing: 0}
         %tr
           %th Account
+          %th Memo
+          %th Confirmation
           %th.number_column Debit
           %th.number_column Credit
           %th &nbsp;
@@ -38,6 +40,10 @@
         %tr
           %td
             %input{ type: 'text', data: { bind: "autocomplete: accountPath, source: getAccountPaths" }}
+          %td
+            %input{ type: 'text', data: { bind: "value: memo" }}
+          %td
+            %input{ type: 'text', data: { bind: "value: confirmation" }}
           %td.number_column
             %input.number_field{ type: 'text', data: { bind: "value: formattedDebitAmount" }}
           %td.number_column
