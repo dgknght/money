@@ -163,23 +163,23 @@ ActiveRecord::Schema.define(version: 20150115013953) do
   add_index "reconciliations", ["account_id", "reconciliation_date"], name: "index_reconciliations_on_account_id_and_reconciliation_date", using: :btree
 
   create_table "transaction_items", force: true do |t|
-    t.integer  "transaction_id",                 null: false
-    t.integer  "account_id",                     null: false
-    t.string   "action",                         null: false
-    t.decimal  "amount",                         null: false
+    t.integer  "transaction_id",                             null: false
+    t.integer  "account_id",                                 null: false
+    t.string   "action",                                     null: false
+    t.decimal  "amount",                                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "reconciled",     default: false, null: false
+    t.boolean  "reconciled",                 default: false, null: false
+    t.string   "memo",           limit: 100
+    t.string   "confirmation",   limit: 50
   end
 
   create_table "transactions", force: true do |t|
-    t.date     "transaction_date",             null: false
-    t.string   "description",                  null: false
+    t.date     "transaction_date", null: false
+    t.string   "description",      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "entity_id",                    null: false
-    t.string   "memo",             limit: 100
-    t.string   "confirmation",     limit: 50
+    t.integer  "entity_id",        null: false
   end
 
   create_table "users", force: true do |t|

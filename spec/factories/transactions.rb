@@ -4,8 +4,6 @@ FactoryGirl.define do
   factory :transaction do
     transaction_date "2013-09-17"
     description "The Payee"
-    memo { Faker::Lorem.sentence(3) }
-    confirmation { Faker::Code.isbn }
     entity
     ignore do
       amount 100

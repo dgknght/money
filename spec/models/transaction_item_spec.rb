@@ -11,6 +11,8 @@ describe TransactionItem do
       transaction: transaction,
       account: checking,
       action: TransactionItem.credit,
+      memo: "dinner party food",
+      confirmation: '123F',
       amount: 100.00
     }
   end

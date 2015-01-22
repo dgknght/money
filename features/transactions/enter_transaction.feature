@@ -1,4 +1,3 @@
-@wip
 @timecop
 Feature: Enter a transaction
   Scenario: A user enters a transaction:
@@ -33,23 +32,24 @@ Feature: Enter a transaction
     Then I should see "Transactions" within the page title
 
     When I fill in "description" with "Kroger"
-    And I fill in "memo" with "Food for dinner party"
-    And I fill in "confirmation" with "123456"
 
-    And I fill in the 1st transaction items amount field with "56.65"
-    And I select "credit" from the 1st transaction items action list
+    And I select "Checking" from the "Account" list within the 1st transaction item row
+    And I fill in "amount" with "56.65" within the 1st transaction item row
+    And I select "credit" from the "Action" list within the 1st transaction item row
+    And I fill in "confirmation" with "1234567890" within the 1st transaction item row
 
-    And I fill in the 2nd transaction items amount field with "56.65"
-    And I select "Groceries" from the 2nd transaction items account_id list
-    And I select "debit" from the 2nd transaction items action list
+    And I select "Groceries" from the "Account" list within the 2nd transaction item row
+    And I fill in "amount" with "56.65" within the 2nd transaction item row
+    And I select "debit" from the "Action" list within the 2nd transaction item row
+    And I fill in "memo" with "dinner party fixin's" within the 2nd transaction item row
 
     And I click "Save"
     Then I should see "Transactions" within the page title
     And I should see "The transaction was created successfully." within the notice area
     And I should see the following transactions table
-      | Transaction Date | Description     | Memo                  | Confirmation | Amount |
-      |         1/2/2014 | Kroger          | Food for dinner party | 123456       |  56.65 |
-      |         1/1/2014 | Opening balance |                       |              | 100.00 |
+      | Transaction Date | Description     | Amount |
+      |         1/2/2014 | Kroger          |  56.65 |
+      |         1/1/2014 | Opening balance | 100.00 |
 
     When I click "Back"
     Then I should see the following accounts table

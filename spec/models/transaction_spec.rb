@@ -9,8 +9,6 @@ describe Transaction do
       transaction_date: Date.civil(2013, 1, 1),
       description: 'Kroger',
       entity_id: entity.id,
-      memo: "dinner party food",
-      confirmation: '123F',
       items_attributes: [
         { account: checking, action: TransactionItem.credit, amount: 34.43 },
         { account: groceries, action: TransactionItem.debit, amount: 34.43 }

@@ -23,8 +23,6 @@ Given(/^(#{ENTITY}) has the following transactions$/) do |entity, table|
     FactoryGirl.create(:transaction, entity: entity,
                                      transaction_date: row['Transaction date'],
                                      description: row['Description'],
-                                     memo: nil,
-                                     confirmation: nil,
                                      amount: amount,
                                      credit_account: credit_account,
                                      debit_account: debit_account)

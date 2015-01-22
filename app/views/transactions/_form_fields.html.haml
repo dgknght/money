@@ -6,14 +6,14 @@
   
 =f.text_field :transaction_date, class: 'date_field transaction_date_field', autofocus: true
 =f.text_field :description, class: 'transaction_description_field', placeholder: 'description'
-=f.text_field :memo, class: 'transaction_memo_field', placeholder: 'memo'
-=f.text_field :confirmation, class: 'transaction_confirmation_field', placeholder: 'confirmation'
 
 .new_transaction_items_container
   %table#transaction_items_table.list{cellspacing: 0, cellpadding: 0}
     %tr
       %th Account
       %th Action
+      %th Memo
+      %th Confirmation
       %th Amount
       %th &nbsp;
     -items.each_with_index do |item, index|
@@ -22,9 +22,14 @@
           %td
             =item_form.hidden_field :id
             =hidden_field_tag "transaction[items_attributes][#{index}][_destroy]"
+            =item_form.label :account_id, style: 'display: none'
             =item_form.select :account_id, grouped_options_for_select(available_accounts(transaction.entity), item.account_id)
-          %td= item_form.select :action, [:credit, :debit]
-          %td= item_form.text_field :amount
+          %td
+            =item_form.label :action
+            =item_form.select :action, [:credit, :debit]
+          %td= item_form.text_field :memo, placeholder: 'memo'
+          %td= item_form.text_field :confirmation, placeholder: 'confirmation'
+          %td= item_form.text_field :amount, placeholder: 'amount'
           %td
             =button_tag('Delete', type: 'button', class: 'delete_button', onclick: "removeTransactionItem(#{index});")
 .actions

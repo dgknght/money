@@ -5,6 +5,8 @@ FactoryGirl.define do
     transaction
     account
     action TransactionItem.debit
+    memo { Faker::Lorem.sentence(3) }
+    confirmation { Faker::Code.isbn }
     amount 100
     reconciled false
   end
