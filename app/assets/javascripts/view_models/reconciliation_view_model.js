@@ -8,12 +8,29 @@ function ReconciliationViewModel(reconciliation, account) {
   this.closing_balance = ko.observable(0);
   this.reconciliation_date = ko.observable(new Date());
 
-  this.items = ko.observableArray(
-    _.chain(account.transaction_items())
+  this._itemPresent = function(item) {
+    if (_.isUndefined(_self.items)) return false;
+
+    return _.find(_self.items(), function(i) {
+      return i.transaction_item.id() == item.id();
+    }) != null;
+  };
+
+  this._createNewItemViewModels = function(items) {
+    return _.chain(account.transaction_items())
+      .filter(function(i) { return !_self._itemPresent(i); })
       .filter(function(i) { return !i.reconciled(); })
       .map(function(i) { return new ReconciliationItemViewModel(i); })
       .value()
-    );
+  };
+
+  this.items = ko.observableArray(_self._createNewItemViewModels(account.transaction_items()));
+
+  // listen for new transaction items too
+  this.account.transaction_items.subscribe(function(items) {
+    var newItems = _self._createNewItemViewModels(items);
+    newItems.pushAllTo(_self.items);
+  });
 
   this.debit_items = ko.computed(function() {
     return _.filter(this.items(), function(i) { return i.action() == "debit"; });
