@@ -17,7 +17,7 @@ function ReconciliationViewModel(reconciliation, account) {
   };
 
   this._createNewItemViewModels = function(items) {
-    return _.chain(account.transaction_items())
+    return _.chain(items)
       .filter(function(i) { return !_self._itemPresent(i); })
       .filter(function(i) { return !i.reconciled(); })
       .map(function(i) { return new ReconciliationItemViewModel(i); })
@@ -28,8 +28,20 @@ function ReconciliationViewModel(reconciliation, account) {
 
   // listen for new transaction items too
   this.account.transaction_items.subscribe(function(items) {
+    // add new items
     var newItems = _self._createNewItemViewModels(items);
     newItems.pushAllTo(_self.items);
+
+    // remove deleted items
+    var currentIds = _.map(items, function(item) { return item.id(); });
+    var toDelete = _.chain(_self.items())
+      .map(function(vm) { return vm.transaction_item.id(); })
+      .filter(function(id) { return !_.contains(currentIds, id); })
+      .value();
+
+    _self.items.remove(function (vm) {
+      return _.contains(toDelete, vm.transaction_item.id());
+    });
   });
 
   this.debit_items = ko.computed(function() {

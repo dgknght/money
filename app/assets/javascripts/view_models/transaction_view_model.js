@@ -98,7 +98,9 @@ function TransactionViewModel(transaction, entity) {
 
   this.onDestroyed = function() {
     $.each(this.items(), function(index, item) {
-      item.account().transaction_items.remove(item);
+      item.account().transaction_items.remove(function(i) {
+        return i.id() == item.id();
+      });
     });
   };
 
