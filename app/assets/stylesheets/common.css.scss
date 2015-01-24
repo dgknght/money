@@ -316,6 +316,11 @@ table.attributes {
   background-image: image-url("download_small.png");
 }
 
+.small_sort_button {
+  @extend .any_small_button;
+  background-image: image-url("sort_small.png");
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;

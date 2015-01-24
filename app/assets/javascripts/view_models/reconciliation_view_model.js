@@ -44,17 +44,23 @@ function ReconciliationViewModel(reconciliation, account) {
     });
   });
 
+  this.sort_multiplier = ko.observable(1);
+
+  this.toggle_sort = function() {
+    _self.sort_multiplier(_self.sort_multiplier() * -1);
+  };
+
   this.debit_items = ko.computed(function() {
     return _.chain(this.items())
       .filter(function(i) { return i.action() == "debit"; })
-      .sortBy(function(i) { return i.transaction_date(); })
+      .sortBy(function(i) { return i.transaction_date().getTime() * _self.sort_multiplier(); })
       .value();
   }, this);
 
   this.credit_items = ko.computed(function() {
     return _.chain(this.items())
       .filter(function(i) { return i.action() == "credit"; })
-      .sortBy(function(i) { return i.transaction_date(); })
+      .sortBy(function(i) { return i.transaction_date().getTime() * _self.sort_multiplier(); })
       .value();
   }, this);
 

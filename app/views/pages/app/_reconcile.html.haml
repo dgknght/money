@@ -32,7 +32,9 @@
         %span.reconciliation-header Debits
         %table.table.table-striped
           %tr
-            %th Date
+            %th
+              Date
+              %a.small_sort_button{ data: { bind: 'click: toggle_sort' }, title: 'Click here to change the sort direction of the reconciliation items.', href: '#'} Sort
             %th Description
             %th Amount
             %th Reconciled
