@@ -6,6 +6,7 @@ describe AccountsController do
   let!(:cash) { FactoryGirl.create(:account, entity: entity, name: 'cash') }
   let (:ira) { FactoryGirl.create(:commodities_account, entity: entity, name: 'IRA') }
   let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
+  let (:account_data) { fixture_file_upload('files/accounts.csv', 'text/csv') }
   let (:purchase_attributes) do
     {
       transaction_date: '2014-01-01',
@@ -244,6 +245,26 @@ describe AccountsController do
           expect(response).to be_success
         end
       end
+
+      describe 'get :new_import' do
+        it 'should be successful' do
+          get :new_import, entity_id: entity
+          expect(response).to be_success
+        end
+      end
+
+      describe 'post :import' do
+        it 'should redirect to the account index page' do
+          post :import, entity_id: entity, data: account_data
+          expect(response).to redirect_to entity_accounts_path(entity)
+        end
+
+        it 'should import the specified accounts' do
+          expect do
+            post :import, entity_id: entity, data: account_data
+          end.to change(Account, :count).by(10)
+        end
+      end
     end
 
     context 'that does not own the entity' do
@@ -360,6 +381,26 @@ describe AccountsController do
         it 'should redirect to the user home page' do
           get :holdings, id: ira
           expect(response).to redirect_to home_path
+        end
+      end
+
+      describe 'get :new_import' do
+        it 'should redirect to the use home page' do
+          get :new_import, entity_id: entity
+          expect(response).to redirect_to home_path
+        end
+      end
+
+      describe 'post :import' do
+        it 'should redirect to the user home page' do
+          post :import, entity_id: entity, data: account_data
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not import the specified accounts' do
+          expect do
+            post :import, entity_id: entity, data: account_data
+          end.not_to change(Account, :count)
         end
       end
     end
@@ -520,6 +561,26 @@ describe AccountsController do
       it 'should redirect to the sign in page' do
         get :holdings, id: ira
         expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    describe 'get :new_import' do
+      it 'should redirect to the sign in page' do
+        get :new_import, entity_id: entity
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    describe 'post :import' do
+      it 'should redirect to the sign in page' do
+        post :import, entity_id: entity, data: account_data
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not import the specified accounts' do
+        expect do
+          post :import, entity_id: entity, data: account_data
+        end.not_to change(Account, :count)
       end
     end
   end

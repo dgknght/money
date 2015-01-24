@@ -2,8 +2,8 @@ class AccountsController < ApplicationController
   include ApplicationHelper
   
   before_filter :authenticate_user!
-  before_filter :load_entity, only: [:index, :new, :create]
-  before_filter :load_account, except: [:index, :new, :create]
+  before_filter :load_entity, only: [:index, :new, :create, :new_import, :import]
+  before_filter :load_account, except: [:index, :new, :create, :new_import, :import]
   before_filter :set_current_entity
   respond_to :html, :json
   
@@ -14,6 +14,12 @@ class AccountsController < ApplicationController
     respond_with @account.entity, @account
   end
   
+  def import
+    @importer = AccountImporter.new(import_params)
+    flash[:notice] = 'The accounts were imported successfully.' if @importer.save
+    respond_with @importer, location: entity_accounts_path(@entity)
+  end
+
   def index
     authorize! :show, @entity
     @accounts = AccountsPresenter.new(@entity)
@@ -33,6 +39,10 @@ class AccountsController < ApplicationController
   def new_commodity_transaction
     authorize! :update, @account
     @creator = CommodityTransactionCreator.new account: @account
+  end
+
+  def new_import
+    @importer = AccountImporter.new(import_params)
   end
 
   def create
@@ -69,6 +79,10 @@ class AccountsController < ApplicationController
   private
     def account_params
       params.require(:account).permit(:name, :account_type, :entity_id, :parent_id, :content_type)
+    end
+
+    def import_params
+      params.require(:import).permit(:file)
     end
 
     def load_account
