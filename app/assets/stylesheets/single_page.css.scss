@@ -214,3 +214,13 @@ input.number_field {
   color: $green;
   font-weight: bold;
 }
+
+.reconciliation-header {
+  font-weight: bold;
+  font-size: 120%;
+  display: inline-block;
+  margin: {
+    top: .5em;
+    bottom: .2em;
+  }
+}

@@ -29,7 +29,7 @@
           %span{ data: { bind: 'text: formatted_difference, css: { invalid: !valid(), valid: valid() }' } }
     .row
       .col-md-6
-        Debits
+        %span.reconciliation-header Debits
         %table.table.table-striped
           %tr
             %th Date
@@ -45,7 +45,7 @@
               %input{ type: "checkbox", data: { bind: "checked: selected" } }
           <!-- /ko -->
       .col-md-6
-        Credits
+        %span.reconciliation-header Credits
         %table.table.table-striped
           %tr
             %th Date
