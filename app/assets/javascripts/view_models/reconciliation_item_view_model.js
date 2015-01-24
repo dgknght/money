@@ -12,6 +12,10 @@ function ReconciliationItemViewModel(transaction_item) {
     return this.transaction_item.action();
   }, this);
 
+  this.transaction_date = ko.computed(function() {
+    return this.transaction_item.transaction().transaction_date();
+  }, this);
+
   this.formatted_transaction_date = ko.computed(function() {
     return this.transaction_item.transaction().formattedTransactionDate();
   }, this);

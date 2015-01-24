@@ -45,11 +45,17 @@ function ReconciliationViewModel(reconciliation, account) {
   });
 
   this.debit_items = ko.computed(function() {
-    return _.filter(this.items(), function(i) { return i.action() == "debit"; });
+    return _.chain(this.items())
+      .filter(function(i) { return i.action() == "debit"; })
+      .sortBy(function(i) { return i.transaction_date(); })
+      .value();
   }, this);
 
   this.credit_items = ko.computed(function() {
-    return _.filter(this.items(), function(i) { return i.action() == "credit"; });
+    return _.chain(this.items())
+      .filter(function(i) { return i.action() == "credit"; })
+      .sortBy(function(i) { return i.transaction_date(); })
+      .value();
   }, this);
 
   // read-only properties
