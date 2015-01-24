@@ -3,6 +3,9 @@ rvm:
   2.1.2
 env:
   - DB=postgresql
+branches:
+  only:
+    -master
 script:
   - RAILS_ENV=test bundle exec rake db:setup --trace
   - bundle exec rspec spec
