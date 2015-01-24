@@ -15,6 +15,7 @@ SimpleNavigation::Configuration.run do |navigation|
         primary.item :budgets, 'Budgets', entity_budgets_path(current_entity)
         primary.item :budget_monitors, 'Budget monitors', entity_budget_monitors_path(current_entity)
         primary.item :reports, 'Reports', reports_entity_path(current_entity)
+        primary.item :import, 'Import', new_import_entity_accounts_path(current_entity)
       end
       primary.item :sign_out, 'Sign out', destroy_user_session_path, method: :delete
     else

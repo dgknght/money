@@ -12,8 +12,8 @@ Feature: Import accounts
     And I am on the "Personal" entity page
     Then I should see "Import" within the navigation
 
-    When I click "Import Accounts" within the navigation
-    Then I should see "Import" within the page title
+    When I click "Import" within the navigation
+    Then I should see "Import Accounts" within the page title
 
     When I select "accounts.csv" for "File"
     And I click "Submit"

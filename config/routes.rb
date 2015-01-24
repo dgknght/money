@@ -3,7 +3,12 @@ Money::Application.routes.draw do
   devise_for :users
 
   resources :entities do
-    resources :accounts, only: [:new, :create, :index]
+    resources :accounts, only: [:new, :create, :index] do
+      collection do
+        get :new_import
+        post :import
+      end
+    end
     resources :transactions, only: [:index, :new, :create]
     resources :commodities, only: [:index, :new, :create]
     resources :budgets, only: [:index, :new, :create]
