@@ -3,13 +3,16 @@ require 'spec_helper'
 describe AccountImporter do
   let (:account_data) { Rails.root.join('spec', 'fixtures', 'files', 'accounts.csv') }
 
-  it 'should be creatable without attributes' do
-    importer = AccountImporter.new
-    expect(importer).to be_valid
-  end
-
   it 'should be creatable with valid attributes' do
     importer = AccountImporter.new(data: account_data)
+  end
+
+  describe '#data' do
+    it 'should be required' do
+      importer = AccountImporter.new
+      expect(importer).not_to be_valid
+      expect(importer).to have(1).error_on(:data)
+    end
   end
 
   describe '#import' do
