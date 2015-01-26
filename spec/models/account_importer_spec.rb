@@ -7,6 +7,10 @@ describe AccountImporter do
     importer = AccountImporter.new(data: account_data)
   end
 
+  describe '#entity' do
+    it 'should be required'
+  end
+
   describe '#data' do
     it 'should be required' do
       importer = AccountImporter.new
