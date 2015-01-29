@@ -145,6 +145,11 @@ class Account < ActiveRecord::Base
     parent ? parent.depth + 1 : 0
   end
 
+  def self.find_by_path(path)
+    segments = path.is_a?(String) ? path.split('/') : path
+    segments.reduce(nil){|p, n| (p.try(:children) || Account).find_by_name(n)}
+  end
+
   def gains
     value - cost
   end

@@ -654,4 +654,15 @@ describe Account do
       expect(ira.gains_with_children).to eq(600)
     end
   end
+
+  describe '::find_by_path' do
+    include_context 'savings accounts'
+    let!(:spouse) { FactoryGirl.create(:asset_account, name: 'spouse', entity: entity, parent: car) }
+
+    it 'should return the specified account' do
+      spouse_car = Account.find_by_path('savings/car/spouse')
+      expect(spouse_car).not_to be_nil
+      expect(spouse_car).to eq(spouse)
+    end
+  end
 end
