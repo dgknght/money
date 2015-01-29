@@ -19,12 +19,27 @@ class AccountImporter
         select{|r| r[:place_holder] != 'T'}.
         reject{|r| %w(Imbalance-USD Orphan-USD).include?(r[:full_name])}.
       each do |row|
-      entity.accounts.create!(name: row[:name], account_type: TYPE_MAP[row[:type]])
+          parent = get_parent_from_full_name(row[:full_name])
+          entity.accounts.create!(name: row[:name],
+                                  account_type: TYPE_MAP[row[:type]],
+                                  parent: parent)
     end
   end
 
+  def get_parent_from_full_name(full_name)
+    # full name looks like Assets:Savings:Reserve
+    # The first segment is the account type
+    # The last segment is the child account
+    # The rest are parent accounts
+    segments = full_name.split(':').reverse.drop(1).reverse.drop(1)
+    segments.present? ? Account.find_by_path(segments) : nil
+  end
+  private :get_parent_from_full_name
+
   def initialize(params = {})
-    @data = (params || {})[:data]
+    params = params || {}
+    @data = params[:data]
+    @entity = params[:entity]
   end
 
   # TODO Move this to a library
