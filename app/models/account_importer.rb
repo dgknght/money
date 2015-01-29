@@ -6,10 +6,9 @@ class AccountImporter
 
   TYPE_MAP = { "BANK" => Account.asset_type,
                "CREDIT" => Account.liability_type,
-               "INCOME" => Account.income_type,
-               "EXPENSE" => Account.expense_type,
-               "EQUITY" => Account.equity_type,
                "CASH" => Account.asset_type }
+  IGNORE = %w(Assets Liabilities Income Expenses Equity Imbalance-USD Orphan-USD)
+
   attr_accessor :data, :entity
 
   validates_presence_of :data, :entity
@@ -18,15 +17,22 @@ class AccountImporter
     return false unless valid?
 
     Reader.new(data).
-        select{|r| r[:place_holder] != 'T'}.
-        reject{|r| %w(Imbalance-USD Orphan-USD).include?(r[:full_name])}.
+        reject{|r| IGNORE.include?(r[:full_name])}.
       each do |row|
           parent = get_parent_from_full_name(row[:full_name])
-          entity.accounts.create!(name: row[:name],
-                                  account_type: TYPE_MAP[row[:type]],
+          a = entity.accounts.new(name: row[:name],
+                                  account_type: translate_type(row[:type]),
                                   parent: parent)
+          unless a.save
+            puts "unable to save account #{a.inspect}: #{a.errors.full_messages.to_sentence}"
+          end
     end
   end
+
+  def translate_type(import_type)
+    TYPE_MAP[import_type] || import_type.downcase
+  end
+  private :translate_type
 
   def get_parent_from_full_name(full_name)
     # full name looks like Assets:Savings:Reserve

@@ -1,7 +1,7 @@
 .form-group
   =f.label :name
   %br
-  =f.text_field :name, class: 'form-control'
+  =f.text_field :name, class: 'form-control', autofocus: true
 .actions
   =f.submit "Save", class: 'save_button', title: 'Click here to save the entity.'
   =link_to "Back", entities_path, class: 'back_button', title: 'Click here to return the list of entities.'

@@ -3,7 +3,6 @@ Feature: Import accounts
   In order to use data from another accounting application
   I need to be able to import the accounts
 
-  @wip
   Scenario: A user with no existing accounts imports accounts from a GnuCash CSV file
     Given there is a user with email address "john@doe.com" and password "please01"
     And user "john@doe.com" has an entity named "Personal"
@@ -13,11 +12,11 @@ Feature: Import accounts
     Then I should see "Import" within the navigation
 
     When I click "Import" within the navigation
-    Then I should see "Import Accounts" within the page title
+    Then I should see "Import accounts" within the page title
 
-    When I select "accounts.csv" for "File"
+    When I specify the file "accounts.csv" for "Data"
     And I click "Submit"
-    Then I should see "Import Accounts" within the page title
+    Then I should see "Accounts" within the page title
     And I should see the following accounts table
       | Name             | Balance |
       | Assets           |    0.00 |
@@ -27,9 +26,9 @@ Feature: Import accounts
       | Savings          |    0.00 |
       | Car              |    0.00 |
       | Fixed Assets     |    0.00 |
-      | Home             |    0.00 |
       | Car              |    0.00 |
-      | Liability        |    0.00 |
+      | Home             |    0.00 |
+      | Liabilities      |    0.00 |
       | Credit Card      |    0.00 |
       | Loans            |    0.00 |
       | Car              |    0.00 |
@@ -39,7 +38,7 @@ Feature: Import accounts
       | Opening Balances |    0.00 |
       | Income           |    0.00 |
       | Bonus            |    0.00 |
-      | Gifts            |    0.00 |
+      | Gifts Received   |    0.00 |
       | Salary           |    0.00 |
       | Expense          |    0.00 |
       | Auto             |    0.00 |
