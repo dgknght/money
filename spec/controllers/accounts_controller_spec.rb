@@ -255,13 +255,13 @@ describe AccountsController do
 
       describe 'post :import' do
         it 'should redirect to the account index page' do
-          post :import, entity_id: entity, data: account_data
+          post :import, entity_id: entity, import: {data: account_data}
           expect(response).to redirect_to entity_accounts_path(entity)
         end
 
         it 'should import the specified accounts' do
           expect do
-            post :import, entity_id: entity, data: account_data
+            post :import, entity_id: entity, import: {data: account_data}
           end.to change(Account, :count).by(10)
         end
       end
@@ -393,13 +393,13 @@ describe AccountsController do
 
       describe 'post :import' do
         it 'should redirect to the user home page' do
-          post :import, entity_id: entity, data: account_data
+          post :import, entity_id: entity, import: {data: account_data}
           expect(response).to redirect_to home_path
         end
 
         it 'should not import the specified accounts' do
           expect do
-            post :import, entity_id: entity, data: account_data
+            post :import, entity_id: entity, import: {data: account_data}
           end.not_to change(Account, :count)
         end
       end
@@ -573,13 +573,13 @@ describe AccountsController do
 
     describe 'post :import' do
       it 'should redirect to the sign in page' do
-        post :import, entity_id: entity, data: account_data
+        post :import, entity_id: entity, import: {data: account_data}
         expect(response).to redirect_to(new_user_session_path)
       end
 
       it 'should not import the specified accounts' do
         expect do
-          post :import, entity_id: entity, data: account_data
+          post :import, entity_id: entity, import: {data: account_data}
         end.not_to change(Account, :count)
       end
     end

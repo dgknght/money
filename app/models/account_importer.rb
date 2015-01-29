@@ -15,6 +15,8 @@ class AccountImporter
   validates_presence_of :data, :entity
 
   def import
+    return false unless valid?
+
     Reader.new(data).
         select{|r| r[:place_holder] != 'T'}.
         reject{|r| %w(Imbalance-USD Orphan-USD).include?(r[:full_name])}.

@@ -53,5 +53,15 @@ describe AccountImporter do
       reserve = Account.find_by_name("Reserve")
       expect(reserve.parent.try(:name)).to eq("Savings")
     end
+
+    it 'should return true if the import succeeded' do
+      importer = AccountImporter.new(attributes)
+      expect(importer.import).to be_true
+    end
+
+    it 'should return false if the import cannot be completed' do
+      importer = AccountImporter.new(attributes.except(:entity))
+      expect(importer.import).to be_false
+    end
   end
 end

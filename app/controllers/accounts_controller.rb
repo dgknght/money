@@ -16,7 +16,7 @@ class AccountsController < ApplicationController
   
   def import
     @importer = AccountImporter.new(import_params)
-    flash[:notice] = 'The accounts were imported successfully.' if @importer.save
+    flash[:notice] = 'The accounts were imported successfully.' if @importer.import
     respond_with @importer, location: entity_accounts_path(@entity)
   end
 
@@ -42,7 +42,7 @@ class AccountsController < ApplicationController
   end
 
   def new_import
-    @importer = AccountImporter.new(import_params)
+    @importer = AccountImporter.new
   end
 
   def create
@@ -82,7 +82,7 @@ class AccountsController < ApplicationController
     end
 
     def import_params
-      params.require(:import).permit(:file)
+      params.require(:import).permit(:data).merge(entity: @entity)
     end
 
     def load_account
