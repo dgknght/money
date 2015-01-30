@@ -12,6 +12,9 @@ Feature: Import accounts
     Then I should see "Import" within the navigation
 
     When I click "Import" within the navigation
+    Then I should see "Import accounts" within the main content
+
+    When I click "Import accounts" within the main content
     Then I should see "Import accounts" within the page title
 
     When I specify the file "accounts.csv" for "Data"

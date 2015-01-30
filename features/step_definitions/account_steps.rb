@@ -15,7 +15,7 @@ end
 Given(/^(#{ENTITY}) has the following accounts$/) do |entity, table|
   table.hashes.each do |row|
     FactoryGirl.create(:account,  entity: entity,
-                                  account_type: row['Account type'],
+                                  account_type: row['Account type'].downcase,
                                   name: row['Name'],
                                   content_type: row['Content type'])
   end

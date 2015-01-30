@@ -9,7 +9,12 @@ Money::Application.routes.draw do
         post :import
       end
     end
-    resources :transactions, only: [:index, :new, :create]
+    resources :transactions, only: [:index, :new, :create] do
+      collection do
+        get :new_import
+        post :import
+      end
+    end
     resources :commodities, only: [:index, :new, :create]
     resources :budgets, only: [:index, :new, :create]
     resources :budget_monitors, only: [:index, :new, :create]
@@ -23,6 +28,7 @@ Money::Application.routes.draw do
       get :balance_sheet, to: 'reports#balance_sheet'
       get :income_statement, to: 'reports#income_statement'
       get :budget, to: 'reports#budget'
+      get :import
     end
   end
   resources :accounts, only: [:show, :edit, :update, :destroy] do
