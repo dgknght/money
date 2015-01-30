@@ -150,6 +150,13 @@ describe EntitiesController do
           end
         end
       end
+
+      describe 'get :import' do
+        it 'should be successful' do
+          get :import, id: entity
+          expect(response).to be_success
+        end
+      end
     end
     
     context 'that does not own the entity' do
@@ -239,6 +246,13 @@ describe EntitiesController do
             delete :destroy, id: entity, format: :json
             response.body.should == [].to_json
           end
+        end
+      end
+
+      describe 'get :import' do
+        it 'should redirect to the user home page' do
+          get :import, id: entity
+          expect(response).to redirect_to(home_path)
         end
       end
     end
@@ -369,6 +383,13 @@ describe EntitiesController do
             delete :destroy, id: entity, format: :json
           end.should_not change(Entity, :count)
         end
+      end
+    end
+
+    describe 'get :import' do
+      it 'should redirect to the sign in page' do
+        get :import, id: entity
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end

@@ -27,6 +27,9 @@ class EntitiesController < ApplicationController
   def edit
   end
 
+  def import
+  end
+
   def update
     @entity.update_attributes(entity_params)
     flash[:notice] = 'The entity was updated successfully.' if @entity.save

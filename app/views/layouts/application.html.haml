@@ -21,9 +21,9 @@
         .col-md-6
           %nav{role: "navigation"}
             #html_nav
-              =render_navigation
+              =render_navigation levels: 1
             #ajax_nav{ style: "display: none;" }
-              =render_navigation context: :ajax
+              =render_navigation context: :ajax, levels: 1
         .col-md-1
           -if user_signed_in?
             .current_user
