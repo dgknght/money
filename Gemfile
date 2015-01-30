@@ -15,6 +15,7 @@ gem 'simple-navigation'
 gem 'cancan'
 gem 'rails-footnotes', '~> 4.0'
 gem 'pg'
+gem 'chronic'
 
 group :test, :development do
   gem 'rspec-rails'

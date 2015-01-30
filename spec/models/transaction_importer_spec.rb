@@ -32,8 +32,20 @@ describe TransactionImporter do
   end
 
   describe '#import' do
-    it 'should return true on success'
-    it 'should return false on failure'
-    it 'should import the transactions'
+    it 'should return true on success' do
+      importer = TransactionImporter.new(attributes)
+      expect(importer.import).to be_true
+    end
+
+    it 'should return false if unable to import the transactions' do
+      importer = TransactionImporter.new(attributes.except(:data))
+      expect(importer.import).to be_false
+    end
+
+    it 'should import the transactions' do
+      expect do
+        TransactionImporter.new(attributes).import
+      end.to change(Transaction, :count).by(2)
+    end
   end
 end
