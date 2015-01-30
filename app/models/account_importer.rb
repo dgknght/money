@@ -1,5 +1,3 @@
-require 'csv'
-
 # Imports accounts
 class AccountImporter
   include ActiveModel::Validations
@@ -16,7 +14,7 @@ class AccountImporter
   def import
     return false unless valid?
 
-    Reader.new(data).
+    CsvReader.new(data).
         reject{|r| IGNORE.include?(r[:full_name])}.
       each do |row|
           parent = get_parent_from_full_name(row[:full_name])
@@ -48,35 +46,5 @@ class AccountImporter
     params = params || {}
     @data = params[:data]
     @entity = params[:entity]
-  end
-
-  # TODO Move this to a library
-
-  # Reads a CSV file, yielding a hash for each row with keys
-  # based on the first row of the file
-  class Reader
-    include Enumerable
-
-    def initialize(data)
-      @data = data
-    end
-
-    def each
-      CSV.parse(@data.read) do |row|
-        if @header
-          yield to_hash(row)
-        else
-          @header = row
-        end
-      end
-    end
-
-    def to_hash(row)
-      Hash.new.tap do |h|
-        row.each_with_index do |value, index|
-          h[@header[index].to_sym] = value
-        end
-      end
-    end
   end
 end
