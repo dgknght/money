@@ -203,6 +203,14 @@ class Account < ActiveRecord::Base
     return children.reduce(value) { |sum, child| sum + child.value_with_children }
   end
 
+  def left_side?
+    LEFT_SIDE.include?(account_type)
+  end
+
+  def right_side?
+    RIGHT_SIDE.include?(account_type)
+  end
+
   private
     def credit_transaction_items(start_date, end_date)
       result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date)
@@ -217,20 +225,12 @@ class Account < ActiveRecord::Base
       date
     end
     
-    def left_side?
-      LEFT_SIDE.include?(account_type)
-    end
-    
     def parent_is_same_type?
       parent_id.nil? || parent.account_type == self.account_type
     end
     
     def parent_must_have_same_type
       errors.add(:parent_id, 'must have the same account type') unless parent_is_same_type?
-    end
-    
-    def right_side?
-      RIGHT_SIDE.include?(account_type)
     end
     
     def set_defaults
