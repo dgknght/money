@@ -50,5 +50,15 @@ describe TransactionImporter do
         TransactionImporter.new(attributes).import
       end.to change(Transaction, :count).by(2)
     end
+
+    it 'should leave the account with the correct balances' do
+      TransactionImporter.new(attributes).import
+
+      [checking, salary, groceries].each{|a| a.reload}
+
+      expect(checking.balance).to eq(1900)
+      expect(salary.balance).to eq(2000)
+      expect(groceries.balance).to eq(100)
+    end
   end
 end

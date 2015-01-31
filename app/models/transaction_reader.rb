@@ -14,8 +14,8 @@ class TransactionReader
         yield @transaction if @transaction
         @transaction = TransactionRecord.new(Chronic.parse(row["Date"]), row["Description"], [])
       else
-        @transaction.items << ItemRecord.new(BigDecimal.new(row["To Num."]),
-                                             BigDecimal.new(row["From Num."]),
+        @transaction.items << ItemRecord.new(BigDecimal.new(row["To Num."].gsub(',', '')),
+                                             BigDecimal.new(row["From Num."].gsub(',', '')),
                                              row["Category"],
                                              row["Number"],
                                              row["Memo"])
