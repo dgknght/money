@@ -6,6 +6,7 @@ class CsvReader
   include Enumerable
 
   def initialize(data)
+    raise "Parameter 'data' cannot be nil" if data.nil?
     @data = data
   end
 

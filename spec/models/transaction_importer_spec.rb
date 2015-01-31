@@ -9,6 +9,9 @@ describe TransactionImporter do
       data: transaction_data
     }
   end
+  let!(:checking) { FactoryGirl.create(:account, name: "Checking", entity: entity) }
+  let!(:salary) { FactoryGirl.create(:account, name: "Salary", entity: entity, account_type: Account.income_type) }
+  let!(:groceries) { FactoryGirl.create(:account, name: "Groceries", entity: entity, account_type: Account.expense_type) }
 
   it 'should be creatable from valid attributes' do
     importer = TransactionImporter.new(attributes)

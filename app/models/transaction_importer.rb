@@ -13,33 +13,28 @@ class TransactionImporter
   end
 
   def import
-    TransactionReader.new(CsvReader.new(data)).each do |t|
-      puts "t=#{t.inspect}"
-    end
+    return false unless valid?
+    TransactionReader.new(CsvReader.new(data)).each{ |t| import_transaction(t)}
+    true
   end
 
-  class TransactionReader
-    include Enumerable
+  private
 
-    def initialize(reader)
-      @reader = reader
-    end
+  def import_transaction(t)
+    transaction = entity.transactions.new(transaction_date: t.transaction_date,
+                                          description: t.description,
+                                          items_attributes: t.items.map{ |i| translate_item(i)})
+    transaction.save
+  end
 
-    TransactionRecord = Struct.new(:transaction_date, :description, :items)
-    ItemRecord = Struct.new(:amount, :account, :number, :memo)
-    def each
-      @reader.each do |row|
-        if row["Date"].present?
-          yield @transaction if @transaction
-          @transaction = TransactionRecord.new(Chronic.parse(row["Date"]), row["Description"], [])
-        else
-          @transaction.items << ItemRecord.new(BigDecimal.new(row["From Num."]),
-                                               row["Category"],
-                                               row["Number"],
-                                               row["Memo"])
-        end
-      end
-      yield @transaction if @transaction
-    end
+  def translate_item(i)
+    amount = i.to_amount == 0 ? i.from_amount : i.to_amount
+    { account: lookup_account(i.account),
+      amount: amount.abs,
+      action: i.to_amount == 0 ? TransactionItem.debit : TransactionItem.credit }
+  end
+
+  def lookup_account(name)
+    entity.accounts.find_by_name(name) #TODO how to handle ambiguous names?
   end
 end
