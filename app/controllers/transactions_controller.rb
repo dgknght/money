@@ -58,7 +58,8 @@ class TransactionsController < ApplicationController
     authorize! :update, @entity
     @importer = TransactionImporter.new(import_params)
     flash[:notice] = "The transactions were imported successfully" if @importer.import
-    respond_with @importer, location: entity_transactions_path(@entity)
+    respond_with @importer, location: entity_transactions_path(@entity),
+                            action: :new_import
   end
 
   private
@@ -67,6 +68,10 @@ class TransactionsController < ApplicationController
       entity_transactions_path(@entity)
     end
     
+    def import_params
+      params.require(:import).permit(:data).merge(entity: @entity)
+    end
+
     def load_account
       @account = Account.find(params[:account_id]) if params[:account_id]
     end
