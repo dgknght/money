@@ -31,7 +31,7 @@ class TransactionImporter
     amount = i.to_amount == 0 ? i.from_amount : i.to_amount
     { account: lookup_account(i.account),
       amount: amount.abs,
-      action: i.to_amount == 0 ? TransactionItem.debit : TransactionItem.credit }
+      action: amount < 0 ? TransactionItem.credit : TransactionItem.debit }
   end
 
   def lookup_account(name)
