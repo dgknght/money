@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe TransactionsController do
   let (:entity) { FactoryGirl.create(:entity) }
-  let (:account) { FactoryGirl.create(:account, entity: entity) }
-  let (:account2) { FactoryGirl.create(:account, entity: entity) }
+  let!(:account) { FactoryGirl.create(:account, entity: entity, name: "Groceries", account_type: Account.expense_type) }
+  let!(:account2) { FactoryGirl.create(:account, entity: entity, name: "Checking") }
+  let!(:salary) { FactoryGirl.create(:account, entity: entity, name: "Salary", account_type: Account.income_type) }
   let!(:transaction) { FactoryGirl.create(:transaction, entity: entity, description: 'The payee') }
   let (:import_attributes) do
     {
