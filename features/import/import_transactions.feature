@@ -1,4 +1,3 @@
-@wip
 Feature: Import transactions
   As a user
   In order to use data that I have entered into another accounting system
@@ -40,5 +39,6 @@ Feature: Import transactions
     And I click "Submit"
     Then I should see "Transactions" within the page title
     And I should see the following transactions table
-     | Transaction date | Description  |   Amount |
-     | 9/5/2014         | LivingSocial | 5,000.00 |
+     | Transaction Date | Description  |   Amount |
+     |         1/4/2015 | Groceries    |   100.00 |
+     |         1/1/2015 | Paycheck     | 2,000.00 |
