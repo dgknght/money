@@ -14,8 +14,14 @@ class TransactionImporter
 
   def import
     return false unless valid?
-    TransactionReader.new(CsvReader.new(data)).each{ |t| import_transaction(t)}
+    Transaction.transaction do
+      TransactionReader.new(CsvReader.new(data)).each{ |t| import_transaction(t)}
+    end
     true
+  rescue e
+    flash[:error] = "Unable to import the transactions: #{e.message}"
+    logger.error "Unable to import the transactions: #{e.inspect}"
+    false
   end
 
   private
@@ -31,7 +37,8 @@ class TransactionImporter
     amount = i.to_amount == 0 ? i.from_amount : i.to_amount
     { account: lookup_account(i.account),
       amount: amount.abs,
-      action: amount < 0 ? TransactionItem.credit : TransactionItem.debit }
+      action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
+      memo: i.memo }
   end
 
   def lookup_account(name)

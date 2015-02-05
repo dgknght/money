@@ -34,4 +34,4 @@
             =button_tag('Delete', type: 'button', class: 'delete_button', onclick: "removeTransactionItem(#{index});")
 .actions
   =f.submit 'Save', class: 'save_button', title: 'Click here to save the transaction.'
-  =link_to 'Back', entity_path(@entity), class: 'back_button', title: 'Click here to return to the list of entities.'
+  =link_to 'Back', entity_transactions_path(@entity || @transaction.entity), class: 'back_button', title: 'Click here to return to the list of entities.'
