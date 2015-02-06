@@ -16,8 +16,16 @@ class BalanceSheetReport < Report
     # Equity
     equities = _flatten(@entity.accounts.equity)
     equity_total = sum(equities)
+
+    # Income
+    income = _flatten(@entity.accounts.income)
+    income_total = sum(income)
+
+    # Expense
+    expense = _flatten(@entity.accounts.expense)
+    expense_total = sum(expense)
     
-    retained_earnings = asset_total - (equity_total + liability_total)
+    retained_earnings = income_total - expense_total
     
     # Assemble the final result
     [ { account: 'Assets', balance: format(asset_total), depth: 0 } ] +
