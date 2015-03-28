@@ -18,6 +18,7 @@ SimpleNavigation::Configuration.run do |navigation|
         primary.item :import, 'Import', import_entity_path(current_entity) do |import|
           import.item :import_accounts, 'Import accounts', new_import_entity_accounts_path(current_entity)
           import.item :import_transaction, 'Import transactions', new_import_entity_transactions_path(current_entity)
+          import.item :import_gnucash, 'Import from GnuCash', new_gnucash_entity_path(current_entity)
         end
       end
       primary.item :sign_out, 'Sign out', destroy_user_session_path, method: :delete
