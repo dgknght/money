@@ -18,3 +18,7 @@ pickle-email-*.html
 *.swp
 *~
 .DS_Store
+*.log
+*.LNK
+*.LCK
+*.gnucash.*.gnucash
