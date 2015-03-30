@@ -157,6 +157,13 @@ describe EntitiesController do
           expect(response).to be_success
         end
       end
+
+      describe 'get :new_gnucash' do
+        it 'should be successful' do
+          get :new_gnucash, id: entity
+          expect(response).to be_success
+        end
+      end
     end
     
     context 'that does not own the entity' do
@@ -253,6 +260,13 @@ describe EntitiesController do
         it 'should redirect to the user home page' do
           get :import, id: entity
           expect(response).to redirect_to(home_path)
+        end
+      end
+
+      describe 'get :new_gnucash' do
+        it 'should return "resource not found"' do
+          get :new_gnucash, id: entity
+          expect(response.response_code).to eq(404)
         end
       end
     end
@@ -390,6 +404,13 @@ describe EntitiesController do
       it 'should redirect to the sign in page' do
         get :import, id: entity
         expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    describe 'get :new_gnucash' do
+      it 'should return "access denied"' do
+        get :new_gnucash, id: entity
+        expect(response.response_code).to eq(401)
       end
     end
   end

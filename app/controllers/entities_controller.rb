@@ -18,6 +18,10 @@ class EntitiesController < ApplicationController
     @entity = current_user.entities.new
   end
 
+  def new_gnucash
+    puts "we're here in the new_gnucash method"
+  end
+
   def create
     @entity = current_user.entities.new(entity_params)
     flash[:notice] = 'The entity was created successfully.' if @entity.save
