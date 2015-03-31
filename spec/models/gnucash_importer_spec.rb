@@ -5,7 +5,7 @@ describe GnucashImporter do
   let (:gnucash_data) { Rails.root.join('spec', 'fixtures', 'files', 'sample.gnucash') }
   let (:attributes) do
     {
-      data: gnucash_data,
+      data: Struct.new(:tempfile).new(gnucash_data),
       entity: entity
     }
   end

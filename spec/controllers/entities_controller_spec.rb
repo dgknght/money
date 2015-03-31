@@ -168,7 +168,7 @@ describe EntitiesController do
 
       describe 'post :gnucash' do
         it 'should redirect to the accounts page' do
-          post :gnucash, id: entity, import: gnucash_data
+          post :gnucash, id: entity, import: {data: Struct.new(:tempfile).new(gnucash_data)}
           expect(response).to redirect_to(entity_accounts_path(entity))
         end
 
