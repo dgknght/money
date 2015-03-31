@@ -266,7 +266,7 @@ describe EntitiesController do
       describe 'get :new_gnucash' do
         it 'should return "resource not found"' do
           get :new_gnucash, id: entity
-          expect(response.response_code).to eq(404)
+          expect(response).to redirect_to(home_path)
         end
       end
     end
@@ -408,9 +408,9 @@ describe EntitiesController do
     end
 
     describe 'get :new_gnucash' do
-      it 'should return "access denied"' do
+      it 'should redirect to the sign in page' do
         get :new_gnucash, id: entity
-        expect(response.response_code).to eq(401)
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end

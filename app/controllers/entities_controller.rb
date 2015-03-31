@@ -19,7 +19,6 @@ class EntitiesController < ApplicationController
   end
 
   def new_gnucash
-    puts "we're here in the new_gnucash method"
   end
 
   def create
