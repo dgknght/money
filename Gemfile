@@ -16,6 +16,7 @@ gem 'cancan'
 gem 'rails-footnotes', '~> 4.0'
 gem 'pg'
 gem 'chronic'
+gem 'nokogiri'
 
 group :test, :development do
   gem 'rspec-rails'

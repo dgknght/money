@@ -216,6 +216,7 @@ DEPENDENCIES
   jquery-rails
   launchy
   lunchy
+  nokogiri
   pg
   rails (= 4.0.0)
   rails-erd
