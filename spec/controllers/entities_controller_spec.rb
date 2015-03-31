@@ -8,6 +8,7 @@ describe EntitiesController do
       name: 'The new entity'
     }
   end
+  let (:gnucash_data) { fixture_file_upload('files/sample.gnucash', 'application/zip') }
   
   context 'for an authenticated user' do
     before(:each) { sign_in user }
@@ -164,6 +165,16 @@ describe EntitiesController do
           expect(response).to be_success
         end
       end
+
+      describe 'post :gnucash' do
+        it 'should redirect to the accounts page' do
+          post :gnucash, id: entity, import: gnucash_data
+          expect(response).to redirect_to(entity_accounts_path(entity))
+        end
+
+        it 'should create the specified accounts'
+        it 'should create the specified transactions'
+      end
     end
     
     context 'that does not own the entity' do
@@ -268,6 +279,10 @@ describe EntitiesController do
           get :new_gnucash, id: entity
           expect(response).to redirect_to(home_path)
         end
+      end
+
+      describe 'post :gnucash' do
+        it 'should redirect to the user home page'
       end
     end
   end
@@ -412,6 +427,10 @@ describe EntitiesController do
         get :new_gnucash, id: entity
         expect(response).to redirect_to(new_user_session_path)
       end
+    end
+
+    describe 'post :gnucash' do
+      it 'should redirect to the sign in page'
     end
   end
 end

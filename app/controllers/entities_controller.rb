@@ -30,7 +30,14 @@ class EntitiesController < ApplicationController
   def edit
   end
 
-  def import
+  def gnucash
+    importer = GnucashImporter.new(gnucash_params)
+    if importer.import
+      flash[:notice] = 'The information was imported successfully.'
+      redirect_to entity_accounts_path(@entity)
+    else
+      render :new_gnucash
+    end
   end
 
   def update

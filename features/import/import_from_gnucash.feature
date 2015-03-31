@@ -18,7 +18,7 @@ Feature: Import from gnucash
     When I click "Import from GnuCash" within the main content
     Then I should see "Import from GnuCash" within the page title
 
-    When I specify the file "Test.gnucash" for "Data"
+    When I specify the file "sample.gnucash" for "Data"
     And I click "Submit"
     Then I should see "Accounts" within the page title
     And I should see the following accounts table
