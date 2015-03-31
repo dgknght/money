@@ -19,6 +19,7 @@ class EntitiesController < ApplicationController
   end
 
   def new_gnucash
+    @importer = GnucashImporter.new
   end
 
   def create
@@ -31,8 +32,8 @@ class EntitiesController < ApplicationController
   end
 
   def gnucash
-    importer = GnucashImporter.new(gnucash_params)
-    if importer.import
+    @importer = GnucashImporter.new(gnucash_params)
+    if @importer.import!
       flash[:notice] = 'The information was imported successfully.'
       redirect_to entity_accounts_path(@entity)
     else
@@ -59,5 +60,9 @@ class EntitiesController < ApplicationController
     
     def entity_params
       params.require(:entity).permit(:name)
+    end
+
+    def gnucash_params
+      params.require(:import).permit(:data).merge(entity: @entity)
     end
 end

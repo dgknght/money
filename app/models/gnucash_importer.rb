@@ -13,10 +13,13 @@ class GnucashImporter
     return unless valid?
     parser = Nokogiri::XML::SAX::Parser.new(GnucashDocument.new(ImportListener.new(@entity)))
     parser.parse(gzip_reader)
+    true
+  rescue
+    false
   end
 
   def gzip_reader
-    Zlib::GzipReader.open(data)
+    Zlib::GzipReader.open(data.tempfile)
   end
 
   class ImportListener

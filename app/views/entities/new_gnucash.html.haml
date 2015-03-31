@@ -2,6 +2,7 @@
   .col-md-4.col-md-offset-4
     %h2#page_title Import from GnuCash
 
+    =render 'shared/errors', :resource => @importer
     =form_tag(gnucash_entity_path(@entity), multipart: true) do
       .form-group
         =label_tag 'import[data]', 'Data'
