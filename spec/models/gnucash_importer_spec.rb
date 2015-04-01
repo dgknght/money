@@ -30,11 +30,19 @@ describe GnucashImporter do
   end
 
   describe '#import!' do
-    it 'should create the specified accounts' do
+    it 'should create the correct number of accounts' do
       importer = GnucashImporter.new(attributes)
       expect do
         importer.import!
       end.to change(Account, :count).by(18)
+    end
+
+    it 'should create the correct accounts' do
+      GnucashImporter.new(attributes).import!
+      expect(Account.all.map(&:name).sort).to eq(["Checking", "Current Assets", "Federal Income", "Fixed Assets",
+                                                 "Groceries", "House", "Imbalance-USD", "Interest", "Loans",
+                                                 "Medicare", "Opening Balances", "Rent", "Salary", "Social Security",
+                                                 "Taxes", "Vehicle", "Vehicle Loan", "Vehicle Loan Interest"])
     end
 
     it 'should create the specified commodities'
