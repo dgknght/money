@@ -46,6 +46,7 @@ describe GnucashImporter do
     end
 
     it 'should create the specified commodities'
+    it 'should reflect the correct reconciliation state for each transaction item'
 
     it 'should create the specified transactions' do
       importer = GnucashImporter.new(attributes)
