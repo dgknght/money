@@ -20,9 +20,6 @@ class GnucashImporter
   end
 
   def gzip_reader
-
-    puts "data=#{data.class}"
-
     Zlib::GzipReader.open(data.tempfile)
   end
 end
