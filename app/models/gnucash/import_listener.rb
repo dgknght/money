@@ -2,9 +2,15 @@ module Gnucash
   # Listener that watches a SAX parser that parses GnuCash files
   # and responds to the data that the parser finds
   class ImportListener
-    TYPE_MAP = { "BANK" => Account.asset_type,
-      "CREDIT" => Account.liability_type,
-      "CASH" => Account.asset_type }
+    TYPE_MAP = {"BANK"   => Account.asset_type,
+                "CREDIT" => Account.liability_type,
+                "CASH"   => Account.asset_type,
+                "STOCK"  => Account.asset_type,
+                "MUTUAL" => Account.asset_type}
+
+    CONTENT_TYPE_MAP = {"STOCK"  => Account.commodity_content,
+                        "MUTUAL" => Account.commodity_content}
+
     IGNORE_ACCOUNTS = ["Root Account", "Assets", "Liabilities", "Expenses", "Income", "Equity"]
 
     def account_map
@@ -13,13 +19,19 @@ module Gnucash
 
     def account_read(source)
       return if ignore_account?(source[:name])
-      account = @entity.accounts.new(name: source[:name],
+      content_type = map_account_content_type(source[:type])
+      account = @entity.accounts.new(name: content_type == Account.currency_content ? source[:name] : source[:code],
                                      account_type: map_account_type(source[:type]),
+                                     content_type: content_type,
                                      parent_id: lookup_account_id(source[:parent]))
       if account.save
         account_map[source[:id]] = account.id
       else
         raise "Unable to save the account \"#{account.name}\": #{account.errors.full_messages.to_sentence}"
+      end
+
+      if content_type == Account.commodity_content && account.parent.content_type != Account.commodities_content
+        account.parent.update_attribute(:content_type, Account.commodities_content)
       end
     end
 
@@ -49,6 +61,10 @@ module Gnucash
       account_map[source_id]
     end
 
+    def map_account_content_type(type)
+      CONTENT_TYPE_MAP.fetch(type, Account.currency_content)
+    end
+
     def map_account_type(type)
       TYPE_MAP.fetch(type, type.downcase)
     end
@@ -60,6 +76,36 @@ module Gnucash
     end
 
     def transaction_read(source)
+      if commodity_transaction?(source)
+        save_commodity_transaction(source)
+      else
+        save_regular_transaction(source)
+      end
+    end
+
+    def commodity_transaction?(source)
+      source[:items].any?{|i| i.has_key?(:action)}
+    end
+
+    def save_commodity_transaction(source)
+      # points to the investment account
+      commodities_item = source[:items].select{|i| !i.has_key?(:action)}.first
+      commodities_account_id = lookup_account_id(commodities_item[:account])
+
+      # points to the account that tracks purchases of a commodity within the investment account
+      commodity_item = source[:items].select{|i| i.has_key?(:action)}.first
+      commodity_account_id = lookup_account_id(commodity_item[:account])
+      commodity_account = Account.find(commodity_account_id)
+
+      CommodityTransactionCreator.new(account_id: commodities_account_id,
+                                      transaction_date: source[:date_posted],
+                                      action: commodity_item[:action].downcase,
+                                      symbol: commodity_account.name,
+                                      shares: parse_amount(commodity_item[:quantity]),
+                                      value: parse_amount(commodity_item[:value])).create!
+    end
+
+    def save_regular_transaction(source)
       transaction = @entity.transactions.new(transaction_date: source[:"date-posted"],
                                             description: source[:description])
       source[:items].each do |item_source|
