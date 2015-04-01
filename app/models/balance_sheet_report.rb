@@ -1,5 +1,5 @@
 class BalanceSheetReport < Report
-  def initialize(entity, filter)
+  def initialize(entity, filter=BalanceSheetFilter.new)
     @entity = entity
     @filter = filter
   end

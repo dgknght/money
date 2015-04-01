@@ -39,5 +39,27 @@ module Gnucash
     def map_account_type(type)
       TYPE_MAP.fetch(type, type.downcase)
     end
+
+    # The amount comes in as a fraction, like 200000/100
+    def parse_amount(input)
+      numerator, denominator = input.split('/')
+      BigDecimal.new(numerator) / BigDecimal.new(denominator)
+    end
+
+    def transaction_read(source)
+      transaction = @entity.transactions.new(transaction_date: source[:"date-posted"],
+                                            description: source[:description])
+      source[:items].each do |item_source|
+        amount = parse_amount(item_source[:value])
+        transaction.items.new(account_id: lookup_account_id(item_source[:account]),
+                              action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
+                              amount: amount.abs,
+                              reconciled: item_source[:"reconciled_state"] == 'y')
+      end
+
+      unless transaction.save
+        raise "Unable to save the transaction \"#{transaction.description}\": #{transaction.errors.full_messages.to_sentence}"
+      end
+    end
   end
 end

@@ -46,8 +46,50 @@ describe GnucashImporter do
     end
 
     it 'should create the specified commodities'
-    it 'should create the specified transactions'
-    it 'should result in a balance sheet report with correct balances'
-    # TODO Should we test income statement also?
+
+    it 'should create the specified transactions' do
+      importer = GnucashImporter.new(attributes)
+      expect do
+        importer.import!
+      end.to change(Transaction, :count).by(19)
+    end
+
+    it 'should result in a balance sheet report with correct balances' do
+      GnucashImporter.new(attributes).import!
+      report = BalanceSheetReport.new(entity)
+      expected = [{account: "Assets"              , balance: "227,688.00", depth: 0},
+                  {account: "Current Assets"      , balance:   "2,688.00", depth: 1},
+                  {account: "Checking"            , balance:   "2,688.00", depth: 2},
+                  {account: "Fixed Assets"        , balance: "225,000.00", depth: 1},
+                  {account: "House"               , balance: "200,000.00", depth: 2},
+                  {account: "Vehicle"             , balance:  "25,000.00", depth: 2},
+                  {account: "Imbalance-USD"       , balance:       "0.00", depth: 1},
+                  {account: "Liabilities"         , balance:  "24,400.00", depth: 0},
+                  {account: "Loans"               , balance:  "24,400.00", depth: 1},
+                  {account: "Vehicle Loan"        , balance:  "24,400.00", depth: 2},
+                  {account: "Equity"              , balance: "203,288.00", depth: 0},
+                  {account: "Opening Balances"    , balance: "200,000.00", depth: 1},
+                  {account: "Retained Earnings"   , balance:   "3,288.00", depth: 1},
+                  {account: "Liabilities + Equity", balance: "227,688.00", depth: 0}]
+      expect(report.content).to eq(expected)
+    end
+
+    it 'should result in an income statement with correct balances' do
+      GnucashImporter.new(attributes).import!
+      report = IncomeStatementReport.new(entity, IncomeStatementFilter.new(from: Chronic.parse("2015-01-01"), to: Chronic.parse("2015-12-31")))
+      expected = [{account: "Income"                , balance: "8,000.00", depth: 0},
+                  {account: "Salary"                , balance: "8,000.00", depth: 1},
+                  {account: "Expense"               , balance: "4,712.00", depth: 0},
+                  {account: "Groceries"             , balance:   "800.00", depth: 1},
+                  {account: "Interest"              , balance:   "100.00", depth: 1},
+                  {account: "Vehicle Loan Interest" , balance:   "100.00", depth: 2},
+                  {account: "Rent"                  , balance: "1,600.00", depth: 1},
+                  {account: "Taxes"                 , balance: "2,212.00", depth: 1},
+                  {account: "Federal Income"        , balance: "1,600.00", depth: 2},
+                  {account: "Medicare"              , balance:   "116.00", depth: 2},
+                  {account: "Social Security"       , balance:   "496.00", depth: 2},
+                  {account: "Net"                   , balance: "3,288.00", depth: 0}]
+      expect(report.content).to eq(expected)
+    end
   end
 end

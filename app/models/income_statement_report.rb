@@ -17,7 +17,7 @@ class IncomeStatementReport < Report
       [{ account: 'Net', balance: format(income_total - expense_total), depth: 0}]
   end
   
-  def initialize(entity, filter)
+  def initialize(entity, filter=IncomeStatementFilter.new)
     @entity = entity
     @filter = filter.is_a?(IncomeStatementFilter) ? filter : IncomeStatementFilter.new(filter)
   end
