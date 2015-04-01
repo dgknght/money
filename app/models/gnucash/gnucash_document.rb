@@ -15,6 +15,8 @@ module Gnucash
         @transaction_items = []
       when "trn:split"
         @transaction_item = HashWithIndifferentAccess.new
+      when "gnc:commodity"
+        @commodity = HashWithIndifferentAccess.new
       end
     end
 
@@ -23,7 +25,9 @@ module Gnucash
     end
 
     def end_element(name)
-      finish_account_element(name) || finish_transaction_element(name)
+      finish_account_element(name) ||
+        finish_transaction_element(name) ||
+        finish_commodity_element(name)
     end
 
     def finish_account_element(name)
@@ -36,6 +40,15 @@ module Gnucash
         true
       end
       false
+    end
+
+    def finish_commodity_element(name)
+      case name
+      when /^cmdty:(.*)/
+        @commodity[$1] = @last_content
+      when "gnc:commodity"
+        @listener.commodity_read(@commodity)
+      end
     end
 
     def finish_transaction_element(name)

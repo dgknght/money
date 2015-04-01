@@ -23,6 +23,19 @@ module Gnucash
       end
     end
 
+    def commodity_read(source)
+      # ignore USD and template
+      return if %w(USD template).include?(source[:id])
+
+      commodity = @entity.commodities.new(name: source[:name],
+                                          symbol: source[:id],
+                                          market: source[:space])
+
+      unless commodity.save
+        raise "Unable to save the commodity \"#{commodity.name}\": #{commodity.errors.full_messages.to_sentence}"
+      end
+    end
+
     def ignore_account?(name)
       IGNORE_ACCOUNTS.include?(name)
     end

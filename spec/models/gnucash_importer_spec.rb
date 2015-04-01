@@ -45,7 +45,12 @@ describe GnucashImporter do
                                                  "Taxes", "Vehicle", "Vehicle Loan", "Vehicle Loan Interest"])
     end
 
-    it 'should create the specified commodities'
+    it 'should create the specified commodities' do
+      expect do
+        GnucashImporter.new(attributes).import!
+      end.to change(Commodity, :count).by(2)
+    end
+
     it 'should reflect the correct reconciliation state for each transaction item'
 
     it 'should create the specified transactions' do
