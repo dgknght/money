@@ -15,7 +15,7 @@ class BalanceSheetReport < Report
     
     # Equity
     equities = _flatten(@entity.accounts.equity)
-    equity_total = sum(equities)
+    equity_subtotal = sum(equities)
 
     # Income
     income = _flatten(@entity.accounts.income)
@@ -26,20 +26,23 @@ class BalanceSheetReport < Report
     expense_total = sum(expense)
     
     retained_earnings = income_total - expense_total
+    unrealized_gains = @entity.unrealized_gains
+    equity_total = equity_subtotal + retained_earnings + unrealized_gains
     
     # Assemble the final result
     [ { account: 'Assets', balance: format(asset_total), depth: 0 } ] +
     transform(assets) +
     [ { account: 'Liabilities', balance: format(liability_total), depth: 0 } ] +
     transform(liabilities) +
-    [ { account: 'Equity', balance: format(equity_total + retained_earnings), depth: 0 } ] +
+    [ { account: 'Equity', balance: format(equity_total), depth: 0 } ] +
     transform(equities) +
     [ { account: 'Retained Earnings', balance: format(retained_earnings), depth: 1 } ] +
-    [ { account: 'Liabilities + Equity', balance: format((equity_total + retained_earnings) + liability_total), depth: 0 } ]    
+    [ { account: 'Unrealized Gains', balance: format(unrealized_gains), depth: 1 } ] +
+    [ { account: 'Liabilities + Equity', balance: format(equity_total + liability_total), depth: 0 } ]
   end
   
   private
     def _flatten(accounts)
-      flatten accounts, 1, :value_with_children_as_of, @filter.as_of
+      flatten accounts, 1, ->(account) { !account.commodity? }, :value_with_children_as_of, @filter.as_of
     end
 end
