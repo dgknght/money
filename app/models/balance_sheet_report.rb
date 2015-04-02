@@ -40,6 +40,6 @@ class BalanceSheetReport < Report
   
   private
     def _flatten(accounts)
-      flatten accounts, 1, :balance_with_children_as_of, @filter.as_of
+      flatten accounts, 1, :value_with_children_as_of, @filter.as_of
     end
 end
