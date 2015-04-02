@@ -75,6 +75,16 @@ module Gnucash
       BigDecimal.new(numerator) / BigDecimal.new(denominator)
     end
 
+    def price_read(source)
+      commodity = @entity.commodities.find_by(symbol: source[:commodity][:id])
+      price = commodity.prices.new(trade_date: source[:time],
+                                   price: parse_amount(source[:value]))
+
+      unless price.save
+        raise "Unable to save the price: #{price.errors.full_messages.to_sentence}"
+      end
+    end
+
     def transaction_read(source)
       if commodity_transaction?(source)
         save_commodity_transaction(source)

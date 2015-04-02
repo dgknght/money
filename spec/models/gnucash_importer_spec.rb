@@ -63,6 +63,12 @@ describe GnucashImporter do
       end.to change(Commodity, :count).by(2)
     end
 
+    it 'should import commodity prices' do
+      expect do
+        GnucashImporter.new(attributes).import!
+      end.to change(Price, :count).by(8)
+    end
+
     it 'should reflect the correct reconciliation state for each transaction item'
 
     it 'should create the specified transactions' do
