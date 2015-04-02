@@ -18,4 +18,10 @@ class Entity < ActiveRecord::Base
   has_many :budgets
   has_many :budget_monitors
   has_many :commodities
+
+  # Returns the unrealized gains in the commodities held by the entity
+  # as of the specified date
+  def unrealized_gains
+    accounts.commodities.reduce(0) {|sum, account| sum + account.gains_with_children}
+  end
 end
