@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
     sum_of_credits = sum_of credit_transaction_items(start_date, end_date)
     sum_of_debits = sum_of debit_transaction_items(start_date, end_date)
     
-    if LEFT_SIDE.include?(account_type)
+    if left_side?
       sum_of_debits - sum_of_credits
     else
       sum_of_credits - sum_of_debits
