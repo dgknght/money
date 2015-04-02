@@ -279,7 +279,7 @@ class CommodityTransactionCreator
   def to_date(value)
     return nil unless value
     return value.to_date if value.respond_to?(:to_date)
-    Date.parse(value)
+    Chronic.parse(value)
   end
 
   def value_is_not_zero
