@@ -26,8 +26,8 @@ describe Account do
   end
 
   shared_context 'investment accounts' do
-    let (:ira) { FactoryGirl.create(:commodities_account, name: '401k') }
-    let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss') }
+    let (:ira) { FactoryGirl.create(:commodities_account, name: '401k', entity: entity) }
+    let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss', entity: entity) }
     let (:kss_account) { Account.find_by_name('kss') }
     let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: ira, credit_account: opening_balances) }
     let!(:purchase1) do
@@ -543,7 +543,29 @@ describe Account do
     end
 
     describe '#value_as_of' do
-      it 'should return the balance_as_of value'
+      let!(:p1) { FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-01'),
+                                                   description: 'Paycheck',
+                                                   entity: entity,
+                                                   amount: 1000,
+                                                   debit_account: checking,
+                                                   credit_account: salary) }
+      let!(:g1) { FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-04'),
+                                                   description: 'Kroger',
+                                                   entity: entity,
+                                                   amount: 100,
+                                                   debit_account: groceries,
+                                                   credit_account: checking) }
+      let!(:p2) { FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-15'),
+                                                   description: 'Paycheck',
+                                                   entity: entity,
+                                                   amount: 1000,
+                                                   debit_account: checking,
+                                                   credit_account: salary) }
+      it 'should return the balance_as_of value' do
+        expect(checking.value_as_of('2015-01-02')).to eq(1000)
+        expect(checking.value_as_of('2015-01-04')).to eq(900)
+        expect(checking.value_as_of('2015-02-01')).to eq(1900)
+      end
     end
 
     describe '#cost' do
@@ -575,12 +597,15 @@ describe Account do
     end
 
     describe '#value_as_of' do
-      it 'should return the value of the shares of the commidity based on the price that is before and closest to the specified date'
+      let!(:price) {FactoryGirl.create(:price, commodity: kss, trade_date: '2014-03-01', price: 15)}
+      it 'should return the value of the shares of the commidity based on the price that is before and closest to the specified date' do
+        expect(kss_account.value_as_of('2014-01-01')).to eq(1_000) # 1,000 (1 100-share lot  at $10/share)
+        expect(kss_account.value_as_of('2014-02-01')).to eq(2_400) # 2,400 (2 100-share lots at $12/share)
+        expect(kss_account.value_as_of('2014-03-02')).to eq(3_000) # 3,000 (2 100-share lots at $15/share)
+      end
     end
 
     describe '#cost' do
-      include_context 'investment accounts'
-
       it 'should return the sum of the lot costs' do
         expect(kss_account.cost).to eq(2_200)
       end
@@ -613,6 +638,15 @@ describe Account do
 
       it 'should return the cash balance' do
         expect(ira.value).to eq(800)
+      end
+    end
+
+    describe '#value_with_children_as_of' do
+      let!(:price) {FactoryGirl.create(:price, commodity: kss, trade_date: '2014-03-01', price: 15)}
+      it 'should return the value of the shares of the commidity based on the price that is before and closest to the specified date' do
+        expect(ira.value_with_children_as_of('2014-01-01')).to eq(3_000) # 2,000.00 in cash, 1,000 in KSS stock
+        expect(ira.value_with_children_as_of('2014-02-01')).to eq(3_200) #   800.00 in cash, 2,400 in KSS stock (2 100-share lots at $12/share)
+        expect(ira.value_with_children_as_of('2014-03-02')).to eq(3_800) #   800.00 in cash, 3,000 in KSS stock (2 100-share lots at $15/share)
       end
     end
 

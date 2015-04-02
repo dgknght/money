@@ -187,7 +187,14 @@ class Account < ActiveRecord::Base
   end
 
   def shares
-    lots.reduce(0) { |sum, lot| sum + lot.shares_owned }
+    shares_as_of(Time.now.utc)
+  end
+
+  def shares_as_of(date)
+    date = ensure_date(date)
+    lots.
+      select{|l| l.purchase_date <= date}.
+      reduce(0){|sum, lot| sum + lot.shares_owned}
   end
 
   # Value is the current value of the account. For cash accounts
@@ -197,6 +204,42 @@ class Account < ActiveRecord::Base
     # This really wants to be polymorphic, but that feels like overkill here
     return lots.reduce(0) { |sum, lot| sum + lot.current_value } if commodity?
     balance
+  end
+
+  def value_as_of(date)
+    date = ensure_date(date)
+    return balance_as_of(date) unless commodity?
+
+    price = nearest_price(date)
+    shrs = shares_as_of(date)
+    price && shrs ? shrs * price : 0
+  end
+
+  def value_with_children_as_of(date)
+    date = ensure_date(date)
+    children.reduce(value_as_of(date)){|sum, child| sum + child.value_with_children_as_of(date)}
+  end
+
+  def nearest_price(date)
+    #TODO Consider adding to the price table on purchase to avoid this fallback
+    nearest_price_quote(date) || nearest_lot_price(date)
+  end
+
+  def nearest_price_quote(date)
+    commodity = entity.commodities.find_by_symbol(name)
+    commodity.prices.
+      sort{|p1, p2| p2.trade_date <=> p1.trade_date}.
+      select{|p| p.trade_date <= date}.
+      map(&:price).
+      first
+  end
+
+  def nearest_lot_price(date)
+    lots.
+      sort{|l1, l2| l2.purchase_date <=> l1.purchase_date}.
+      select{|l| l.purchase_date <= date}.
+      map(&:price).
+      first
   end
 
   def value_with_children
