@@ -108,7 +108,7 @@ module Gnucash
       commodity_account = Account.find(commodity_account_id)
 
       CommodityTransactionCreator.new(account_id: commodities_account_id,
-                                      transaction_date: source[:date_posted],
+                                      transaction_date: source["date-posted"],
                                       action: commodity_item[:action].downcase,
                                       symbol: commodity_account.name,
                                       shares: parse_amount(commodity_item[:quantity]),
