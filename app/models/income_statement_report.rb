@@ -24,7 +24,7 @@ class IncomeStatementReport < Report
   
   private
     def _flatten(accounts)
-      flatten accounts, 1, :balance_with_children_between, @filter.from, @filter.to
+      flatten accounts, 1, ->(a) { true }, :balance_with_children_between, @filter.from, @filter.to
     end
     
     def f(accounts, depth = 1)

@@ -7,11 +7,11 @@ class Report
   
   # Flattens the account hierarchy calculating a
   # balance using the specified method and arguments
-  def flatten(accounts, depth, method, *args)
-    accounts.map do |account|
+  def flatten(accounts, depth, filter, method, *args)
+    accounts.select{|a| filter.call(a)}.map do |account|
       [
         { account: account, depth: depth, balance: account.send(method, *args) },
-        flatten(account.children, depth + 1, method, *args)
+        flatten(account.children, depth + 1, filter, method, *args)
       ]
     end.flatten
   end
