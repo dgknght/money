@@ -542,6 +542,10 @@ describe Account do
       end
     end
 
+    describe '#value_as_of' do
+      it 'should return the balance_as_of value'
+    end
+
     describe '#cost' do
       it 'should return the balance' do
         expect(car.cost).to eq(1_000)
@@ -568,6 +572,10 @@ describe Account do
       it 'should return the current value of the shares of the commodity currently held in the account' do
         expect(kss_account.value).to eq(2_800)
       end
+    end
+
+    describe '#value_as_of' do
+      it 'should return the value of the shares of the commidity based on the price that is before and closest to the specified date'
     end
 
     describe '#cost' do
