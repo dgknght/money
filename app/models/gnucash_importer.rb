@@ -15,11 +15,14 @@ class GnucashImporter
     parser.parse(gzip_reader)
     true
   rescue Exception => e
-    puts "Unable to complete the import: #{e}"
+    Rails.logger.error "Unable to complete the import: #{e}\n#{e.backtrace.join("\n")}"
     false
   end
 
   def gzip_reader
-    Zlib::GzipReader.open(data)
+    # The following was necessary to get the unit tests and
+    # usage through a web browse to work
+    to_read = data.respond_to?(:tempfile) ? data.tempfile : data
+    Zlib::GzipReader.open(to_read)
   end
 end
