@@ -24,4 +24,8 @@ class Entity < ActiveRecord::Base
   def unrealized_gains
     accounts.commodities.reduce(0) {|sum, account| sum + account.gains_with_children}
   end
+
+  def unrealized_gains_as_of(date)
+    accounts.commodities.reduce(0) {|sum, account| sum + account.gains_with_children_as_of(date)}
+  end
 end

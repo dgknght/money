@@ -26,7 +26,7 @@ class BalanceSheetReport < Report
     expense_total = sum(expense)
     
     retained_earnings = income_total - expense_total
-    unrealized_gains = @entity.unrealized_gains
+    unrealized_gains = @entity.unrealized_gains_as_of(@filter.as_of)
     equity_total = equity_subtotal + retained_earnings + unrealized_gains
     
     # Assemble the final result

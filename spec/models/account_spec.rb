@@ -50,7 +50,20 @@ describe Account do
         value: 1_200
       ).create!
     end
-    let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14) }
+    let!(:price) { FactoryGirl.create(:price, commodity: kss, price: 14, trade_date: '2014-03-01') }
+  end
+
+  shared_context 'currency as of' do
+    let!(:paycheck1) { FactoryGirl.create(:transaction, transaction_date: '2015-01-01',
+                                          description: 'Paycheck',
+                                          amount: 1_000,
+                                          debit_account: checking,
+                                          credit_account: salary) }
+    let!(:paycheck2) { FactoryGirl.create(:transaction, transaction_date: '2015-01-15',
+                                          description: 'Paycheck',
+                                          amount: 1_000,
+                                          debit_account: checking,
+                                          credit_account: salary) }
   end
 
   it 'should be creatable from valid attributes' do
@@ -574,9 +587,25 @@ describe Account do
       end
     end
 
+    describe '#cost_as_of' do
+      include_context 'currency as of'
+      it 'should return the balance_as_of amount' do
+        expect(checking.cost_as_of('2015-01-14')).to eq(1_000)
+        expect(checking.cost_as_of('2015-01-15')).to eq(2_000)
+      end
+    end
+
     describe '#gains' do
       it 'should return zero' do
         expect(reserve.gains).to eq(0)
+      end
+    end
+
+    describe '#gains_as_of' do
+      include_context 'currency as of'
+      it 'should return zero' do
+        expect(checking.gains_as_of('2014-01-14')).to eq(0)
+        expect(checking.gains_as_of('2014-01-15')).to eq(0)
       end
     end
 
@@ -611,9 +640,31 @@ describe Account do
       end
     end
 
+    describe '#cost_as_of' do
+      it 'should return what was the cost at the specified date' do
+        expect(kss_account.cost_as_of('2014-01-31')).to eq(1_000)
+        expect(kss_account.cost_as_of('2014-02-01')).to eq(2_200)
+      end
+    end
+
     describe '#gains' do
       it 'should return the difference between the current value and the cost of the account contents' do
         expect(kss_account.gains).to eq(600)
+      end
+    end
+
+    describe '#gains_as_of' do
+      let!(:kss_price1) { FactoryGirl.create(:price, commodity: kss,
+                                                    trade_date: '2014-01-15',
+                                                    price: 11) }
+      let!(:kss_price2) { FactoryGirl.create(:price, commodity: kss,
+                                                    trade_date: '2014-02-15',
+                                                    price: 13) }
+      it 'should return the gains at the specified date' do
+        expect(kss_account.gains_as_of('2014-01-02')).to eq(0)   # 100 shares @10 valued at 1000
+        expect(kss_account.gains_as_of('2014-01-15')).to eq(100) # 100 shares @10 valued at 1100
+        expect(kss_account.gains_as_of('2014-02-01')).to eq(200) # 100 shares @10 + 100 shares @12 valued at 2400
+        expect(kss_account.gains_as_of('2014-02-28')).to eq(400) # 100 shares @10 + 100 shares @12 valued at 2600
       end
     end
 
@@ -630,6 +681,13 @@ describe Account do
     describe '#gains' do
       it 'should return the zero' do
         expect(ira.gains).to eq(0)
+      end
+    end
+
+    describe '#gains_as_of' do
+      it 'should return zero' do
+        expect(ira.gains_as_of('2014-01-31')).to eq(0)
+        expect(ira.gains_as_of('2014-02-01')).to eq(0)
       end
     end
 
@@ -655,6 +713,15 @@ describe Account do
 
       it 'should return the cash value' do
         expect(ira.cost).to eq(800)
+      end
+    end
+
+    describe '#cost_as_of' do
+      include_context 'investment accounts'
+
+      it 'should return the balance_as_of amount' do
+        expect(ira.cost_as_of('2014-01-31')).to eq(2_000)
+        expect(ira.cost_as_of('2014-02-01')).to eq(800)
       end
     end
 

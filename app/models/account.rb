@@ -117,6 +117,10 @@ class Account < ActiveRecord::Base
     balance
   end
 
+  def cost_as_of(date)
+    balance_as_of(date)
+  end
+
   def cost_with_children
     return children.reduce(cost) { |sum, child| sum + child.cost_with_children }
   end
@@ -155,8 +159,16 @@ class Account < ActiveRecord::Base
     value - cost
   end
 
+  def gains_as_of(date)
+    value_as_of(date) - cost_as_of(date)
+  end
+
   def gains_with_children
     children.reduce(gains) { |sum, child| sum + child.gains_with_children }
+  end
+
+  def gains_with_children_as_of(date)
+    children.reduce(gains_as_of(date)) { |sum, child| sum + child.gains_with_children_as_of(date) }
   end
 
   def infer_action(amount)
@@ -222,23 +234,10 @@ class Account < ActiveRecord::Base
   end
 
   def nearest_price(date)
-    #TODO Consider adding to the price table on purchase to avoid this fallback
-    nearest_price_quote(date) || nearest_lot_price(date)
-  end
-
-  def nearest_price_quote(date)
     commodity = entity.commodities.find_by_symbol(name)
     commodity.prices.
       sort{|p1, p2| p2.trade_date <=> p1.trade_date}.
       select{|p| p.trade_date <= date}.
-      map(&:price).
-      first
-  end
-
-  def nearest_lot_price(date)
-    lots.
-      sort{|l1, l2| l2.purchase_date <=> l1.purchase_date}.
-      select{|l| l.purchase_date <= date}.
       map(&:price).
       first
   end
