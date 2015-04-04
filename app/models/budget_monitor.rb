@@ -39,7 +39,7 @@ class BudgetMonitor < ActiveRecord::Base
   private
 
   def get_period
-    budget = Budget.current
+    budget = entity.current_budget
     return nil unless budget
 
     item = budget.item_for(account)

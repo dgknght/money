@@ -35,11 +35,6 @@ class Budget < ActiveRecord::Base
   
   after_update :sync_budget_item_periods
   
-  def self.current
-    today = Date.today
-    where(['start_date <= ?', today]).select{|b| b.end_date > today}.first
-  end
-
   def current?
     Date.today >= start_date && Date.today <= end_date
   end

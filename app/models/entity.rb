@@ -19,6 +19,11 @@ class Entity < ActiveRecord::Base
   has_many :budget_monitors
   has_many :commodities
 
+  def current_budget
+    today = Date.today
+    budgets.where(['start_date <= ?', today]).select{|b| b.end_date > today}.first
+  end
+
   # Returns the unrealized gains in the commodities held by the entity
   # as of the specified date
   def unrealized_gains

@@ -58,6 +58,17 @@ describe Entity do
     end
   end
 
+  describe '#current_budget' do
+    let!(:b2014) { FactoryGirl.create(:budget, entity: entity, name: '2014', start_date: Date.parse('2014-01-01')) }
+    let!(:b2015) { FactoryGirl.create(:budget, entity: entity, name: '2015', start_date: Date.parse('2015-01-01')) }
+    let!(:b2016) { FactoryGirl.create(:budget, entity: entity, name: '2016', start_date: Date.parse('2016-01-01')) }
+    it 'should return the budget applicable to the current date' do
+      Timecop.freeze(Date.parse('2015-02-27')) do
+        expect(entity.current_budget).to eq(b2015)
+      end
+    end
+  end
+
   describe 'budget_monitors' do
     let!(:budget_monitor) { FactoryGirl.create(:budget_monitor, entity: entity) }
 
