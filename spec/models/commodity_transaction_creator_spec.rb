@@ -160,6 +160,12 @@ describe CommodityTransactionCreator do
           CommodityTransactionCreator.new(attributes).create
         end.to change(Lot, :count).by(1)
       end
+
+      it 'should create a new price entry for the commodity' do
+        expect do
+          CommodityTransactionCreator.new(attributes).create
+        end.to change(Price, :count).by(1)
+      end
     end
 
     context 'with a "sell" action' do

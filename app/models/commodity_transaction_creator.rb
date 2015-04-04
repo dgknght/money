@@ -204,6 +204,7 @@ class CommodityTransactionCreator
   def process_buy
     transaction = create_buy_transaction
     lots << process_buy_lot(transaction)
+    create_price_record
     transaction
   end
 
