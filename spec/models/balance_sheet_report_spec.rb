@@ -90,6 +90,7 @@ describe BalanceSheetReport do
       { account: 'Equity',                balance:  '65,000.00', depth: 0 },
       { account: 'Opening Balances',      balance:  '65,000.00', depth: 1 },
       { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
+      { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
       { account: 'Liabilities + Equity',  balance: '242,000.00', depth: 0 }
     ]
   end
