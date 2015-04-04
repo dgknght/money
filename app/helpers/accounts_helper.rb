@@ -8,16 +8,16 @@ module AccountsHelper
     account.children.select { |c| c.shares > 0 }
   end
 
-  def all_accounts(opts = {})
+  def grouped_accounts(entity, opts = {})
     except = (opts || {}).fetch(:except, [])
     except = Array(except)
     except = except.map{|a| a.is_a?(Account) ? a.id : a}
     {
-      'Assets'      => to_array(Account.asset, except),
-      'Liabilities' => to_array(Account.liability, except),
-      'Equity'      => to_array(Account.equity, except),
-      'Income'      => to_array(Account.income, except),
-      'Expense'     => to_array(Account.expense, except)
+      'Assets'      => to_array(entity.accounts.asset, except),
+      'Liabilities' => to_array(entity.accounts.liability, except),
+      'Equity'      => to_array(entity.accounts.equity, except),
+      'Income'      => to_array(entity.accounts.income, except),
+      'Expense'     => to_array(entity.accounts.expense, except)
     }
   end
   
@@ -35,6 +35,6 @@ module AccountsHelper
       # Currently, this is enforcing a "one-level deep" rule
       # for the accounts. That's something we may want to change in the future
       list = except ? accounts.reject { |a| except.include?(a.id) } : accounts
-      list.map { |a| [a.name, a.id]}
+      list.map { |a| [a.path, a.id]}.sort_by{|a| a.first}
     end
 end

@@ -9,7 +9,7 @@
 .form-group
   =f.label :parent_id
   %br
-  =f.select :parent_id, grouped_options_for_select(all_accounts(except: account), account.parent_id), { include_blank: true }, :class => 'form-control'
+  =f.select :parent_id, grouped_options_for_select(grouped_accounts(account.entity, except: account), account.parent_id), { include_blank: true }, :class => 'form-control'
 .form-group
   =f.label :name
   %br

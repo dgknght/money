@@ -5,6 +5,6 @@
     =form_for([@entity, @budget_monitor]) do |f|
       .form_group
         =f.label :account_id
-        =f.select :account_id, grouped_options_for_select(all_accounts), {}, class: 'form-control'
+        =f.select :account_id, grouped_options_for_select(grouped_accounts(@entity)), {}, class: 'form-control'
       .actions
         =f.submit 'Save', class: 'save_button', title: 'Click here to create the monitor.'
