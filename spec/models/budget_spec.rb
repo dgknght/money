@@ -19,15 +19,22 @@ describe Budget do
   end
   
   describe 'name' do
+    let (:other_entity) { FactoryGirl.create(:entity, user: entity.user) }
     it 'should be required' do
       budget = Budget.new(attributes.without(:name))
       budget.should_not be_valid
     end
     
-    it 'should be unique' do
+    it 'should be unique for the entity' do
+      budget1 = entity.budgets.create!(attributes)
+      budget2 = entity.budgets.new(attributes)
+      budget2.should have(1).error_on(:name)
+    end
+
+    it 'should allow the same name to be used for different entities' do
       budget1 = Budget.create!(attributes)
-      budget2 = Budget.new(FactoryGirl.attributes_for(:budget).merge(name: attributes[:name]))
-      budget2.should_not be_valid
+      budget2 = other_entity.budgets.create!(attributes.except(:entity_id))
+      budget2.should be_valid
     end
   end
   

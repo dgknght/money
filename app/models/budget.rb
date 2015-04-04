@@ -30,7 +30,7 @@ class Budget < ActiveRecord::Base
   has_many :items, class_name: 'BudgetItem', dependent: :destroy
   
   validates_presence_of :name, :start_date, :period, :period_count
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, scope: :entity_id
   validates_inclusion_of :period, :in => PERIODS
   
   after_update :sync_budget_item_periods

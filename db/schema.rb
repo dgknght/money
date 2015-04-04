@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150115013953) do
+ActiveRecord::Schema.define(version: 20150404222555) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+#  enable_extension "plpgsql"
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                  null: false
@@ -87,8 +87,7 @@ ActiveRecord::Schema.define(version: 20150115013953) do
     t.integer  "period_count",            default: 12,      null: false
   end
 
-  add_index "budgets", ["entity_id"], name: "index_budgets_on_entity_id", using: :btree
-  add_index "budgets", ["name"], name: "index_budgets_on_name", unique: true, using: :btree
+  add_index "budgets", ["entity_id", "name"], name: "index_budgets_on_entity_id_and_name", unique: true, using: :btree
   add_index "budgets", ["start_date"], name: "index_budgets_on_start_date", using: :btree
 
   create_table "commodities", force: true do |t|
