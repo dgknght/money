@@ -20,6 +20,6 @@ class GnucashImporter
   end
 
   def gzip_reader
-    Zlib::GzipReader.open(data.tempfile)
+    Zlib::GzipReader.open(data)
   end
 end
