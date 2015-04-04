@@ -90,4 +90,12 @@ describe Transaction do
       expect(transaction.lot_transactions).to be_empty
     end
   end
+
+  describe '#destroy' do
+    let!(:transaction) { FactoryGirl.create(:transaction) }
+
+    it 'should remove all transaction items for the transaction' do
+      expect{transaction.destroy!}.to change(TransactionItem, :count).by(-2)
+    end
+  end
 end
