@@ -15,7 +15,7 @@ class GnucashImporter
     parser.parse(gzip_reader)
     true
   rescue Exception => e
-    puts "Exception: #{e}"
+    puts "Unable to complete the import: #{e}"
     false
   end
 
