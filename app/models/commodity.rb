@@ -23,8 +23,8 @@ class Commodity < ActiveRecord::Base
   end
 
   belongs_to :entity
-  has_many :prices
-  has_many :lots
+  has_many :prices, dependent: :destroy
+  has_many :lots, dependent: :destroy
 
   validates :name,  presence: true,
                     uniqueness: { scope: :entity_id }

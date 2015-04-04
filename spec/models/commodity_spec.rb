@@ -110,4 +110,22 @@ describe Commodity do
       expect(commodity).to have(1).lot
     end
   end
+
+  describe '#destroy' do
+    let!(:commodity) { FactoryGirl.create(:commodity, entity: entity) }
+    let!(:ira) { FactoryGirl.create(:asset_account, entity: entity, content_type: Account.commodities_content) }
+    let!(:transaction) { CommodityTransactionCreator.new(symbol: commodity.symbol,
+                                                         account: ira,
+                                                         shares: 100,
+                                                         action: 'buy',
+                                                         value: 1_000).create! }
+
+    it 'should remove all constituent lots from the system' do
+      expect{commodity.destroy!}.to change(Lot, :count).by(-1)
+    end
+
+    it 'should remove all constituent prices from the system' do
+      expect{commodity.destroy!}.to change(Price, :count).by(-1)
+    end
+  end
 end
