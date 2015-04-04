@@ -130,4 +130,13 @@ describe Budget do
       expect(budget.item_for(dining)).to eq(item1)
     end
   end
+
+  describe '#destroy' do
+    let!(:budget) { FactoryGirl.create(:budget) }
+    let!(:budget_item) { FactoryGirl.create(:budget_item, budget: budget) }
+
+    it 'should remove all constituent budget items' do
+      expect{budget.destroy!}.to change(BudgetItem, :count).by(-1)
+    end
+  end
 end
