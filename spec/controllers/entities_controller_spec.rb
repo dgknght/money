@@ -171,9 +171,6 @@ describe EntitiesController do
           post :gnucash, id: entity, import: {data: gnucash_data}
           expect(response).to redirect_to(entity_accounts_path(entity))
         end
-
-        it 'should create the specified accounts'
-        it 'should create the specified transactions'
       end
     end
     
@@ -282,7 +279,10 @@ describe EntitiesController do
       end
 
       describe 'post :gnucash' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          post :gnucash, id: entity, import: {data: gnucash_data}
+          expect(response).to redirect_to(home_path)
+        end
       end
     end
   end
@@ -430,7 +430,10 @@ describe EntitiesController do
     end
 
     describe 'post :gnucash' do
-      it 'should redirect to the sign in page'
+      it 'should redirect to the sign in page' do
+        post :gnucash, id: entity, import: {data: gnucash_data}
+        expect(response).to redirect_to(new_user_session_path)
+      end
     end
   end
 end
