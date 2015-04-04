@@ -282,7 +282,7 @@ describe Account do
     include_context 'investment accounts'
 
     it 'should return a list of asset accounts' do
-      Account.asset.should == [ira, checking]
+      Account.asset.should == [ira, checking, kss_account]
     end
   end
   

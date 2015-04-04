@@ -57,13 +57,14 @@ class Account < ActiveRecord::Base
   
   before_validation :set_defaults
 
-  scope :root, -> { where(parent_id: nil).order(:name) }
-  scope :asset, -> { root.where(account_type: Account.asset_type) }
+  scope :base, -> { order(:name) }
+  scope :root, -> { base.where(parent_id: nil) }
+  scope :asset, -> { base.where(account_type: Account.asset_type) }
   scope :commodities, -> { asset.where(content_type: Account.commodities_content) }
-  scope :liability, -> { root.where(account_type: Account.liability_type) }
-  scope :equity, -> { root.where(account_type: Account.equity_type) }
-  scope :income, -> { root.where(account_type: Account.income_type) }
-  scope :expense, -> { root.where(account_type: Account.expense_type) }
+  scope :liability, -> { base.where(account_type: Account.liability_type) }
+  scope :equity, -> { base.where(account_type: Account.equity_type) }
+  scope :income, -> { base.where(account_type: Account.income_type) }
+  scope :expense, -> { base.where(account_type: Account.expense_type) }
   
   def all_children
     children.reduce([]) { |array, child| array + child.children }

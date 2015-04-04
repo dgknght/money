@@ -6,23 +6,23 @@ class BalanceSheetReport < Report
   
   def content
     # Assets
-    assets = _flatten(@entity.accounts.asset)
+    assets = _flatten(@entity.accounts.asset.root)
     asset_total = sum(assets)
     
     # Liabilities
-    liabilities = _flatten(@entity.accounts.liability)
+    liabilities = _flatten(@entity.accounts.liability.root)
     liability_total = sum(liabilities)
     
     # Equity
-    equities = _flatten(@entity.accounts.equity)
+    equities = _flatten(@entity.accounts.equity.root)
     equity_subtotal = sum(equities)
 
     # Income
-    income = _flatten(@entity.accounts.income)
+    income = _flatten(@entity.accounts.income.root)
     income_total = sum(income)
 
     # Expense
-    expense = _flatten(@entity.accounts.expense)
+    expense = _flatten(@entity.accounts.expense.root)
     expense_total = sum(expense)
     
     retained_earnings = income_total - expense_total

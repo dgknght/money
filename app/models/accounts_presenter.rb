@@ -51,7 +51,7 @@ class AccountsPresenter
   end
 
   def summary(method, caption) 
-    accounts = @entity.accounts.send(method)
+    accounts = @entity.accounts.root.send(method)
     records = accounts_to_adapters(accounts)
     AccountSummaryRecord.new(caption, records)
   end

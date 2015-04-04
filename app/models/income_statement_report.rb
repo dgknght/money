@@ -2,11 +2,11 @@ class IncomeStatementReport < Report
   
   def content
     # Income
-    income = _flatten(@entity.accounts.income)
+    income = _flatten(@entity.accounts.income.root)
     income_total = sum(income)
     
     # Expense
-    expense = _flatten(@entity.accounts.expense)
+    expense = _flatten(@entity.accounts.expense.root)
     expense_total = sum(expense)
     
     # Assemble the final result
