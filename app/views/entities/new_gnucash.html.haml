@@ -3,6 +3,11 @@
     %h2#page_title Import from GnuCash
 
     =render 'shared/errors', :resource => @importer
+    -if @error_message
+      .alert.alert-danger
+        An error occurred while performing the import operation.
+        %br
+        =@error_message
     =form_tag(gnucash_entity_path(@entity), multipart: true) do
       .form-group
         =label_tag 'import[data]', 'Data'

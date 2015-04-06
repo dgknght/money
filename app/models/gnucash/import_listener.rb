@@ -27,7 +27,7 @@ module Gnucash
       if account.save
         account_map[source[:id]] = account.id
       else
-        raise "Unable to save the account \"#{account.name}\": #{account.errors.full_messages.to_sentence}"
+        cannot_save account, :name, source
       end
 
       if content_type == Account.commodity_content && account.parent.content_type != Account.commodities_content
@@ -43,9 +43,15 @@ module Gnucash
                                           symbol: source[:id],
                                           market: source[:space])
 
-      unless commodity.save
-        raise "Unable to save the commodity \"#{commodity.name}\": #{commodity.errors.full_messages.to_sentence}"
-      end
+      cannot_save(commodity, :name, source) unless commodity.save
+    end
+
+    def cannot_save(resource, display_attribute, source)
+      Rails.logger.error "Unable to save the #{resource.class.name}" +
+                         "\n  resource=#{resource.inspect}" +
+                         "\n  source=#{source.inspect}" +
+                         "\n  errors=#{resource.errors.full_messages.to_sentence}"
+      raise "Unable to save the #{resource.class.name} \"#{resource.send(display_attribute)}\"."
     end
 
     def ignore_account?(name)
@@ -80,9 +86,7 @@ module Gnucash
       price = commodity.prices.new(trade_date: source[:time],
                                    price: parse_amount(source[:value]))
 
-      unless price.save
-        raise "Unable to save the price: #{price.errors.full_messages.to_sentence}"
-      end
+      cannot_save(price, :trade_date, source) unless price.save
     end
 
     def transaction_read(source)
@@ -126,9 +130,7 @@ module Gnucash
                               reconciled: item_source[:"reconciled_state"] == 'y')
       end
 
-      unless transaction.save
-        raise "Unable to save the transaction \"#{transaction.description}\": #{transaction.errors.full_messages.to_sentence}"
-      end
+      cannot_save(transaction, :description, source) unless transaction.save
     end
   end
 end

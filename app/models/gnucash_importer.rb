@@ -13,10 +13,6 @@ class GnucashImporter
     return unless valid?
     parser = Nokogiri::XML::SAX::Parser.new(Gnucash::GnucashDocument.new(Gnucash::ImportListener.new(@entity)))
     parser.parse(gzip_reader)
-    true
-  rescue Exception => e
-    Rails.logger.error "Unable to complete the import: #{e}\n#{e.backtrace.join("\n")}"
-    false
   end
 
   def gzip_reader
