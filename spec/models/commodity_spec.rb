@@ -48,12 +48,17 @@ describe Commodity do
   describe '#symbol' do
     it 'should be required' do
       commodity = entity.commodities.new(attributes.except(:symbol))
-      expect(commodity).not_to be_valid
+      expect(commodity).to have_at_least(1).error_on(:symbol)
     end
 
     it 'cannot contain spaces' do
       commodity = entity.commodities.new(attributes.merge(symbol: 'A B'))
-      expect(commodity).not_to be_valid
+      expect(commodity).to have(1).error_on(:symbol)
+    end
+
+    it 'may contain underscores' do
+      commodity = entity.commodities.new(attributes.merge(symbol: 'A_B'))
+      expect(commodity).to have(0).errors_on(:symbol)
     end
 
     it 'should be unique within an entity' do
