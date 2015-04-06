@@ -20,10 +20,11 @@ module Gnucash
       when "price"
         @price = HashWithIndifferentAccess.new
       end
+      @last_content = ""
     end
 
     def characters(value)
-      @last_content = value
+      @last_content << value
     end
 
     def end_element(name)
@@ -40,7 +41,7 @@ module Gnucash
         @account = nil
         true
       when /^act:(.*)/
-        @account[$1] = @last_content
+        @account[$1] = last_content
         true
       end
       false
@@ -49,7 +50,7 @@ module Gnucash
     def finish_commodity_element(name)
       case name
       when /^cmdty:(.*)/
-        @commodity[$1] = @last_content
+        @commodity[$1] = last_content
         true
       when "gnc:commodity"
         @listener.commodity_read(@commodity)
@@ -73,7 +74,7 @@ module Gnucash
         @price[:time] = @date
         true
       when /^price:(.*)/
-        @price[$1] = @last_content
+        @price[$1] = last_content
         true
       end
       false
@@ -91,13 +92,13 @@ module Gnucash
         @transaction[:items] = @transaction_items
         true
       when /^trn:(.*)/
-        @transaction[$1] = @last_content
+        @transaction[$1] = last_content
         true
       when /^split:(.*)/
-        @transaction_item[$1] = @last_content
+        @transaction_item[$1] = last_content
         true
       when "ts:date"
-        @date = Chronic.parse(@last_content)
+        @date = Chronic.parse(last_content)
         true
       when "gnc:transaction"
         @listener.transaction_read(@transaction)
@@ -105,6 +106,10 @@ module Gnucash
         true
       end
       false
+    end
+
+    def last_content
+      @last_content.strip
     end
   end
 end
