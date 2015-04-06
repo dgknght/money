@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406013039) do
+ActiveRecord::Schema.define(version: 20150406014612) do
 
   # These are extensions that must be enabled in order to support this database
 #  enable_extension "plpgsql"
@@ -93,7 +93,7 @@ ActiveRecord::Schema.define(version: 20150406013039) do
   create_table "commodities", force: true do |t|
     t.integer  "entity_id"
     t.string   "name"
-    t.string   "symbol",     limit: 5
+    t.string   "symbol",     limit: 10
     t.string   "market",     limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"

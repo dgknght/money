@@ -73,6 +73,11 @@ describe Commodity do
       c2 = other_entity.commodities.new(attributes.merge(name: 'John Doe Software Services'))
       expect(c2).to have(:no).errors_on(:symbol)
     end
+
+    it 'should not be longer than 10 characters' do
+      commodity = entity.commodities.new(attributes.merge(symbol: "OTTFFSSENTE"))
+      expect(commodity).to have(1).error_on(:symbol)
+    end
   end
 
   describe '#market' do

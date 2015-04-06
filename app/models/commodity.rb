@@ -30,7 +30,8 @@ class Commodity < ActiveRecord::Base
                     uniqueness: { scope: [:entity_id, :market] }
   validates :symbol,  presence: true,
                       uniqueness: { scope: [:entity_id, :market] },
-                      format: { with: /\A[a-z]+\z/i, message: 'cannot contain spaces' }
+                      format: { with: /\A[a-z]+\z/i, message: 'cannot contain spaces' },
+                      length: { maximum: 10 }
   validates :market,  presence: true,
                       inclusion: { in: MARKETS }
 
