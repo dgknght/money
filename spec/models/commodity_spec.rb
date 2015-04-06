@@ -29,13 +29,19 @@ describe Commodity do
     it 'should be unique within an entity' do
       c1 = entity.commodities.create!(attributes)
       c2 = entity.commodities.new(attributes.merge(symbol: 'XYZ'))
-      expect(c2).not_to be_valid
+      expect(c2).to have(1).error_on(:name)
+    end
+
+    it 'should allow duplicates across markets' do
+      c1 = entity.commodities.create!(attributes)
+      c2 = entity.commodities.new(attributes.merge(market: Commodity.amex))
+      expect(c2).to have(:no).errors_on(:name)
     end
 
     it 'should allow duplicates across entities' do
       c1 = entity.commodities.create!(attributes)
       c2 = other_entity.commodities.new(attributes.merge(symbol: 'XYZ'))
-      expect(c2).to be_valid
+      expect(c2).to have(:no).errors_on(:name)
     end
   end
 
@@ -53,13 +59,19 @@ describe Commodity do
     it 'should be unique within an entity' do
       c1 = entity.commodities.create!(attributes)
       c2 = entity.commodities.new(attributes.merge(name: 'John Doe Software Services'))
-      expect(c2).not_to be_valid
+      expect(c2).to have(1).error_on(:symbol)
+    end
+
+    it 'should allow duplicates across markets' do
+      c1 = entity.commodities.create!(attributes)
+      c2 = entity.commodities.new(attributes.merge(market: Commodity.amex))
+      expect(c2).to have(:no).errors_on(:symbol)
     end
 
     it 'should allow duplicates across entities' do
       c1 = entity.commodities.create!(attributes)
       c2 = other_entity.commodities.new(attributes.merge(name: 'John Doe Software Services'))
-      expect(c2).to be_valid
+      expect(c2).to have(:no).errors_on(:symbol)
     end
   end
 

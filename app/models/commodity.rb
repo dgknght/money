@@ -27,9 +27,9 @@ class Commodity < ActiveRecord::Base
   has_many :lots, dependent: :destroy
 
   validates :name,  presence: true,
-                    uniqueness: { scope: :entity_id }
+                    uniqueness: { scope: [:entity_id, :market] }
   validates :symbol,  presence: true,
-                      uniqueness: { scope: :entity_id },
+                      uniqueness: { scope: [:entity_id, :market] },
                       format: { with: /\A[a-z]+\z/i, message: 'cannot contain spaces' }
   validates :market,  presence: true,
                       inclusion: { in: MARKETS }

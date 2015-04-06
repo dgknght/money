@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150404222555) do
+ActiveRecord::Schema.define(version: 20150406013039) do
 
   # These are extensions that must be enabled in order to support this database
 #  enable_extension "plpgsql"
@@ -99,7 +99,8 @@ ActiveRecord::Schema.define(version: 20150404222555) do
     t.datetime "updated_at"
   end
 
-  add_index "commodities", ["entity_id", "symbol"], name: "index_commodities_on_entity_id_and_symbol", unique: true, using: :btree
+  add_index "commodities", ["entity_id", "market", "name"], name: "index_commodities_on_entity_id_and_market_and_name", unique: true, using: :btree
+  add_index "commodities", ["entity_id", "market", "symbol"], name: "index_commodities_on_entity_id_and_market_and_symbol", unique: true, using: :btree
 
   create_table "entities", force: true do |t|
     t.integer  "user_id",                null: false
