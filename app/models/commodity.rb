@@ -13,7 +13,7 @@
 
 # Represents something that can be traded on a market
 class Commodity < ActiveRecord::Base
-  MARKETS = %w(NYSE NASDAQ FUND)
+  MARKETS = %w(NYSE NASDAQ FUND AMEX)
   class << self
     MARKETS.each do |market|
       define_method market.downcase do 
