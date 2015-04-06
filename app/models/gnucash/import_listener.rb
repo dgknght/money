@@ -83,10 +83,8 @@ module Gnucash
 
     def price_read(source)
       commodity = @entity.commodities.find_by(symbol: source[:commodity][:id])
-      price = commodity.prices.new(trade_date: source[:time],
-                                   price: parse_amount(source[:value]))
-
-      cannot_save(price, :trade_date, source) unless price.save
+      amount = parse_amount(source[:value])
+      Price.put_price(commodity, source[:time], amount) if amount > 0
     end
 
     def transaction_read(source)
