@@ -81,10 +81,30 @@ module Gnucash
       BigDecimal.new(numerator) / BigDecimal.new(denominator)
     end
 
+    def prices_read
+      @prices_read ||= Set.new
+    end
+
     def price_read(source)
-      commodity = @entity.commodities.find_by(symbol: source[:commodity][:id])
       amount = parse_amount(source[:value])
-      Price.put_price(commodity, source[:time], amount) if amount > 0
+      return unless amount > 0
+
+      symbol = source[:commodity][:id]
+      trade_date = source[:time].to_date
+      key = "#{symbol}:#{trade_date}"
+      unless prices_read.include?(key)
+        commodity = @entity.commodities.find_by(symbol: symbol)
+        price = commodity.prices.new(trade_date: trade_date,
+                                     price: amount)
+
+        if price.save
+          prices_read << key
+        else
+          cannot_save price, :trade_date, source
+        end
+      end
+    rescue StandardError => e
+      Rails.logger.warning "Unable to import the price.\n  source=#{source.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
     end
 
     def transaction_read(source)
