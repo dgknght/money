@@ -100,11 +100,11 @@ module Gnucash
         if price.save
           prices_read << key
         else
-          cannot_save price, :trade_date, source
+          Rails.logger.warn "Unable to import the price.\n  source=#{source.inspect}\n  #{price.errors.full_messages.to_sentence}"
         end
       end
     rescue StandardError => e
-      Rails.logger.warning "Unable to import the price.\n  source=#{source.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
+      Rails.logger.warn "Unable to import the price.\n  source=#{source.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
     end
 
     def transaction_read(source)
