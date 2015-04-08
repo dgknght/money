@@ -15,7 +15,7 @@ class Price < ActiveRecord::Base
 
   validates_presence_of :commodity_id, :trade_date
   validates_uniqueness_of :trade_date, scope: :commodity_id
-  validates :price, presence: true, numericality: { greater_than: 0 }
+  validates :price, presence: true, numericality: { greater_than: 0, less_than: 10_000 }
 
   default_scope { order('trade_date DESC') }
 

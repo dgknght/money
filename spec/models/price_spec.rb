@@ -58,6 +58,11 @@ describe Price do
       expect(price).not_to be_valid
       expect(price).to have(1).errors_on(:price)
     end
+
+    it 'should be less than 10,000' do
+      price = commodity.prices.new(attributes.merge(price: '10_000'))
+      expect(price).to have(1).error_on(:price)
+    end
   end
 
   describe '::put_price' do
