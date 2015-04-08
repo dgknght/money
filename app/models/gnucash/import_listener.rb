@@ -17,22 +17,29 @@ module Gnucash
       @account_map ||= {}
     end
 
-    def account_read(source)
-      return if ignore_account?(source[:name])
+    def map_account_attributes(source)
       content_type = map_account_content_type(source[:type])
-      account = @entity.accounts.new(name: content_type == Account.currency_content ? source[:name] : source[:code],
+
+      name_keys = content_type == Account.commodity_content ? [:code, :name] : [:name]
+      name = name_keys.map{|k| source[k]}.select{|name| name}.first
+
+      account = @entity.accounts.new(name: name,
                                      account_type: map_account_type(source[:type]),
                                      content_type: content_type,
                                      parent_id: lookup_account_id(source[:parent]))
+    end
+
+    def account_read(source)
+      return if ignore_account?(source[:name])
+
+      account = map_account_attributes(source)
       if account.save
         account_map[source[:id]] = account.id
       else
         cannot_save account, :name, source
       end
 
-      if content_type == Account.commodity_content && account.parent.content_type != Account.commodities_content
-        account.parent.update_attribute(:content_type, Account.commodities_content)
-      end
+      account.parent.update_attribute(:content_type, Account.commodities_content) if account.commodity? && !account.parent.commodities?
     end
 
     def commodity_read(source)
