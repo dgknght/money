@@ -105,30 +105,35 @@ describe AccountsPresenter do
         ).create!
       end
 
+      # [{ caption: 'Assets'                  , balance: 36_700, depth: 0 },
+      #  { caption: 'Checking'                , balance:  5_000, depth: 1 },
+      #  { caption: 'IRA'                     , balance:  1_700, depth: 1 },
+      #  { caption: 'Savings'                 , balance: 30_000, depth: 1 },
+      #  { caption: 'Car'                     , balance:  6_000, depth: 2 },
+      #  { caption: 'Reserve'                 , balance: 24_000, depth: 2 },
+      #  { caption: 'Liabilities'             , balance:      0, depth: 0 },
+
+      #  { caption: 'Equity'                  , balance: 36_700, depth: 0 },
+      #  { caption: 'Opening balances'        , balance: 31_500, depth: 1 },
+      #  { caption: 'Unrealized gains'        , balance:    100, depth: 1 },
+      #  { caption: 'Retained earnings'       , balance:  5_100, depth: 1 },
+
+      #  { caption: 'Income'                  , balance:  5_100, depth: 0 },
+      #  { caption: 'Long-term capital gains' , balance:      0, depth: 1 },
+      #  { caption: 'Salary'                  , balance:  5_000, depth: 1 },
+      #  { caption: 'Short-term capital gains', balance:    100, depth: 1 },
+
+      #  { caption: 'Expense', balance: 0, depth: 0 }]
       it 'should include unrealized gains' do
         presenter = AccountsPresenter.new(entity)
-        expect(presenter).to have_account_display_records([
-          { caption: 'Assets', balance: 36_700, depth: 0 },
-          { caption: 'Checking', balance: 5_000, depth: 1 },
-          { caption: 'IRA', balance: 1_700, depth: 1 },
-          { caption: 'KSS', balance: 600, depth: 2 },
-          { caption: 'Savings', balance: 30_000, depth: 1 },
-          { caption: 'Car', balance: 6_000, depth: 2 },
-          { caption: 'Reserve', balance: 24_000, depth: 2 },
-          { caption: 'Liabilities', balance: 0, depth: 0 },
+        expect(presenter).to include_account_display_record(caption: 'Unrealized gains',
+                                                            balance: 100,
+                                                            depth: 1)
+      end
 
-          { caption: 'Equity', balance: 36_700, depth: 0 },
-          { caption: 'Opening balances', balance: 31_500, depth: 1 },
-          { caption: 'Unrealized gains', balance: 100, depth: 1 },
-          { caption: 'Retained earnings', balance: 5_100, depth: 1 },
-
-          { caption: 'Income', balance: 5_100, depth: 0 },
-          { caption: 'Long-term capital gains', balance: 0, depth: 1 },
-          { caption: 'Salary', balance: 5_000, depth: 1 },
-          { caption: 'Short-term capital gains', balance: 100, depth: 1 },
-
-          { caption: 'Expense', balance: 0, depth: 0 }
-        ])
+      it 'should not include individual commodity accounts' do
+        presenter = AccountsPresenter.new(entity)
+        expect(presenter).not_to include_account_display_record(caption: 'KSS')
       end
     end
   end

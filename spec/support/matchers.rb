@@ -33,3 +33,11 @@ RSpec::Matchers.define :have_account_display_records do |expected|
     }
   end
 end
+
+RSpec::Matchers.define :include_account_display_record do |expected|
+  match do |actual|
+    actual.any? do |record|
+      expected.all?{|k,v| record.send(k) == v}
+    end
+  end
+end
