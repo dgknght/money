@@ -33,9 +33,9 @@ class EntitiesController < ApplicationController
 
   def gnucash
     @importer = GnucashImporter.new(gnucash_params)
-     @importer.import!
-      flash[:notice] = 'The information was imported successfully.'
-      redirect_to entity_accounts_path(@entity)
+    @importer.import!
+    flash[:notice] = 'The information was imported successfully.'
+    redirect_to entity_accounts_path(@entity)
   rescue StandardError => e
     @error_message = e.message
     render :new_gnucash
