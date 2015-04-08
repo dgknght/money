@@ -13,12 +13,12 @@ class Entity < ActiveRecord::Base
   validates_presence_of :name, :user_id
   
   belongs_to :user
-  has_many :accounts, dependent: :delete_all
-  has_many :transactions, dependent: :delete_all
-  has_many :budgets, dependent: :delete_all
-  has_many :budget_monitors, dependent: :delete_all
-  has_many :commodities, dependent: :delete_all
-  has_many :attachment_contents, dependent: :delete_all
+  has_many :accounts, dependent: :destroy
+  has_many :transactions, dependent: :destroy
+  has_many :budgets, dependent: :destroy
+  has_many :budget_monitors, dependent: :destroy
+  has_many :commodities, dependent: :destroy
+  has_many :attachment_contents, dependent: :destroy
 
   def current_budget
     today = Date.today

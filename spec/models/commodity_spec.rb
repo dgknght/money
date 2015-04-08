@@ -150,4 +150,14 @@ describe Commodity do
       expect{commodity.destroy!}.to change(Price, :count).by(-1)
     end
   end
+
+  describe '#destroy' do
+    let!(:commodity) { FactoryGirl.create(:commodity) }
+    let!(:price) { FactoryGirl.create(:price, commodity: commodity) }
+    it 'should remove all constituent prices' do
+      expect do
+        commodity.destroy!
+      end.to change(Price, :count).by(-1)
+    end
+  end
 end
