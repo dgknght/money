@@ -23,15 +23,25 @@ Feature: Import from gnucash
     Then I should see "Accounts" within the page title
     And I should see the following accounts table
       | Name                  |    Balance |
-      | Assets                | 227,688.00 |
+      | Assets                | 249,649.51 |
       | Current Assets        |   2,688.00 |
       | Checking              |   2,688.00 |
       | Fixed Assets          | 225,000.00 |
       | House                 | 200,000.00 |
       | Vehicle               |  25,000.00 |
-      | Equity                | 200,000.00 |
-      | Opening Balances      | 200,000.00 |
-      | Expenses              |   4,712.00 |
+      | Imbalance-USD         |       0.00 |
+      | Investments           |  21,961.51 |
+      | 401k                  |  21,961.51 |
+      | Liabilities           |  24,400.00 |
+      | Loans                 |  24,400.00 |
+      | Vehicle Loan          |  24,400.00 |
+      | Equity                | 225,249.51 |
+      | Opening Balances      | 220,000.00 |
+      | Unrealized gains      |   1,961.51 |
+      | Retained earnings     |   3,288.00 |
+      | Income                |   8,000.00 |
+      | Salary                |   8,000.00 |
+      | Expense               |   4,712.00 |
       | Groceries             |     800.00 |
       | Interest              |     100.00 |
       | Vehicle Loan Interest |     100.00 |
@@ -40,8 +50,3 @@ Feature: Import from gnucash
       | Federal Income        |   1,600.00 |
       | Medicare              |     116.00 |
       | Social Security       |     496.00 |
-      | Income                |   8,000.00 |
-      | Salary                |   8,000.00 |
-      | Liabilities           |  24,400.00 |
-      | Loans                 |  24,400.00 |
-      | Vehicle Loan          |  24,400.00 |
