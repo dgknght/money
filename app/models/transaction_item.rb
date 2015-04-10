@@ -65,8 +65,8 @@ class TransactionItem < ActiveRecord::Base
     
     def rollback_account_balance
       method_name = "#{action}!"
-      previous_account = Account.find(account_id_was)
-      previous_account.send(method_name, amount_was * -1)
+      previous_account = Account.where(id: account_id_was).first
+      previous_account.send(method_name, amount_was * -1) if previous_account
     end
     
     def update_account_balance
