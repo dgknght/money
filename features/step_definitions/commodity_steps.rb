@@ -11,13 +11,15 @@ Given /^(#{ENTITY}) has the following commodities$/ do |entity, table|
 end
 
 Given /^(#{ACCOUNT}) has the following commodity transactions$/ do |account, table|
-  table.hashes.each do |hash|
-    CommodityTransactionCreator.new(account: account,
-                                    transaction_date: hash['Date'],
-                                    action: hash['Action'],
-                                    symbol: hash['Symbol'],
-                                    shares: hash['Shares'],
-                                    value: hash['Value'],
-                                    valuation_method: CommodityTransactionCreator.fifo).create!
+  Timecop.freeze('2000-01-01') do
+    table.hashes.each do |hash|
+      CommodityTransactionCreator.new(account: account,
+                                      transaction_date: hash['Date'],
+                                      action: hash['Action'],
+                                      symbol: hash['Symbol'],
+                                      shares: hash['Shares'],
+                                      value: hash['Value'],
+                                      valuation_method: CommodityTransactionCreator.fifo).create!
+    end
   end
 end
