@@ -69,4 +69,5 @@ Feature: Balance sheet report
       | Equity                |      73,780.00 |
       |   Opening Balances    |    65,000.00   |
       |   Retained Earnings   |     8,780.00   |
+      |   Unrealized Gains    |         0.00   |
       | Liabilities + Equity  |     249,000.00 |      
