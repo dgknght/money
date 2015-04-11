@@ -31,6 +31,8 @@ Feature: Import from gnucash
       | Imbalance-USD         |       0.00 |
       | Investments           |  21,961.51 |
       | 401k                  |  21,961.51 |
+      | AAPL                  |  12,424.51 |
+      | VTSAX                 |   5,228.00 |
       | Liabilities           |  24,400.00 |
       | Loans                 |  24,400.00 |
       | Vehicle Loan          |  24,400.00 |

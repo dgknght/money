@@ -52,7 +52,7 @@ class AccountsPresenter
 
   def summary(method, caption) 
     accounts = @entity.accounts.root.send(method)
-    records = accounts_to_adapters(accounts).reject{|a| a.account.commodity?}
+    records = accounts_to_adapters(accounts)
     AccountSummaryRecord.new(caption, records)
   end
 

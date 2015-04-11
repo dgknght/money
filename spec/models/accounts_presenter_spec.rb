@@ -130,11 +130,6 @@ describe AccountsPresenter do
                                                             balance: 100,
                                                             depth: 1)
       end
-
-      it 'should not include individual commodity accounts' do
-        presenter = AccountsPresenter.new(entity)
-        expect(presenter).not_to include_account_display_record(caption: 'KSS')
-      end
     end
   end
 end
