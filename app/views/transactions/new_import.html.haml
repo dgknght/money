@@ -1,9 +1,0 @@
-.row
-  .col-md-4.col-md-offset-4
-    %h2#page_title Import transactions
-
-    =form_tag(import_entity_transactions_path(@entity), multipart: true) do
-      .form-group
-        =label_tag 'import[data]', 'Data'
-        =file_field_tag 'import[data]', class: 'form-control'
-      =submit_tag "Submit", class: 'save_button'

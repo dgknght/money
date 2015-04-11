@@ -3,7 +3,7 @@ class TransactionsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_account, only: [ :index, :create ]
-  before_filter :load_entity, only: [ :index, :create, :new_import, :import ]
+  before_filter :load_entity, only: [ :index, :create]
   before_filter :load_transaction, only: [:update, :show, :destroy]
   before_filter :set_current_entity
   
@@ -50,28 +50,12 @@ class TransactionsController < ApplicationController
     respond_with @transaction
   end
   
-  def new_import
-    authorize! :update, @entity
-  end
-
-  def import
-    authorize! :update, @entity
-    @importer = TransactionImporter.new(import_params)
-    flash[:notice] = "The transactions were imported successfully" if @importer.import
-    respond_with @importer, location: entity_transactions_path(@entity),
-                            action: :new_import
-  end
-
   private
     def create_redirect_path
       return account_transactions_path(@account) if @account
       entity_transactions_path(@entity)
     end
     
-    def import_params
-      params.require(:import).permit(:data).merge(entity: @entity)
-    end
-
     def load_account
       @account = Account.find(params[:account_id]) if params[:account_id]
     end

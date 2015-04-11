@@ -6,11 +6,6 @@ describe TransactionsController do
   let!(:account2) { FactoryGirl.create(:account, entity: entity, name: "Checking") }
   let!(:salary) { FactoryGirl.create(:account, entity: entity, name: "Salary", account_type: Account.income_type) }
   let!(:transaction) { FactoryGirl.create(:transaction, entity: entity, description: 'The payee') }
-  let (:import_attributes) do
-    {
-      data: fixture_file_upload('files/transactions.csv', 'text/csv')
-    }
-  end
   let (:attributes) do
     {
       transaction_date: Date.new(2013, 1, 1),
@@ -171,26 +166,6 @@ describe TransactionsController do
           end
         end
       end
-
-      describe 'get :new_import' do
-        it 'should be successful' do
-          get :new_import, entity_id: entity
-          expect(response).to be_success
-        end
-      end
-
-      describe 'post :import' do
-        it 'should redirect to the transactions index page' do
-          post :import, entity_id: entity, import: import_attributes
-          expect(response).to redirect_to(entity_transactions_path(entity))
-        end
-
-        it 'should import the specified transactions' do
-          expect do
-            post :import, entity_id: entity, import: import_attributes
-          end.to change(Transaction, :count).by(2)
-        end
-      end
     end
 
     context 'to which the account does not belong' do
@@ -279,26 +254,6 @@ describe TransactionsController do
           end
         end
       end
-
-      describe 'get :new_import' do
-        it 'should redirect to the user home page' do
-          get :new_import, entity_id: entity
-          expect(response).to redirect_to(home_path)
-        end
-      end
-
-      describe 'post :import' do
-        it 'should redirect to the user home page' do
-          post :import, entity_id: entity, import: import_attributes
-          expect(response).to redirect_to(home_path)
-        end
-
-        it 'should not import the specified transactions' do
-          expect do
-            post :import, entity_id: entity, import: import_attributes
-          end.not_to change(Transaction, :count)
-        end
-      end
     end
   end
   
@@ -382,26 +337,6 @@ describe TransactionsController do
             delete :destroy, id: transaction, format: :json
           end.should_not change(Transaction, :count)
         end
-      end
-    end
-
-    describe 'get :new_import' do
-      it 'should redirect to the sign in page' do
-        get :new_import, entity_id: entity
-        expect(response).to redirect_to(new_user_session_path)
-      end
-    end
-
-    describe 'post :import' do
-      it 'should redirect to the sign in page' do
-        post :import, entity_id: entity, import: import_attributes
-        expect(response).to redirect_to(new_user_session_path)
-      end
-
-      it 'should not import the specified transactions' do
-        expect do
-          post :import, entity_id: entity, import: import_attributes
-        end.not_to change(Transaction, :count)
       end
     end
   end

@@ -1,7 +1,0 @@
-"Date","Account Name","Number","Description","Notes","Memo","Category","Type","Action","Reconcile","To With Sym","From With Sym","To Num.","From Num.","To Rate/Price","From Rate/Price"
-"01/01/2015","Salary","","Paycheck","","","-- Split Transaction --","T","","N","-$2,000.00","","-2,000.00","","",""
-"","","","","","This is a test","Checking","S","","N","","$2,000.00","","2,000.00","","1.00"
-"","","","","","","Salary","S","","N","-$2,000.00","","-2,000.00","","1.00",""
-"01/04/2015","Kroger","","Groceries","","","Groceries","T","","N","$100","","100","","",""
-"","","","","","","Groceries","S","","N","$100","","100","","1.00",""
-"","","","","","","Checking","S","","N","","-$100","","-100","","1.00"

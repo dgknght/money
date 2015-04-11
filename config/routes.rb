@@ -7,18 +7,8 @@ Money::Application.routes.draw do
       get :new_gnucash
       post :gnucash
     end
-    resources :accounts, only: [:new, :create, :index] do
-      collection do
-        get :new_import
-        post :import
-      end
-    end
-    resources :transactions, only: [:index, :new, :create] do
-      collection do
-        get :new_import
-        post :import
-      end
-    end
+    resources :accounts, only: [:new, :create, :index]
+    resources :transactions, only: [:index, :new, :create]
     resources :commodities, only: [:index, :new, :create]
     resources :budgets, only: [:index, :new, :create]
     resources :budget_monitors, only: [:index, :new, :create]
