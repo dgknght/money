@@ -1,3 +1,4 @@
+@wip
 Feature: Import from gnucash
   As a user
   In order to migrate from GnuCash
@@ -8,18 +9,15 @@ Feature: Import from gnucash
     And user "john@doe.com" has an entity named "Personal"
 
     When I am signed in as "john@doe.com/please01"
-    And I am on the "Personal" entity page
-    Then I should see "Import" within the navigation
+    And I am on the entities page
 
-    When I click "Import" within the navigation
-    Then I should see "Import from GnuCash" within the main content
-
-    When I click "Import from GnuCash" within the main content
-    Then I should see "Import from GnuCash" within the page title
+    When I click "Add" within the main content
+    Then I should see "New entity" within the page title
 
     When I specify the file "sample.gnucash" for "Data"
+    And I fill in "Name" with "Imported"
     And I click "Submit"
-    Then I should see "Accounts" within the page title
+    Then I should see "Entity" within the page title
     And I should see the following accounts table
       | Name                  |    Balance |
       | Assets                | 249,649.51 |

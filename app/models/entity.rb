@@ -20,6 +20,11 @@ class Entity < ActiveRecord::Base
   has_many :commodities, dependent: :destroy
   has_many :attachment_contents, dependent: :destroy
 
+  # This attribute is here to support the rails form_for helper
+  # method in views/entities/new.html.haml. It can be removed
+  # if a better workaround is found
+  attr_accessor :data
+
   def current_budget
     today = Date.today
     budgets.where(['start_date <= ?', today]).select{|b| b.end_date > today}.first

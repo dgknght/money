@@ -16,29 +16,19 @@ class EntitiesController < ApplicationController
 
   def new
     @entity = current_user.entities.new
-  end
-
-  def new_gnucash
     @importer = GnucashImporter.new
   end
 
   def create
+
+    puts "params=#{params.inspect}"
+
     @entity = current_user.entities.new(entity_params)
-    flash[:notice] = 'The entity was created successfully.' if @entity.save
+    flash[:notice] = 'The entity was created successfully.' if @entity.save && import
     respond_with @entity
   end
 
   def edit
-  end
-
-  def gnucash
-    @importer = GnucashImporter.new(gnucash_params)
-    @importer.import!
-    flash[:notice] = 'The information was imported successfully.'
-    redirect_to entity_accounts_path(@entity)
-  rescue StandardError => e
-    @error_message = e.message
-    render :new_gnucash
   end
 
   def update
@@ -54,6 +44,18 @@ class EntitiesController < ApplicationController
   end
   
   private
+    def import
+      return true unless import_params.has_key?('data')
+
+      @importer = GnucashImporter.new(import_params)
+      @importer.import!
+      flash[:notice] = 'The information was imported successfully.'
+      true
+    rescue StandardError => e
+      @error_message = e.message
+      false
+    end
+
     def set_current_entity
       self.current_entity = @entity
     end
@@ -62,7 +64,7 @@ class EntitiesController < ApplicationController
       params.require(:entity).permit(:name)
     end
 
-    def gnucash_params
-      params.require(:import).permit(:data).merge(entity: @entity)
+    def import_params
+      params.require(:entity).permit(:data).merge(entity: @entity)
     end
 end

@@ -30,6 +30,7 @@ module NavigationHelpers
       when "the home" then "/"
       when "my home" then  "/home"
       when /the "([^"]+)" entity/ then entity_path(find_entity($1))
+      when /the (\w+)/ then  "/#{$1}"
       else raise "unrecognized page identifier \"#{page_identifier}\""
     end
   end

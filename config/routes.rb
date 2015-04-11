@@ -3,8 +3,7 @@ Money::Application.routes.draw do
   devise_for :users
 
   resources :entities do
-    member do
-      get :new_gnucash
+    collection do
       post :gnucash
     end
     resources :accounts, only: [:new, :create, :index]

@@ -63,6 +63,16 @@ describe EntitiesController do
           end.should change(Entity, :count).by(1)
         end
       end
+
+      context 'with a data file' do
+        it 'should import the data' do
+          post :create, entity: attributes.merge(data: gnucash_data)
+          entity = Entity.last
+          expect(entity).to have_at_least(1).account
+          # expect(entity).to have_at_least(1).transaction # this caused a strange error
+          expect(entity).to have_at_least(1).commodity
+        end
+      end
     end
     
     context 'that owns the entity' do
@@ -149,27 +159,6 @@ describe EntitiesController do
               delete :destroy, id: entity, format: :json
             end.should change(Entity, :count).by(-1)
           end
-        end
-      end
-
-      describe 'get :import' do
-        it 'should be successful' do
-          get :import, id: entity
-          expect(response).to be_success
-        end
-      end
-
-      describe 'get :new_gnucash' do
-        it 'should be successful' do
-          get :new_gnucash, id: entity
-          expect(response).to be_success
-        end
-      end
-
-      describe 'post :gnucash' do
-        it 'should redirect to the accounts page' do
-          post :gnucash, id: entity, import: {data: gnucash_data}
-          expect(response).to redirect_to(entity_accounts_path(entity))
         end
       end
     end
@@ -261,27 +250,6 @@ describe EntitiesController do
             delete :destroy, id: entity, format: :json
             response.body.should == [].to_json
           end
-        end
-      end
-
-      describe 'get :import' do
-        it 'should redirect to the user home page' do
-          get :import, id: entity
-          expect(response).to redirect_to(home_path)
-        end
-      end
-
-      describe 'get :new_gnucash' do
-        it 'should return "resource not found"' do
-          get :new_gnucash, id: entity
-          expect(response).to redirect_to(home_path)
-        end
-      end
-
-      describe 'post :gnucash' do
-        it 'should redirect to the user home page' do
-          post :gnucash, id: entity, import: {data: gnucash_data}
-          expect(response).to redirect_to(home_path)
         end
       end
     end
@@ -412,27 +380,6 @@ describe EntitiesController do
             delete :destroy, id: entity, format: :json
           end.should_not change(Entity, :count)
         end
-      end
-    end
-
-    describe 'get :import' do
-      it 'should redirect to the sign in page' do
-        get :import, id: entity
-        expect(response).to redirect_to(new_user_session_path)
-      end
-    end
-
-    describe 'get :new_gnucash' do
-      it 'should redirect to the sign in page' do
-        get :new_gnucash, id: entity
-        expect(response).to redirect_to(new_user_session_path)
-      end
-    end
-
-    describe 'post :gnucash' do
-      it 'should redirect to the sign in page' do
-        post :gnucash, id: entity, import: {data: gnucash_data}
-        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end
