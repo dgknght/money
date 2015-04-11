@@ -152,7 +152,7 @@ module Gnucash
         transaction.items.new(account_id: lookup_account_id(item_source[:account]),
                               action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
                               amount: amount.abs,
-                              reconciled: item_source[:"reconciled_state"] == 'y')
+                              reconciled: item_source[:"reconciled-state"] == 'y')
       end
 
       cannot_save(transaction, :description, source) unless transaction.save

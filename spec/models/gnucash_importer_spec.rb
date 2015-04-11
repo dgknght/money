@@ -69,7 +69,25 @@ describe GnucashImporter do
       end.to change(Price, :count).by(8)
     end
 
-    it 'should reflect the correct reconciliation state for each transaction item'
+    it 'should mark reconciled items as reconciled' do
+      GnucashImporter.new(attributes).import!
+      checking = Account.find_by(name: 'Checking')
+      r = checking.transaction_items.
+            joins(:transaction).
+            where('transactions.transaction_date' => Chronic.parse('2015-01-01 00:00:00 UTC')..Chronic.parse('2015-01-31 23:59:59 UTC')).
+            map(&:reconciled)
+      expect(Set.new(r)).to eq(Set.new([true]))
+    end
+
+    it 'should leave unreconciled items unreconciled' do
+      GnucashImporter.new(attributes).import!
+      checking = Account.find_by(name: 'Checking')
+      r = checking.transaction_items.
+            joins(:transaction).
+            where('transactions.transaction_date' => Chronic.parse('2015-02-01 00:00:00 UTC')..Chronic.parse('2015-02-28 23:59:59 UTC')).
+            map(&:reconciled)
+      expect(Set.new(r)).to eq(Set.new([false]))
+    end
 
     it 'should create the specified transactions' do
       importer = GnucashImporter.new(attributes)
