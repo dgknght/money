@@ -20,9 +20,6 @@ class EntitiesController < ApplicationController
   end
 
   def create
-
-    puts "params=#{params.inspect}"
-
     @entity = current_user.entities.new(entity_params)
     flash[:notice] = 'The entity was created successfully.' if @entity.save && import
     respond_with @entity
