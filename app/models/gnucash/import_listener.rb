@@ -50,7 +50,11 @@ module Gnucash
                                           symbol: source[:id],
                                           market: source[:space])
 
-      cannot_save(commodity, :name, source) unless commodity.save
+      if commodity.save
+        @commodities[commodity.symbol] = commodity
+      else
+        cannot_save(commodity, :name, source)
+      end
     end
 
     def cannot_save(resource, display_attribute, source)
@@ -67,6 +71,7 @@ module Gnucash
 
     def initialize(entity)
       @entity = entity
+      @commodities = {}
     end
 
     def lookup_account_id(source_id)
@@ -100,11 +105,11 @@ module Gnucash
       trade_date = source[:time].to_date
       key = "#{symbol}:#{trade_date}"
       unless prices_read.include?(key)
-        commodity = @entity.commodities.find_by(symbol: symbol)
+        commodity = @commodities[symbol]
         price = commodity.prices.new(trade_date: trade_date,
                                      price: amount)
 
-        if price.save
+        if price.save(validate: false) # skip validation for performance reasons
           prices_read << key
         else
           Rails.logger.warn "Unable to import the price.\n  source=#{source.inspect}\n  #{price.errors.full_messages.to_sentence}"
@@ -145,8 +150,10 @@ module Gnucash
     end
 
     def save_regular_transaction(source)
+      description = source[:description]
+      description = "blank" unless description.present?
       transaction = @entity.transactions.new(transaction_date: source[:"date-posted"],
-                                            description: source[:description])
+                                             description: description)
       source[:items].each do |item_source|
         amount = parse_amount(item_source[:value])
         transaction.items.new(account_id: lookup_account_id(item_source[:account]),
