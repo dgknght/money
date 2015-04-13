@@ -141,12 +141,16 @@ module Gnucash
       commodity_account_id = lookup_account_id(commodity_item[:account])
       commodity_account = Account.find(commodity_account_id)
 
-      CommodityTransactionCreator.new(account_id: commodities_account_id,
-                                      transaction_date: source["date-posted"],
-                                      action: commodity_item[:action].downcase,
-                                      symbol: commodity_account.name,
-                                      shares: parse_amount(commodity_item[:quantity]),
-                                      value: parse_amount(commodity_item[:value])).create!
+      creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
+                                                transaction_date: source["date-posted"],
+                                                action: commodity_item[:action].downcase,
+                                                symbol: commodity_account.name,
+                                                shares: parse_amount(commodity_item[:quantity]),
+                                                value: parse_amount(commodity_item[:value]))
+      creator.create!
+    rescue StandardError => e
+      Rails.logger.error "Unable to save the commodity transaction: source=#{source.inspect}, creator=#{creator.inspect}"
+      raise e
     end
 
     def save_regular_transaction(source)
