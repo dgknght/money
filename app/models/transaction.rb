@@ -38,8 +38,8 @@ class Transaction < ActiveRecord::Base
   private
   
     def credits_and_debits_are_in_balance
-      c = total_credits
-      d = total_debits
+      c = total_credits.round(2)
+      d = total_debits.round(2)
       errors.add(:total_credits, "must equal total_debits (#{c} != #{d})") unless c == d 
     end
 
