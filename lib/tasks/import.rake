@@ -4,7 +4,12 @@ namespace :import do
     Rails.logger = Logger.new(STDOUT)
 
     user = User.find_by_email(ENV['EMAIL'])
-    entity = user.entities.new(name: ENV['ENTITY_NAME'])
+    entity_name = ENV['ENTITY_NAME']
+
+    existing = user.entities.find_by(name: entity_name)
+    existing.destroy! if existing.present?
+
+    entity = user.entities.new(name: entity_name)
     unless entity.save
       logger.warn "Unable to save the entity #{entity.inspect}: #{entity.errors.full_messages.to_sentence}"
       return
