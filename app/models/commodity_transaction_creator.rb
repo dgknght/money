@@ -1,6 +1,10 @@
 class CommodityTransactionCreator
   include ActiveModel::Validations
 
+  #TODO Need to be able to configure this
+  LONG_TERM_GAINS_NAMES = ['Long Term Gains', 'Long-term capital gains']
+  SHORT_TERM_GAINS_NAMES = ['Short Term Gains', 'Short-term capital gains']
+
   VALUATION_METHODS = %w(fifo filo)
   class << self
     VALUATION_METHODS.each do |m|
@@ -24,7 +28,7 @@ class CommodityTransactionCreator
     end
   end
 
-  attr_accessor :account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method
+  attr_accessor :account_id, :commodities_account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method
 
   ACTIONS.each do |a|
     define_method "#{a}?" do
@@ -39,7 +43,7 @@ class CommodityTransactionCreator
   validate :value_is_not_zero, :can_find_commodity
 
   def account
-    @account ||= find_account
+    @account ||= find_account(account_id)
   end
 
   def account=(account)
@@ -52,6 +56,15 @@ class CommodityTransactionCreator
       transaction: @transaction.as_json(options),
       lots: lots.as_json(options)
     }
+  end
+
+  def commodities_account
+    @commodities_account ||= (find_account(commodities_account_id) || account)
+  end
+
+  def commodities_account=(account)
+    @commodities_account = account
+    self.commodities_account_id = account.nil? ? nil : account.id
   end
 
   def commodity
@@ -80,6 +93,8 @@ class CommodityTransactionCreator
     attr = (attributes || {}).with_indifferent_access
     self.account_id = attr[:account_id] if attr[:account_id]
     self.account = attr[:account] if attr[:account]
+    self.commodities_account_id = attr[:commodities_account_id] if attr[:commodities_account_id]
+    self.commodities_account = attr[:commodities_account] if attr[:commodities_account]
     self.transaction_date = to_date(attr[:transaction_date]) || Date.today
     self.action = attr[:action]
     self.symbol = attr[:symbol]
@@ -130,7 +145,6 @@ class CommodityTransactionCreator
       cost = (result.shares * result.lot.price)
       proceeds = (result.shares * price)
       gain = proceeds - cost
-
       cost_of_shares_sold += cost
       if held_more_than_one_year?(result.lot.purchase_date)
         lt_gain += gain
@@ -156,10 +170,10 @@ class CommodityTransactionCreator
   end
 
   def create_commodity_account(symbol)
-    account.children.create!(name: symbol,
-                             account_type: Account.asset_type,
-                             content_type: Account.commodity_content,
-                             entity: account.entity)
+    commodities_account.children.create!(name: symbol,
+                                         account_type: Account.asset_type,
+                                         content_type: Account.commodity_content,
+                                         entity: account.entity)
   end
 
   def create_price_record
@@ -172,11 +186,29 @@ class CommodityTransactionCreator
     add_sell_transaction_items transaction, sale_results
     transaction.save!
     transaction
+  rescue StandardError => e
+    Rails.logger.error "Unable to create the transaction for the commodity sale:\n  #{transaction.errors.full_messages.to_sentence}\n  transaction=#{transaction.inspect}\n  items=#{transaction.items.map{|i| i.inspect}.join("\n    ")}"
+    raise e
   end
 
-  def find_account
-    return nil unless account_id
-    Account.find(account_id)
+  def find_account(id)
+    return nil unless id
+    Account.find(id)
+  end
+
+  def find_first_account_with_name(names)
+    names.lazy.
+      map{|name| account.entity.accounts.find_by_name(name)}.
+      select{|a| a}.
+      first
+  end
+
+  def find_long_term_gains_account
+    find_first_account_with_name(LONG_TERM_GAINS_NAMES)
+  end
+
+  def find_short_term_gains_account
+    find_first_account_with_name(SHORT_TERM_GAINS_NAMES)
   end
 
   def find_or_create_commodity_account
@@ -184,8 +216,7 @@ class CommodityTransactionCreator
   end
 
   def long_term_gains_account
-    #TODO Need to be able to configure this
-    @long_term_gains_account ||= account.entity.accounts.find_by_name('Long-term capital gains')
+    @long_term_gains_account ||= find_long_term_gains_account
     raise 'Long term gains account not found' unless @long_term_gains_account
     @long_term_gains_account
   end
@@ -263,8 +294,7 @@ class CommodityTransactionCreator
   end
 
   def short_term_gains_account
-    #TODO Need to be able to configure this
-    @short_term_gains_account ||= account.entity.accounts.find_by_name('Short-term capital gains')
+    @short_term_gains_account ||= find_short_term_gains_account
     raise 'Short term gains account not found' unless @short_term_gains_account
     @short_term_gains_account
   end
