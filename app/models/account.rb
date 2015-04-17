@@ -49,6 +49,8 @@ class Account < ActiveRecord::Base
     end
   end
   
+  validates :name, presence: true,
+                   uniqueness: { scope: [:entity, :parent] }
   validates :account_type, presence: true, 
                            inclusion: { in: ACCOUNT_TYPES }
   validates :content_type, presence: true,

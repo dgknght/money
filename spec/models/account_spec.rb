@@ -774,4 +774,31 @@ describe Account do
       expect(spouse_car).to eq(spouse)
     end
   end
+
+  describe '#name' do
+    it 'is required' do
+      account = entity.accounts.new(attributes.except(:name))
+      expect(account).to have(1).error_on(:name)
+    end
+
+    it 'cannot be duplicated between root accounts' do
+      a1 = entity.accounts.create!(name: 'Salary', account_type: Account.income_type)
+      a2 = entity.accounts.new(name: 'Salary', account_type: Account.income_type)
+      expect(a2).to have(1).error_on(:name)
+    end
+
+    it 'can be the same for accounts with different parents' do
+      auto = entity.accounts.create!(name: 'Auto', account_type: Account.expense_type)
+      utilities = entity.accounts.create!(name: 'Utilities', account_type: Account.expense_type)
+      gas1 = entity.accounts.create!(name: 'Gas', account_type: Account.expense_type, parent: auto)
+      gas2 = entity.accounts.new(name: 'Gas', account_type: Account.expense_type, parent: utilities)
+      expect(gas2).to be_valid
+    end
+
+    it 'cannot be duplicated between two accounts with the same parent' do
+      food1 = entity.accounts.create!(name: 'Food', account_type: Account.expense_type, parent: groceries)
+      food2 = entity.accounts.new(name: 'Food', account_type: Account.expense_type, parent: groceries)
+      expect(food2).to have(1).error_on(:name)
+    end
+  end
 end
