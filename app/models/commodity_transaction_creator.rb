@@ -212,7 +212,7 @@ class CommodityTransactionCreator
   end
 
   def find_or_create_commodity_account
-    account.children.where(name: symbol).first || create_commodity_account(symbol)
+    commodities_account.children.where(name: symbol).first || create_commodity_account(symbol)
   end
 
   def long_term_gains_account
