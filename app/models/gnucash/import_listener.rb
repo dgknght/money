@@ -37,7 +37,8 @@ module Gnucash
         account_map[source[:id]] = account.id
         @trace_method.call 'a'
       else
-        cannot_save account, :name, source
+        cannot_save account, :name, source unless account.errors.count == 1 and account.errors[:name].count == 1
+        return
       end
 
       account.parent.update_attribute(:content_type, Account.commodities_content) if account.commodity? && !account.parent.commodities?
