@@ -15,7 +15,9 @@ namespace :import do
       return
     end
 
-    importer = GnucashImporter.new(entity: entity, data: File.open(ENV['PATH']))
+    importer = GnucashImporter.new(entity: entity,
+                                   data: File.open(ENV['PATH']),
+                                   trace_method: ->(m){print m})
     if importer.valid?
       importer.import!
     else

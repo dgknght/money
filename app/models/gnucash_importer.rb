@@ -7,11 +7,12 @@ class GnucashImporter
   def initialize(options = {})
     @data = options[:data]
     @entity = options[:entity]
+    @trace_method = options[:trace_method] || ->(m){}
   end
 
   def import!
     return unless valid?
-    parser = Nokogiri::XML::SAX::Parser.new(Gnucash::GnucashDocument.new(Gnucash::ImportListener.new(@entity)))
+    parser = Nokogiri::XML::SAX::Parser.new(Gnucash::GnucashDocument.new(Gnucash::ImportListener.new(@entity, @trace_method)))
     parser.parse(gzip_reader)
   end
 

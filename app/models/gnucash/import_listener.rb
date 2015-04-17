@@ -35,6 +35,7 @@ module Gnucash
       account = map_account_attributes(source)
       if account.save
         account_map[source[:id]] = account.id
+        @trace_method.call 'a'
       else
         cannot_save account, :name, source
       end
@@ -52,6 +53,7 @@ module Gnucash
 
       if commodity.save
         @commodities[commodity.symbol] = commodity
+        @trace_method.call 'c'
       else
         cannot_save(commodity, :name, source)
       end
@@ -69,9 +71,10 @@ module Gnucash
       IGNORE_ACCOUNTS.include?(name)
     end
 
-    def initialize(entity)
+    def initialize(entity, trace_method = ->(m){})
       @entity = entity
       @commodities = {}
+      @trace_method = trace_method
     end
 
     def lookup_account_id(source_id)
@@ -111,6 +114,7 @@ module Gnucash
 
         if price.save(validate: false) # skip validation for performance reasons
           prices_read << key
+          @trace_method.call 'p'
         else
           Rails.logger.warn "Unable to import the price.\n  source=#{source.inspect}\n  #{price.errors.full_messages.to_sentence}"
         end
@@ -125,6 +129,7 @@ module Gnucash
       else
         save_regular_transaction(source)
       end
+      @trace_method.call 't'
     end
 
     def commodity_transaction?(source)
@@ -168,6 +173,16 @@ module Gnucash
       end
 
       cannot_save(transaction, :description, source) unless transaction.save
+    end
+  end
+
+  class NullTracer
+    def print(message); end
+  end
+
+  class ConsoleTracer
+    def print(message)
+      print message
     end
   end
 end
