@@ -36,7 +36,7 @@ describe AccountsController do
           
           it 'should return the list of accounts' do
             get :index, entity_id: entity, format: :json
-            response.body.should == [checking, cash].to_json
+            response.body.should == [cash, checking].to_json
           end
         end
       end

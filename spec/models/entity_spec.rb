@@ -39,7 +39,7 @@ describe Entity do
   
   describe 'accounts' do
     it 'should list the accounts that belong to the entity' do
-      entity.accounts.should == [salary, checking, savings, credit_card, retained_earnings]
+      entity.accounts.should == [checking, credit_card, retained_earnings, salary, savings]
     end
   end
   
