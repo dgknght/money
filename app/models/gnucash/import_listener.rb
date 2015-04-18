@@ -140,24 +140,32 @@ module Gnucash
     def save_commodity_transaction(source)
       # points to the account use to pay for purchases, and that received proceeds from sales
       commodities_item = source[:items].select{|i| !i.has_key?(:action)}.first
-      commodities_account_id = lookup_account_id(commodities_item[:account])
+      if commodities_item
+        commodities_account_id = lookup_account_id(commodities_item[:account])
 
-      # points to the account that tracks purchases of a commodity within the investment account
-      commodity_item = source[:items].select{|i| i.has_key?(:action)}.first
-      commodity_account_id = lookup_account_id(commodity_item[:account])
-      commodity_account = Account.find(commodity_account_id)
+        # points to the account that tracks purchases of a commodity within the investment account
+        commodity_item = source[:items].select{|i| i.has_key?(:action)}.first
+        commodity_account_id = lookup_account_id(commodity_item[:account])
+        commodity_account = Account.find(commodity_account_id)
 
-      creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
-                                                commodities_account_id: commodity_account.parent_id,
-                                                transaction_date: source["date-posted"],
-                                                action: commodity_item[:action].downcase,
-                                                symbol: commodity_account.name,
-                                                shares: parse_amount(commodity_item[:quantity]).abs,
-                                                value: parse_amount(commodity_item[:value]).abs)
-      creator.create!
+        creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
+                                                  commodities_account_id: commodity_account.parent_id,
+                                                  transaction_date: source["date-posted"],
+                                                  action: commodity_item[:action].downcase,
+                                                  symbol: commodity_account.name,
+                                                  shares: parse_amount(commodity_item[:quantity]).abs,
+                                                  value: parse_amount(commodity_item[:value]).abs)
+        creator.create!
+      else
+        save_commodity_transfer_transaction source
+      end
     rescue StandardError => e
       Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.backtrace.join("\n    ")}"
       raise e
+    end
+
+    def save_commodity_transfer_transaction(source)
+      puts "transfer"
     end
 
     def save_regular_transaction(source)
