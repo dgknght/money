@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :account, aliases: [:asset_account] do
-    name { Faker::Commerce.department }
+    name { Faker::Lorem.words(3).join(" ") }
     account_type Account.asset_type
     entity
     
