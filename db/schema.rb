@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150406014612) do
+ActiveRecord::Schema.define(version: 20150417215315) do
 
   # These are extensions that must be enabled in order to support this database
 #  enable_extension "plpgsql"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20150406014612) do
     t.string   "content_type", limit: 20
   end
 
+  add_index "accounts", ["entity_id", "parent_id", "name"], name: "index_accounts_on_entity_id_and_parent_id_and_name", unique: true, using: :btree
   add_index "accounts", ["parent_id"], name: "index_accounts_on_parent_id", using: :btree
 
   create_table "attachment_contents", force: true do |t|
