@@ -37,6 +37,7 @@ end
 group :development do
   gem 'annotate'
   gem 'rails-erd' # requires Graphbiz available at http://graphviz.org/Download_windows.php
+  gem 'therubyracer'
 end
 
 # Gems used only for assets and not required
