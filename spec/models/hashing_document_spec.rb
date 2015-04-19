@@ -49,4 +49,24 @@ describe HashingDocument do
     expect(data).to have(1).item
     expect(data.first).to eq({"name" => "Doug", "car" => {"make" => "Mazda", "model" => "Mazda 3"}})
   end
+
+  it 'should included nested hashes for deeply nested elements' do
+    xml = <<-eos
+      <?xml version="1.0"?>
+      <people>
+        <person>
+          <name>Doug</name>
+          <transportation>
+            <car>
+              <make>Mazda</make>
+              <model>Mazda 3</model>
+            </car>
+          </transportation>
+        </person>
+      </people>
+    eos
+    data = parse("person", xml)
+    expect(data).to have(1).item
+    expect(data.first).to eq({"name" => "Doug", "transportation" => {"car" => {"make" => "Mazda", "model" => "Mazda 3"}}})
+  end
 end
