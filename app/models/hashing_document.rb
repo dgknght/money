@@ -7,12 +7,18 @@ class HashingDocument < Nokogiri::XML::SAX::Document
       @parent = parent
     end
     def store_content(key)
-      @values ||= HashWithIndifferentAccess.new
-      @values[key] = content
+      return unless @parent
+      parent.put(key, value)
       self.content = nil
+    end
+    def put(key, value)
+      values[key] = value
     end
     def value
       @values || content
+    end
+    def values
+      @values ||= HashWithIndifferentAccess.new
     end
   end
 
@@ -36,9 +42,9 @@ class HashingDocument < Nokogiri::XML::SAX::Document
   def end_element(name)
     if @element_names.include?(name)
       @notify_method.call(@storage.value)
-      @storage = @storage.parent
     else
       @storage.store_content(name) if @storage
     end
+    @storage = @storage.parent if @storage
   end
 end
