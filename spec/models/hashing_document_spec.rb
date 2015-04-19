@@ -10,7 +10,7 @@ describe HashingDocument do
     data = []
     doc = HashingDocument.new(->(datum){data<<datum}, *element_names)
     parser = Nokogiri::XML::SAX::Parser.new(doc)
-    parser.parse(xml)
+    parser.parse(xml.strip)
     data
   end
 
@@ -30,5 +30,23 @@ describe HashingDocument do
     data = parse("person", '<people><person><name>Doug</name><job>Programmer</job></person></people>')
     expect(data).to have(1).items
     expect(data.first).to eq({"name" => "Doug", "job" => "Programmer"})
+  end
+
+  it 'should included nested hashes for nested elements' do
+    xml = <<-eos
+      <?xml version="1.0"?>
+      <people>
+        <person>
+          <name>Doug</name>
+          <car>
+            <make>Mazda</make>
+            <model>Mazda 3</model>
+          </car>
+        </person>
+      </people>
+    eos
+    data = parse("person", xml)
+    expect(data).to have(1).item
+    expect(data.first).to eq({"name" => "Doug", "car" => {"make" => "Mazda", "model" => "Mazda 3"}})
   end
 end
