@@ -3,20 +3,27 @@ class HashingDocument < Nokogiri::XML::SAX::Document
   class ElementContext
     attr_reader :parent
     attr_accessor :content
+
     def initialize(parent = nil)
       @parent = parent
     end
+
     def store_content(key)
       return unless @parent
       parent.put(key, value)
       self.content = nil
     end
+
     def put(key, value)
       values[key] = value
     end
+
     def value
       @values || content
     end
+
+    private
+
     def values
       @values ||= HashWithIndifferentAccess.new
     end
@@ -40,11 +47,10 @@ class HashingDocument < Nokogiri::XML::SAX::Document
   end
 
   def end_element(name)
-    if @element_names.include?(name)
-      @notify_method.call(@storage.value)
-    else
-      @storage.store_content(name) if @storage
-    end
-    @storage = @storage.parent if @storage
+    return unless @storage
+
+    @notify_method.call(@storage.value) if @element_names.include?(name)
+    @storage.store_content(name)
+    @storage = @storage.parent
   end
 end
