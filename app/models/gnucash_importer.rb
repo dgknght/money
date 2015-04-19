@@ -106,12 +106,12 @@ class GnucashImporter
   end
 
   def process_element(name, elem)
-    if name == "gnc:account"
-      process_account_element(elem)
-    elsif name == "gnc:commodity"
-      process_commodity_element(elem)
+    simple_name = name.rpartition(':')[2]
+    method_name = "process_#{simple_name}_element".to_sym
+    if respond_to?(method_name, true)
+      send method_name, elem
     else
-      puts "process_element #{name}, #{elem.inspect}"
+      puts "Unrecognized element #{name}, #{elem.inspect}"
     end
   end
 
