@@ -8,7 +8,7 @@ describe HashingDocument do
 
   def parse(*element_names, xml)
     data = []
-    doc = HashingDocument.new(->(datum){data<<datum}, *element_names)
+    doc = HashingDocument.new(->(name, datum){data<<[name, datum]}, *element_names)
     parser = Nokogiri::XML::SAX::Parser.new(doc)
     parser.parse(xml.strip)
     data
@@ -17,19 +17,19 @@ describe HashingDocument do
   it 'should notify on named elements' do
     data = parse("root", '<?xml version="1.0"?><root>This is a test</root>')
     expect(data).to have(1).item
-    expect(data.first).to eq("This is a test")
+    expect(data.first).to eq(["root", "This is a test"])
   end
 
   it 'should include multiple lines of content' do
     data = parse("root", "<?xml version=\"1.0\"?><root>This is\na test</root>")
     expect(data).to have(1).item
-    expect(data.first).to eq("This is\na test")
+    expect(data.first).to eq(["root", "This is\na test"])
   end
 
   it 'should include inner elements in hash values' do
     data = parse("person", '<people><person><name>Doug</name><job>Programmer</job></person></people>')
     expect(data).to have(1).items
-    expect(data.first).to eq({"name" => "Doug", "job" => "Programmer"})
+    expect(data.first).to eq(["person", {"name" => "Doug", "job" => "Programmer"}])
   end
 
   it 'should included nested hashes for nested elements' do
@@ -47,7 +47,7 @@ describe HashingDocument do
     eos
     data = parse("person", xml)
     expect(data).to have(1).item
-    expect(data.first).to eq({"name" => "Doug", "car" => {"make" => "Mazda", "model" => "Mazda 3"}})
+    expect(data.first).to eq(["person", {"name" => "Doug", "car" => {"make" => "Mazda", "model" => "Mazda 3"}}])
   end
 
   it 'should included nested hashes for deeply nested elements' do
@@ -67,6 +67,6 @@ describe HashingDocument do
     eos
     data = parse("person", xml)
     expect(data).to have(1).item
-    expect(data.first).to eq({"name" => "Doug", "transportation" => {"car" => {"make" => "Mazda", "model" => "Mazda 3"}}})
+    expect(data.first).to eq(["person", {"name" => "Doug", "transportation" => {"car" => {"make" => "Mazda", "model" => "Mazda 3"}}}])
   end
 end

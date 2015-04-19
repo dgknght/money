@@ -49,7 +49,7 @@ class HashingDocument < Nokogiri::XML::SAX::Document
   def end_element(name)
     return unless @storage
 
-    @notify_method.call(@storage.value) if @element_names.include?(name)
+    @notify_method.call(name, @storage.value) if @element_names.include?(name)
     @storage.store_content(name)
     @storage = @storage.parent
   end
