@@ -14,8 +14,10 @@ class HashingDocument < Nokogiri::XML::SAX::Document
       self.content = nil
     end
 
-    def put(key, value)
-      values[key] = value
+    def put(key, val)
+      existing = values[key]
+      new_value = existing.present? ? (Array(existing) << val) : val
+      values[key] = new_value
     end
 
     def value

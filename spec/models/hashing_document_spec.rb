@@ -69,4 +69,44 @@ describe HashingDocument do
     expect(data).to have(1).item
     expect(data.first).to eq(["person", {"name" => "Doug", "transportation" => {"car" => {"make" => "Mazda", "model" => "Mazda 3"}}}])
   end
+
+  it 'should put multiple values with the same element name in an array' do
+    xml = <<-eos
+      <?xml version="1.0"?>
+      <people>
+        <person>
+          <name>Doug</name>
+          <car>Mazda 3</car>
+          <car>Volkswagon Passat</car>
+        </person>
+        <person>
+          <name>Eli</name>
+        </person>
+      </people>
+    eos
+    data = parse("person", xml)
+    expect(data).to eq([["person", {"name" => "Doug", "car" => ["Mazda 3", "Volkswagon Passat"]}],
+                        ["person", {"name" => "Eli"}]])
+  end
+
+  it 'should put multiple nested values with the same element name in an array' do
+    xml = <<-eos
+      <?xml version="1.0"?>
+      <people>
+        <person>
+          <name>Doug</name>
+          <cars>
+            <car>Mazda 3</car>
+            <car>Volkswagon Passat</car>
+          </cars>
+        </person>
+        <person>
+          <name>Eli</name>
+        </person>
+      </people>
+    eos
+    data = parse("person", xml)
+    expect(data).to eq([["person", {"name" => "Doug", "cars" => {"car" => ["Mazda 3", "Volkswagon Passat"]}}],
+                        ["person", {"name" => "Eli"}]])
+  end
 end
