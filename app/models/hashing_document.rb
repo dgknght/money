@@ -16,7 +16,12 @@ class HashingDocument < Nokogiri::XML::SAX::Document
 
     def put(key, val)
       existing = values[key]
-      new_value = existing.present? ? (Array(existing) << val) : val
+      if existing.present?
+        new_value = existing.is_a?(Array) ? existing : [existing]
+        new_value << val
+      else
+        new_value = val
+      end
       values[key] = new_value
     end
 
