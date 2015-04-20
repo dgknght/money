@@ -12,7 +12,7 @@ class GnucashImporter
     "MUTUAL" => Account.commodity_content}
   IGNORE_ACCOUNTS = ["Root Account", "Assets", "Liabilities", "Expenses", "Income", "Equity"]
 
-  ELEMENTS_TO_PROCESS = ["gnc:account", "gnc:commodity", "price"]
+  ELEMENTS_TO_PROCESS = ["gnc:account", "gnc:commodity", "price", "gnc:transaction"]
 
   attr_accessor :data, :entity
   validates_presence_of :data, :entity
@@ -146,6 +146,66 @@ class GnucashImporter
     end
   rescue StandardError => e
     Rails.logger.warn "Unable to import the price.\n  source=#{source.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
+  end
+
+  def process_transaction_element(source)
+    if commodity_transaction?(source)
+      save_commodity_transaction(source)
+    else
+      save_regular_transaction(source)
+    end
+    @trace_method.call 't'
+  end
+
+  def commodity_transaction?(source)
+    source["trn:splits"]["trn:split"].any?{|i| i.has_key?("slot:action")}
+  end
+
+  def save_commodity_transaction(source)
+    # points to the account use to pay for purchases, and that received proceeds from sales
+    commodities_item = source[:items].select{|i| !i.has_key?(:action)}.first
+    if commodities_item
+      commodities_account_id = lookup_account_id(commodities_item[:account])
+
+      # points to the account that tracks purchases of a commodity within the investment account
+      commodity_item = source[:items].select{|i| i.has_key?(:action)}.first
+      commodity_account_id = lookup_account_id(commodity_item[:account])
+      commodity_account = Account.find(commodity_account_id)
+
+      creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
+                                                commodities_account_id: commodity_account.parent_id,
+                                                transaction_date: source["date-posted"],
+                                                action: commodity_item[:action].downcase,
+                                                symbol: commodity_account.name,
+                                                shares: parse_amount(commodity_item[:quantity]).abs,
+                                                value: parse_amount(commodity_item[:value]).abs)
+      creator.create!
+    else
+      save_commodity_transfer_transaction source
+    end
+  rescue StandardError => e
+    Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.backtrace.join("\n    ")}"
+    raise e
+  end
+
+  def save_commodity_transfer_transaction(source)
+    puts "transfer"
+  end
+
+  def save_regular_transaction(source)
+    description = source["trn:description"]
+    description = "blank" unless description.present?
+    transaction = @entity.transactions.new(transaction_date: source["trn:date-posted"]["ts:date"],
+                                           description: description)
+    source["trn:splits"]["trn:split"].each do |item_source|
+      amount = parse_amount(item_source["split:value"])
+      transaction.items.new(account_id: lookup_account_id(item_source["split:account"]),
+                            action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
+                            amount: amount.abs,
+                            reconciled: item_source["split:reconciled-state"] == 'y')
+    end
+
+    cannot_save(transaction, :description, source) unless transaction.save
   end
 
   def gzip_reader
