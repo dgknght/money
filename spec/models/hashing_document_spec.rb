@@ -32,6 +32,19 @@ describe HashingDocument do
     expect(data.first).to eq(["person", {"name" => "Doug", "job" => "Programmer"}])
   end
 
+  it 'should handle ampersands correctly' do
+    xml = <<-eos
+      <?xml version="1.0"?>
+      <places>
+        <place>Dave &amp; Busters</place>
+        <place>Main Event</place>
+      </places>
+    eos
+    data = parse("place", xml)
+    expect(data).to have(2).item
+    expect(data.first).to eq(["place", "Dave & Busters"])
+  end
+
   it 'should included nested hashes for nested elements' do
     xml = <<-eos
       <?xml version="1.0"?>

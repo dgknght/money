@@ -50,7 +50,13 @@ class HashingDocument < Nokogiri::XML::SAX::Document
   end
 
   def characters(value)
-    @storage.content = value if @storage
+    if @storage
+      if @storage.content
+        @storage.content << value
+      else
+        @storage.content = value
+      end
+    end
   end
 
   def end_element(name)
