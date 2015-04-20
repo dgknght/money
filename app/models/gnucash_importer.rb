@@ -158,27 +158,28 @@ class GnucashImporter
   end
 
   def commodity_transaction?(source)
-    source["trn:splits"]["trn:split"].any?{|i| i.has_key?("slot:action")}
+    source["trn:splits"]["trn:split"].any?{|i| i.has_key?("split:action")}
   end
 
   def save_commodity_transaction(source)
     # points to the account use to pay for purchases, and that received proceeds from sales
-    commodities_item = source[:items].select{|i| !i.has_key?(:action)}.first
+    source_items = source["trn:splits"]["trn:split"]
+    commodities_item = source_items.select{|i| !i.has_key?("split:action")}.first
     if commodities_item
-      commodities_account_id = lookup_account_id(commodities_item[:account])
+      commodities_account_id = lookup_account_id(commodities_item["split:account"])
 
       # points to the account that tracks purchases of a commodity within the investment account
-      commodity_item = source[:items].select{|i| i.has_key?(:action)}.first
-      commodity_account_id = lookup_account_id(commodity_item[:account])
+      commodity_item = source_items.select{|i| i.has_key?("split:action")}.first
+      commodity_account_id = lookup_account_id(commodity_item["split:account"])
       commodity_account = Account.find(commodity_account_id)
 
       creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
                                                 commodities_account_id: commodity_account.parent_id,
-                                                transaction_date: source["date-posted"],
-                                                action: commodity_item[:action].downcase,
+                                                transaction_date: source["trn:date-posted"]["ts:date"],
+                                                action: commodity_item["split:action"].downcase,
                                                 symbol: commodity_account.name,
-                                                shares: parse_amount(commodity_item[:quantity]).abs,
-                                                value: parse_amount(commodity_item[:value]).abs)
+                                                shares: parse_amount(commodity_item["split:quantity"]).abs,
+                                                value: parse_amount(commodity_item["split:value"]).abs)
       creator.create!
     else
       save_commodity_transfer_transaction source
