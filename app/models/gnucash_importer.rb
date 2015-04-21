@@ -157,13 +157,33 @@ class GnucashImporter
     @trace_method.call 't'
   end
 
+  def transaction_items(source)
+    items = source["trn:splits"]["trn:split"]
+    items.is_a?(Hash) ? [items] : items
+  end
+
   def commodity_transaction?(source)
-    source["trn:splits"]["trn:split"].any?{|i| i.has_key?("split:action")}
+    transaction_items(source).any?{|i| i.has_key?("split:action")}
   end
 
   def save_commodity_transaction(source)
     # points to the account use to pay for purchases, and that received proceeds from sales
-    source_items = source["trn:splits"]["trn:split"]
+    if transaction_items(source).one?
+      save_stock_split(source)
+    else
+      save_standard_commodity_transaction(source)
+    end
+  rescue StandardError => e
+    Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.backtrace.join("\n    ")}"
+    raise e
+  end
+
+  def save_stock_split(source)
+    puts "split"
+  end
+
+  def save_standard_commodity_transaction(source)
+    source_items = transaction_items(source)
     commodities_item = source_items.select{|i| !i.has_key?("split:action")}.first
     if commodities_item
       commodities_account_id = lookup_account_id(commodities_item["split:account"])
@@ -184,9 +204,6 @@ class GnucashImporter
     else
       save_commodity_transfer_transaction source
     end
-  rescue StandardError => e
-    Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.backtrace.join("\n    ")}"
-    raise e
   end
 
   def save_commodity_transfer_transaction(source)
