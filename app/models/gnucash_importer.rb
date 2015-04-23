@@ -57,8 +57,9 @@ class GnucashImporter
   def map_account_attributes(source)
     content_type = map_account_content_type(source["act:type"])
 
-    name_keys = content_type == Account.commodity_content ? ["act:code", "act:name"] : ["act:name"]
-    name = name_keys.map{|k| source[k]}.select{|name| name}.first
+    name = content_type == Account.commodity_content ?
+      source["act:commodity"]["cmdty:id"] :
+      source["act:name"]
 
     account = @entity.accounts.new(name: name,
                                    account_type: map_account_type(source["act:type"]),
