@@ -174,9 +174,6 @@ class GnucashImporter
     else
       save_standard_commodity_transaction(source)
     end
-  rescue StandardError => e
-    Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.backtrace.join("\n    ")}"
-    raise e
   end
 
   def save_stock_split(source)
@@ -205,6 +202,9 @@ class GnucashImporter
     else
       save_commodity_transfer_transaction source
     end
+  rescue StandardError => e
+    Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.backtrace.join("\n    ")}"
+    raise e
   end
 
   def save_commodity_transfer_transaction(source)
