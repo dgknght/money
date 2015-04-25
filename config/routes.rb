@@ -40,6 +40,10 @@ Money::Application.routes.draw do
   end
   resources :commodities, only: [:show, :edit, :update, :destroy] do
     resources :prices, only: [:index, :new, :create]
+    member do
+      get :new_split
+      put :split
+    end
   end
   resources :prices, only: [:show, :edit, :update, :destroy]
   resources :attachments, only: [:show, :destroy]

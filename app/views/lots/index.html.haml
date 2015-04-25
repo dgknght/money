@@ -7,6 +7,7 @@
     %th Cost
     %th Current value
     %th Gain/loss
+    %th &nbsp;
   -@lots.each do |lot|
     %tr
       %td.number_column= format_date(lot.purchase_date)
@@ -15,5 +16,6 @@
       %td.number_column= format_currency(lot.cost)
       %td.number_column= format_currency(lot.current_value)
       %td.number_column= format_currency(lot.gains)
+      %td.action_cell= link_to 'Split', new_split_commodity_path(lot.commodity), class: 'split_button', title: 'Click here to record a stock split.'
 .actions
   =link_to 'Back', holdings_account_path(@account.parent), class: 'back_button', title: 'Click here to return to the account holdings page.'
