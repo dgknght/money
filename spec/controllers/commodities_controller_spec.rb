@@ -3,13 +3,41 @@ require 'spec_helper'
 describe CommoditiesController do
 
   let (:entity) { FactoryGirl.create(:entity) }
-  let!(:commodity) { FactoryGirl.create(:commodity, entity: entity) }
+  let!(:commodity) { FactoryGirl.create(:commodity, entity: entity, symbol: 'AAPL') }
   let (:attributes) do
     {
       name: 'Knight Software Services',
       symbol: 'KSS', 
       market: Commodity.nyse
     }
+  end
+  shared_context 'split' do
+    let (:split_attributes) do
+      {
+        numerator: 2,
+        denominator: 1
+      }
+    end
+    let (:ira) do
+      FactoryGirl.create(:asset_account, content_type: Account.commodities_content,
+                                         entity: entity)
+    end
+    let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity) }
+    let!(:opening_trans) do
+      FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-01'),
+                                       description: 'Opening balance',
+                                       amount: 10_000,
+                                       debit_account: ira,
+                                       credit_account: opening_balances)
+    end
+    let!(:purchase_trans) do
+      CommodityTransactionCreator.new(trade_date: Chronic.parse('2015-01-02'),
+                                                  account: ira,
+                                                  action: 'buy',
+                                                  symbol: 'AAPL',
+                                                  shares: 100,
+                                                  value: 2_000).create!
+    end
   end
 
   context 'for an authenticated user' do
@@ -145,6 +173,30 @@ describe CommoditiesController do
               delete :destroy, id: commodity, format: :json
             end.to change(Commodity, :count).by(-1)
           end
+        end
+      end
+
+      describe 'get :new_split' do
+        include_context 'split'
+
+        it 'should be successful' do
+          get :new_split, id: commodity
+          expect(response).to be_success
+        end
+      end
+
+      describe 'put :split' do
+        include_context 'split'
+
+        it 'should redirect to the lot index page' do
+          put :split, id: commodity, split: split_attributes
+          expect(response).to redirect_to(account_lots_path(ira))
+        end
+
+        it 'should record the stock split' do
+          expect do
+            put :split, id: commodity, split: split_attributes
+          end.to change(commodity.lots.first, :shares_owned).from(100).to(200)
         end
       end
     end
@@ -299,6 +351,15 @@ describe CommoditiesController do
           end
         end
       end
+
+      describe 'get :new_split' do
+        it 'should redirect to the user home page'
+      end
+
+      describe 'put :split' do
+        it 'should redirect to the user home page'
+        it 'should not record the stock split'
+      end
     end
   end
 
@@ -449,6 +510,15 @@ describe CommoditiesController do
           expect(JSON.parse(response.body)).to have_only('error')
         end
       end
+    end
+
+    describe 'get :new_split' do
+      it 'should redirect to the sign in page'
+    end
+
+    describe 'put :split' do
+      it 'should redirect to the sign in page'
+      it 'should not record the stock split'
     end
   end
 end

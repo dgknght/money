@@ -3,7 +3,7 @@ class CommoditiesController < ApplicationController
 
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :create, :new]
-  before_filter :load_commodity, only: [:show, :update, :destroy, :edit]
+  before_filter :load_commodity, only: [:show, :update, :destroy, :edit, :split]
   before_filter :set_current_entity, only: [:show, :update, :edit, :destroy]
   respond_to :html, :json
 
@@ -21,6 +21,20 @@ class CommoditiesController < ApplicationController
   def new
     authorize! :update, @entity
     @commodity = @entity.commodities.new
+  end
+
+  SplitStruct = Struct.new(:numerator, :denominator)
+  def new_split
+    @split = SplitStruct.new
+  end
+
+  def split
+    if @commodity.split(split_params)
+      redirect_to account_lots_path(params[:account_id])
+    else
+      @split = SplitStruct.new(split_params[:numerator], split_params[:denominator])
+      render :new_split
+    end
   end
 
   def create
@@ -50,6 +64,10 @@ class CommoditiesController < ApplicationController
   private
     def commodity_params
       params.require(:commodity).permit([:name, :symbol, :market])
+    end
+
+    def split_params
+      params.require(:split).permit([:numerator, :denominator])
     end
 
     def load_commodity
