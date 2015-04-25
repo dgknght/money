@@ -13,12 +13,13 @@ end
 Given /^(#{ACCOUNT}) has the following commodity transactions$/ do |account, table|
   Timecop.freeze('2000-01-01') do
     table.hashes.each do |hash|
+      value = BigDecimal.new(hash['Value'].gsub(/[^.0123456789]/, ""))
       CommodityTransactionCreator.new(account: account,
                                       transaction_date: hash['Date'],
                                       action: hash['Action'],
                                       symbol: hash['Symbol'],
                                       shares: hash['Shares'],
-                                      value: hash['Value'],
+                                      value: value,
                                       valuation_method: CommodityTransactionCreator.fifo).create!
     end
   end
