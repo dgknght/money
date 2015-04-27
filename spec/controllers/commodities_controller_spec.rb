@@ -189,14 +189,16 @@ describe CommoditiesController do
         include_context 'split'
 
         it 'should redirect to the lot index page' do
-          put :split, id: commodity, split: split_attributes
+          put :split, id: commodity, split: split_attributes, account_id: ira.id
           expect(response).to redirect_to(account_lots_path(ira))
         end
 
         it 'should record the stock split' do
+          lots = commodity.lots.to_a
           expect do
-            put :split, id: commodity, split: split_attributes
-          end.to change(commodity.lots.first, :shares_owned).from(100).to(200)
+            put :split, id: commodity, split: split_attributes, account_id: ira.id
+            lots.each{|l| l.reload}
+          end.to change(lots.first, :shares_owned).from(BigDecimal.new(100)).to(BigDecimal.new(200))
         end
       end
     end

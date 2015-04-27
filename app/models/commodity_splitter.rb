@@ -10,9 +10,9 @@ class CommoditySplitter
   validates :commodity, presence: true
 
   def initialize(options = {})
-    options = {denominator: 1}.merge(options)
-    @numerator = options[:numerator]
-    @denominator = options[:denominator]
+    options = {denominator: 1}.merge(options).with_indifferent_access
+    @numerator = options[:numerator].to_i
+    @denominator = options[:denominator].to_i
     @commodity = options[:commodity]
   end
 
