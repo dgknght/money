@@ -24,11 +24,13 @@ class CommoditiesController < ApplicationController
   end
 
   def new_split
+    authorize! :update, @commodity
     @split = CommoditySplitter.new(commodity: @commodity)
     @account_id = params[:account_id]
   end
 
   def split
+    authorize! :update, @commodity
     @split = CommoditySplitter.new(split_params)
     if @split.split # returns the list of lots affected
       redirect_to account_lots_path(params[:account_id])

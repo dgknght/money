@@ -355,12 +355,27 @@ describe CommoditiesController do
       end
 
       describe 'get :new_split' do
-        it 'should redirect to the user home page'
+        it 'should redirect to the user home page' do
+          get :new_split, id: commodity
+          expect(response).to redirect_to home_path
+        end
       end
 
       describe 'put :split' do
-        it 'should redirect to the user home page'
-        it 'should not record the stock split'
+        include_context 'split'
+
+        it 'should redirect to the user home page' do
+          put :split, id: commodity, split: split_attributes, account_id: ira.id
+          expect(response).to redirect_to home_path
+        end
+
+        it 'should not record the stock split' do
+          lots = commodity.lots.to_a
+          expect do
+            put :split, id: commodity, split: split_attributes, account_id: ira.id
+            lots.each {|l| l.reload}
+          end.not_to change(lots.first, :shares_owned)
+        end
       end
     end
   end
