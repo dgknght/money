@@ -11,15 +11,15 @@ class CommoditySplitter
 
   def initialize(options = {})
     options = {denominator: 1}.merge(options).with_indifferent_access
-    @numerator = options[:numerator].to_i
-    @denominator = options[:denominator].to_i
+    @numerator = options[:numerator]
+    @denominator = options[:denominator]
     @commodity = options[:commodity]
   end
 
   def split
     return false unless valid?
 
-    ratio = numerator / denominator
+    ratio = numerator.to_i / denominator.to_i
     commodity.transaction do
       commodity.lots.each do |lot|
         lot.shares_owned = lot.shares_owned * ratio
