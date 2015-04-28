@@ -33,6 +33,7 @@ class CommoditiesController < ApplicationController
     authorize! :update, @commodity
     @split = CommoditySplitter.new(split_params)
     if @split.split # returns the list of lots affected
+      flash[:notice] = 'The stock split was recorded successfully.'
       redirect_to account_lots_path(params[:account_id])
     else
       render :new_split

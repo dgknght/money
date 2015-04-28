@@ -1,0 +1,18 @@
+.row
+  .col-md-4.col-md-offset-4
+    %h2#page_title #{h @split.commodity.symbol} Split
+    =form_tag(split_commodity_path(@split.commodity), method: 'put') do
+      =hidden_field_tag :account_id, @account_id
+
+      .form-group
+        =label_tag 'split[numerator]', 'Numerator'
+        %br
+        =number_field_tag 'split[numerator]', @split.numerator, min: 1, max: 100
+
+      .form-group
+        =label_tag 'split[denominator]', 'Denominator'
+        %br
+        =number_field_tag 'split[denominator]', @split.denominator, min: 1, max: 100
+
+      .actions
+        =submit_tag 'Save', class: 'save_button', title: 'Click here to record the stock split.'
