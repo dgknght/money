@@ -63,5 +63,5 @@ Feature: Record a stock split
  And I click "Save"
  Then I should see "The stock split was recorded successfully" within the notice area
  And I should see the following lots table
-   | Purchase date | Price | Shares owned | Current value |
-   |      1/2/2015 |  5.00 |          200 |      1,000.00 |
+   | Purchase date | Shares owned |   Price |     Cost | Current value | Gain/loss |
+   |      1/2/2015 |     200.0000 | 10.0000 | 2,000.00 |      2,000.00 |      0.00 |
