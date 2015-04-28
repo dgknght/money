@@ -1,4 +1,3 @@
-@wip
 Feature: Record a stock split
   As a user,
   In order to update the value of my stock holdings,
