@@ -35,6 +35,12 @@ Money::Application.routes.draw do
       get :holdings
     end
   end
+  resources :lots, only: [] do
+    member do
+      get :new_transfer
+      put :transfer
+    end
+  end
   resources :transactions, only: [:show, :edit, :update, :destroy] do
     resources :attachments, only: [:index, :new, :create]
   end

@@ -16,6 +16,8 @@
       %td.number_column= format_currency(lot.cost)
       %td.number_column= format_currency(lot.current_value)
       %td.number_column= format_currency(lot.gains)
-      %td.action_cell= link_to 'Split', new_split_commodity_path(lot.commodity, account_id: @account.id), class: 'split_button', title: 'Click here to record a stock split.'
+      %td.action_cell
+        =link_to 'Split', new_split_commodity_path(lot.commodity, account_id: @account.id), class: 'split_button', title: 'Click here to record a stock split.'
+        =link_to 'Transfer', new_transfer_lot_path(lot, account_id: @account.id), class: 'transfer_button', title: 'Click here to transfer this lot to another account.'
 .actions
   =link_to 'Back', holdings_account_path(@account.parent), class: 'back_button', title: 'Click here to return to the account holdings page.'
