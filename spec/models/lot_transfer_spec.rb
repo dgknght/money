@@ -11,7 +11,6 @@ describe LotTransfer do
   let (:lot) { kss.lots.first }
   let (:attributes) do
     {
-      source_account: four01k,
       target_account: ira,
       lot: lot
     }
@@ -20,13 +19,6 @@ describe LotTransfer do
   it 'should be creatable from valid attributes' do
     transfer = LotTransfer.new(attributes)
     expect(transfer).to be_valid
-  end
-
-  describe '#source_account' do
-    it 'should be required' do
-      transfer = LotTransfer.new(attributes.except(:source_account))
-      expect(transfer).to have_at_least(1).error_on(:source_account)
-    end
   end
 
   describe '#target_account' do
@@ -51,9 +43,28 @@ describe LotTransfer do
       end.to change(kss_account.lots, :count).from(1).to(0)
     end
 
-    it 'should create the target commodity account, if it does not exist'
-    it 'should add the lot to the target commodity account'
-    it 'should not change the shares in the lot'
-    it 'should not change the current value of the lot'
+    it 'should create the target commodity account, if it does not exist' do
+      LotTransfer.new(attributes).transfer
+      expect(ira).to have(1).child
+    end
+
+    it 'should add the lot to the target commodity account' do
+      LotTransfer.new(attributes).transfer
+      expect(ira.children.find_by_name('KSS')).to have(1).lot
+    end
+
+    it 'should not change the shares in the lot' do
+      expect do
+        LotTransfer.new(attributes).transfer
+        lot.reload
+      end.not_to change(lot, :shares_owned)
+    end
+
+    it 'should not change the current value of the lot' do
+      expect do
+        LotTransfer.new(attributes).transfer
+        lot.reload
+      end.not_to change(lot, :current_value)
+    end
   end
 end
