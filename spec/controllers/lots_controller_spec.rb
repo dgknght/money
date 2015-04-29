@@ -4,7 +4,7 @@ describe LotsController do
   let (:entity) { FactoryGirl.create(:entity) }
   let (:account) { FactoryGirl.create(:commodities_account, entity: entity) }
   let (:other_account) { FactoryGirl.create(:commodities_account, entity: entity) }
-  let (:commodity) { FactoryGirl.create(:commodity, entity: entity) }
+  let (:commodity) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSS') }
   let (:commodity_account) { Account.find_by_name(commodity.symbol) }
   let!(:transaction1) do
     CommodityTransactionCreator.new(account: account,
@@ -23,6 +23,9 @@ describe LotsController do
                                     value: 1_300).create!
   end
   let (:lot) { commodity.lots.first }
+  let (:transfer_attributes) do
+    { target_account_id: other_account.id }
+  end
 
   context 'for an authenticated user' do
     context 'that owns the entity' do
@@ -56,20 +59,20 @@ describe LotsController do
 
       describe 'put :transfer' do
         it 'should redirect to the lot index page for the original account' do
-          put :transfer, id: lot, transfer: { account_id: other_account.id }
+          put :transfer, id: lot, transfer: transfer_attributes, account_id: account
           expect(response).to redirect_to account_lots_path(account)
         end
 
         it 'should add the lot to the specified account' do
-          expect do
-            put :transfer, id: lot, transfer: { account_id: other_account.id }
-          end.to change(other_account.lots, :count).by(1)
+          put :transfer, id: lot, transfer: transfer_attributes
+          expect(other_account.children.find_by_name('KSS')).to have(1).lot
         end
 
         it 'should remove the lot from the current account' do
+          commodity_account = account.children.find_by_name('KSS')
           expect do
-            put :transfer, id: lot, transfer: { account_id: other_account.id }
-          end.to change(account.lots, :count).by(-1)
+            put :transfer, id: lot, transfer: transfer_attributes
+          end.to change(commodity_account.lots, :count).by(-1)
         end
       end
     end
@@ -106,13 +109,13 @@ describe LotsController do
 
       describe 'put :transfer' do
         it 'should redirect to the user home page' do
-          put :transfer, id: lot, transfer: { account_id: other_account.id }
+          put :transfer, id: lot, transfer: transfer_attributes
           expect(response).to redirect_to home_path
         end
 
         it 'should not add the lot to the specified account' do
           expect do
-            put :transfer, id: lot, transfer: { account_id: other_account.id }
+            put :transfer, id: lot, transfer: transfer_attributes
           end.not_to change(other_account.lots, :count)
         end
       end
@@ -150,13 +153,13 @@ describe LotsController do
 
     describe 'put :transfer' do
       it 'should redirect to the sign in page' do
-        put :transfer, id: lot, transfer: { account_id: other_account.id }
+        put :transfer, id: lot, transfer: transfer_attributes
         expect(response).to redirect_to new_user_session_path
       end
 
       it 'should not add the lot to the specified account' do
         expect do
-          put :transfer, id: lot, transfer: { account_id: other_account.id }
+          put :transfer, id: lot, transfer: transfer_attributes
         end.not_to change(other_account.lots, :count)
       end
     end
