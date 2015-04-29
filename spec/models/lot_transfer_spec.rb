@@ -11,7 +11,7 @@ describe LotTransfer do
   let (:lot) { kss.lots.first }
   let (:attributes) do
     {
-      target_account: ira,
+      target_account_id: ira.id,
       lot: lot
     }
   end
@@ -21,10 +21,10 @@ describe LotTransfer do
     expect(transfer).to be_valid
   end
 
-  describe '#target_account' do
+  describe '#target_account_id' do
     it 'should be required' do
-      transfer = LotTransfer.new(attributes.except(:target_account))
-      expect(transfer).to have_at_least(1).error_on(:target_account)
+      transfer = LotTransfer.new(attributes.except(:target_account_id))
+      expect(transfer).to have_at_least(1).error_on(:target_account_id)
     end
   end
 

@@ -2,16 +2,23 @@
 class LotTransfer
   include ActiveModel::Validations
 
-  attr_accessor :target_account, :lot
+  attr_accessor :target_account_id, :lot
 
-  validates_presence_of :target_account, :lot
+  validates_presence_of :target_account_id, :lot
 
   def initialize(options = {})
-    @target_account = options[:target_account]
+    @target_account_id = options[:target_account_id]
     @lot = options[:lot]
   end
 
+  def target_account
+    @target_account ||= Account.find(target_account_id)
+    @target_account
+  end
+
   def transfer
+    return false unless valid?
+
     lot.account_id = commodity_target_account.id
     lot.save
   end
