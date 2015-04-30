@@ -6,6 +6,7 @@ class LotsController < ApplicationController
 
   def index
     authorize! :show, @account
+
     @lots = @account.lots
     respond_with @lots
   end
@@ -13,18 +14,19 @@ class LotsController < ApplicationController
   def new_transfer
     authorize! :update, @lot
 
-    @transfer = LotTransfer.new
-    @account_id = params[:account_id]
+    @transfer = LotTransfer.new(lot: @lot)
+    @account_id = params[:account_id].to_i
   end
 
 
   def transfer
     authorize! :update, @lot
 
+    previous_account_id = @lot.account_id
     @transfer = LotTransfer.new(transfer_params)
     if @transfer.transfer
       flash[:notice] = 'The lot was transferred successfully.'
-      redirect_to account_lots_path(params[:account_id])
+      redirect_to account_lots_path(previous_account_id)
     else
       render :new_transfer
     end

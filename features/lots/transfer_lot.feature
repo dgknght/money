@@ -1,4 +1,3 @@
-@wip
 Feature: Transfer an equity lot
   As a user
   In order to keep my records up to date with my accounts
@@ -61,15 +60,17 @@ Feature: Transfer an equity lot
     When I click "Transfer" within the 1st lots row
     Then I should see "Transfer lot" within the page title
 
-    When I select "IRA" from the account list
+    When I select "IRA" from the "Target account" list
     And I click "Save"
-    Then I should see "The lot was transfered successfully." within the notice area
+    Then I should see "The lot was transferred successfully." within the notice area
 
-    When I click "Accounts" within the navigation
+    When I click "Back"
+    And I click "Back"
     Then I should see the following accounts table
       | Name             |  Balance |
       | Assets           | 2,000.00 |
       | 401k             | 1,000.00 |
+      | KSS              |     0.00 |
       | IRA              | 1,000.00 |
       | KSS              | 1,000.00 |
       | Liabilities      |     0.00 |

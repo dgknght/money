@@ -1,1 +1,15 @@
-%h2#page_title Lot Transfer
+.row
+  .col-md-3.col-md-offset-4
+    %h2#page_title Transfer lot
+
+    =render "shared/errors", :resource => @transfer
+    =form_tag(transfer_lot_path(@transfer.lot), method: 'PUT') do
+      =hidden_field_tag :account_id, @account_id
+
+      =label_tag 'transfer[target_account_id]', 'Target account'
+      %br
+      =select_tag 'transfer[target_account_id]', account_options_for_transfer, class: 'form-control'
+
+      .actions
+        =submit_tag 'Save', class: 'save_button', title: 'Click here to transfer the lot.'
+        =link_to 'Back', account_lots_path(@transfer.lot.account_id), class: 'back_button', title: 'Click here to return to the list of lots.'

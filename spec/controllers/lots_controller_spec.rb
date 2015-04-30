@@ -60,7 +60,7 @@ describe LotsController do
       describe 'put :transfer' do
         it 'should redirect to the lot index page for the original account' do
           put :transfer, id: lot, transfer: transfer_attributes, account_id: account
-          expect(response).to redirect_to account_lots_path(account)
+          expect(response).to redirect_to account_lots_path(commodity_account)
         end
 
         it 'should add the lot to the specified account' do
