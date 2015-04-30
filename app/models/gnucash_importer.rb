@@ -168,40 +168,52 @@ class GnucashImporter
   end
 
   def save_commodity_transaction(source)
-    # points to the account use to pay for purchases, and that received proceeds from sales
-    if transaction_items(source).one?
-      save_stock_split(source)
+    if split_transaction?(source)
+      save_commodity_split_transaction(source)
+    elsif transfer_transaction?(source)
+      save_commodity_transfer_transaction(source)
     else
       save_standard_commodity_transaction(source)
     end
   end
 
-  def save_stock_split(source)
+  def transfer_transaction?(source)
+    source_items = transaction_items(source)
+    !source_items.any?{|i| !i.has_key?("split:action")}
+  end
+
+  def split_transaction?(source)
+    source_items = transaction_items(source)
+    source_items.one?
+  end
+
+  def save_commodity_split_transaction(source)
+    items = transaction_items(source)
+    puts "*******************************"
     puts "split"
+    puts "quantity=#{parse_amount(items.first["split:quantity"])}"
+    puts source.inspect
+    puts "*******************************"
   end
 
   def save_standard_commodity_transaction(source)
     source_items = transaction_items(source)
     commodities_item = source_items.select{|i| !i.has_key?("split:action")}.first
-    if commodities_item
-      commodities_account_id = lookup_account_id(commodities_item["split:account"])
+    commodities_account_id = lookup_account_id(commodities_item["split:account"])
 
-      # points to the account that tracks purchases of a commodity within the investment account
-      commodity_item = source_items.select{|i| i.has_key?("split:action")}.first
-      commodity_account_id = lookup_account_id(commodity_item["split:account"])
-      commodity_account = Account.find(commodity_account_id)
+    # points to the account that tracks purchases of a commodity within the investment account
+    commodity_item = source_items.select{|i| i.has_key?("split:action")}.first
+    commodity_account_id = lookup_account_id(commodity_item["split:account"])
+    commodity_account = Account.find(commodity_account_id)
 
-      creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
-                                                commodities_account_id: commodity_account.parent_id,
-                                                transaction_date: source["trn:date-posted"]["ts:date"],
-                                                action: commodity_item["split:action"].downcase,
-                                                symbol: commodity_account.name,
-                                                shares: parse_amount(commodity_item["split:quantity"]).abs,
-                                                value: parse_amount(commodity_item["split:value"]).abs)
-      creator.create!
-    else
-      save_commodity_transfer_transaction source
-    end
+    creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
+                                              commodities_account_id: commodity_account.parent_id,
+                                              transaction_date: source["trn:date-posted"]["ts:date"],
+                                              action: commodity_item["split:action"].downcase,
+                                              symbol: commodity_account.name,
+                                              shares: parse_amount(commodity_item["split:quantity"]).abs,
+                                              value: parse_amount(commodity_item["split:value"]).abs)
+    creator.create!
   rescue StandardError => e
     Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
     raise e
