@@ -190,6 +190,7 @@ table.attributes {
   height: 24px;
   width: 24px;
   margin: 2px;
+  background-repeat: no-repeat;
 }
 
 .any_small_button {
@@ -329,6 +330,16 @@ table.attributes {
 .small_split_button {
   @extend .any_small_button;
   background-image: image-url("split_small.png");
+}
+
+.transfer_button {
+  @extend .any_button;
+  background-image: image-url("transfer.png");
+}
+
+.small_transfer_button {
+  @extend .any_small_button;
+  background-image: image-url("transfer_small.png");
 }
 
 .standard_button {
