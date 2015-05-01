@@ -23,6 +23,11 @@ class LotTransfer
     lot.save
   end
 
+  def transfer!
+    raise "Unable to execute the transfer: #{errors.full_messages.to_sentence}" unless valid?
+    transfer
+  end
+
   private
 
   def commodity_target_account
