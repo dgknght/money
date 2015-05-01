@@ -179,7 +179,7 @@ class GnucashImporter
 
   def transfer_transaction?(source)
     source_items = transaction_items(source)
-    !source_items.any?{|i| !i.has_key?("split:action")}
+    source_items.all?{|i| i.has_key?("split:action")}
   end
 
   def split_transaction?(source)
@@ -229,7 +229,17 @@ class GnucashImporter
   end
 
   def save_commodity_transfer_transaction(source)
-    puts "transfer"
+    source_items = transaction_items(source)
+    items = source_items.map do |i|
+      {
+        quantity: parse_amount(i["split:quantity"]),
+        account: Account.find(lookup_account_id(i["split:account"]))
+      }
+    end.sort_by{|i| i[:quantity]}
+
+    items.first[:account].lots.each do |lot|
+      LotTransfer.new(lot: lot, target_account_id: items.second[:account].parent_id).transfer!
+    end
   end
 
   def save_regular_transaction(source)
