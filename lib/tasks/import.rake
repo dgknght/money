@@ -8,7 +8,10 @@ namespace :import do
       entity_name = ENV['ENTITY_NAME']
 
       existing = user.entities.find_by(name: entity_name)
-      existing.destroy! if existing.present?
+      if existing.present?
+        Entity.connection.execute("UPDATE transaction_items SET reconciled = false FROM transaction_items i INNER JOIN transactions t ON t.id = i.transaction_id WHERE t.entity_id = #{existing.id}")
+        existing.destroy!
+      end
 
       entity = user.entities.new(name: entity_name)
       unless entity.save
