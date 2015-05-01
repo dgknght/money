@@ -190,11 +190,19 @@ class GnucashImporter
   def save_commodity_split_transaction(source)
     item = transaction_items(source).first
     quantity_added = parse_amount(item["split:quantity"])
+
     account_id = lookup_account_id(item["split:account"])
     account = Account.find(account_id)
-    puts "split in account #{account.name}, add quantity #{quantity_added}"
-    puts account.lots.map{|l| "#{l.shares_owned} - #{l.price}"}.to_sentence
-    puts "total shares: #{account.lots.reduce(0){|sum, l| sum + l.shares_owned}}"
+
+    shares_owned = account.lots.reduce(0){|sum, l| sum + l.shares_owned}
+
+    commodity_account_id = lookup_account_id(item["split:account"])
+    commodity_account = Account.find(commodity_account_id)
+    commodity = @entity.commodities.find_by(symbol: commodity_account.name)
+
+    CommoditySplitter.new(numerator: shares_owned + quantity_added,
+                          denominator: shares_owned,
+                          commodity: commodity).split!
   end
 
   def save_standard_commodity_transaction(source)
