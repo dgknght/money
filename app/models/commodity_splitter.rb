@@ -19,7 +19,7 @@ class CommoditySplitter
   def split
     return false unless valid?
 
-    ratio = numerator.to_i / denominator.to_i
+    ratio = BigDecimal.new(numerator) / BigDecimal(denominator)
     commodity.transaction do
       commodity.lots.each do |lot|
         lot.shares_owned = lot.shares_owned * ratio
@@ -31,5 +31,10 @@ class CommoditySplitter
         price.save!
       end
     end
+  end
+
+  def split!
+    raise "The split cannot be executed: #{errors.full_messages.to_sentence}" unless valid?
+    split
   end
 end
