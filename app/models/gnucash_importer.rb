@@ -258,15 +258,33 @@ class GnucashImporter
     description = "blank" unless description.present?
     transaction = @entity.transactions.new(transaction_date: source["trn:date-posted"]["ts:date"],
                                            description: description)
-    source["trn:splits"]["trn:split"].each do |item_source|
-      amount = parse_amount(item_source["split:value"])
-      transaction.items.new(account_id: lookup_account_id(item_source["split:account"]),
-                            action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
-                            amount: amount.abs,
-                            reconciled: item_source["split:reconciled-state"] == 'y')
-    end
 
-    cannot_save(transaction, :description, source) unless transaction.save
+    transaction_items(source).
+      map{|i| transaction_item_attributes(i)}.
+      compact.
+      each{|h| transaction.items.new(h)}
+
+    if transaction.items.any?
+      cannot_save(transaction, :description, source) unless transaction.save
+    end
+  rescue => e
+    puts "Unable to save the regular transaction #{source.inspect}"
+    raise e
+  end
+
+  def transaction_item_attributes(item_source)
+    amount = item_source.has_key?("split:value") ? parse_amount(item_source["split:value"]) : 0
+    return nil if amount.zero?
+
+    {
+      amount: amount.abs,
+      account_id: lookup_account_id(item_source["split:account"]),
+      action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
+      reconciled: item_source["split:reconciled-state"] == 'y'
+    }
+  rescue => e
+    puts "Unable to transform the transaction item attributes #{item_source.inspect}"
+    raise e
   end
 
   def gzip_reader
