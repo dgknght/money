@@ -113,11 +113,11 @@ class CommodityTransactionCreator
   def add_balance_sheet_items(transaction, cost_of_shares_sold)
     # account
     account_item = transaction.items.new(account: account,
-                                         action: account.infer_action(value),
+                                         action: TransactionItem.debit,
                                          amount: value)
     # commodity
     transaction.items.new(account: commodity_account,
-                          action: TransactionItem.opposite_action(account_item.action),
+                          action: TransactionItem.credit,
                           amount: cost_of_shares_sold)
   end
 
