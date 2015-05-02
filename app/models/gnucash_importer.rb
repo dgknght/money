@@ -122,7 +122,7 @@ class GnucashImporter
     if respond_to?(method_name, true)
       send method_name, elem
     else
-      puts "Unrecognized element #{name}, #{elem.inspect}"
+      Rails.logger.error "Unrecognized element #{name}, #{elem.inspect}"
     end
   end
 
