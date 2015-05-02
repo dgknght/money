@@ -49,9 +49,13 @@ class GnucashImporter
     IGNORE_ACCOUNTS.include?(name)
   end
 
-  def lookup_account_id(source_id)
+  def lookup_account_id(source_id, raise_error_if_not_found = false)
     return nil unless source_id
-    account_map[source_id]
+    result = account_map[source_id]
+    if raise_error_if_not_found && result.nil?
+      raise "Unable to find an account with source_id=#{source_id}"
+    end
+    result
   end
 
   def map_account_attributes(source)
@@ -93,7 +97,14 @@ class GnucashImporter
       account_map[source["act:id"]] = account.id
       @trace_method.call 'a'
     else
-      cannot_save account, :name, source unless account.errors.count == 1 and account.errors[:name].count == 1
+      if account.errors.count == 1 and account.errors[:name] == ["has already been taken"]
+        # Account is a duplicate, point to the existing account with the same name
+        existing = account.parent.children.find_by(name: account.name)
+        raise "Unable to find the duplicate #{source.inspect}" unless existing
+        account_map[source["act:id"]] = existing.id
+      else
+        cannot_save account, :name, source
+      end
       return
     end
 
@@ -212,7 +223,7 @@ class GnucashImporter
 
     # points to the account that tracks purchases of a commodity within the investment account
     commodity_item = source_items.select{|i| i.has_key?("split:action")}.first
-    commodity_account_id = lookup_account_id(commodity_item["split:account"])
+    commodity_account_id = lookup_account_id(commodity_item["split:account"], true)
     commodity_account = Account.find(commodity_account_id)
 
     creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
