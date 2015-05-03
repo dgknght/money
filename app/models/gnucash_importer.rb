@@ -268,7 +268,7 @@ class GnucashImporter
       cannot_save(transaction, :description, source) unless transaction.save
     end
   rescue => e
-    puts "Unable to save the regular transaction #{source.inspect}"
+    Rails.logger.error "Unable to save the regular transaction #{source.inspect}"
     raise e
   end
 
@@ -283,7 +283,7 @@ class GnucashImporter
       reconciled: item_source["split:reconciled-state"] == 'y'
     }
   rescue => e
-    puts "Unable to transform the transaction item attributes #{item_source.inspect}"
+    Rails.logger.error "Unable to transform the transaction item attributes #{item_source.inspect}"
     raise e
   end
 
