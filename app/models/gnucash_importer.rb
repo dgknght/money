@@ -31,6 +31,15 @@ class GnucashImporter
     parser.parse(gzip_reader)
   end
 
+  def lookup_account_id(source_id, raise_error_if_not_found = false)
+    return nil unless source_id
+    result = account_map[source_id]
+    if raise_error_if_not_found && result.nil?
+      raise "Unable to find an account with source_id=#{source_id}"
+    end
+    result
+  end
+
   private
 
   def account_map
@@ -47,15 +56,6 @@ class GnucashImporter
 
   def ignore_account?(name)
     IGNORE_ACCOUNTS.include?(name)
-  end
-
-  def lookup_account_id(source_id, raise_error_if_not_found = false)
-    return nil unless source_id
-    result = account_map[source_id]
-    if raise_error_if_not_found && result.nil?
-      raise "Unable to find an account with source_id=#{source_id}"
-    end
-    result
   end
 
   def map_account_attributes(source)
@@ -162,7 +162,7 @@ class GnucashImporter
   end
 
   def process_transaction_element(source)
-    transaction = Gnucash::TransactionWrapper.new(source)
+    transaction = Gnucash::TransactionWrapper.new(source, self)
     if transaction.commodity_transaction?
       save_commodity_transaction(transaction)
     else
@@ -183,30 +183,22 @@ class GnucashImporter
 
   def save_commodity_split_transaction(source)
     item = source.items.first
-    quantity_added = item.quantity
+    shares_owned = item.account.lots.reduce(0){|sum, l| sum + l.shares_owned}
+    commodity = @entity.commodities.find_by(symbol: item.account.name)
 
-    account_id = lookup_account_id(item.account)
-    account = Account.find(account_id)
-
-    shares_owned = account.lots.reduce(0){|sum, l| sum + l.shares_owned}
-
-    commodity = @entity.commodities.find_by(symbol: account.name)
-
-    CommoditySplitter.new(numerator: shares_owned + quantity_added,
+    CommoditySplitter.new(numerator: shares_owned + item.quantity,
                           denominator: shares_owned,
                           commodity: commodity).split!
   end
 
   def save_standard_commodity_transaction(source)
     commodities_item = source.items.select{|i| i.action.nil?}.first
-    commodities_account_id = lookup_account_id(commodities_item.account)
 
     # points to the account that tracks purchases of a commodity within the investment account
     commodity_item = source.items.select{|i| i.action}.first
-    commodity_account_id = lookup_account_id(commodity_item.account, true)
-    commodity_account = Account.find(commodity_account_id)
+    commodity_account = commodity_item.account
 
-    creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
+    creator = CommodityTransactionCreator.new(account_id: commodities_item.account_id,
                                               commodities_account_id: commodity_account.parent_id,
                                               transaction_date: source.date_posted,
                                               action: commodity_item.action.downcase,
@@ -220,15 +212,10 @@ class GnucashImporter
   end
 
   def save_commodity_transfer_transaction(source)
-    items = source.items.map do |i|
-      {
-        quantity: i.quantity,
-        account: Account.find(lookup_account_id(i["split:account"]))
-      }
-    end.sort_by{|i| i[:quantity]}
-
-    items.first[:account].lots.each do |lot|
-      LotTransfer.new(lot: lot, target_account_id: items.second[:account].parent_id).transfer!
+    items = source.items.sort_by{|i| i.quantity}
+    target_account_id = items.second.account.parent_id
+    items.first.account.lots.each do |lot|
+      LotTransfer.new(lot: lot, target_account_id: target_account_id).transfer!
     end
   end
 
@@ -251,12 +238,12 @@ class GnucashImporter
   end
 
   def transaction_item_attributes(item_source)
-    amount = item_source.value ? item_source.value : 0
+    amount = item_source.value || 0
     return nil if amount.zero?
 
     {
       amount: amount.abs,
-      account_id: lookup_account_id(item_source.account),
+      account_id: item_source.account_id,
       action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
       reconciled: item_source.reconciled_state == 'y'
     }
