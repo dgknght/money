@@ -182,14 +182,14 @@ class GnucashImporter
 
   def save_commodity_split_transaction(source)
     item = source.items.first
-    quantity_added = parse_amount(item["split:quantity"])
+    quantity_added = parse_amount(item.quantity)
 
-    account_id = lookup_account_id(item["split:account"])
+    account_id = lookup_account_id(item.account)
     account = Account.find(account_id)
 
     shares_owned = account.lots.reduce(0){|sum, l| sum + l.shares_owned}
 
-    commodity_account_id = lookup_account_id(item["split:account"])
+    commodity_account_id = lookup_account_id(item.account)
     commodity_account = Account.find(commodity_account_id)
     commodity = @entity.commodities.find_by(symbol: commodity_account.name)
 
@@ -199,21 +199,21 @@ class GnucashImporter
   end
 
   def save_standard_commodity_transaction(source)
-    commodities_item = source.items.select{|i| !i.has_key?("split:action")}.first
-    commodities_account_id = lookup_account_id(commodities_item["split:account"])
+    commodities_item = source.items.select{|i| i.action.nil?}.first
+    commodities_account_id = lookup_account_id(commodities_item.account)
 
     # points to the account that tracks purchases of a commodity within the investment account
-    commodity_item = source.items.select{|i| i.has_key?("split:action")}.first
-    commodity_account_id = lookup_account_id(commodity_item["split:account"], true)
+    commodity_item = source.items.select{|i| i.action}.first
+    commodity_account_id = lookup_account_id(commodity_item.account, true)
     commodity_account = Account.find(commodity_account_id)
 
     creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
                                               commodities_account_id: commodity_account.parent_id,
                                               transaction_date: source.date_posted,
-                                              action: commodity_item["split:action"].downcase,
+                                              action: commodity_item.action.downcase,
                                               symbol: commodity_account.name,
-                                              shares: parse_amount(commodity_item["split:quantity"]).abs,
-                                              value: parse_amount(commodity_item["split:value"]).abs)
+                                              shares: parse_amount(commodity_item.quantity).abs,
+                                              value: parse_amount(commodity_item.value).abs)
     creator.create!
   rescue StandardError => e
     Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
@@ -252,14 +252,14 @@ class GnucashImporter
   end
 
   def transaction_item_attributes(item_source)
-    amount = item_source.has_key?("split:value") ? parse_amount(item_source["split:value"]) : 0
+    amount = item_source.value ? parse_amount(item_source.value) : 0
     return nil if amount.zero?
 
     {
       amount: amount.abs,
-      account_id: lookup_account_id(item_source["split:account"]),
+      account_id: lookup_account_id(item_source.account),
       action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
-      reconciled: item_source["split:reconciled-state"] == 'y'
+      reconciled: item_source.reconciled_state == 'y'
     }
   rescue => e
     Rails.logger.error "Unable to transform the transaction item attributes #{item_source.inspect}"
