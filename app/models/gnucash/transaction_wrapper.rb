@@ -27,7 +27,7 @@ module Gnucash
     end
 
     def transfer_transaction?
-      items.all?{|i| i.has_key?("split:action")}
+      items.all?{|i| i.action}
     end
 
     private
