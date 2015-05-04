@@ -161,45 +161,27 @@ class GnucashImporter
   end
 
   def process_transaction_element(source)
-    if commodity_transaction?(source)
-      save_commodity_transaction(source)
+    transaction = Gnucash::TransactionWrapper.new(source)
+    if transaction.commodity_transaction?
+      save_commodity_transaction(transaction)
     else
-      save_regular_transaction(source)
+      save_regular_transaction(transaction)
     end
     @trace_method.call 't'
   end
 
-  def transaction_items(source)
-    items = source["trn:splits"]["trn:split"]
-    items.is_a?(Hash) ? [items] : items
-  end
-
-  def commodity_transaction?(source)
-    transaction_items(source).any?{|i| i.has_key?("split:action")}
-  end
-
   def save_commodity_transaction(source)
-    if split_transaction?(source)
+    if source.split_transaction?
       save_commodity_split_transaction(source)
-    elsif transfer_transaction?(source)
+    elsif source.transfer_transaction?
       save_commodity_transfer_transaction(source)
     else
       save_standard_commodity_transaction(source)
     end
   end
 
-  def transfer_transaction?(source)
-    source_items = transaction_items(source)
-    source_items.all?{|i| i.has_key?("split:action")}
-  end
-
-  def split_transaction?(source)
-    source_items = transaction_items(source)
-    source_items.one?
-  end
-
   def save_commodity_split_transaction(source)
-    item = transaction_items(source).first
+    item = source.items.first
     quantity_added = parse_amount(item["split:quantity"])
 
     account_id = lookup_account_id(item["split:account"])
@@ -217,18 +199,17 @@ class GnucashImporter
   end
 
   def save_standard_commodity_transaction(source)
-    source_items = transaction_items(source)
-    commodities_item = source_items.select{|i| !i.has_key?("split:action")}.first
+    commodities_item = source.items.select{|i| !i.has_key?("split:action")}.first
     commodities_account_id = lookup_account_id(commodities_item["split:account"])
 
     # points to the account that tracks purchases of a commodity within the investment account
-    commodity_item = source_items.select{|i| i.has_key?("split:action")}.first
+    commodity_item = source.items.select{|i| i.has_key?("split:action")}.first
     commodity_account_id = lookup_account_id(commodity_item["split:account"], true)
     commodity_account = Account.find(commodity_account_id)
 
     creator = CommodityTransactionCreator.new(account_id: commodities_account_id,
                                               commodities_account_id: commodity_account.parent_id,
-                                              transaction_date: source["trn:date-posted"]["ts:date"],
+                                              transaction_date: source.date_posted,
                                               action: commodity_item["split:action"].downcase,
                                               symbol: commodity_account.name,
                                               shares: parse_amount(commodity_item["split:quantity"]).abs,
@@ -240,8 +221,7 @@ class GnucashImporter
   end
 
   def save_commodity_transfer_transaction(source)
-    source_items = transaction_items(source)
-    items = source_items.map do |i|
+    items = source.items.map do |i|
       {
         quantity: parse_amount(i["split:quantity"]),
         account: Account.find(lookup_account_id(i["split:account"]))
@@ -254,12 +234,11 @@ class GnucashImporter
   end
 
   def save_regular_transaction(source)
-    description = source["trn:description"]
-    description = "blank" unless description.present?
-    transaction = @entity.transactions.new(transaction_date: source["trn:date-posted"]["ts:date"],
-                                           description: description)
+    description = "blank" unless source.description.present?
+    transaction = @entity.transactions.new(transaction_date: source.date_posted,
+                                           description: source.description)
 
-    transaction_items(source).
+    source.items.
       map{|i| transaction_item_attributes(i)}.
       compact.
       each{|h| transaction.items.new(h)}
