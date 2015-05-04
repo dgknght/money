@@ -9,6 +9,10 @@ module Gnucash
       @source["trn:date-posted"]["ts:date"]
     end
 
+    def inspect
+      @source.inspect
+    end
+
     def initialize(source, importer)
       @source = source
       @importer = importer
@@ -24,6 +28,10 @@ module Gnucash
 
     def split_transaction?
       items.one?
+    end
+
+    def to_s
+      @source.to_s
     end
 
     def transfer_transaction?
