@@ -80,7 +80,8 @@ class GnucashImporter
   end
 
   # The amount comes in as a fraction, like 200000/100
-  def parse_amount(input)
+  def self.parse_amount(input)
+    return nil unless input.present?
     numerator, denominator = input.split('/')
     BigDecimal.new(numerator) / BigDecimal.new(denominator)
   end
@@ -138,7 +139,7 @@ class GnucashImporter
   end
 
   def process_price_element(source)
-    amount = parse_amount(source["price:value"])
+    amount = GnucashImporter.parse_amount(source["price:value"])
     return unless amount > 0
 
     symbol = source["price:commodity"]["cmdty:id"]
@@ -182,7 +183,7 @@ class GnucashImporter
 
   def save_commodity_split_transaction(source)
     item = source.items.first
-    quantity_added = parse_amount(item.quantity)
+    quantity_added = item.quantity
 
     account_id = lookup_account_id(item.account)
     account = Account.find(account_id)
@@ -212,8 +213,8 @@ class GnucashImporter
                                               transaction_date: source.date_posted,
                                               action: commodity_item.action.downcase,
                                               symbol: commodity_account.name,
-                                              shares: parse_amount(commodity_item.quantity).abs,
-                                              value: parse_amount(commodity_item.value).abs)
+                                              shares: commodity_item.quantity.abs,
+                                              value: commodity_item.value.abs)
     creator.create!
   rescue StandardError => e
     Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
@@ -223,7 +224,7 @@ class GnucashImporter
   def save_commodity_transfer_transaction(source)
     items = source.items.map do |i|
       {
-        quantity: parse_amount(i["split:quantity"]),
+        quantity: i.quantity,
         account: Account.find(lookup_account_id(i["split:account"]))
       }
     end.sort_by{|i| i[:quantity]}
@@ -252,7 +253,7 @@ class GnucashImporter
   end
 
   def transaction_item_attributes(item_source)
-    amount = item_source.value ? parse_amount(item_source.value) : 0
+    amount = item_source.value ? item_source.value : 0
     return nil if amount.zero?
 
     {

@@ -52,7 +52,19 @@ module Gnucash
       @source = source
     end
 
+    def quantity
+      number_value("split:quantity")
+    end
+
+    def value
+      number_value("split:value")
+    end
+
     private
+
+    def number_value(key)
+      GnucashImporter.parse_amount(@source[key])
+    end
 
     def to_key(method_name)
       "split:#{method_name.to_s.gsub('_', '-')}"
