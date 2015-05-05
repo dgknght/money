@@ -230,9 +230,14 @@ class CommodityTransactionCreator
   end
 
   def held_more_than_one_year?(purchase_date)
-    one_year_later = Date.new(purchase_date.year + 1,
-                              purchase_date.month,
-                              purchase_date.day)
+    year = purchase_date.year + 1
+    month, day = (purchase_date.month == 2 && purchase_date.day == 29) ?
+      [3, 1] :
+      [purchase_date.month, purchase_date.day]
+
+    puts "#{year}-#{month}-#{day}"
+
+    one_year_later = Date.new(year, month, day)
     transaction_date >= one_year_later
   end
 
