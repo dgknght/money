@@ -2,7 +2,7 @@
 module Gnucash
   class TransactionWrapper
     def commodity_transaction?
-      items.any?{|i| i.action}
+      items.any?{|i| i.account.commodity?}
     end
 
     def date_posted
@@ -35,7 +35,7 @@ module Gnucash
     end
 
     def transfer_transaction?
-      items.all?{|i| i.action}
+      items.all?{|i| i.account.commodity?}
     end
 
     private
