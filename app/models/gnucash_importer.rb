@@ -168,7 +168,6 @@ class GnucashImporter
     else
       save_regular_transaction(transaction)
     end
-    @trace_method.call 't'
   end
 
   def save_commodity_transaction(source)
@@ -189,6 +188,7 @@ class GnucashImporter
     CommoditySplitter.new(numerator: shares_owned + item.quantity,
                           denominator: shares_owned,
                           commodity: commodity).split!
+    @trace_method.call 's'
   end
 
   def save_standard_commodity_transaction(source)
@@ -206,6 +206,7 @@ class GnucashImporter
                                               shares: commodity_item.quantity.abs,
                                               value: commodity_item.value.abs)
     creator.create!
+    @trace_method.call 'o'
   rescue StandardError => e
     Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
     raise e
@@ -217,6 +218,7 @@ class GnucashImporter
     items.first.account.lots.each do |lot|
       LotTransfer.new(lot: lot, target_account_id: target_account_id).transfer!
     end
+    @trace_method.call 'r'
   end
 
   def save_regular_transaction(source)
@@ -232,6 +234,7 @@ class GnucashImporter
     if transaction.items.any?
       cannot_save(transaction, :description, source) unless transaction.save
     end
+    @trace_method.call 't'
   rescue => e
     Rails.logger.error "Unable to save the regular transaction #{source.inspect}"
     raise e
