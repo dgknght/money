@@ -103,6 +103,10 @@ class CommodityTransactionCreator
     self.valuation_method = attr[:valuation_method] || default_valuation_method
   end
 
+  def inspect
+    "<CommodityTransactionCreator: @account=#{account.name} @shares=#{shares.to_f} @price=#{price.to_f} @value=#{value.to_f} @symbol=#{symbol} @transaction_date=#{transaction_date}>"
+  end
+
   def price
     return nil if value.nil? || shares.nil?
     value.to_f / shares.to_f
