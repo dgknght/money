@@ -235,8 +235,6 @@ class CommodityTransactionCreator
       [3, 1] :
       [purchase_date.month, purchase_date.day]
 
-    puts "#{year}-#{month}-#{day}"
-
     one_year_later = Date.new(year, month, day)
     transaction_date >= one_year_later
   end
