@@ -170,9 +170,20 @@ class GnucashImporter
     end
   end
 
+  def save_commodity_exchange_transaction(source)
+    puts "***** exchange *****"
+    puts source.inspect
+    puts "***** exchange *****"
+    @trace_method.call 'x'
+  end
+
   def save_commodity_transaction(source)
+    return if source.ignorable_transaction?
+
     if source.split_transaction?
       save_commodity_split_transaction(source)
+    elsif source.exchange_transaction?
+      save_commodity_exchange_transaction(source)
     elsif source.transfer_transaction?
       save_commodity_transfer_transaction(source)
     else
@@ -189,6 +200,9 @@ class GnucashImporter
                           denominator: shares_owned,
                           commodity: commodity).split!
     @trace_method.call 's'
+  rescue => e
+    Rails.logger.error "Unable to save the commodity split transaction:\n  source=#{source.inspect},\n  #{splitter.inspect},\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
+    raise e
   end
 
   def save_standard_commodity_transaction(source)
@@ -219,6 +233,9 @@ class GnucashImporter
       LotTransfer.new(lot: lot, target_account_id: target_account_id).transfer!
     end
     @trace_method.call 'r'
+  rescue => e
+    Rails.logger.error "Unable to save the commodity transfer transaction #{source.inspect}"
+    raise e
   end
 
   def save_regular_transaction(source)

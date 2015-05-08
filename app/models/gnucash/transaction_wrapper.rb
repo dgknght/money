@@ -1,12 +1,24 @@
 # Wrapper around GnucashTransactionData
 module Gnucash
   class TransactionWrapper
+    def all_items
+      @all_items ||= parse_items
+    end
+
     def commodity_transaction?
       items.any?{|i| i.account.commodity?}
     end
 
     def date_posted
       @source["trn:date-posted"]["ts:date"]
+    end
+
+    def exchange_transaction?
+      items.one? && %w(Buy Sell).include?(items.first.action)
+    end
+
+    def ignorable_transaction?
+      items.none?
     end
 
     def inspect
@@ -19,7 +31,7 @@ module Gnucash
     end
 
     def items
-      @items ||= parse_items
+      @items ||= all_items.select(&:has_value?)
     end
 
     def method_missing(m, *args, &block)
@@ -27,7 +39,7 @@ module Gnucash
     end
 
     def split_transaction?
-      items.one?
+      items.one? && items.first.action == "Split"
     end
 
     def to_s
@@ -35,7 +47,7 @@ module Gnucash
     end
 
     def transfer_transaction?
-      items.all?{|i| i.account.commodity?}
+      items.count == 2 && items.all?{|i| i.account.commodity?}
     end
 
     private
@@ -63,6 +75,10 @@ module Gnucash
 
     def account_id
       @account_id ||= lookup_account_id
+    end
+
+    def has_value?
+      quantity != 0 || value != 0
     end
 
     def initialize(source, importer)
