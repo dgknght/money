@@ -39,6 +39,8 @@ Money::Application.routes.draw do
     member do
       get :new_transfer
       put :transfer
+      get :new_exchange
+      put :exchange
     end
   end
   resources :transactions, only: [:show, :edit, :update, :destroy] do
