@@ -11,12 +11,11 @@ Feature: Exchange commodity shares
       | Name             | Account type | Content type |
       | Opening balances | equity       | currency     |
       | IRA              | asset        | commodities  |
-      | KSS              | asset        | commodity    |
 
     And entity "Personal" has the following commodities
       | Name                     | Symbol | Market |
       | Knight Software Services | KSS    | NYSE   |
-      | Knight Software Services | KSX    | NYSE   |
+      | Knight Software Empire   | KSE    | NYSE   |
 
     And entity "Personal" has the following transactions
       | Transaction date | Description     | Amount | Debit account | Credit account   |
@@ -28,7 +27,7 @@ Feature: Exchange commodity shares
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
-    Then I should see the "Accounts" within the navigation
+    Then I should see "Accounts" within the navigation
 
     When I click "Accounts" within the navigation
     Then I should see "Accounts" within the page title
@@ -49,8 +48,8 @@ Feature: Exchange commodity shares
       | Symbol          |    Value |   Shares |     Cost | Gain/Loss |
       | KSS             | 1,000.00 | 100.0000 | 1,000.00 |      0.00 |
       | Commodity total | 1,000.00 |          |          |           |
-      | Cash            |     0.00 |          |          |           |
-      | Total value     | 1,000.00 |          | 1,000.00 |      0.00 |
+      | Cash            | 1,000.00 |          |          |           |
+      | Total value     | 2,000.00 |          | 1,000.00 |      0.00 |
 
     When I click "KSS" within the holdings table
     Then I should see "KSS Lots in IRA" within the page title
@@ -58,10 +57,10 @@ Feature: Exchange commodity shares
       | Purchase date | Shares owned |     Cost | Current value | Gain/loss |
       |      1/2/2015 |     100.0000 | 1,000.00 |      1,000.00 |      0.00 |
 
-    When I click "Exchange" from within the 1st lots row
+    When I click "Exchange" within the 1st lots row
     Then I should see "Exchange lot" within the page title
 
-    When I select "KSX" from the "Commodity" list
+    When I select "KSE" from the "Commodity" list
     And I click "Save"
     Then I should see "The lot was exchanged successfully." within the notice area
 
