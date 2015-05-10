@@ -11,13 +11,26 @@ class LotsController < ApplicationController
     respond_with @lots
   end
 
+  def new_exchange
+    @exchanger = CommodityExchanger.new
+  end
+
+  def exchange
+    @exchanger = CommodityExchanger.new(exchange_attributes)
+    if @exchanger.exchange
+      flash[:notice] = 'The lot was exchanged successfully.'
+      redirect_to account_lots_path(@lot.account_id)
+    else
+      render :new_exchange
+    end
+  end
+
   def new_transfer
     authorize! :update, @lot
 
     @transfer = LotTransfer.new(lot: @lot)
     @account_id = params[:account_id].to_i
   end
-
 
   def transfer
     authorize! :update, @lot

@@ -6,6 +6,7 @@ describe LotsController do
   let (:other_account) { FactoryGirl.create(:commodities_account, entity: entity) }
   let (:commodity) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSS') }
   let (:commodity_account) { Account.find_by_name(commodity.symbol) }
+  let!(:other_commodity) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSX') }
   let!(:transaction1) do
     CommodityTransactionCreator.new(account: account,
                                     transaction_date: '2014-01-01',
@@ -25,6 +26,9 @@ describe LotsController do
   let (:lot) { commodity.lots.first }
   let (:transfer_attributes) do
     { target_account_id: other_account.id }
+  end
+  let (:exchange_attributes) do
+    { commodity_id: other_commodity.id }
   end
 
   context 'for an authenticated user' do
@@ -75,6 +79,40 @@ describe LotsController do
           end.to change(commodity_account.lots, :count).by(-1)
         end
       end
+
+      describe 'get :new_exchange' do
+        it 'should be successful' do
+          get :new_exchange, id: lot
+          expect(response).to be_success
+        end
+      end
+
+      describe 'put :exchange' do
+        it 'should redirec to the lot index page for the original account' do
+          put :exchange, id: lot, exchange: exchange_attributes
+          expect(response).to redirect_to account_lots_path(commodity_account)
+        end
+
+        it 'should remove the shares of the original commodity' do
+          original_lot = commodity.lots.first
+          expect do
+            put :exchange, id: lot, exchange: exchange_attributes
+            original_lot.reload
+          end.to change(original_lot, :shares_owned).by(-100)
+        end
+
+        it 'should add shares of the selected commodity' do
+          put :exchange, id: lot, exchange: exchange_attributes
+          expect(other_commodity).to have(1).lot
+          expect(other_commodity.lots.first.shares_owned).to eq(100)
+        end
+
+        it 'should not change the cost basis of the lots' do
+          original_cost_basis = commodity.lots.first.cost
+          put :exchange, id: lot, exchange: exchange_attributes
+          expect(other_commodity.lots.first.cost).to eq(original_cost_basis)
+        end
+      end
     end
 
     context 'that does not own the entity' do
@@ -119,6 +157,30 @@ describe LotsController do
           end.not_to change(other_account.lots, :count)
         end
       end
+
+      describe 'get :new_exchange' do
+        it 'should redirect to the user home page' do
+          get :new_exchange, id: lot
+          expect(response).to redirect_to(home_path)
+        end
+      end
+
+      describe 'put :exchange' do
+        it 'should redirect to the user home page' do
+          put :exchange, id: lot, exchange: exchange_attributes
+          expect(response).to redirect_to(home_path)
+        end
+
+        it 'should not remove the shares of the original commodity' do
+          put :exchange, id: lot, exchange: exchange_attributes
+          expect(commodity.lots(true).count).to eq(2)
+        end
+
+        it 'should not add shares of the selected commodity' do
+          put :exchange, id: lot, exchange: exchange_attributes
+          expect(other_commodity.lots(true).count).to eq(0)
+        end
+      end
     end
   end
 
@@ -161,6 +223,30 @@ describe LotsController do
         expect do
           put :transfer, id: lot, transfer: transfer_attributes
         end.not_to change(other_account.lots, :count)
+      end
+    end
+
+    describe 'get :new_exchange' do
+      it 'should redirect to the sign in page' do
+        get :new_exchange, id: lot
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    describe 'put :exchange' do
+      it 'should redirect to the sign in page' do
+        put :exchange, id: lot, exchange: exchange_attributes
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'should not remove the shares of the original commodity' do
+        put :exchange, id: lot, exchange: exchange_attributes
+        expect(commodity.lots(true).count).to eq(2)
+      end
+
+      it 'should not add shares of the selected commodity' do
+        put :exchange, id: lot, exchange: exchange_attributes
+        expect(other_commodity.lots(true).count).to eq(0)
       end
     end
   end
