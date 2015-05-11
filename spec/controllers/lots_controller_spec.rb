@@ -88,17 +88,16 @@ describe LotsController do
       end
 
       describe 'put :exchange' do
-        it 'should redirec to the lot index page for the original account' do
+        it 'should redirect to the lot index page for the original account' do
           put :exchange, id: lot, exchange: exchange_attributes
-          expect(response).to redirect_to account_lots_path(commodity_account)
+          expect(response).to redirect_to account_lots_path(account)
         end
 
         it 'should remove the shares of the original commodity' do
-          original_lot = commodity.lots.first
-          expect do
-            put :exchange, id: lot, exchange: exchange_attributes
-            original_lot.reload
-          end.to change(original_lot, :shares_owned).by(-100)
+          original_share_count = commodity.lots.reduce(0){|sum, l| sum + l.shares_owned}
+          put :exchange, id: lot, exchange: exchange_attributes
+          new_share_count = commodity.lots(true).reduce(0){|sum, l| sum + l.shares_owned}
+          expect(new_share_count - original_share_count).to eq(-100)
         end
 
         it 'should add shares of the selected commodity' do
@@ -108,9 +107,9 @@ describe LotsController do
         end
 
         it 'should not change the cost basis of the lots' do
-          original_cost_basis = commodity.lots.first.cost
-          put :exchange, id: lot, exchange: exchange_attributes
-          expect(other_commodity.lots.first.cost).to eq(original_cost_basis)
+          expect do
+            put :exchange, id: lot, exchange: exchange_attributes
+          end.not_to change(account, :cost_with_children)
         end
       end
     end

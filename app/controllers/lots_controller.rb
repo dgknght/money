@@ -1,7 +1,7 @@
 class LotsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_account, only: [:index]
-  before_filter :load_lot, only: [:transfer, :new_transfer]
+  before_filter :load_lot, only: [:transfer, :new_transfer, :exchange, :new_exchange]
   respond_to :html, :json
 
   def index
@@ -12,14 +12,17 @@ class LotsController < ApplicationController
   end
 
   def new_exchange
+    authorize! :update, @lot
     @exchanger = CommodityExchanger.new
   end
 
   def exchange
+    authorize! :update, @lot
+
     @exchanger = CommodityExchanger.new(exchange_attributes)
     if @exchanger.exchange
       flash[:notice] = 'The lot was exchanged successfully.'
-      redirect_to account_lots_path(@lot.account_id)
+      redirect_to account_lots_path(@lot.account.parent_id)
     else
       render :new_exchange
     end
@@ -46,6 +49,10 @@ class LotsController < ApplicationController
   end
 
   private
+
+  def exchange_attributes
+    params.require(:exchange).permit(:commodity_id).merge(lot: @lot)
+  end
 
   def load_account
     @account = Account.find(params[:account_id])

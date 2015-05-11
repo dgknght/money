@@ -18,6 +18,11 @@ class CommodityExchanger
     @lot ||= Lot.find(lot_id)
   end
 
+  def lot=(l)
+    self.lot_id = l ? l.id : nil
+    @lot = l
+  end
+
   def exchange
     lot.commodity_id = commodity.id # go through the commodity object to be sure the commodity id is good
     lot.account_id = commodity_account.id
@@ -26,6 +31,7 @@ class CommodityExchanger
 
   def initialize(options = {})
     self.lot_id = options[:lot_id]
+    self.lot = options[:lot] if options.has_key?(:lot)
     self.commodity_id = options[:commodity_id]
   end
 
