@@ -342,6 +342,16 @@ table.attributes {
   background-image: image-url("transfer_small.png");
 }
 
+.exchange_button {
+  @extend .any_button;
+  background-image: image-url("exchange.png");
+}
+
+.small_exchange_button {
+  @extend .any_small_button;
+  background-image: image-url("exchange_small.png");
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;

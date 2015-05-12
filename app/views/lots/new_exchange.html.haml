@@ -7,6 +7,6 @@
       .form-group
         =label_tag 'exchange[commodity_id]', 'Commodity'
         %br
-        =select_tag 'exchange[commodity_id]', commodity_options, class: 'form-control'
+        =select_tag 'exchange[commodity_id]', commodity_options(@exchanger.lot.commodity.entity), class: 'form-control'
       .actions
         =submit_tag 'Save', class: 'save_button', title: 'Click here to exchange the shares.'

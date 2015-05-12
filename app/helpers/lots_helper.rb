@@ -4,7 +4,7 @@ module LotsHelper
     options_from_collection_for_select(accounts, :id, :path)
   end
 
-  def commodity_options
-    options_from_collection_for_select(current_entity.commodities, :id, :symbol)
+  def commodity_options(entity)
+    options_from_collection_for_select(entity.commodities, :id, :symbol)
   end
 end
