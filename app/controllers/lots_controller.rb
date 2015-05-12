@@ -13,7 +13,7 @@ class LotsController < ApplicationController
 
   def new_exchange
     authorize! :update, @lot
-    @exchanger = CommodityExchanger.new
+    @exchanger = CommodityExchanger.new(lot: @lot)
   end
 
   def exchange
@@ -22,7 +22,7 @@ class LotsController < ApplicationController
     @exchanger = CommodityExchanger.new(exchange_attributes)
     if @exchanger.exchange
       flash[:notice] = 'The lot was exchanged successfully.'
-      redirect_to account_lots_path(@lot.account.parent_id)
+      redirect_to account_lots_path(@lot.account_id)
     else
       render :new_exchange
     end

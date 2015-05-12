@@ -1,1 +1,12 @@
-%h2#page_title Exchange
+.row
+  .col-md-4.col-md-offset-4
+    %h2#page_title Exchange lot
+
+    =render 'shared/errors', resource: @exchanger
+    =form_tag(exchange_lot_path(@exchanger.lot), method: :put) do
+      .form-group
+        =label_tag 'exchange[commodity_id]', 'Commodity'
+        %br
+        =select_tag 'exchange[commodity_id]', commodity_options, class: 'form-control'
+      .actions
+        =submit_tag 'Save', class: 'save_button', title: 'Click here to exchange the shares.'
