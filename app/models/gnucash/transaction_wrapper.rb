@@ -14,7 +14,7 @@ module Gnucash
     end
 
     def exchange_transaction?
-      items.one? && %w(Buy Sell).include?(items.first.action)
+      items.count == 2 && items.all?{|i| i.account.commodity?} && items.map(&:parent_id).uniq.count == 1
     end
 
     def ignorable_transaction?
