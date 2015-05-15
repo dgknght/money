@@ -171,10 +171,23 @@ class GnucashImporter
   end
 
   def save_commodity_exchange_transaction(source)
-    puts "***** exchange *****"
-    puts source.inspect
-    puts "***** exchange *****"
+    items = source.items.sort_by{|i| i.quantity}
+    source_item = items.first
+    target_item = items.last
+    to_exchange = target_item.quantity
+    commodity = @entity.commodities.find_by(symbol: target_item.account.name)
+
+    source_item.account.lots.each do |lot|
+      raise "Tried to exchange #{lot.shares_owned} shares, but the transaction only calls for #{to_exchange}" if to_exchange < lot.shares_owned
+      to_exchange -= lot.shares_owned
+      CommodityExchanger.new(lot: lot, commodity: commodity).exchange!
+    end
+
+    Rails.logger.warn "#{to_exchange} shares unexchanged for #{commodity.symbol}" unless to_exchange.zero?
     @trace_method.call 'x'
+  rescue => e
+    Rails.logger.error "Unable to save the commodity exchange transaction: #{e.message}\n  #{source}\n  #{e.backtrace.join("\n    ")}"
+    raise e
   end
 
   def save_commodity_transaction(source)
@@ -186,6 +199,8 @@ class GnucashImporter
       save_commodity_exchange_transaction(source)
     elsif source.transfer_transaction?
       save_commodity_transfer_transaction(source)
+    elsif source.items.one?
+      puts "\nwhat to do with this? #{source}"
     else
       save_standard_commodity_transaction(source)
     end
@@ -206,10 +221,10 @@ class GnucashImporter
   end
 
   def save_standard_commodity_transaction(source)
-    commodities_item = source.items.select{|i| i.action.nil?}.first
+    commodities_item = source.items.select{|i| !i.account.commodity?}.first
 
     # points to the account that tracks purchases of a commodity within the investment account
-    commodity_item = source.items.select{|i| i.action}.first
+    commodity_item = source.items.select{|i| i.account.commodity?}.first
     commodity_account = commodity_item.account
 
     creator = CommodityTransactionCreator.new(account_id: commodities_item.account_id,

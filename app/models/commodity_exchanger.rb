@@ -10,6 +10,11 @@ class CommodityExchanger
     @commodity ||= Commodity.find(commodity_id)
   end
 
+  def commodity=(c)
+    self.commodity_id = c ? c.id : nil
+    @commodity = c
+  end
+
   def commodity_account
     @commodity_account ||= find_or_create_commodity_account
   end
@@ -29,10 +34,16 @@ class CommodityExchanger
     lot.save
   end
 
+  def exchange!
+    raise "Cannot exchange the shares because of the following validation errors: #{errors.full_messages.to_sentence}" unless valid?
+    exchange
+  end
+
   def initialize(options = {})
     self.lot_id = options[:lot_id]
     self.lot = options[:lot] if options.has_key?(:lot)
     self.commodity_id = options[:commodity_id]
+    self.commodity = options[:commodity] if options.has_key?(:commodity)
   end
 
   private
