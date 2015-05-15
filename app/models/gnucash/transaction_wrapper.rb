@@ -14,7 +14,7 @@ module Gnucash
     end
 
     def exchange_transaction?
-      items.count == 2 && items.all?{|i| i.account.commodity?} && items.map(&:parent_id).uniq.count == 1
+      two_commodity_items? && same_parent_account?
     end
 
     def ignorable_transaction?
@@ -47,10 +47,14 @@ module Gnucash
     end
 
     def transfer_transaction?
-      items.count == 2 && items.all?{|i| i.account.commodity?}
+      two_commodity_items? && different_parent_accounts?
     end
 
     private
+
+    def different_parent_accounts?
+      items.map{|i| i.account.parent_id}.uniq.count > 1
+    end
 
     def parse_items
       raw = @source["trn:splits"]["trn:split"]
@@ -58,8 +62,16 @@ module Gnucash
       raw.map{|i| TransactionItemWrapper.new(i, @importer)}
     end
 
+    def same_parent_account?
+      items.map{|i| i.account.parent_id}.uniq.count == 1
+    end
+
     def to_key(method_name)
       "trn:#{method_name}"
+    end
+
+    def two_commodity_items?
+      items.count == 2 && items.all?{|i| i.account.commodity?}
     end
   end
 
