@@ -5,13 +5,10 @@ namespace :import do
 
     user = User.find_by_email(ENV['EMAIL'])
     if user
-      entity_name = ENV['ENTITY_NAME']
+      entity_name = ENV['ENTITY_NAME'] || 'gnucash'
 
       existing = user.entities.find_by(name: entity_name)
-      if existing.present?
-        Entity.connection.execute("UPDATE transaction_items SET reconciled = false FROM transaction_items i INNER JOIN transactions t ON t.id = i.transaction_id WHERE t.entity_id = #{existing.id}")
-        existing.destroy!
-      end
+      existing.fast_destroy! if existing.present?
 
       entity = user.entities.new(name: entity_name)
       unless entity.save
