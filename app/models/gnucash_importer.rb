@@ -55,7 +55,9 @@ class GnucashImporter
   end
 
   def ignore_account?(source)
-    IGNORE_ACCOUNTS.include?(source.name) || source.type == "ROOT"
+    IGNORE_ACCOUNTS.include?(source['act:name']) ||
+      source['act:type'] == 'ROOT' ||
+      source['act:commodity']['cmdty:id'] == 'template'
   end
 
   def map_account_attributes(source)
@@ -91,7 +93,7 @@ class GnucashImporter
   end
 
   def process_account_element(source)
-    return if ignore_account?(source["act:name"])
+    return if ignore_account?(source)
 
     account = map_account_attributes(source)
     if account.save
