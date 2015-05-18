@@ -54,8 +54,8 @@ class GnucashImporter
     raise "Unable to save the #{resource.class.name} \"#{resource.send(display_attribute)}\"."
   end
 
-  def ignore_account?(name)
-    IGNORE_ACCOUNTS.include?(name)
+  def ignore_account?(source)
+    IGNORE_ACCOUNTS.include?(source.name) || source.type == "ROOT"
   end
 
   def map_account_attributes(source)
