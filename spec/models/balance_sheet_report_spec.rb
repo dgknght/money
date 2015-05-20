@@ -68,7 +68,7 @@ describe BalanceSheetReport do
                                 )
   end
   
-  let(:filter) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31)) }
+  let(:filter) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: true) }
     
   it 'should be creatable with a valid filter' do
     report = BalanceSheetReport.new(entity, filter)
@@ -93,5 +93,29 @@ describe BalanceSheetReport do
       { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
       { account: 'Liabilities + Equity',  balance: '242,000.00', depth: 0 }
     ]
+  end
+
+  context 'with #hide_zero_balances=true' do
+    let!(:cash) { FactoryGirl.create(:asset_account, entity: entity, name: 'Cash') }
+
+    it 'should omit records with a balance of zero' do
+      report = BalanceSheetReport.new(entity, filter)
+      report.content.should == [
+        { account: 'Assets',                balance: '242,000.00', depth: 0 },
+        { account: 'Checking',              balance:   '2,000.00', depth: 1 },
+        { account: 'Home',                  balance: '200,000.00', depth: 1 },
+        { account: 'Savings',               balance:  '40,000.00', depth: 1 },
+        { account: 'Car',                   balance:  '10,000.00', depth: 2 },
+        { account: 'Reserve',               balance:  '30,000.00', depth: 2 },
+        { account: 'Liabilities',           balance: '177,000.00', depth: 0 },
+        { account: 'Credit Card',           balance:   '2,000.00', depth: 1 },
+        { account: 'Home Loan',             balance: '175,000.00', depth: 1 },
+        { account: 'Equity',                balance:  '65,000.00', depth: 0 },
+        { account: 'Opening Balances',      balance:  '65,000.00', depth: 1 },
+        { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
+        { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
+        { account: 'Liabilities + Equity',  balance: '242,000.00', depth: 0 }
+      ]
+    end
   end
 end

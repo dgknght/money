@@ -31,11 +31,11 @@ class BalanceSheetReport < Report
     
     # Assemble the final result
     [ { account: 'Assets', balance: format(asset_total), depth: 0 } ] +
-    transform(assets) +
+    filter_and_transform(assets) +
     [ { account: 'Liabilities', balance: format(liability_total), depth: 0 } ] +
-    transform(liabilities) +
+    filter_and_transform(liabilities) +
     [ { account: 'Equity', balance: format(equity_total), depth: 0 } ] +
-    transform(equities) +
+    filter_and_transform(equities) +
     [ { account: 'Retained Earnings', balance: format(retained_earnings), depth: 1 } ] +
     [ { account: 'Unrealized Gains', balance: format(unrealized_gains), depth: 1 } ] +
     [ { account: 'Liabilities + Equity', balance: format(equity_total + liability_total), depth: 0 } ]
@@ -44,5 +44,12 @@ class BalanceSheetReport < Report
   private
     def _flatten(accounts)
       flatten accounts, 1, ->(account) { !account.commodity? }, :value_with_children_as_of, @filter.as_of
+    end
+
+    def filter_and_transform(accounts)
+      filtered = @filter.hide_zero_balances? ?
+        accounts.reject{|a| a[:balance].zero?} :
+        accounts
+      transform(filtered)
     end
 end
