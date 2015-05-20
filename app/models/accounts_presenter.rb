@@ -27,12 +27,17 @@ class AccountsPresenter
     income = summary(:income, 'Income')
     expense = summary(:expense, 'Expense')
 
-    to_a(asset, liability, equity, income, expense).each { |r| yield r }
+    to_a(asset, liability, equity, income, expense).each do |r|
+      yield r if include_record?(r)
+    end
   end
 
-  def initialize(entity)
+  # Options:
+  #   hide_zero_balances: when true, causes accounts with a balance of zero to be excluded
+  def initialize(entity, options = {})
     raise 'Must specify an entity' unless entity && entity.respond_to?(:accounts)
     @entity = entity
+    @hide_zero_balances = options.fetch(:hide_zero_balances, false)
   end
 
   private
@@ -48,6 +53,10 @@ class AccountsPresenter
   def balancing_record(total_assets, total_liabilities, total_equity)
     difference = total_assets - (total_liabilities + total_equity)
     DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
+  end
+
+  def include_record?(record)
+    !(@hide_zero_balances && record.depth > 0 && record.balance.zero?)
   end
 
   def summary(method, caption) 

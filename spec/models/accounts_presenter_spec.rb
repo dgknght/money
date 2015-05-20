@@ -72,6 +72,32 @@ describe AccountsPresenter do
       ])
     end
 
+    describe '#hide_zero_balances' do
+      let!(:rent) { FactoryGirl.create(:expense_account, entity: entity, name: 'Rent') }
+
+      it 'should cause accounts with zero balance not to be displayed when true' do
+        presenter = AccountsPresenter.new(entity, hide_zero_balances: true)
+        expect(presenter).to have_account_display_records([
+          { caption: 'Assets', balance: 35_000, depth: 0 },
+          { caption: 'Checking', balance: 5_000, depth: 1 },
+          { caption: 'Savings', balance: 30_000, depth: 1 },
+          { caption: 'Car', balance: 6_000, depth: 2 },
+          { caption: 'Reserve', balance: 24_000, depth: 2 },
+
+          { caption: 'Liabilities', balance: 0, depth: 0 },
+
+          { caption: 'Equity', balance: 35_000, depth: 0 },
+          { caption: 'Opening balances', balance: 30_000, depth: 1 },
+          { caption: 'Retained earnings', balance: 5_000, depth: 1 },
+
+          { caption: 'Income', balance: 5_000, depth: 0 },
+          { caption: 'Salary', balance: 5_000, depth: 1 },
+
+          { caption: 'Expense', balance: 0, depth: 0 }
+        ])
+      end
+    end
+
     context 'and investment accounts are present' do
       let!(:ira) { FactoryGirl.create(:commodities_account, name: 'IRA', entity: entity) }
       let!(:lt_grains) { FactoryGirl.create(:income_account, name: 'Long-term capital gains', entity: entity) }
