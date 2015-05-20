@@ -7,6 +7,7 @@ describe LotsController do
   let (:commodity) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSS') }
   let (:commodity_account) { Account.find_by_name(commodity.symbol) }
   let!(:other_commodity) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSX') }
+  let (:other_commodity_account) { Account.find_by_name(other_commodity.symbol) }
   let!(:transaction1) do
     CommodityTransactionCreator.new(account: account,
                                     transaction_date: '2014-01-01',
@@ -88,9 +89,9 @@ describe LotsController do
       end
 
       describe 'put :exchange' do
-        it 'should redirect to the lot index page for the original account' do
+        it 'should redirect to the lot index page for the new commodity account' do
           put :exchange, id: lot, exchange: exchange_attributes
-          expect(response).to redirect_to account_lots_path(account)
+          expect(response).to redirect_to account_lots_path(other_commodity_account)
         end
 
         it 'should remove the shares of the original commodity' do
