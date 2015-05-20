@@ -16,7 +16,7 @@ class AccountsController < ApplicationController
   
   def index
     authorize! :show, @entity
-    @accounts = AccountsPresenter.new(@entity)
+    @accounts = AccountsPresenter.new(@entity, presenter_params)
     respond_with @accounts
   end
 
@@ -80,6 +80,10 @@ class AccountsController < ApplicationController
       @entity = current_user.entities.find(params[:entity_id])
     end
     
+    def presenter_params
+      params.permit(:hide_zero_balances)
+    end
+
     def purchase_params
       params.require(:purchase).permit(:transaction_date, :symbol, :action, :shares, :value).merge(account: @account)
     end
