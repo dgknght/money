@@ -1,9 +1,17 @@
-%h2#page_title Balance sheet
+.row
+  .col-md-6.col-md-offset-3
+    %h2#page_title Balance sheet
 
-.filter
-  =form_tag({ url: balance_sheet_entity_path(@entity) }, method: :get) do
-    =text_field_tag :as_of, @filter.as_of, class: 'date_field', placeholder: 'As of'
-    =submit_tag 'Show', class: 'show_button', title: 'Click here to view the report with these filter setttings.'
-    
-.report
-  =render 'table', report: @report
+    .filter
+      =form_tag({ url: balance_sheet_entity_path(@entity) }, method: :get) do
+        .row
+          .col-md-2
+            =text_field_tag :as_of, @filter.as_of, class: 'date_field form-control', placeholder: 'As of'
+          .col-md-2
+            =check_box_tag :hide_zero_balances, 1, @filter.hide_zero_balances
+            =label_tag :hide_zero_balances
+          .col-md-2
+            =submit_tag 'Show', class: 'show_button', title: 'Click here to view the report with these filter setttings.'
+
+    .report
+      =render 'table', report: @report
