@@ -20,6 +20,11 @@ Feature: Download prices
       | Knight Software Services | KSS    | NYSE   |
       | Apple, Inc.              | AAPL   | NASDAQ |
 
+    And account "401k" has the following commodity transactions
+      | Transaction date | Symbol | Action | Shares | Value |
+      |       2014-01-02 | KSS    | buy    |    100 |  1000 |
+      |       2014-01-02 | AAPL   | buy    |    100 |  3000 |
+
     And commodity "KSS" has the following online price history
       | Trade date | Price |
       | 2013-12-30 |  9.50 |
@@ -31,11 +36,6 @@ Feature: Download prices
       | 2013-12-30 | 30.57 |
       | 2014-01-01 | 30.00 |
       | 2014-01-02 | 28.45 |
-
-    And account "401k" has the following commodity transactions
-      | Transaction date | Symbol | Action | Shares | Value |
-      |       2014-01-02 | KSS    | buy    |    100 |  1000 |
-      |       2014-01-02 | AAPL   | buy    |    100 |  3000 |
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
