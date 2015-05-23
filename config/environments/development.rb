@@ -27,4 +27,7 @@ Money::Application.configure do
 
   # added upgrading to rails 4.0
   config.eager_load = false
+
+  # added to suppress warning message in rake tasks
+  I18n.enforce_available_locales = false
 end
