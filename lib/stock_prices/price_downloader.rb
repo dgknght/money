@@ -8,7 +8,9 @@ module StockPrices
     end
 
     def download
-      @entity.commodities.each { |c| process_commodity(c) }
+      @entity.commodities.
+        select{|c| c.lots.present?}.
+        each { |c| process_commodity(c) }
     end
 
     private
