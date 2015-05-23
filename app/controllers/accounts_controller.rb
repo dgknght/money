@@ -85,7 +85,7 @@ class AccountsController < ApplicationController
     end
 
     def purchase_params
-      params.require(:purchase).permit(:transaction_date, :symbol, :action, :shares, :value).merge(account: @account)
+      params.require(:purchase).permit(:transaction_date, :symbol, :action, :shares, :value, :fee).merge(account: @account)
     end
 
     def set_current_entity

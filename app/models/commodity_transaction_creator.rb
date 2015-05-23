@@ -4,6 +4,7 @@ class CommodityTransactionCreator
   #TODO Need to be able to configure this
   LONG_TERM_GAINS_NAMES = ['Long Term Gains', 'Long-term capital gains']
   SHORT_TERM_GAINS_NAMES = ['Short Term Gains', 'Short-term capital gains']
+  INVESTMENT_EXPENSE_NAMES = ['Investment Expenses']
 
   VALUATION_METHODS = %w(fifo filo)
   class << self
@@ -28,7 +29,7 @@ class CommodityTransactionCreator
     end
   end
 
-  attr_accessor :account_id, :commodities_account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method
+  attr_accessor :account_id, :commodities_account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method, :fee
 
   ACTIONS.each do |a|
     define_method "#{a}?" do
@@ -41,6 +42,7 @@ class CommodityTransactionCreator
   validates :action, presence: true, inclusion: { in: ACTIONS }
   validates :value, presence: true, numericality: true
   validate :value_is_not_zero, :can_find_commodity
+  validates_numericality_of :fee
 
   def account
     @account ||= find_account(account_id)
@@ -101,6 +103,7 @@ class CommodityTransactionCreator
     self.shares = BigDecimal.new(attr[:shares], 4) if attr[:shares]
     self.value = BigDecimal.new(attr[:value], 4) if attr[:value]
     self.valuation_method = attr[:valuation_method] || default_valuation_method
+    self.fee = attr.fetch(:fee, 0)
   end
 
   def inspect
@@ -164,13 +167,25 @@ class CommodityTransactionCreator
   end
 
   def create_buy_transaction
-    attributes = {
-      transaction_date: transaction_date,
-      description: purchase_description,
-      other_account: commodity_account,
-      amount: -value
-    }
-    TransactionItemCreator.new(account, attributes).create!.transaction
+    transaction = account.entity.transactions.new(transaction_date: transaction_date,
+                                                  description: purchase_description)
+
+    # Debit the account that tracks the value of the commodity
+    transaction.items << TransactionItem.new(account: commodity_account,
+                                             amount: value,
+                                             action: TransactionItem.debit)
+
+    # Debit the investment expense account, if a fee is present
+    transaction.items << TransactionItem.new(account: investment_expense_account,
+                                             amount: numeric_fee,
+                                             action: TransactionItem.debit) unless numeric_fee.zero?
+
+    # Credit the account used to fund the purchase
+    transaction.items << TransactionItem.new(account: account,
+                                             amount: value + numeric_fee,
+                                             action: TransactionItem.credit)
+    transaction.save!
+    transaction
   end
 
   def create_commodity_account(symbol)
@@ -237,6 +252,14 @@ class CommodityTransactionCreator
 
     one_year_later = Date.new(year, month, day)
     transaction_date >= one_year_later
+  end
+
+  def investment_expense_account
+    find_first_account_with_name(INVESTMENT_EXPENSE_NAMES) || raise("Unable to find an account with these names: #{INVESTMENT_EXPENSE_NAMES.join(', ')}")
+  end
+
+  def numeric_fee
+    BigDecimal.new(fee)
   end
 
   def process_buy

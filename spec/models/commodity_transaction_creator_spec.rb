@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe CommodityTransactionCreator do
-  let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services') }
-  let (:opening) { FactoryGirl.create(:equity_account, name: 'Opening balances') }
-  let (:ira) { FactoryGirl.create(:account, name: 'IRA') }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let!(:kss) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSS', name: 'Knight Software Services') }
+  let (:opening) { FactoryGirl.create(:equity_account, entity: entity, name: 'Opening balances') }
+  let (:ira) { FactoryGirl.create(:account, entity: entity, name: 'IRA') }
+  let!(:exp) { FactoryGirl.create(:expense_account, entity: entity, name: 'Investment Expenses') }
   let (:attributes) do
     {
       account_id: ira.id,
@@ -115,6 +117,19 @@ describe CommodityTransactionCreator do
     end
   end
 
+  describe '#fee' do
+    it 'should default to zero' do
+      creator = CommodityTransactionCreator.new(attributes)
+      expect(creator.fee).to be_zero
+    end
+
+    it 'should not allow non-numbers' do
+      creator = CommodityTransactionCreator.new(attributes.merge(fee: 'notanumber'))
+      expect(creator).not_to be_valid
+      expect(creator).to have_at_least(1).error_on(:fee)
+    end
+  end
+
   describe '#create' do
     context 'with a "buy" action' do
       it 'should create a new transaction' do
@@ -165,6 +180,14 @@ describe CommodityTransactionCreator do
         expect do
           CommodityTransactionCreator.new(attributes).create
         end.to change(Price, :count).by(1)
+      end
+
+      context 'and a fee' do
+        it 'should debit the fee account' do
+          CommodityTransactionCreator.new(attributes.merge(fee: 10)).create!
+          exp.reload
+          expect(exp.balance).to eq(10)
+        end
       end
     end
 
