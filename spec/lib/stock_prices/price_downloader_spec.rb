@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe StockPrices::PriceDownloader do
   let (:entity) { FactoryGirl.create(:entity) }
+  let (:ira) { FactoryGirl.create(:commodities_account, entity: entity) }
+  let (:ob) { FactoryGirl.create(:equity_account, entity: entity) }
   let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS', name: 'Knight Software Services', entity: entity) }
+  let!(:t1) { FactoryGirl.create(:transaction, amount: 2_000, debit_account: ira, credit_account: ob) }
+  let!(:t2) { CommodityTransactionCreator.new(account: ira, symbol: 'KSS', shares: 100, value: 1_000, action: 'buy').create! }
 
   it 'should be creatable from an entity' do
     downloader = StockPrices::PriceDownloader.new(entity)
