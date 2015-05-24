@@ -229,12 +229,15 @@ class GnucashImporter
     commodity_item = source.items.select{|i| i.account.commodity?}.first
     commodity_account = commodity_item.account
 
+    fee_item = source.items.select{|i| i.account.expense?}.first
+
     creator = CommodityTransactionCreator.new(account_id: commodities_item.account_id,
                                               commodities_account_id: commodity_account.parent_id,
                                               transaction_date: source.date_posted,
                                               action: commodity_item.action.downcase,
                                               symbol: commodity_account.name,
                                               shares: commodity_item.quantity.abs,
+                                              fee: fee_item ? fee_item.value : 0,
                                               value: commodity_item.value.abs)
     creator.create!
     @trace_method.call 'o'
