@@ -48,6 +48,12 @@ class Account < ActiveRecord::Base
       end
     end
   end
+
+  ACCOUNT_TYPES.each do |type|
+    define_method "#{type}?" do
+      self.account_type == type
+    end
+  end
   
   validates :name, presence: true,
                    uniqueness: { scope: [:entity, :parent] }
