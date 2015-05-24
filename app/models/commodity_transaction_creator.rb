@@ -121,7 +121,7 @@ class CommodityTransactionCreator
     # account
     account_item = transaction.items.new(account: account,
                                          action: TransactionItem.debit,
-                                         amount: value)
+                                         amount: value - numeric_fee)
     # commodity
     transaction.items.new(account: commodity_account,
                           action: TransactionItem.credit,
@@ -131,6 +131,9 @@ class CommodityTransactionCreator
   def add_income_expense_items(transaction, st_gains, lt_gains)
     add_inferred_action_item transaction, long_term_gains_account, lt_gains
     add_inferred_action_item transaction, short_term_gains_account, st_gains
+    transaction.items.new(account: investment_expense_account,
+                          amount: fee,
+                          action: TransactionItem.debit) unless numeric_fee.zero?
   end
 
   def add_inferred_action_item(transaction, account, amount)

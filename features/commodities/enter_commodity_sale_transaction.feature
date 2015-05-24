@@ -12,6 +12,7 @@ Feature: Enter a commodity sale transaction
       | Opening balances         | equity       | currency     |
       | Short-term capital gains | income       | currency     |
       | Long-term capital gains  | income       | currency     |
+      | Investment Expenses      | expense      | currency     |
 
     And entity "Personal" has the following transactions
       | Transaction date | Description     |    Amount | Debit account | Credit account   |
@@ -41,6 +42,7 @@ Feature: Enter a commodity sale transaction
       | Long-term capital gains  |      0.00 |
       | Short-term capital gains |      0.00 |
       | Expense                  |      0.00 |
+      | Investment Expenses      |      0.00 |
 
     When I click "401k"
     Then I should see "401k Holdings" within the page title
@@ -59,6 +61,7 @@ Feature: Enter a commodity sale transaction
     And I fill in "Symbol" with "KSS"
     And I fill in "Shares" with "50"
     And I fill in "Value" with "600"
+    And I fill in "Fee" with "10"
     And I click "Save"
 
     Then I should see "The transaction was created successfully." within the notice area
@@ -67,23 +70,24 @@ Feature: Enter a commodity sale transaction
       | Symbol          |     Value |  Shares |     Cost | Gain/Loss |
       | KSS             |    600.00 | 50.0000 |   500.00 |    100.00 |
       | Commodity total |    600.00 |         |          |           |
-      | Cash            |  9,600.00 |         |          |           |
-      | Total value     | 10,200.00 |         |   500.00 |    100.00 |
+      | Cash            |  9,590.00 |         |          |           |
+      | Total value     | 10,190.00 |         |   500.00 |    100.00 |
 
     When I click "Back"
     Then I should see "Accounts" within the page title
     And I should see the following accounts table
       | Name                     |   Balance |
-      | Assets                   | 10,200.00 |
-      | 401k                     | 10,200.00 |
+      | Assets                   | 10,190.00 |
+      | 401k                     | 10,190.00 |
       | KSS                      |    600.00 |
       | Liabilities              |      0.00 |
-      | Equity                   | 10,200.00 |
+      | Equity                   | 10,190.00 |
       | Opening balances         | 10,000.00 |
       | Unrealized gains         |    100.00 |
-      | Retained earnings        |    100.00 |
+      | Retained earnings        |     90.00 |
       | Income                   |    100.00 |
       | Long-term capital gains  |      0.00 |
       | Short-term capital gains |    100.00 |
-      | Expense                  |      0.00 |
+      | Expense                  |     10.00 |
+      | Investment Expenses      |     10.00 |
 
