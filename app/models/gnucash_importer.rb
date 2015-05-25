@@ -223,15 +223,13 @@ class GnucashImporter
   end
 
   def save_standard_commodity_transaction(source)
-    commodities_item = source.items.select{|i| !i.account.commodity? && i.account.asset?}.first
+    payment_item, fee_item = infer_payment_items(source.items)
 
     # points to the account that tracks purchases of a commodity within the investment account
     commodity_item = source.items.select{|i| i.account.commodity?}.first
     commodity_account = commodity_item.account
 
-    fee_item = source.items.select{|i| i.account.expense?}.first
-
-    creator = CommodityTransactionCreator.new(account_id: commodities_item.account_id,
+    creator = CommodityTransactionCreator.new(account_id: payment_item.account_id,
                                               commodities_account_id: commodity_account.parent_id,
                                               transaction_date: source.date_posted,
                                               action: commodity_item.action.downcase,
@@ -239,14 +237,21 @@ class GnucashImporter
                                               shares: commodity_item.quantity.abs,
                                               fee: fee_item ? fee_item.value : 0,
                                               value: commodity_item.value.abs,
-                                              payment_memo: commodities_item.memo,
+                                              payment_memo: payment_item.memo,
                                               commodity_memo: commodity_item.memo)
 
     creator.create!
     @trace_method.call 'o'
   rescue StandardError => e
-    Rails.logger.error "Unable to save the commodity transaction:\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
+    Rails.logger.error "Unable to save the commodity transaction:\n  items=#{source.items.map{|i| "#{i.account.name} #{i.quantity} #{i.value}"}.to_sentence}\n  source=#{source.inspect},\n  creator=#{creator.inspect}\n  #{e.message}\n  #{e.backtrace.join("\n    ")}"
     raise e
+  end
+
+  def infer_payment_items(items)
+    non_commodity_items = items.reject{|i| i.account.commodity?}
+    return non_commodity_items if non_commodity_items.one?
+    raise 'Unable to infer the payment item for the commodity transaction' unless non_commodity_items.count == 2
+    non_commodity_items.sort_by{|i| i.account.expense? ? 10 : 0}
   end
 
   def save_commodity_transfer_transaction(source)
