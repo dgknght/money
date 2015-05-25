@@ -163,6 +163,20 @@ describe CommodityTransactionCreator do
         end.to change(ira, :balance).by(-1_234)
       end
 
+      it 'should use the supplied memo for the payment account' do
+        memo = 'An important side note'
+        trans = CommodityTransactionCreator.new(attributes.merge(payment_memo: memo)).create!
+        item = trans.items.reject{|i| i.account.commodity?}.first
+        expect(item.memo).to eq(memo)
+      end
+
+      it 'should use the supplied memo for the commodity account' do
+        memo = 'An important side note'
+        trans = CommodityTransactionCreator.new(attributes.merge(commodity_memo: memo)).create!
+        item = trans.items.select{|i| i.account.commodity?}.first
+        expect(item.memo).to eq(memo)
+      end
+
       it 'should create a new lot transaction' do
         expect do
           CommodityTransactionCreator.new(attributes).create

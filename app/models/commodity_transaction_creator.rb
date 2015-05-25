@@ -29,7 +29,8 @@ class CommodityTransactionCreator
     end
   end
 
-  attr_accessor :account_id, :commodities_account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method, :fee
+  attr_accessor :account_id, :commodities_account_id, :transaction_date, :symbol, :action, :shares, :value, :valuation_method, :fee,
+    :payment_memo, :commodity_memo
 
   ACTIONS.each do |a|
     define_method "#{a}?" do
@@ -104,6 +105,8 @@ class CommodityTransactionCreator
     self.value = BigDecimal.new(attr[:value], 4) if attr[:value]
     self.valuation_method = attr[:valuation_method] || default_valuation_method
     self.fee = attr.fetch(:fee, 0)
+    self.payment_memo = attr[:payment_memo]
+    self.commodity_memo = attr[:commodity_memo]
   end
 
   def inspect
@@ -176,7 +179,8 @@ class CommodityTransactionCreator
     # Debit the account that tracks the value of the commodity
     transaction.items << TransactionItem.new(account: commodity_account,
                                              amount: value,
-                                             action: TransactionItem.debit)
+                                             action: TransactionItem.debit,
+                                             memo: commodity_memo)
 
     # Debit the investment expense account, if a fee is present
     transaction.items << TransactionItem.new(account: investment_expense_account,
@@ -186,7 +190,8 @@ class CommodityTransactionCreator
     # Credit the account used to fund the purchase
     transaction.items << TransactionItem.new(account: account,
                                              amount: value + numeric_fee,
-                                             action: TransactionItem.credit)
+                                             action: TransactionItem.credit,
+                                             memo: payment_memo)
     transaction.save!
     transaction
   end

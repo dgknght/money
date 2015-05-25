@@ -238,7 +238,9 @@ class GnucashImporter
                                               symbol: commodity_account.name,
                                               shares: commodity_item.quantity.abs,
                                               fee: fee_item ? fee_item.value : 0,
-                                              value: commodity_item.value.abs)
+                                              value: commodity_item.value.abs,
+                                              payment_memo: commodities_item.memo,
+                                              commodity_memo: commodity_item.memo)
     creator.create!
     @trace_method.call 'o'
   rescue StandardError => e
@@ -285,6 +287,7 @@ class GnucashImporter
       amount: amount.abs,
       account_id: item_source.account_id,
       action: amount < 0 ? TransactionItem.credit : TransactionItem.debit,
+      memo: item_source.memo,
       reconciled: item_source.reconciled_state == 'y'
     }
   rescue => e

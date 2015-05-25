@@ -69,6 +69,17 @@ describe GnucashImporter do
       end.to change(Price, :count).by(8)
     end
 
+    it 'should include memos in commodity transactions' do
+      GnucashImporter.new(attributes).import!
+      account = Account.find_by(name: '401k')
+
+      item = account.transaction_items.select{|i| /AAPL/ =~ i.transaction.description}.first
+      expect(item.memo).to eq('comment about the account')
+
+      other_item = item.transaction.items.reject{|i| i.id == item.id}.first
+      expect(other_item.memo).to eq('comment about the shares')
+    end
+
     it 'should mark reconciled items as reconciled' do
       GnucashImporter.new(attributes).import!
       checking = Account.find_by(name: 'Checking')
@@ -94,6 +105,12 @@ describe GnucashImporter do
       expect do
         importer.import!
       end.to change(Transaction, :count).by(22)
+    end
+
+    it 'should include transaction item memos' do
+      GnucashImporter.new(attributes).import!
+      groceries = Account.find_by(name: 'Groceries')
+      expect(groceries.transaction_items.first.memo).to eq('comment about the groceries')
     end
 
     it 'should result in a balance sheet report with correct balances' do
