@@ -42,8 +42,18 @@ class AccountsPresenter
 
   private
 
+  def root_accounts(account_type)
+    all_accounts.
+      select{|a| a.root? && a.send("#{account_type}?".to_sym)}.
+      sort_by(&:name)
+  end
+
+  def all_accounts
+    @all_accounts ||= @entity.accounts.to_a
+  end
+
   def account_to_adapters(account)
-    [AccountRecordAdapter.new(account)] + accounts_to_adapters(account.children)
+    [AccountRecordAdapter.new(account)] + accounts_to_adapters(children(account))
   end
 
   def accounts_to_adapters(accounts)
@@ -55,12 +65,16 @@ class AccountsPresenter
     DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
   end
 
+  def children(account)
+    all_accounts.select{|a| a.parent_id == account.id}
+  end
+
   def include_record?(record)
     !(@hide_zero_balances && record.depth > 0 && record.balance.zero?)
   end
 
-  def summary(method, caption) 
-    accounts = @entity.accounts.root.send(method)
+  def summary(type, caption)
+    accounts = root_accounts(type)
     records = accounts_to_adapters(accounts)
     AccountSummaryRecord.new(caption, records)
   end

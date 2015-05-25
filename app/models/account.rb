@@ -207,6 +207,10 @@ class Account < ActiveRecord::Base
     save!
   end
 
+  def root?
+    self.parent_id.nil?
+  end
+
   def shares
     shares_as_of(Time.now.utc)
   end
