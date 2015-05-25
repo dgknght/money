@@ -223,7 +223,7 @@ class GnucashImporter
   end
 
   def save_standard_commodity_transaction(source)
-    commodities_item = source.items.select{|i| !i.account.commodity?}.first
+    commodities_item = source.items.select{|i| !i.account.commodity? && i.account.asset?}.first
 
     # points to the account that tracks purchases of a commodity within the investment account
     commodity_item = source.items.select{|i| i.account.commodity?}.first
@@ -241,6 +241,7 @@ class GnucashImporter
                                               value: commodity_item.value.abs,
                                               payment_memo: commodities_item.memo,
                                               commodity_memo: commodity_item.memo)
+
     creator.create!
     @trace_method.call 'o'
   rescue StandardError => e

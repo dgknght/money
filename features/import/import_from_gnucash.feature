@@ -19,30 +19,31 @@ Feature: Import from gnucash
     Then I should see "Entity" within the page title
     And I should see the following accounts table
       | Name                  |    Balance |
-      | Assets                | 249,649.51 |
+      | Assets                | 249,639.51 |
       | Current Assets        |   2,688.00 |
       | Checking              |   2,688.00 |
       | Fixed Assets          | 225,000.00 |
       | House                 | 200,000.00 |
       | Vehicle               |  25,000.00 |
       | Imbalance-USD         |       0.00 |
-      | Investments           |  21,961.51 |
-      | 401k                  |  21,961.51 |
+      | Investments           |  21,951.51 |
+      | 401k                  |  21,951.51 |
       | AAPL                  |  12,424.51 |
       | VTSAX                 |   5,228.00 |
       | Liabilities           |  24,400.00 |
       | Loans                 |  24,400.00 |
       | Vehicle Loan          |  24,400.00 |
-      | Equity                | 225,249.51 |
+      | Equity                | 225,239.51 |
       | Opening Balances      | 220,000.00 |
       | Unrealized gains      |   1,961.51 |
-      | Retained earnings     |   3,288.00 |
+      | Retained earnings     |   3,278.00 |
       | Income                |   8,000.00 |
       | Salary                |   8,000.00 |
-      | Expense               |   4,712.00 |
+      | Expense               |   4,722.00 |
       | Groceries             |     800.00 |
       | Interest              |     100.00 |
       | Vehicle Loan Interest |     100.00 |
+      | Investment Expenses   |      10.00 |
       | Rent                  |   1,600.00 |
       | Taxes                 |   2,212.00 |
       | Federal Income        |   1,600.00 |
