@@ -205,26 +205,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def recalculation_fields(opts)
-    all_fields = %w(balance value cost gains)
-    if opts[:only]
-      Array(opts[:only])
-    elsif opts[:except]
-      except = Array(opts[:except])
-      all_fields.reject{|f| except.include?(f)}
-    else
-      all_fields
-    end
-  end
-
-  def recalculate_field(field)
-    # Assume that most of the time the balance 
-    # will not need to be updated
-    method = "#{field}_as_of".to_sym
-    current = send(method, END_OF_TIME)
-    update_attribute(field, current) unless current == send(field)
-  end
-
   def root?
     self.parent_id.nil?
   end
@@ -311,7 +291,27 @@ class Account < ActiveRecord::Base
     def parent_must_have_same_type
       errors.add(:parent_id, 'must have the same account type') unless parent_is_same_type?
     end
-    
+
+    def recalculation_fields(opts)
+      all_fields = %w(balance value cost gains)
+      if opts[:only]
+        Array(opts[:only])
+      elsif opts[:except]
+        except = Array(opts[:except])
+        all_fields.reject{|f| except.include?(f)}
+      else
+        all_fields
+      end
+    end
+
+    def recalculate_field(field)
+      # Assume that most of the time the balance 
+      # will not need to be updated
+      method = "#{field}_as_of".to_sym
+      current = send(method, END_OF_TIME)
+      update_attribute(field, current) unless current == send(field)
+    end
+      
     def set_defaults
       self.content_type ||= Account.currency_content
     end
