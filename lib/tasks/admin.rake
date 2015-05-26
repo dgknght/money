@@ -5,15 +5,24 @@ namespace :admin do
   # Update balance
   # --------------
   
-  desc 'Recalculates the current balance for all accounts'
-  task :update_balance => :environment do
-    Account.find(:all).each do |account|
-      LOGGER.debug "recalculating balance for account #{account.name}"
+  desc 'Recalculates the current balance for all accounts (options: ENTITY & EMAIL)'
+  task :update_balances => :environment do
+    accounts = if ENV['EMAIL'] && ENV['ENTITY']
+                 user = User.find_by(email: ENV['EMAIL'])
+                 raise "Unable to find a user with email #{ENV['EMAIL']}" unless user
 
-      before = account.balance
-      account.recalculate_balance
+                 entity = user.entities.find_by(name: ENV['ENTITY'])
+                 raise "Unable to find an entity named #{ENV['ENTITY']}" unless entity
 
-      LOGGER.info "updated balance of account #{account.name} from #{before} to #{account.balance}"
+                 LOGGER.debug "Updating accounts in #{entity.name}"
+                 entity.accounts
+               else
+                 LOGGER.debug "Updating all accounts"
+                 Account.find(:all)
+               end
+    accounts.each do |account|
+      account.recalculate_balances
+      LOGGER.info "called update_balances on account #{account.name}"
     end
   end
 end

@@ -23,6 +23,7 @@ class Account < ActiveRecord::Base
   has_many :budget_items
   has_many :budget_monitors
 
+  END_OF_TIME = Chronic.parse('9999-12-31')
   CONTENT_TYPES = %w(currency commodities commodity)
 
   class << self
@@ -122,17 +123,16 @@ class Account < ActiveRecord::Base
     children.reduce(0) { |sum, child| sum + child.value }
   end
 
-  def cost
-    return lots.reduce(0) { |sum, lot| sum + lot.cost } if commodity?
-    balance
-  end
-
   def cost_as_of(date)
     balance_as_of(date)
   end
 
   def cost_with_children
     return children.reduce(cost) { |sum, child| sum + child.cost_with_children }
+  end
+
+  def cost_with_children_as_of(date)
+    return children.reduce(cost) { |sum, child| sum + child.cost_with_children_as_of(date) }
   end
 
   # Adjusts the balance of the account by the specified amount
@@ -163,10 +163,6 @@ class Account < ActiveRecord::Base
   def self.find_by_path(path)
     segments = path.is_a?(String) ? path.split('/') : path
     segments.reduce(nil){|p, n| (p.try(:children) || Account).find_by_name(n)}
-  end
-
-  def gains
-    value - cost
   end
 
   def gains_as_of(date)
@@ -202,11 +198,31 @@ class Account < ActiveRecord::Base
     1
   end
 
-  def recalculate_balance
-    debit_total = transaction_items.debits.sum(:amount);
-    credit_total = transaction_items.credits.sum(:amount);
-    self.balance = (debit_total * polarity(TransactionItem.debit)) + (credit_total * polarity(TransactionItem.credit))
-    save!
+  def recalculate_balances(opts = {})
+    recalculation_fields(opts).each do |field|
+      recalculate_field(field)
+      recalculate_field("#{field}_with_children")
+    end
+  end
+
+  def recalculation_fields(opts)
+    all_fields = %w(balance value cost gains)
+    if opts[:only]
+      Array(opts[:only])
+    elsif opts[:except]
+      except = Array(opts[:except])
+      all_fields.reject{|f| except.include?(f)}
+    else
+      all_fields
+    end
+  end
+
+  def recalculate_field(field)
+    # Assume that most of the time the balance 
+    # will not need to be updated
+    method = "#{field}_as_of".to_sym
+    current = send(method, END_OF_TIME)
+    update_attribute(field, current) unless current == send(field)
   end
 
   def root?

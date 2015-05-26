@@ -11,20 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150417215315) do
+ActiveRecord::Schema.define(version: 20150525204306) do
 
   # These are extensions that must be enabled in order to support this database
-#  enable_extension "plpgsql"
+  enable_extension "plpgsql"
 
   create_table "accounts", force: true do |t|
-    t.string   "name",                                  null: false
-    t.string   "account_type",                          null: false
+    t.string   "name",                                           null: false
+    t.string   "account_type",                                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "balance",                 default: 0.0, null: false
-    t.integer  "entity_id",                             null: false
+    t.decimal  "balance",                          default: 0.0, null: false
+    t.integer  "entity_id",                                      null: false
     t.integer  "parent_id"
-    t.string   "content_type", limit: 20
+    t.string   "content_type",          limit: 20
+    t.decimal  "cost",                             default: 0.0, null: false
+    t.decimal  "gains",                            default: 0.0, null: false
+    t.decimal  "value",                            default: 0.0, null: false
+    t.decimal  "balance_with_children",            default: 0.0, null: false
+    t.decimal  "cost_with_children",               default: 0.0, null: false
+    t.decimal  "gains_with_children",              default: 0.0, null: false
+    t.decimal  "value_with_children",              default: 0.0, null: false
   end
 
   add_index "accounts", ["entity_id", "parent_id", "name"], name: "index_accounts_on_entity_id_and_parent_id_and_name", unique: true, using: :btree

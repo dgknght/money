@@ -20,6 +20,9 @@ class Lot < ActiveRecord::Base
   validates_presence_of :account_id, :price, :commodity_id, :shares_owned, :purchase_date
   validates_numericality_of :price, greater_than: 0
 
+  after_create :update_account
+  after_save :update_account
+
   scope :active, -> { where('shares_owned > 0') }
   scope :fifo, -> { order(purchase_date: :asc) }
   scope :filo, -> { order(purchase_date: :desc) }
@@ -44,5 +47,9 @@ class Lot < ActiveRecord::Base
       where(['trade_date <= ?', as_of]).
       order(trade_date: :desc).
       first.try(:price)
+  end
+
+  def update_account
+    account.recalculate_balances
   end
 end
