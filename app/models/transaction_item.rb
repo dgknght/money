@@ -10,6 +10,8 @@
 #  created_at     :datetime
 #  updated_at     :datetime
 #  reconciled     :boolean          default(FALSE), not null
+#  memo           :string(100)
+#  confirmation   :string(50)
 #
 
 class TransactionItem < ActiveRecord::Base

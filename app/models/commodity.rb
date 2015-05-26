@@ -5,7 +5,7 @@
 #  id         :integer          not null, primary key
 #  entity_id  :integer
 #  name       :string(255)
-#  symbol     :string(5)
+#  symbol     :string(10)
 #  market     :string(10)
 #  created_at :datetime
 #  updated_at :datetime
