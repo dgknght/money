@@ -13,6 +13,9 @@
 class Price < ActiveRecord::Base
   belongs_to :commodity, inverse_of: :prices
 
+  after_create :update_account
+  after_update :update_account
+
   validates_presence_of :commodity_id, :trade_date
   validates_uniqueness_of :trade_date, scope: :commodity_id
   validates :price, presence: true, numericality: { greater_than: 0, less_than: 10_000 }
@@ -29,5 +32,15 @@ class Price < ActiveRecord::Base
       price_model = commodity.prices.create!(trade_date: trade_date, price: price)
     end
     price_model
+  end
+
+  private
+
+  def all_accounts
+    commodity.lots.active.map(&:account).uniq{|a| a.id}
+  end
+
+  def update_account
+    all_accounts.each{|a| a.recalculate_balances(only: [:value, :cost, :gains])}
   end
 end
