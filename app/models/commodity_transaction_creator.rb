@@ -305,7 +305,7 @@ class CommodityTransactionCreator
   def process_sell_lots
     shares_to_remove = shares
     result = []
-    lots = fifo? ? commodity_account.lots.fifo : commodity_account.lots.filo
+    lots = fifo? ? commodity_account.lots.active.fifo : commodity_account.lots.active.filo
     lots.each do |lot|
       if shares_to_remove <= lot.shares_owned
         result << OpenStruct.new(shares: shares_to_remove,

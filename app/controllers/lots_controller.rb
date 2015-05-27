@@ -7,7 +7,7 @@ class LotsController < ApplicationController
   def index
     authorize! :show, @account
 
-    @lots = @account.lots
+    @lots = @account.lots.active
     respond_with @lots
   end
 
