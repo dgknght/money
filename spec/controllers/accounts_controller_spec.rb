@@ -5,7 +5,7 @@ describe AccountsController do
   let!(:checking) { FactoryGirl.create(:account, entity: entity, name: 'checking') }
   let!(:cash) { FactoryGirl.create(:account, entity: entity, name: 'cash') }
   let (:ira) { FactoryGirl.create(:commodities_account, entity: entity, name: 'IRA') }
-  let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
+  let!(:kss) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSS') }
   let (:account_data) { fixture_file_upload('files/accounts.csv', 'text/csv') }
   let (:purchase_attributes) do
     {
