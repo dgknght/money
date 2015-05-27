@@ -149,8 +149,32 @@ describe Account do
   end
   
   shared_context 'groceries' do
-    let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 11) }
-    let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id, balance: 12) }
+    let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id) }
+    let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id) }
+    let!(:t1) do
+      FactoryGirl.create(:transaction,
+                         amount: 1_000,
+                         debit_account: checking,
+                         credit_account: opening_balances)
+    end
+    let!(:t1) do
+      FactoryGirl.create(:transaction,
+                         amount: 1_000,
+                         debit_account: checking,
+                         credit_account: opening_balances)
+    end
+    let!(:t2) do
+      FactoryGirl.create(:transaction,
+                         amount: 11,
+                         debit_account: food,
+                         credit_account: checking)
+    end
+    let!(:t3) do
+      FactoryGirl.create(:transaction,
+                         amount: 12,
+                         debit_account: non_food,
+                         credit_account: checking)
+    end
   end
 
   describe '#balance_with_children' do
