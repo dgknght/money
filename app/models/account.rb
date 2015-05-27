@@ -131,7 +131,8 @@ class Account < ActiveRecord::Base
   end
 
   def cost_as_of(date)
-    balance_as_of(date)
+    return balance_as_of(date) unless commodity?
+    lots.reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
   end
 
   def cost_with_children
@@ -144,7 +145,10 @@ class Account < ActiveRecord::Base
 
   # Adjusts the balance of the account by the specified amount
   def credit(amount)
-    self.balance += (amount * polarity(TransactionItem.credit))
+    delta = (amount * polarity(TransactionItem.credit))
+    self.balance += delta
+    self.cost += delta
+    self.value += delta unless commodity?
   end
   
   def credit!(amount)
@@ -154,7 +158,10 @@ class Account < ActiveRecord::Base
   
   # Adjusts the balance of the account by the specified amount
   def debit(amount)
-    self.balance += (amount * polarity(TransactionItem.debit))
+    delta = (amount * polarity(TransactionItem.debit))
+    self.balance += delta
+    self.cost += delta
+    self.value += delta unless commodity?
   end
   
   def debit!(amount)
@@ -230,12 +237,6 @@ class Account < ActiveRecord::Base
   # Value is the current value of the account. For cash accounts
   # this will always be the same as the balance. For commodity
   # accounts, this will be the sum of the values of the lots
-  def value
-    # This really wants to be polymorphic, but that feels like overkill here
-    return lots.reduce(0) { |sum, lot| sum + lot.current_value } if commodity?
-    balance
-  end
-
   def value_as_of(date)
     date = ensure_date(date)
     return balance_as_of(date) unless commodity?

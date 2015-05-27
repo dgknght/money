@@ -31,6 +31,10 @@ class Lot < ActiveRecord::Base
     (price || 0) * (shares_owned || 0)
   end
 
+  def cost_as_of(date)
+    raise 'not implemented'
+  end
+
   def current_value(as_of = Date.today)
     return 0 if shares_owned == 0
     (most_recent_price(as_of) || price) * shares_owned
@@ -50,6 +54,6 @@ class Lot < ActiveRecord::Base
   end
 
   def update_account
-    account.recalculate_balances
+    account.recalculate_balances(only: [:gains, :value])
   end
 end
