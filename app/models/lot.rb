@@ -20,9 +20,6 @@ class Lot < ActiveRecord::Base
   validates_presence_of :account_id, :price, :commodity_id, :shares_owned, :purchase_date
   validates_numericality_of :price, greater_than: 0
 
-  after_create :update_account
-  after_save :update_account
-
   scope :active, -> { where('shares_owned > 0') }
   scope :fifo, -> { order(purchase_date: :asc) }
   scope :filo, -> { order(purchase_date: :desc) }
@@ -34,9 +31,7 @@ class Lot < ActiveRecord::Base
   def cost_as_of(date)
     return 0 unless transactions.present?
 
-    shares = shares_as_of(date)
-    price = transactions.select{|t| t.shares_traded > 0}.first.price
-    return shares * price
+    shares_as_of(date) * price
   end
 
   def current_value(as_of = Date.today)
@@ -62,9 +57,5 @@ class Lot < ActiveRecord::Base
     transactions.
       select{|t| t.transaction && t.transaction.transaction_date <= date}.
       reduce(0){|sum, t| sum + t.shares_traded}
-  end
-
-  def update_account
-    account.recalculate_balances(only: [:gains, :value])
   end
 end
