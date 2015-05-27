@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe LotTransfer do
   let (:entity) { FactoryGirl.create(:entity) }
-  let!(:kss) { FactoryGirl.create(:commodity, symbol: 'KSS') }
+  let!(:kss) { FactoryGirl.create(:commodity, entity: entity, symbol: 'KSS') }
   let (:four01k) { FactoryGirl.create(:commodities_account, entity: entity) }
   let (:ira) { FactoryGirl.create(:commodities_account, entity: entity) }
   let (:opening) { FactoryGirl.create(:equity_account, entity: entity) }

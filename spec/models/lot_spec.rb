@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe Lot do
-  let (:account) { FactoryGirl.create(:account) }
-  let (:commodity) { FactoryGirl.create(:commodity) }
+  let (:entity) { FactoryGirl.create(:entity) }
+  let (:ira) { FactoryGirl.create(:account, entity: entity) }
+  let (:commodity) { FactoryGirl.create(:commodity, entity: entity) }
   let (:attributes) do
     {
-      account_id: account.id,
+      account_id: ira.id,
       commodity_id: commodity.id,
       price: 12.345,
       shares_owned: 43.21,
@@ -68,6 +69,49 @@ describe Lot do
     end
   end
 
+  describe '#cost_as_of' do
+    let (:ob) { FactoryGirl.create(:equity_account, entity: entity) }
+    let!(:ltg) { FactoryGirl.create(:income_account, entity: entity, name: 'Long Term Gains') }
+    let!(:stg) { FactoryGirl.create(:income_account, entity: entity, name: 'Short Term Gains') }
+    let!(:t1) { FactoryGirl.create(:transaction, amount: 2_000, debit_account: ira, credit_account: ob) }
+    let!(:t2) do
+      CommodityTransactionCreator.new(account: ira,
+                                      shares: 100,
+                                      transaction_date: Chronic.parse('2015-01-01'),
+                                      value: 1_000,
+                                      action: 'buy',
+                                      symbol: commodity.symbol).create!
+    end
+    let!(:t3) do
+      CommodityTransactionCreator.new(account: ira,
+                                      shares: 50,
+                                      transaction_date: Chronic.parse('2015-02-01'),
+                                      value: 550,
+                                      action: 'sell',
+                                      symbol: commodity.symbol).create!
+    end
+    let!(:t4) do
+      CommodityTransactionCreator.new(account: ira,
+                                      shares: 50,
+                                      transaction_date: Chronic.parse('2015-03-01'),
+                                      value: 600,
+                                      action: 'sell',
+                                      symbol: commodity.symbol).create!
+    end
+
+    it 'should return the cost as of the specified date' do
+
+      puts "transaction count: #{Transaction.all.count}"
+      puts "count of lots: #{commodity.lots.count}"
+
+      lot = commodity.lots.first
+      expect(lot.cost_as_of('2015-01-01')).to eq(1_000)
+      expect(lot.cost_as_of('2015-02-02')).to eq(500)
+      expect(lot.cost_as_of('2015-03-02')).to eq(0)
+      expect(lot.cost_as_of('2014-12-31')).to eq(0)
+    end
+  end
+
   describe '#gains' do
     let!(:price) { FactoryGirl.create(:price, commodity: commodity, price: 20) }
     it 'should be the difference between the cost and the current value' do
@@ -107,9 +151,9 @@ describe Lot do
   end
 
   shared_context 'existing lots' do
-    let!(:lot1) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-01-01') }
-    let!(:lot2) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-02-01') }
-    let!(:lot3) { FactoryGirl.create(:lot, account: account, purchase_date: '2014-03-01', shares_owned: 0) }
+    let!(:lot1) { FactoryGirl.create(:lot, account: ira, purchase_date: '2014-01-01') }
+    let!(:lot2) { FactoryGirl.create(:lot, account: ira, purchase_date: '2014-02-01') }
+    let!(:lot3) { FactoryGirl.create(:lot, account: ira, purchase_date: '2014-03-01', shares_owned: 0) }
   end
 
   describe '::active' do

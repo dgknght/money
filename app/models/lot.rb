@@ -32,7 +32,11 @@ class Lot < ActiveRecord::Base
   end
 
   def cost_as_of(date)
-    raise 'not implemented'
+    return 0 unless transactions.present?
+
+    shares = shares_as_of(date)
+    price = transactions.select{|t| t.shares_traded > 0}.first.price
+    return shares * price
   end
 
   def current_value(as_of = Date.today)
@@ -51,6 +55,13 @@ class Lot < ActiveRecord::Base
       where(['trade_date <= ?', as_of]).
       order(trade_date: :desc).
       first.try(:price)
+  end
+
+  def shares_as_of(date)
+    date = Chronic.parse(date) if date.is_a? String
+    transactions.
+      select{|t| t.transaction && t.transaction.transaction_date <= date}.
+      reduce(0){|sum, t| sum + t.shares_traded}
   end
 
   def update_account
