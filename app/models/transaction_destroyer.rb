@@ -11,7 +11,7 @@ class TransactionDestroyer
       self.notice = success_notice
       true
     rescue => e
-      Rails.logger.error "Unable to destroy the transaction #{@transaction.inspect} #{e.inspect}"
+      Rails.logger.error "Unable to destroy the transaction #{@transaction.inspect} #{e.message}\n  #{e.backtrace.join("\n  ")}"
       self.error = e.to_s
       false
     end
