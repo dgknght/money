@@ -100,10 +100,6 @@ describe Lot do
     end
 
     it 'should return the cost as of the specified date' do
-
-      puts "transaction count: #{Transaction.all.count}"
-      puts "count of lots: #{commodity.lots.count}"
-
       lot = commodity.lots.first
       expect(lot.cost_as_of('2015-01-01')).to eq(1_000)
       expect(lot.cost_as_of('2015-02-02')).to eq(500)
