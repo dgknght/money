@@ -21,11 +21,12 @@ class AccountsPresenter
     liability = summary(:liability, 'Liabilities')
 
     equity = summary(:equity, 'Equity')
-    equity << unrealized_gains
-    equity << balancing_record(asset.balance, liability.balance, equity.balance) 
 
     income = summary(:income, 'Income')
     expense = summary(:expense, 'Expense')
+
+    equity << unrealized_gains
+    equity << retained_earnings(income.balance, expense.balance)
 
     to_a(asset, liability, equity, income, expense).each do |r|
       yield r if include_record?(r)
@@ -60,17 +61,17 @@ class AccountsPresenter
     accounts.reduce([]) { |list, account| list + account_to_adapters(account) }
   end
 
-  def balancing_record(total_assets, total_liabilities, total_equity)
-    difference = total_assets - (total_liabilities + total_equity)
-    DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
-  end
-
   def children(account)
     all_accounts.select{|a| a.parent_id == account.id}
   end
 
   def include_record?(record)
     !(@hide_zero_balances && record.depth > 0 && record.balance.zero?)
+  end
+
+  def retained_earnings(total_income, total_expense)
+    difference = total_income - total_expense
+    DisplayRecord.new('Retained earnings', difference, 1) if difference != 0
   end
 
   def summary(type, caption)
