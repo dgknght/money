@@ -213,10 +213,12 @@ class Account < ActiveRecord::Base
   end
 
   def recalculate_balances(opts = {})
+    with_children_only = opts.fetch(:with_children_only, false)
     recalculation_fields(opts).each do |field|
-      recalculate_field(field)
+      recalculate_field(field) unless with_children_only
       recalculate_field("#{field}_with_children")
     end
+    parent.recalculate_balances(opts.merge(with_children_only: true)) if parent
   end
 
   def root?
@@ -258,10 +260,6 @@ class Account < ActiveRecord::Base
       select{|p| p.trade_date <= date}.
       map(&:price).
       first
-  end
-
-  def value_with_children
-    return children.reduce(value) { |sum, child| sum + child.value_with_children }
   end
 
   def left_side?
