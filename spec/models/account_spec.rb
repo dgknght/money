@@ -26,7 +26,7 @@ describe Account do
   end
 
   shared_context 'investment accounts' do
-    let (:ira) { FactoryGirl.create(:commodities_account, name: '401k', entity: entity) }
+    let (:ira) { FactoryGirl.create(:commodities_account, name: 'IRA', entity: entity) }
     let!(:kss) { FactoryGirl.create(:commodity, symbol: 'kss', entity: entity) }
     let (:kss_account) { Account.find_by_name('kss') }
     let!(:account_opening) { FactoryGirl.create(:transaction, transaction_date: '2014-01-01', amount: 3_000, debit_account: ira, credit_account: opening_balances) }
@@ -760,6 +760,7 @@ describe Account do
     include_context 'investment accounts'
 
     it 'should return the sum of the current value and all children values' do
+      ira.reload
       expect(ira.value_with_children).to eq(3_600)
     end
   end
