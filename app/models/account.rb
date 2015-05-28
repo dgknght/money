@@ -110,10 +110,6 @@ class Account < ActiveRecord::Base
     end
   end
   
-  def balance_with_children
-    balance + children.sum(:balance)
-  end
-  
   def balance_with_children_as_of(date)
     children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_as_of(date) }
   end
@@ -135,20 +131,14 @@ class Account < ActiveRecord::Base
     lots.reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
   end
 
-  def cost_with_children
-    return children.reduce(cost) { |sum, child| sum + child.cost_with_children }
-  end
-
   def cost_with_children_as_of(date)
-    return children.reduce(cost) { |sum, child| sum + child.cost_with_children_as_of(date) }
+    return children.reduce(cost_as_of(date)) { |sum, child| sum + child.cost_with_children_as_of(date) }
   end
 
   # Adjusts the balance of the account by the specified amount
   def credit(amount)
     delta = (amount * polarity(TransactionItem.credit))
-    self.balance += delta
-    self.cost += delta
-    self.value += delta unless commodity?
+    update_local_balances(delta)
   end
   
   def credit!(amount)
@@ -159,9 +149,7 @@ class Account < ActiveRecord::Base
   # Adjusts the balance of the account by the specified amount
   def debit(amount)
     delta = (amount * polarity(TransactionItem.debit))
-    self.balance += delta
-    self.cost += delta
-    self.value += delta unless commodity?
+    update_local_balances(delta)
   end
   
   def debit!(amount)
@@ -181,10 +169,6 @@ class Account < ActiveRecord::Base
 
   def gains_as_of(date)
     value_as_of(date) - cost_as_of(date)
-  end
-
-  def gains_with_children
-    children.reduce(gains) { |sum, child| sum + child.gains_with_children }
   end
 
   def gains_with_children_as_of(date)
@@ -320,5 +304,18 @@ class Account < ActiveRecord::Base
       
     def set_defaults
       self.content_type ||= Account.currency_content
+    end
+
+    def update_local_balance(field, delta)
+      new_value = send(field) + delta
+      send("#{field}=", new_value)
+    end
+
+    def update_local_balances(delta)
+      %w(balance cost value).each do |field|
+        update_local_balance(field, delta)
+        update_local_balance("#{field}_with_children", delta)
+      end
+      parent.recalculate_balances(with_children_only: true) if parent
     end
 end
