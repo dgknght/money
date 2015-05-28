@@ -29,9 +29,17 @@ class CommodityExchanger
   end
 
   def exchange
+    original_account = lot.account
+
     lot.commodity_id = commodity.id # go through the commodity object to be sure the commodity id is good
     lot.account_id = commodity_account.id
-    lot.save
+    if lot.save
+      [original_account, lot.account].each do |account|
+        account.recalculate_balances(only: [:value, :cost, :gains])
+      end
+      return true
+    end
+    false
   end
 
   def exchange!
