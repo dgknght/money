@@ -181,6 +181,7 @@ describe Account do
     include_context 'groceries'
     
     it 'should be the balance of the account plus the sum of the balances of the child accounts' do
+      groceries.reload
       groceries.balance_with_children.should == 23
     end
   end
@@ -769,6 +770,7 @@ describe Account do
     include_context 'investment accounts'
 
     it 'should return the sum of the cost of all children and the instance cost' do
+      ira.reload
       expect(ira.cost_with_children).to eq(3_000)
     end
   end
@@ -785,6 +787,7 @@ describe Account do
     include_context 'investment accounts'
 
     it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
+      ira.reload
       expect(ira.gains_with_children).to eq(600)
     end
   end
