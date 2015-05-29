@@ -6,6 +6,9 @@ describe TransactionItem do
   let (:groceries) { FactoryGirl.create(:expense_account, entity: entity, name: 'Groceries') }
   let (:gasoline) { FactoryGirl.create(:expense_account, entity: entity, name: 'Gasoline') }
   let (:transaction) { FactoryGirl.create(:transaction, entity: entity) }
+  let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Credit card') }
+  let (:credit_card) { FactoryGirl.create(:liability_account, entity: entity, name: 'Credit card') }
+  let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Credit card') }
   let (:attributes) do
     {
       transaction: transaction,
@@ -64,9 +67,6 @@ describe TransactionItem do
   end
   
   describe '#polarized_amount' do
-    let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Credit card') }
-    let (:credit_card) { FactoryGirl.create(:liability_account, entity: entity, name: 'Credit card') }
-    let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Credit card') }
     context 'with a credit action' do
       let (:action) { TransactionItem.credit }
       it 'should return a negative value for an asset account' do
@@ -227,6 +227,38 @@ describe TransactionItem do
     end
   end
   
+  describe '#balance' do
+    let (:t1) do
+      FactoryGirl.create(:transaction, transaction_date: '2015-01-15',
+                                       amount: 2_000,
+                                       credit_account: salary,
+                                       debit_account: checking)
+    end
+    let (:t2) do
+      FactoryGirl.create(:transaction, transaction_date: '2015-01-01',
+                                       amount: 999,
+                                       credit_account: opening_balances,
+                                       debit_account: checking)
+    end
+
+    it 'contains the balance of the account as a result of the inclusion if the transaction item' do
+      checking_item = t1.items.select{|i| i.account.id == checking.id}.first
+      expect(checking_item.balance.to_f).to eq(2_000)
+
+      ob_item = t1.items.select{|i| i.account.id == salary.id}.first
+      expect(ob_item.balance.to_f).to eq(2_000)
+    end
+
+    it 'is recalculated if any transaction items are inserted earlier in the account history' do
+      c1 = t1.items.select{|i| i.account_id == checking.id}.first
+      expect(c1.balance.to_f).to eq(2_000)
+      c2 = t2.items.select{|i| i.account_id == checking.id}.first
+      expect(c2.balance.to_f).to eq(999)
+      c1.reload
+      expect(c1.balance.to_f).to eq(2_999)
+    end
+  end
+
   describe '#unreconciled scope' do
     let!(:unreconciled) { FactoryGirl.create(:transaction_item) }
     let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }

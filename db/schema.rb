@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150525204306) do
+ActiveRecord::Schema.define(version: 20150529212028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,6 +180,7 @@ ActiveRecord::Schema.define(version: 20150525204306) do
     t.boolean  "reconciled",                 default: false, null: false
     t.string   "memo",           limit: 100
     t.string   "confirmation",   limit: 50
+    t.decimal  "balance",                    default: 0.0,   null: false
   end
 
   create_table "transactions", force: true do |t|
