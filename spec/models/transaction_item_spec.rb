@@ -193,7 +193,7 @@ describe TransactionItem do
       expect(checking.balance.to_i).to eq(-100)
       expect(groceries.balance.to_i).to eq(100)
 
-      groceries_item = transaction.items.select{ |item| item.account.id == groceries.id }.first
+      groceries_item = trn.items.select{ |item| item.account.id == groceries.id }.first
       groceries_item.destroy
       trn.items.build(account: gasoline, action: TransactionItem.debit, amount: 100)
       expect(trn).to be_valid
