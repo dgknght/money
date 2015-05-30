@@ -90,8 +90,8 @@ class Account < ActiveRecord::Base
     start_date = ensure_date(start_date)
     end_date = ensure_date(end_date)
     
-    sum_of_credits = sum_of credit_transaction_items(start_date, end_date)
-    sum_of_debits = sum_of debit_transaction_items(start_date, end_date)
+    sum_of_credits = sum_of_credit_transaction_items(start_date, end_date)
+    sum_of_debits = sum_of_debit_transaction_items(start_date, end_date)
     
     if left_side?
       sum_of_debits - sum_of_credits
@@ -267,12 +267,18 @@ class Account < ActiveRecord::Base
   end
 
   private
-    def credit_transaction_items(start_date, end_date)
-      result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date)
+    def sum_of_credit_transaction_items(start_date, end_date)
+      result = transaction_items.
+        joins(:transaction).
+        where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date).
+        sum(:amount)
     end
     
-    def debit_transaction_items(start_date, end_date)
-      result = transaction_items.joins(:transaction).where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.debit, start_date, end_date)
+    def sum_of_debit_transaction_items(start_date, end_date)
+      result = transaction_items.
+        joins(:transaction).
+        where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.debit, start_date, end_date).
+        sum(:amount)
     end
     
     def ensure_date(date)
@@ -291,8 +297,4 @@ class Account < ActiveRecord::Base
     def set_defaults
       self.content_type ||= Account.currency_content
     end
-
-    def sum_of(items)
-      items.reduce(0) { |sum, item| sum += item.amount }
-    end    
 end
