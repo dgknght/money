@@ -144,6 +144,7 @@ class Account < ActiveRecord::Base
   def credit!(amount)
     credit(amount)
     save!
+    balance
   end
   
   # Adjusts the balance of the account by the specified amount
@@ -155,6 +156,7 @@ class Account < ActiveRecord::Base
   def debit!(amount)
     debit(amount)
     save!
+    balance
   end
   
   # returns the number of parents in the parent-child chain
@@ -317,5 +319,6 @@ class Account < ActiveRecord::Base
         update_local_balance("#{field}_with_children", delta)
       end
       parent.recalculate_balances(with_children_only: true) if parent
+      balance
     end
 end
