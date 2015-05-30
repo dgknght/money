@@ -8,7 +8,7 @@ describe TransactionItem do
   let (:transaction) { FactoryGirl.create(:transaction, entity: entity) }
   let (:salary) { FactoryGirl.create(:income_account, entity: entity, name: 'Credit card') }
   let (:credit_card) { FactoryGirl.create(:liability_account, entity: entity, name: 'Credit card') }
-  let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Credit card') }
+  let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Opening balances') }
   let (:attributes) do
     {
       transaction: transaction,
