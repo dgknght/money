@@ -29,6 +29,8 @@ class Account < ActiveRecord::Base
   has_many :lots
   has_many :budget_items
   has_many :budget_monitors
+  has_one :head_transaction_item, class_name: 'TransactionItem'
+  has_one :first_transaction_item, class_name: 'TransationItem'
 
   END_OF_TIME = Chronic.parse('9999-12-31')
   CONTENT_TYPES = %w(currency commodities commodity)
@@ -196,6 +198,29 @@ class Account < ActiveRecord::Base
   def polarity(action)
     return -1 if (action == TransactionItem.credit && left_side?) || (action == TransactionItem.debit && right_side?)
     1
+  end
+
+  def rebuild_transaction_item_links
+    self.head_transaction_item_id = nil
+    self.first_transaction_item_id = nil
+    last = nil
+    transaction_items.
+      sort{|i| i.transaction.transaction_date}.
+      each do |item|
+        self.first_transaction_item_id = item.id if self.first_transaction_item_id.nil?
+        if last.present?
+          item.previous_transaction_item_id = last.id
+          last.next_transaction_item_id = item.id
+          last.save!
+        end
+        item.balance = item.polarized_amount + (last.present? ? last.balance : 0)
+        item.save!
+        last = item
+    end
+    if last.present?
+      update_attributes!(head_transaction_item_id: last.id,
+                         balance: last.balance)
+    end
   end
 
   def recalculate_balances(opts = {})

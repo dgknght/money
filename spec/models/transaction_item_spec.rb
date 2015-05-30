@@ -220,7 +220,7 @@ describe TransactionItem do
     end
   end
   
-  describe '#balance' do
+  shared_context 'balance transactions' do
     let (:t1) do
       FactoryGirl.create(:transaction, transaction_date: '2015-01-15',
                                        amount: 2_000,
@@ -233,6 +233,10 @@ describe TransactionItem do
                                        credit_account: opening_balances,
                                        debit_account: checking)
     end
+  end
+
+  describe '#balance' do
+    include_context 'balance transactions'
 
     it 'contains the balance of the account as a result of the inclusion if the transaction item' do
       checking_item = t1.items.select{|i| i.account.id == checking.id}.first

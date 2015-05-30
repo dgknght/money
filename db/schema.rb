@@ -11,27 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150529212028) do
+ActiveRecord::Schema.define(version: 20150530015316) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+#  enable_extension "plpgsql"
 
   create_table "accounts", force: true do |t|
-    t.string   "name",                                           null: false
-    t.string   "account_type",                                   null: false
+    t.string   "name",                                               null: false
+    t.string   "account_type",                                       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "balance",                          default: 0.0, null: false
-    t.integer  "entity_id",                                      null: false
+    t.decimal  "balance",                              default: 0.0, null: false
+    t.integer  "entity_id",                                          null: false
     t.integer  "parent_id"
-    t.string   "content_type",          limit: 20
-    t.decimal  "cost",                             default: 0.0, null: false
-    t.decimal  "gains",                            default: 0.0, null: false
-    t.decimal  "value",                            default: 0.0, null: false
-    t.decimal  "balance_with_children",            default: 0.0, null: false
-    t.decimal  "cost_with_children",               default: 0.0, null: false
-    t.decimal  "gains_with_children",              default: 0.0, null: false
-    t.decimal  "value_with_children",              default: 0.0, null: false
+    t.string   "content_type",              limit: 20
+    t.decimal  "cost",                                 default: 0.0, null: false
+    t.decimal  "gains",                                default: 0.0, null: false
+    t.decimal  "value",                                default: 0.0, null: false
+    t.decimal  "balance_with_children",                default: 0.0, null: false
+    t.decimal  "cost_with_children",                   default: 0.0, null: false
+    t.decimal  "gains_with_children",                  default: 0.0, null: false
+    t.decimal  "value_with_children",                  default: 0.0, null: false
+    t.integer  "head_transaction_item_id"
+    t.integer  "first_transaction_item_id"
   end
 
   add_index "accounts", ["entity_id", "parent_id", "name"], name: "index_accounts_on_entity_id_and_parent_id_and_name", unique: true, using: :btree
@@ -171,16 +173,18 @@ ActiveRecord::Schema.define(version: 20150529212028) do
   add_index "reconciliations", ["account_id", "reconciliation_date"], name: "index_reconciliations_on_account_id_and_reconciliation_date", using: :btree
 
   create_table "transaction_items", force: true do |t|
-    t.integer  "transaction_id",                             null: false
-    t.integer  "account_id",                                 null: false
-    t.string   "action",                                     null: false
-    t.decimal  "amount",                                     null: false
+    t.integer  "transaction_id",                                           null: false
+    t.integer  "account_id",                                               null: false
+    t.string   "action",                                                   null: false
+    t.decimal  "amount",                                                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "reconciled",                 default: false, null: false
-    t.string   "memo",           limit: 100
-    t.string   "confirmation",   limit: 50
-    t.decimal  "balance",                    default: 0.0,   null: false
+    t.boolean  "reconciled",                               default: false, null: false
+    t.string   "memo",                         limit: 100
+    t.string   "confirmation",                 limit: 50
+    t.decimal  "balance",                                  default: 0.0,   null: false
+    t.integer  "next_transaction_item_id"
+    t.integer  "previous_transaction_item_id"
   end
 
   create_table "transactions", force: true do |t|
