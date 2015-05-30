@@ -22,47 +22,47 @@ describe TransactionItem do
   
   it 'should be creatable from valid attributes' do
     item = TransactionItem.new(attributes)
-    item.should be_valid
+    expect(item).to be_valid
   end
   
   describe '#transaction' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:transaction))
-      item.should_not be_valid
+      expect(item).not_to be_valid
     end
     
     it 'should refer to the transaction to which the item belongs' do
       item = TransactionItem.new(attributes)
-      item.transaction.should == transaction
+      expect(item.transaction_id).to eq(transaction.id)
     end
   end
   
   describe '#account' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:account))
-      item.should_not be_valid
+      expect(item).not_to be_valid
     end
   end
   
   describe '#action' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:action))
-      item.should_not be_valid
+      expect(item).not_to be_valid
     end
     
     it 'should allow only :credit or :debit' do
       item = TransactionItem.new(attributes.merge(action: TransactionItem.debit))
-      item.should be_valid
+      expect(item).to be_valid
       
       item.action = :something_else
-      item.should_not be_valid
+      expect(item).not_to be_valid
     end
   end
   
   describe '#amount' do
     it 'should be required' do
       item = TransactionItem.new(attributes.without(:amount))
-      item.should_not be_valid
+      expect(item).not_to be_valid
     end
   end
   
@@ -71,27 +71,27 @@ describe TransactionItem do
       let (:action) { TransactionItem.credit }
       it 'should return a negative value for an asset account' do
         item = TransactionItem.new(attributes.merge(account: checking, action: action))
-        item.polarized_amount.to_i.should == -100
+        expect(item.polarized_amount.to_i).to eq(-100)
       end
       
       it 'should return a positive value for a liability account' do
         item = TransactionItem.new(attributes.merge(account: credit_card, action: action))
-        item.polarized_amount.to_i.should == 100
+        expect(item.polarized_amount.to_i).to eq(100)
       end
       
       it 'should return a positive value for an equity account' do
         item = TransactionItem.new(attributes.merge(account: opening_balances, action: action))
-        item.polarized_amount.to_i.should == 100
+        expect(item.polarized_amount.to_i).to eq(100)
       end
       
       it 'should return a positive value for an income account' do
         item = TransactionItem.new(attributes.merge(account: salary, action: action))
-        item.polarized_amount.to_i.should == 100
+        expect(item.polarized_amount.to_i).to eq(100)
       end      
       
       it 'should return a negative value for an expense account' do
         item = TransactionItem.new(attributes.merge(account: groceries, action: action))
-        item.polarized_amount.to_i.should == -100
+        expect(item.polarized_amount.to_i).to eq(-100)
       end      
     end
     
@@ -99,124 +99,117 @@ describe TransactionItem do
       let (:action) { TransactionItem.debit }
       it 'should return a positive value for an asset account' do
         item = TransactionItem.new(attributes.merge(account: checking, action: action))
-        item.polarized_amount.to_i.should == 100
+        expect(item.polarized_amount.to_i).to eq(100)
       end
       
       it 'should return a negative value for a liability account' do
         item = TransactionItem.new(attributes.merge(account: credit_card, action: action))
-        item.polarized_amount.to_i.should == -100
+        expect(item.polarized_amount.to_i).to eq(-100)
       end
       
       it 'should return a negative value for an equity account' do
         item = TransactionItem.new(attributes.merge(account: opening_balances, action: action))
-        item.polarized_amount.to_i.should == -100
+        expect(item.polarized_amount.to_i).to eq(-100)
       end
       
       it 'should return a negative value for an income account' do
         item = TransactionItem.new(attributes.merge(account: salary, action: action))
-        item.polarized_amount.to_i.should == -100
+        expect(item.polarized_amount.to_i).to eq(-100)
       end      
       
       it 'should return a positive value for an expense account' do
         item = TransactionItem.new(attributes.merge(account: groceries, action: action))
-        item.polarized_amount.to_i.should == 100
+        expect(item.polarized_amount.to_i).to eq(100)
       end      
     end
   end
   
   describe '::credits' do
     it 'should return the transaction items with the :credit action' do
-      TransactionItem.credits.where(action: TransactionItem.debit).should_not be_any
+      expect(TransactionItem.credits.where(action: TransactionItem.debit)).to be_empty
     end
   end
   
   describe '::debits' do
     it 'should return the transaction items with the :debit action' do
-      TransactionItem.debits.where(action: TransactionItem.credit).should_not be_any
+      expect(TransactionItem.debits.where(action: TransactionItem.credit)).to be_empty
     end
   end
   
+  shared_context 'buy groceries' do
+    let!(:trn){FactoryGirl.create(:transaction, debit_account: groceries, credit_account: checking, amount: 100)}
+  end
+
   describe 'after create' do    
+    include_context 'buy groceries'
+
     it 'should update the balance on the referenced account' do
-      transaction = entity.transactions.new(description: 'Kroger')
-      transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
-      transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
-      transaction.save!
-      
-      checking.balance.to_i.should == -100
-      groceries.balance.to_i.should == 100
+      expect(checking.balance.to_i).to eq(-100)
+      expect(groceries.balance.to_i).to eq(100)
     end
   end
   
   describe 'after update' do
+    include_context 'buy groceries'
+
     it 'should adjust the balance of the referenced account' do
-      transaction = entity.transactions.new(description: 'Kroger')
-      transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
-      transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
-      transaction.save!
+      expect(checking.balance.to_i).to eq(-100)
+      expect(groceries.balance.to_i).to eq(100)
       
-      checking.balance.to_i.should == -100
-      groceries.balance.to_i.should == 100
-      
-      transaction.items.each { |i| i.amount = 101 }
-      transaction.save!
+      trn.items.each { |i| i.amount = 101 }
+      trn.save!
       
       checking.reload
       groceries.reload
       
-      checking.balance.to_i.should == -101
-      groceries.balance.to_i.should == 101
+      expect(checking.balance.to_i).to eq(-101)
+      expect(groceries.balance.to_i).to eq(101)
     end
   end
   
   describe 'after update with account changed' do
-    it 'should adjust the balance of the referenced account' do
-      transaction = entity.transactions.new(description: 'Kroger')
-      checking_item = transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
-      groceries_item = transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
-      transaction.save!
-      
-      checking.balance.to_i.should == -100
-      groceries.balance.to_i.should == 100
+    include_context 'buy groceries'
 
+    it 'should adjust the balance of the referenced account' do
+      expect(checking.balance.to_i).to eq(-100)
+      expect(groceries.balance.to_i).to eq(100)
+
+      groceries_item = trn.items.select{|i| i.account.id == groceries.id}.first
       groceries_item.account = gasoline
-      transaction.save!
+      trn.save!
       groceries.reload
       gasoline.reload
       
-      checking.balance.to_i.should == -100
-      groceries.balance.to_i.should == 0
-      gasoline.balance.to_i.should == 100
+      expect(checking.balance.to_i).to eq(-100)
+      expect(groceries.balance.to_i).to be_zero
+      expect(gasoline.balance.to_i).to eq(100)
     end
   end
   
   describe 'after destroy' do
+    include_context 'buy groceries'
+
     it 'should adjust the balance of the referenced account' do
-      transaction = entity.transactions.new(description: 'Kroger')
-      transaction.items.build(account: checking, action: TransactionItem.credit, amount: 100)
-      transaction.items.build(account: groceries, action: TransactionItem.debit, amount: 100)
-      transaction.save!
-      
-      checking.balance.to_i.should == -100
-      groceries.balance.to_i.should == 100
+      expect(checking.balance.to_i).to eq(-100)
+      expect(groceries.balance.to_i).to eq(100)
 
       groceries_item = transaction.items.select{ |item| item.account.id == groceries.id }.first
       groceries_item.destroy
-      transaction.items.build(account: gasoline, action: TransactionItem.debit, amount: 100)
-      transaction.should be_valid
-      transaction.save!
+      trn.items.build(account: gasoline, action: TransactionItem.debit, amount: 100)
+      expect(trn).to be_valid
+      trn.save!
       groceries.reload
       
-      checking.balance.to_i.should == -100
-      groceries.balance.to_i.should == 0
-      gasoline.balance.to_i.should == 100
+      expect(checking.balance.to_i).to eq(-100)
+      expect(groceries.balance.to_i).to be_zero
+      expect(gasoline.balance.to_i).to eq(100)
     end
   end
   
   describe '#reconciled?' do
     it 'should default to false' do
       item = TransactionItem.new(attributes)
-      item.should_not be_reconciled
+      expect(item).not_to be_reconciled
     end    
   end
   
@@ -264,8 +257,8 @@ describe TransactionItem do
     let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
     
     it 'should return the unreconciled transaction items' do
-      TransactionItem.unreconciled.should_not include(reconciled)
-      TransactionItem.unreconciled.should include(unreconciled)
+      expect(TransactionItem.unreconciled).not_to include(reconciled)
+      expect(TransactionItem.unreconciled).to include(unreconciled)
     end
   end
   
@@ -274,8 +267,8 @@ describe TransactionItem do
     let!(:reconciled) { FactoryGirl.create(:transaction_item, reconciled: true) }
     
     it 'should return the reconciled transaction items' do
-      TransactionItem.reconciled.should include(reconciled)
-      TransactionItem.reconciled.should_not include(unreconciled)
+      expect(TransactionItem.reconciled).to include(reconciled)
+      expect(TransactionItem.reconciled).not_to include(unreconciled)
     end
   end
 
