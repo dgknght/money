@@ -15,8 +15,8 @@
 #
 
 class TransactionItem < ActiveRecord::Base
-  after_create :update_account
-  after_update :rollback_account_balance, :update_account
+  before_create :update_account
+  before_update :rollback_account_balance, :update_account
   before_destroy :ensure_not_reconciled
   after_destroy :rollback_account_balance
   
@@ -75,6 +75,6 @@ class TransactionItem < ActiveRecord::Base
     def update_account
       method_name = "#{action}!"
       account.reload
-      account.send(method_name, amount)
+      self.balance = account.send(method_name, amount)
     end
 end
