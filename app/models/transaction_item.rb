@@ -18,17 +18,8 @@ class TransactionItem < ActiveRecord::Base
   before_create :update_balance
   after_create :insert_into_the_chain
 
-  # when updating we need to:
-  #   if our position in the chain should change
-  #     remove the item from the chain
-  #     insert the item back into the chain at the correct location
-  #   otherwise if the balance has changed
-  #     either
-  #       update the next item in the chain
-  #     or
-  #       update the account 
-#  before_update :update_balance # determine insert point, update next and previous if necessary
-#  after_update :update_chain # remove from chain
+  before_update :update_balance
+  after_update :insert_into_the_chain
 
   before_destroy :ensure_not_reconciled
   after_destroy :remove_from_chain
@@ -72,22 +63,20 @@ class TransactionItem < ActiveRecord::Base
 
   def update_balance
     self.balance = previous_balance + polarized_amount
-
-    puts "#{action} #{account.name} #{amount} update_balance #{balance}"
-
     balance
   end
 
   def update_balance!
     update_balance
     save!
+    if next_transaction_item
+      next_transaction_item.update_balance!
+    else
+      account.update_attribute(:balance, balance)
+    end
   end
   
   private
-    def add_to_new_chain
-      puts "Add to the new chain #{account.name}"
-    end
-
     def ensure_not_reconciled
       if reconciled?
         raise Money::CannotDeleteError, "The transaction item has already been reconciled. Undo the reconciliation, then delete the item."
@@ -112,22 +101,22 @@ class TransactionItem < ActiveRecord::Base
 
       a = account_id_was.present? && account_id_was != account_id ? Account.find(account_id_was) : account
 
-      puts "remove from account #{a.name}"
-
-      if self.next.present?
+      if next_transaction_item_id.present?
         # This is not the last transaction, attach the next to the previous
-        previous.update_attribute(:next_id, next_id) if previous
+        previous_transaction_item.update_attribute(:next_transaction_item_id, next_transaction_item_id) if previous_transaction_item
+        next_transaction_item.update_balance!
       else
         # This is the last transaction, update the account head
-        a.update_attribute(:head_id, next_id)
+        a.update_attributes!(head_transaction_item_id: previous_transaction_item_id,
+                             balance: previous_transaction_item.try(:balance) || 0)
       end
 
-      if previous.present?
+      if previous_transaction_item.present?
         # This is not the first transaction, attache the previous to the next
-        self.next.update_attribute(:previous_id, previous_id) if self.next
+        next_transaction_item.update_attribute(:previous_transaction_item_id, previous_transaction_item_id) if next_transaction_item
       else
         # This is the first transaction, update the account first
-        a.update_attribute(:first_id, next_id)
+        a.update_attribute(:first_transaction_item_id, next_transaction_item_id)
       end
     end
 
@@ -145,7 +134,7 @@ class TransactionItem < ActiveRecord::Base
 
     def update_balance
       if calculated_previous
-        self.balance = polarized_amount + calculated_previous
+        self.balance = polarized_amount + calculated_previous.balance
         self.previous_transaction_item_id = calculated_previous.id
         self.next_transaction_item_id = calculated_previous.next_transaction_item_id
       else
@@ -154,13 +143,17 @@ class TransactionItem < ActiveRecord::Base
     end
 
     def insert_into_the_chain
-      if account.head_transaction_item.nil?
+      if account_id_was.present? && account_id_was != account_id
+        remove_from_chain
+      end
+
+      if account.head_transaction_item_id.nil?
         # This is the only transaction
         account.update_attributes!(first_transaction_item_id: id,
                                    head_transaction_item_id: id,
                                    balance: balance)
       else
-        if calculated_previous.present?
+        if calculated_previous.present? && calculated_previous.id != previous_transaction_item_id
           # This is not the first
           unless calculated_previous.next_transaction_item_id.present?
             account.update_attribute(:balance, balance)

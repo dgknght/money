@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(version: 20150530015316) do
 
   # These are extensions that must be enabled in order to support this database
-#  enable_extension "plpgsql"
+  enable_extension "plpgsql"
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                               null: false
@@ -113,10 +113,11 @@ ActiveRecord::Schema.define(version: 20150530015316) do
   add_index "commodities", ["entity_id", "market", "symbol"], name: "index_commodities_on_entity_id_and_market_and_symbol", unique: true, using: :btree
 
   create_table "entities", force: true do |t|
-    t.integer  "user_id",                null: false
-    t.string   "name",       limit: 100, null: false
+    t.integer  "user_id",                                                    null: false
+    t.string   "name",                           limit: 100,                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "suspend_balance_recalculations",             default: false, null: false
   end
 
   create_table "lot_transactions", force: true do |t|
