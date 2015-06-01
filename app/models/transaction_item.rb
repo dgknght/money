@@ -15,10 +15,10 @@
 #
 
 class TransactionItem < ActiveRecord::Base
-  before_create :update_balance
+  before_create :update_balance, prepend: true
   after_create :insert_into_the_chain
 
-  before_update :update_balance
+  before_update :update_balance, prepend: true
   after_update :insert_into_the_chain
 
   before_destroy :ensure_not_reconciled
@@ -59,11 +59,6 @@ class TransactionItem < ActiveRecord::Base
   
   def reconciled?
     reconciled
-  end
-
-  def update_balance
-    self.balance = previous_balance + polarized_amount
-    balance
   end
 
   def update_balance!
@@ -140,6 +135,7 @@ class TransactionItem < ActiveRecord::Base
       else
         self.balance = polarized_amount
       end
+      balance
     end
 
     def insert_into_the_chain
@@ -163,7 +159,15 @@ class TransactionItem < ActiveRecord::Base
           # This is the first, but not the only
           account.update_attribute(:first_transaction_item_id, id)
         end
-        next_transaction_item.try(:update_balance!)
+        update_next
+      end
+    end
+
+    def update_next
+      if next_transaction_item
+        next_transaction_item.update_balance!
+      else
+        account.update_attribute(:balance, balance)
       end
     end
 end
