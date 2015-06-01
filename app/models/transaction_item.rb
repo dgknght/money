@@ -15,8 +15,54 @@
 #
 
 class TransactionItem < ActiveRecord::Base
+
+  # When a new transaction item is created:
+  #   1. It is the only item
+  #      Set instance.balance = polarized_amount
+  #
+  #      Set account.head_transaction_item_id = instance.id
+  #      Set account.first_trnsaction_item_id = instance.id
+  #      Set account.balance = instance.balance
+  #
+  #   2. It is the last item
+  #      Set instance.previous_transaction_item_id = account.head_transaction_item_id
+  #      Set instance.balance = polarized_amount + previous_transaction_item.balance
+  #
+  #      Set account.head_transaction_item_id = instance.id
+  #      Set account.balance = instance.balance
+  #
+  #   3. It is the first item
+  #      Set instance.next_transaction_item_id = account.first_transaction_item_id
+  #      Set instance.balance = polarized_amount
+  #
+  #      Set account.first_transaction_item.previous_transaction_item_id = instance.id
+  #      Set account.first_transaction_item_id = instance.id
+  #      Update balance down the chain
+  #
+  #   4. It is neither the first nor the last item
+  #      Set instance.previous_transaction_item_id = calculated_previous.id
+  #      Set instance.next_transaction_item_id = calculated_previous.next_transaction_item_id
+  #      Set instance.balance = polarized_amount + calculated_previous.balance
+  #
+  #      Set calculated_previous.next_transaction_item.previous_transaction_item_id = instance.id
+  #      Set calculated_previous.next_transaction_item_id = instance.id
+  #      Update balance down the chain
+
   before_create :update_balance, prepend: true
   after_create :insert_into_the_chain
+
+  # When a transaction item is updated
+  #
+  # 1. The amount changes
+  #    Update balance down the chain
+  #
+  # 2. The account changes
+  #    Remove from the original account chain
+  #    Insert into the new account change (see creation notes above)
+  #
+  # 3. The transaction date changes
+  #    Remove from the account chain
+  #    Insert back into the account chain at the proper location (see creation notes above)
 
   before_update :update_balance, prepend: true
   after_update :insert_into_the_chain
