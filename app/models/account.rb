@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
   has_many :budget_items
   has_many :budget_monitors
   has_one :head_transaction_item, class_name: 'TransactionItem'
-  has_one :first_transaction_item, class_name: 'TransationItem'
+  has_one :first_transaction_item, class_name: 'TransactionItem'
 
   END_OF_TIME = Chronic.parse('9999-12-31')
   CONTENT_TYPES = %w(currency commodities commodity)
@@ -119,6 +119,15 @@ class Account < ActiveRecord::Base
   def balance_with_children_between(start_date, end_date)
     children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
+
+  def calculate_previous(item)
+    return nil unless head_transaction_item
+    result = head_transaction_item
+    while result && result.id == (item.id || result.transaction.transaction_date > item.transaction.transaction_date)
+      result = result.next_transaction_item_id
+    end
+    result
+  end
   
   def children_cost
     children.reduce(0) { |sum, child| sum + child.cost }
@@ -200,6 +209,19 @@ class Account < ActiveRecord::Base
     1
   end
 
+  def put_transaction_item(item)
+    previous = calculate_previous(item)
+    if previous
+      previous.append_transaction_item(item)
+    elsif first_transaction_item
+      replace_first(item)
+    else
+      update_attributes!(head_transaction_id: item.id,
+                         first_transaction_id: item_id,
+                         balance: item.polarized_amount) # TODO it would be better to use the balance
+    end
+  end
+
   def rebuild_transaction_item_links
     self.head_transaction_item_id = nil
     self.first_transaction_item_id = nil
@@ -221,6 +243,12 @@ class Account < ActiveRecord::Base
       update_attributes!(head_transaction_item_id: last.id,
                          balance: last.balance)
     end
+  end
+
+  def replace_first(item)
+    item.update_attribute(:next_transaction_item_id, first_transaction_item_id)
+    first_transaction_item.update_attribute(:previous_transaction_item_id, item.id)
+    update_attribute(:first_transaction_item_id, item.id)
   end
 
   def recalculate_balances(opts = {})
