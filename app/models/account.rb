@@ -122,11 +122,12 @@ class Account < ActiveRecord::Base
 
   def calculate_previous(item)
     return nil unless head_transaction_item
-    result = head_transaction_item
-    while result && result.id == (item.id || result.transaction.transaction_date > item.transaction.transaction_date)
-      result = result.next_transaction_item_id
-    end
-    result
+
+    result = transaction_items_backward.
+      lazy.
+      reject{|i| i.id == item.id}.
+      select{|i| i.transaction_date <= item.transaction_date}.
+      first
   end
   
   def children_cost
@@ -210,14 +211,17 @@ class Account < ActiveRecord::Base
   end
 
   def put_transaction_item(item)
+    raise "The item #{item} cannot be inserted into the account #{name}" unless item.account_id == id
+
     previous = calculate_previous(item)
+
     if previous
       previous.append_transaction_item(item)
-    elsif first_transaction_item
+    elsif first_transaction_item_id && (first_transaction_item_id != item.id)
       replace_first(item)
     else
-      update_attributes!(head_transaction_id: item.id,
-                         first_transaction_id: item_id,
+      update_attributes!(head_transaction_item_id: item.id,
+                         first_transaction_item_id: item.id,
                          balance: item.polarized_amount) # TODO it would be better to use the balance
     end
   end
@@ -245,10 +249,12 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # replaces the first transaction item with the specified item,
+  # appending the current first to the item
   def replace_first(item)
-    item.update_attribute(:next_transaction_item_id, first_transaction_item_id)
-    first_transaction_item.update_attribute(:previous_transaction_item_id, item.id)
+    old_first = first_transaction_item
     update_attribute(:first_transaction_item_id, item.id)
+    item.append_transaction_item(old_first)
   end
 
   def recalculate_balances(opts = {})
@@ -273,6 +279,16 @@ class Account < ActiveRecord::Base
     lots.
       select{|l| l.purchase_date <= date}.
       reduce(0){|sum, lot| sum + lot.shares_owned}
+  end
+
+  def transaction_items_backward
+    item = head_transaction_item
+    Enumerator.new do |y|
+      while item
+        y.yield item
+        item = item.previous_transaction_item
+      end
+    end
   end
 
   # Value is the current value of the account. For cash accounts

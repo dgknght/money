@@ -84,6 +84,7 @@ class TransactionItem < ActiveRecord::Base
   
   validates_presence_of :account_id, :action, :amount, :transaction
   validates :action, inclusion: { in: ACTIONS }
+  validate :previous_is_not_self, :next_is_not_self
   
   belongs_to :account, inverse_of: :transaction_items
   belongs_to :transaction, inverse_of: :items
@@ -97,14 +98,29 @@ class TransactionItem < ActiveRecord::Base
   scope :reconciled, -> { where(reconciled: true) }
   scope :unreconciled, -> { where(reconciled: false) }
   
+  delegate :transaction_date, to: :transaction, allow_nil: true
+
+  # Places the specified item after this instance in the chain, 
+  # attaching the next item after the new item, if it exists. Also
+  # update the balance of the specified item and all items down the chain
   def append_transaction_item(item)
+    raise "The item must be saved" unless item.id
+    raise "Cannot append a transaction item onto itself (item#{item}, self=#{to_s})" if item.id == id
+    raise "The item must be from the same account" unless item.account_id == account_id
+
     item.update_attributes!(previous_transaction_item_id: id,
                             next_transaction_item_id: next_transaction_item_id,
-                            balance: item.polarized_amount + balance) # Should the balance update be separate?
+                            balance: item.polarized_amount + balance)
 
     update_attributes!(next_transaction_item_id: item.id)
+
     if item.next_transaction_item_id
-      item.next_transaction_item.update_attribute(previous_transaction_item_id: item.id)
+      # This will trigger the balance to be updated down the chain
+      item.next_transaction_item(true).update_attribute(:previous_transaction_item_id, item.id)
+    else
+      # This is the end of the change, update the account
+      account.update_attributes!(balance: item.balance,
+                                 head_transaction_item_id: item.id)
     end
   end
 
@@ -127,11 +143,21 @@ class TransactionItem < ActiveRecord::Base
   def reconciled?
     reconciled
   end
-  
+
+  def to_s
+    "#<TransactionItem: id=#{id} #{action} #{account.try(:name)} #{amount.to_f} on #{transaction_date}>"
+  end
+
   private
     def ensure_not_reconciled
       if reconciled?
         raise Money::CannotDeleteError, "The transaction item has already been reconciled. Undo the reconciliation, then delete the item."
+      end
+    end
+
+    def next_is_not_self
+      if id && next_transaction_item_id == id
+        errors.add(:next_transaction_item_id, 'cannot be the same as self')
       end
     end
     
@@ -141,6 +167,12 @@ class TransactionItem < ActiveRecord::Base
 
     def previous_balance
       previous_transaction_item.try(:balance) || 0
+    end
+
+    def previous_is_not_self
+      if id && previous_transaction_item_id == id
+        errors.add(:previous_transaction_item_id, 'cannot be the same as self')
+      end
     end
     
     def insert_into_account

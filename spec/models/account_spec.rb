@@ -829,4 +829,47 @@ describe Account do
       expect(food2).to have(1).error_on(:name)
     end
   end
+
+  describe '#transaction_items_backward' do
+    let!(:t1) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-01'),
+                                       description: 'Paycheck',
+                                       amount: 2_000,
+                                       debit_account: checking,
+                                       credit_account: salary)
+    end
+    let!(:t3) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-04'),
+                                       description: 'Market Street',
+                                       amount: 100,
+                                       debit_account: groceries,
+                                       credit_account: checking)
+    end
+    let!(:t2) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-15'),
+                                       description: 'Paycheck',
+                                       amount: 2_000,
+                                       debit_account: checking,
+                                       credit_account: salary)
+    end
+    it 'enumerates the transactions items in reverse chronological order' do
+      actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
+
+      puts "****** #{checking.transaction_items.count} transaction items"
+      puts "** first #{checking.first_transaction_item}"
+      puts "** head #{checking.head_transaction_item}"
+      checking.transaction_items(true).each do |item|
+        puts ""
+        puts "previous=#{item.previous_transaction_item}"
+        puts "item=#{item}"
+        puts "next=#{item.next_transaction_item}"
+        puts ""
+      end
+
+      expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
+    end
+  end
 end
