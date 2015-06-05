@@ -857,18 +857,6 @@ describe Account do
     end
     it 'enumerates the transactions items in reverse chronological order' do
       actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
-
-      puts "****** #{checking.transaction_items.count} transaction items"
-      puts "** first #{checking.first_transaction_item}"
-      puts "** head #{checking.head_transaction_item}"
-      checking.transaction_items(true).each do |item|
-        puts ""
-        puts "previous=#{item.previous_transaction_item}"
-        puts "item=#{item}"
-        puts "next=#{item.next_transaction_item}"
-        puts ""
-      end
-
       expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
     end
   end

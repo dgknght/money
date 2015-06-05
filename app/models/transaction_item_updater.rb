@@ -17,11 +17,6 @@ class TransactionItemUpdater
   def update
     return false unless valid?
     update_transaction
-    
-    transaction.items.each { |i| puts "#{i.action}: #{i.amount}" }
-    puts "updater transaction.valid? = #{transaction.valid?}"
-    transaction.errors.full_messages.each { |m|  puts m }
-    
     transaction.save
   end
   
@@ -37,12 +32,7 @@ class TransactionItemUpdater
     def update_transaction
       if amount
         transaction_item.amount = amount
-        
-        puts "set transaction_item.amount to #{transaction_item.amount} (#{transaction_item.action})"
-        
         other_item.amount = amount
-        
-        puts "set other_item.amount to #{other_item.amount} (#{transaction_item.action})"
       end
       transaction.transaction_date = transaction_date if transaction_date
       transaction.description = description if description
