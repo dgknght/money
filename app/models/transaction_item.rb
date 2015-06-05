@@ -108,20 +108,8 @@ class TransactionItem < ActiveRecord::Base
     raise "Cannot append a transaction item onto itself (item#{item}, self=#{to_s})" if item.id == id
     raise "The item must be from the same account" unless item.account_id == account_id
 
-    item.update_attributes!(previous_transaction_item_id: id,
-                            next_transaction_item_id: next_transaction_item_id,
-                            balance: item.polarized_amount + balance)
-
-    update_attributes!(next_transaction_item_id: item.id)
-
-    if item.next_transaction_item_id
-      # This will trigger the balance to be updated down the chain
-      item.next_transaction_item(true).update_attribute(:previous_transaction_item_id, item.id)
-    else
-      # This is the end of the change, update the account
-      account.update_attributes!(balance: item.balance,
-                                 head_transaction_item_id: item.id)
-    end
+    item.update_attribute(:previous_transaction_item_id, id) # This will cause the balance to be recalculated down the chain
+    update_attribute(:next_transaction_item_id, item.id)
   end
 
   def polarized_amount
@@ -135,7 +123,9 @@ class TransactionItem < ActiveRecord::Base
       if next_transaction_item
         next_transaction_item.recalculate_balance!
       else
-        account.update_attribute(:balance, balance)
+        account.balance = balance
+        account.head_transaction_item_id = id if id
+        account.save!
       end
     end
   end

@@ -830,6 +830,63 @@ describe Account do
     end
   end
 
+  shared_context 'misc transactions' do
+    let (:t1) do
+      FactoryGirl.create(:transaction, amount: 1_000,
+                                       transaction_date: '2015-01-02',
+                                       description: 'paycheck',
+                                       debit_account: checking,
+                                       credit_account: salary)
+    end
+    let (:t2) do
+      FactoryGirl.create(:transaction, amount: 999,
+                                       transaction_date: '2015-01-01',
+                                       description: 'opening balance',
+                                       debit_account: checking,
+                                       credit_account: opening_balances)
+    end
+  end
+
+  describe '#first_transaction_item' do
+    include_context 'misc transactions'
+
+    it 'is nil for an account with no transaction items' do
+      expect(checking.first_transaction_item).to be_nil
+    end
+
+    it 'is the item with the earliest date for accounts with at least one transaction item' do
+      t1 # create the first transaction
+      checking.reload
+      expect(checking.first_transaction_item.transaction_date.to_s).to eq('2015-01-02')
+    end
+
+    it 'is updated when a new transaction is created with date that is earlier than the existing first' do
+      t1 # create the first transaction
+      item = t2.items.select{|i| i.account_id == checking.id}.first # create the second transaction
+
+      expect(checking.first_transaction_item_id).to eq(item.id)
+    end
+  end
+
+  describe '#head_transaction_item' do
+    include_context 'misc transactions'
+
+    it 'is nil for an account with no transaction items' do
+      expect(checking.head_transaction_item).to be_nil
+    end
+
+    it 'is the item with the latest date for accounts with at least one transaction item' do
+      t1 # create the first transaction item
+      expect(checking.head_transaction_item.transaction_date.to_s).to eq('2015-01-02')
+    end
+
+    it 'is updated when a new transaction is created with date that is later than the existing head' do
+      t2 # create the second transaction item
+      item = t1.items.select{|i| i.account_id == checking.id}.first  # create the first transaction item
+      expect(checking.head_transaction_item_id).to eq(item.id)
+    end
+  end
+
   describe '#transaction_items_backward' do
     let!(:t1) do
       FactoryGirl.create(:transaction, entity: entity,

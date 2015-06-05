@@ -253,7 +253,7 @@ class Account < ActiveRecord::Base
   # appending the current first to the item
   def replace_first(item)
     old_first = first_transaction_item
-    update_attribute(:first_transaction_item_id, item.id)
+    update_attributes!(first_transaction_item_id: item.id)
     item.append_transaction_item(old_first)
   end
 
