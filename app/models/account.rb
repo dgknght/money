@@ -29,8 +29,8 @@ class Account < ActiveRecord::Base
   has_many :lots
   has_many :budget_items
   has_many :budget_monitors
-  has_one :head_transaction_item, class_name: 'TransactionItem'
-  has_one :first_transaction_item, class_name: 'TransactionItem'
+  belongs_to :head_transaction_item, class_name: 'TransactionItem'
+  belongs_to :first_transaction_item, class_name: 'TransactionItem'
 
   END_OF_TIME = Chronic.parse('9999-12-31')
   CONTENT_TYPES = %w(currency commodities commodity)
