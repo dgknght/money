@@ -210,19 +210,34 @@ class Account < ActiveRecord::Base
     1
   end
 
+  # Inserts the transaction into the transaction linked list chain
+  #
+  # This action also triggers a recalculation of the item balances
+  # and ultimatley a the balances of the account and its parents
   def put_transaction_item(item)
     raise "The item #{item} cannot be inserted into the account #{name}" unless item.account_id == id
 
     previous = calculate_previous(item)
-
     if previous
+      # Item belongs somewhere after the beginning of the chain
+
       previous.append_transaction_item(item)
     elsif first_transaction_item_id && (first_transaction_item_id != item.id)
+      # This item occurs before all existing items
+
       replace_first(item)
+
+      # The initial balance calculation for the item isn't triggered becase
+      # we never update previous_transaction_item_id
+      item.recalculate_balance!
     else
-      update_attributes!(head_transaction_item_id: item.id,
-                         first_transaction_item_id: item.id,
-                         balance: item.polarized_amount) # TODO it would be better to use the balance
+      # This is the very first item for the account
+      # All calculations can be done right here
+
+      item.update_attribute(:balance, item.polarized_amount)
+
+      self.first_transaction_item_id = item.id
+      update_head_transaction_item(item)
     end
   end
 
@@ -263,7 +278,12 @@ class Account < ActiveRecord::Base
       recalculate_field(field) unless with_children_only
       recalculate_field("#{field}_with_children")
     end
-    parent.recalculate_balances(opts.merge(with_children_only: true)) if parent
+    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent
+  end
+
+  def recalculate_balances!(opts = {})
+    recalculate_balances(opts)
+    save!
   end
 
   def root?
@@ -289,6 +309,13 @@ class Account < ActiveRecord::Base
         item = item.previous_transaction_item
       end
     end
+  end
+
+  def update_head_transaction_item(item)
+    self.balance = item.balance
+    self.head_transaction_item_id = id if id
+    recalculate_balances
+    save!
   end
 
   # Value is the current value of the account. For cash accounts
@@ -370,7 +397,7 @@ class Account < ActiveRecord::Base
       # will not need to be updated
       method = "#{field}_as_of".to_sym
       current = send(method, END_OF_TIME)
-      update_attribute(field, current) unless current == send(field)
+      send("#{field}=", current)
     end
       
     def set_defaults

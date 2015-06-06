@@ -123,9 +123,7 @@ class TransactionItem < ActiveRecord::Base
       if next_transaction_item
         next_transaction_item.recalculate_balance!
       else
-        account.balance = balance
-        account.head_transaction_item_id = id if id
-        account.save!
+        account.update_head_transaction_item(self)
       end
     end
   end
