@@ -313,7 +313,7 @@ class Account < ActiveRecord::Base
 
   def update_head_transaction_item(item)
     self.balance = item.balance
-    self.head_transaction_item_id = id if id
+    self.head_transaction_item_id = item.id
     recalculate_balances
     save!
   end
