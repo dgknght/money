@@ -13,8 +13,8 @@
 #
 
 class Lot < ActiveRecord::Base
-  belongs_to :account
-  belongs_to :commodity
+  belongs_to :account, inverse_of: :lots
+  belongs_to :commodity, inverse_of: :lots
   has_many :transactions, class_name: 'LotTransaction', dependent: :destroy
 
   validates_presence_of :account_id, :price, :commodity_id, :shares_owned, :purchase_date

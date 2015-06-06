@@ -11,7 +11,7 @@
 #
 
 class Price < ActiveRecord::Base
-  belongs_to :commodity
+  belongs_to :commodity, inverse_of: :prices
 
   validates_presence_of :commodity_id, :trade_date
   validates_uniqueness_of :trade_date, scope: :commodity_id

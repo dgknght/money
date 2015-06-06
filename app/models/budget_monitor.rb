@@ -10,8 +10,8 @@
 #
 
 class BudgetMonitor < ActiveRecord::Base
-  belongs_to :entity
-  belongs_to :account
+  belongs_to :entity, inverse_of: :budget_monitors
+  belongs_to :account, inverse_of: :budget_monitors
 
   delegate :start_date, :end_date, to: :period
   validates_presence_of :account_id, :entity_id

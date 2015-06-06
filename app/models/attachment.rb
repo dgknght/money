@@ -13,7 +13,7 @@
 #
 
 class Attachment < ActiveRecord::Base
-  belongs_to :transaction
+  belongs_to :transaction, inverse_of: :attachments
   validates_presence_of :name, :transaction_id, :content_type
   before_validation :ensure_entity
   before_create :ensure_content

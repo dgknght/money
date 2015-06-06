@@ -26,7 +26,7 @@ class Budget < ActiveRecord::Base
     end
   end
   
-  belongs_to :entity
+  belongs_to :entity, inverse_of: :budgets
   has_many :items, class_name: 'BudgetItem', dependent: :destroy
   
   validates_presence_of :name, :start_date, :period, :period_count

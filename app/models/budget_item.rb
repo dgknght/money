@@ -10,8 +10,8 @@
 #
 
 class BudgetItem < ActiveRecord::Base
-  belongs_to :budget
-  belongs_to :account
+  belongs_to :budget, inverse_of: :items
+  belongs_to :account, inverse_of: :budget_items
   has_many :periods, class_name: BudgetItemPeriod, inverse_of: :budget_item, validate: false, autosave: true, dependent: :destroy
   
   validates_presence_of :budget_id, :account_id

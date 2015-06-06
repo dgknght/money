@@ -11,7 +11,7 @@
 
 class ReconciliationItem < ActiveRecord::Base
   belongs_to :reconciliation, inverse_of: :items
-  belongs_to :transaction_item
+  belongs_to :transaction_item, inverse_of: :reconciliation_item
   
   validates_presence_of :reconciliation, :transaction_item_id
   validate :transaction_item_belongs_to_account

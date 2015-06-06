@@ -14,12 +14,14 @@
 #
 
 class Account < ActiveRecord::Base
-  belongs_to :entity
+  belongs_to :entity, inverse_of: :accounts
   belongs_to :parent, class_name: 'Account', inverse_of: :children
   has_many :children, -> { order :name }, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
   has_many :reconciliations, -> { order :reconciliation_date }, inverse_of: :account, autosave: true
   has_many :transaction_items
   has_many :lots
+  has_many :budget_items
+  has_many :budget_monitors
 
   CONTENT_TYPES = %w(currency commodities commodity)
 

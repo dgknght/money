@@ -12,7 +12,7 @@
 class Entity < ActiveRecord::Base
   validates_presence_of :name, :user_id
   
-  belongs_to :user
+  belongs_to :user, inverse_of: :entities
   has_many :accounts, dependent: :destroy
   has_many :transactions, dependent: :destroy
   has_many :budgets, dependent: :destroy

@@ -11,7 +11,7 @@
 #
 
 class BudgetItemPeriod < ActiveRecord::Base
-  belongs_to :budget_item
+  belongs_to :budget_item, inverse_of: :periods
   
   validates_presence_of :budget_item_id, :start_date, :budget_amount
   

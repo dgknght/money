@@ -11,7 +11,7 @@
 #
 
 class AttachmentContent < ActiveRecord::Base
-  belongs_to :entity
+  belongs_to :entity, inverse_of: :attachment_contents
   validates_presence_of :data, :entity_id
 
   def raw_file=(input)

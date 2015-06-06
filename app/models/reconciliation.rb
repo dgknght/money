@@ -11,7 +11,7 @@
 #
 
 class Reconciliation < ActiveRecord::Base
-  belongs_to :account
+  belongs_to :account, inverse_of: :reconciliations
   has_many :items, class_name: 'ReconciliationItem', autosave: true, inverse_of: :reconciliation
   accepts_nested_attributes_for :items
   

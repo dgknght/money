@@ -12,8 +12,8 @@
 #
 
 class LotTransaction < ActiveRecord::Base
-  belongs_to :lot
-  belongs_to :transaction
+  belongs_to :lot, inverse_of: :transactions
+  belongs_to :transaction, inverse_of: :lot_transactions
   validates_presence_of :lot_id, :transaction_id, :shares_traded, :price
 
   def sale?

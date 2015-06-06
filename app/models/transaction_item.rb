@@ -35,8 +35,9 @@ class TransactionItem < ActiveRecord::Base
   validates_presence_of :account_id, :action, :amount, :transaction
   validates :action, inclusion: { in: ACTIONS }
   
-  belongs_to :account
+  belongs_to :account, inverse_of: :transaction_items
   belongs_to :transaction, inverse_of: :items
+  has_one :reconciliation_item
   
   scope :credits, -> { where(action: TransactionItem.credit) }
   scope :debits, -> { where(action: TransactionItem.debit) }

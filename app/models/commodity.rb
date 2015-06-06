@@ -22,7 +22,7 @@ class Commodity < ActiveRecord::Base
     end
   end
 
-  belongs_to :entity
+  belongs_to :entity, inverse_of: :commodities
   has_many :prices, dependent: :destroy
   has_many :lots, dependent: :destroy
 
