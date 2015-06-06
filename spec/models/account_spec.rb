@@ -953,16 +953,6 @@ describe Account do
         t1
         t2
         t3
-
-        puts "head_transaction_item_id=#{checking.head_transaction_item_id}"
-        puts "head_transaction_item.id=#{checking.head_transaction_item(true).id}"
-        puts "*** transaction items"
-        checking.transaction_items.each do |i|
-          puts i
-          puts "previous=#{i.previous_transaction_item_id}"
-          puts "next    =#{i.next_transaction_item_id}"
-        end
-
         actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
         expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
       end
