@@ -89,8 +89,8 @@ class TransactionItem < ActiveRecord::Base
   belongs_to :account, inverse_of: :transaction_items
   belongs_to :transaction, inverse_of: :items
   has_one :reconciliation_item
-  has_one :previous_transaction_item, class_name: 'TransactionItem', foreign_key: 'previous_transaction_item_id'
-  has_one :next_transaction_item, class_name: 'TransactionItem', foreign_key: 'next_transaction_item_id'
+  belongs_to :previous_transaction_item, class_name: 'TransactionItem'
+  belongs_to :next_transaction_item, class_name: 'TransactionItem'
   
   scope :credits, -> { where(action: TransactionItem.credit) }
   scope :debits, -> { where(action: TransactionItem.debit) }
@@ -133,7 +133,7 @@ class TransactionItem < ActiveRecord::Base
   end
 
   def to_s
-    "#<TransactionItem: id=#{id} #{action} #{account.try(:name)} #{amount.to_f} on #{transaction_date}>"
+    "#<TransactionItem: id=#{id} #{action} #{account.try(:name)} #{amount.to_f} on #{transaction_date} #{previous_transaction_item_id} <- -> #{next_transaction_item_id}>"
   end
 
   private
