@@ -924,7 +924,7 @@ describe Account do
   end
 
   describe '#transaction_items_backward' do
-    let!(:t1) do
+    let (:t1) do
       FactoryGirl.create(:transaction, entity: entity,
                                        transaction_date: Chronic.parse('2015-01-01'),
                                        description: 'Paycheck',
@@ -932,7 +932,7 @@ describe Account do
                                        debit_account: checking,
                                        credit_account: salary)
     end
-    let!(:t3) do
+    let (:t2) do
       FactoryGirl.create(:transaction, entity: entity,
                                        transaction_date: Chronic.parse('2015-01-04'),
                                        description: 'Market Street',
@@ -940,7 +940,7 @@ describe Account do
                                        debit_account: groceries,
                                        credit_account: checking)
     end
-    let!(:t2) do
+    let (:t3) do
       FactoryGirl.create(:transaction, entity: entity,
                                        transaction_date: Chronic.parse('2015-01-15'),
                                        description: 'Paycheck',
@@ -948,9 +948,34 @@ describe Account do
                                        debit_account: checking,
                                        credit_account: salary)
     end
-    it 'enumerates the transactions items in reverse chronological order' do
-      actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
-      expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
+    context 'when items are added in sequence' do
+      it 'enumerates the transactions items in reverse chronological order' do
+        t1
+        t2
+        t3
+
+        puts "head_transaction_item_id=#{checking.head_transaction_item_id}"
+        puts "head_transaction_item.id=#{checking.head_transaction_item(true).id}"
+        puts "*** transaction items"
+        checking.transaction_items.each do |i|
+          puts i
+          puts "previous=#{i.previous_transaction_item_id}"
+          puts "next    =#{i.next_transaction_item_id}"
+        end
+
+        actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
+        expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
+      end
+    end
+
+    context 'when items are added out of sequence' do
+      it 'enumerates the transactions items in reverse chronological order' do
+        t1
+        t3
+        t2
+        actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
+        expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
+      end
     end
   end
 end
