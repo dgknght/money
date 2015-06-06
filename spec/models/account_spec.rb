@@ -832,18 +832,18 @@ describe Account do
 
   shared_context 'misc transactions' do
     let (:t1) do
-      FactoryGirl.create(:transaction, amount: 1_000,
-                                       transaction_date: '2015-01-02',
-                                       description: 'paycheck',
-                                       debit_account: checking,
-                                       credit_account: salary)
-    end
-    let (:t2) do
       FactoryGirl.create(:transaction, amount: 999,
                                        transaction_date: '2015-01-01',
                                        description: 'opening balance',
                                        debit_account: checking,
                                        credit_account: opening_balances)
+    end
+    let (:t2) do
+      FactoryGirl.create(:transaction, amount: 1_000,
+                                       transaction_date: '2015-01-02',
+                                       description: 'paycheck',
+                                       debit_account: checking,
+                                       credit_account: salary)
     end
   end
 
@@ -855,14 +855,14 @@ describe Account do
     end
 
     it 'is the item with the earliest date for accounts with at least one transaction item' do
-      t1 # create the first transaction
+      t2 # create the first transaction
       checking.reload
       expect(checking.first_transaction_item.transaction_date.to_s).to eq('2015-01-02')
     end
 
     it 'is updated when a new transaction is created with date that is earlier than the existing first' do
-      t1 # create the first transaction
-      item = t2.items.select{|i| i.account_id == checking.id}.first # create the second transaction
+      t2 # create the first transaction
+      item = t1.items.select{|i| i.account_id == checking.id}.first # create the second transaction
 
       expect(checking.first_transaction_item_id).to eq(item.id)
     end
@@ -876,14 +876,50 @@ describe Account do
     end
 
     it 'is the item with the latest date for accounts with at least one transaction item' do
-      t1 # create the first transaction item
+      t2 # create the first transaction item
       expect(checking.head_transaction_item.transaction_date.to_s).to eq('2015-01-02')
     end
 
     it 'is updated when a new transaction is created with date that is later than the existing head' do
-      t2 # create the second transaction item
-      item = t1.items.select{|i| i.account_id == checking.id}.first  # create the first transaction item
+      t1 # create the second transaction item
+      item = t2.items.select{|i| i.account_id == checking.id}.first  # create the first transaction item
       expect(checking.head_transaction_item_id).to eq(item.id)
+    end
+  end
+
+  describe 'creating a transaction' do
+    include_context 'misc transactions'
+
+    context 'the first time' do
+      it 'updates the balance' do
+        expect do
+          t1
+        end.to change(checking, :balance).by(999)
+      end
+
+      it 'updates the balance with children'
+    end
+
+    context 'with an appending transaction' do
+      it 'updates the balance' do
+        t1
+        expect do
+          t2
+        end.to change(checking, :balance).by(1_000)
+      end
+
+      it 'updates the balance with children'
+    end
+
+    context 'with a prepending transaction' do
+      it 'updates the balance' do
+        t2
+        expect do
+          t1
+        end.to change(checking, :balance).by(999)
+      end
+
+      it 'updates the balance with children'
     end
   end
 
