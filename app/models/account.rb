@@ -301,8 +301,8 @@ class Account < ActiveRecord::Base
       reduce(0){|sum, lot| sum + lot.shares_owned}
   end
 
-  def transaction_items_backward
-    item = head_transaction_item
+  def transaction_items_backward(force_reload = false)
+    item = head_transaction_item(force_reload)
     Enumerator.new do |y|
       while item
         y.yield item
