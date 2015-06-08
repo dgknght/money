@@ -916,6 +916,7 @@ describe Account do
         t2
         expect do
           t1
+          checking.reload
         end.to change(checking, :balance).by(999)
       end
 
