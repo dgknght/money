@@ -290,15 +290,15 @@ class Account < ActiveRecord::Base
     self.parent_id.nil?
   end
 
-  def shares
-    shares_as_of(Time.now.utc)
+  def shares(force_reload = false)
+    shares_as_of(Time.now.utc, force_reload)
   end
 
-  def shares_as_of(date)
+  def shares_as_of(date, force_reload = false)
     date = ensure_date(date)
-    lots.
+    lots(force_reload).
       select{|l| l.purchase_date <= date}.
-      reduce(0){|sum, lot| sum + lot.shares_owned}
+      reduce(0){|sum, lot| sum + lot.shares_as_of(date)}
   end
 
   def transaction_items_backward(force_reload = false)
@@ -324,9 +324,8 @@ class Account < ActiveRecord::Base
   def value_as_of(date)
     date = ensure_date(date)
     return balance_as_of(date) unless commodity?
-
     price = nearest_price(date)
-    shrs = shares_as_of(date)
+    shrs = shares_as_of(date, true)
     price && shrs ? shrs * price : 0
   end
 

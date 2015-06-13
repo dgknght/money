@@ -43,6 +43,13 @@ class Lot < ActiveRecord::Base
     current_value - cost
   end
 
+  def shares_as_of(date)
+    date = Chronic.parse(date) if date.is_a? String
+    transactions.
+      select{|t| t.transaction && t.transaction.transaction_date <= date}.
+      reduce(0){|sum, t| sum + t.shares_traded}
+  end
+
   private
 
   def most_recent_price(as_of)
@@ -50,12 +57,5 @@ class Lot < ActiveRecord::Base
       where(['trade_date <= ?', as_of]).
       order(trade_date: :desc).
       first.try(:price)
-  end
-
-  def shares_as_of(date)
-    date = Chronic.parse(date) if date.is_a? String
-    transactions.
-      select{|t| t.transaction && t.transaction.transaction_date <= date}.
-      reduce(0){|sum, t| sum + t.shares_traded}
   end
 end
