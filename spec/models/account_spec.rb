@@ -772,6 +772,7 @@ describe Account do
     include_context 'investment accounts'
 
     it 'should return the sum of the cost of all the children' do
+      ira.reload
       expect(ira.children_cost).to eq(2_200)
     end
   end
