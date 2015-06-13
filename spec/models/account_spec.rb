@@ -717,33 +717,26 @@ describe Account do
     end
 
     describe '#value' do
-      include_context 'investment accounts'
-
       it 'should return the cash balance' do
         expect(ira.value).to eq(800)
       end
     end
 
     describe '#value_with_children_as_of' do
-      let!(:price) {FactoryGirl.create(:price, commodity: kss, trade_date: '2014-03-01', price: 15)}
       it 'should return the value of the shares of the commidity based on the price that is before and closest to the specified date' do
-        expect(ira.value_with_children_as_of('2014-01-01')).to eq(3_000) # 2,000.00 in cash, 1,000 in KSS stock
+        expect(ira.value_with_children_as_of('2014-01-01')).to eq(3_000) # 2,000.00 in cash, 1,000 in KSS stock (1 100-share lot at $10/share)
         expect(ira.value_with_children_as_of('2014-02-01')).to eq(3_200) #   800.00 in cash, 2,400 in KSS stock (2 100-share lots at $12/share)
-        expect(ira.value_with_children_as_of('2014-03-02')).to eq(3_800) #   800.00 in cash, 3,000 in KSS stock (2 100-share lots at $15/share)
+        expect(ira.value_with_children_as_of('2014-03-02')).to eq(3_600) #   800.00 in cash, 2,800 in KSS stock (2 100-share lots at $14/share)
       end
     end
 
     describe '#cost' do
-      include_context 'investment accounts'
-
       it 'should return the cash value' do
         expect(ira.cost).to eq(800)
       end
     end
 
     describe '#cost_as_of' do
-      include_context 'investment accounts'
-
       it 'should return the balance_as_of amount' do
         expect(ira.cost_as_of('2014-01-31')).to eq(2_000)
         expect(ira.cost_as_of('2014-02-01')).to eq(800)
