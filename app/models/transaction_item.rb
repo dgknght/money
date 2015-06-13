@@ -108,7 +108,13 @@ class TransactionItem < ActiveRecord::Base
     raise "Cannot append a transaction item onto itself (item#{item}, self=#{to_s})" if item.id == id
     raise "The item must be from the same account" unless item.account_id == account_id
 
-    item.update_attribute(:previous_transaction_item_id, id) # This will cause the balance to be recalculated down the chain
+    item.update_attributes(previous_transaction_item_id: id, # This will cause the balance to be recalculated down the chain
+                           next_transaction_item_id: next_transaction_item_id)
+    if next_transaction_item_id
+      next_transaction_item.previous_transaction_item = item
+      next_transaction_item.save!
+    end
+
     update_attribute(:next_transaction_item_id, item.id)
   end
 
