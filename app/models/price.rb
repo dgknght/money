@@ -41,6 +41,6 @@ class Price < ActiveRecord::Base
   end
 
   def update_account
-    all_accounts.each{|a| a.recalculate_balances(only: [:value, :cost, :gains])}
+    all_accounts.each{|a| a.recalculate_balances!(only: [:value, :cost, :gains])}
   end
 end
