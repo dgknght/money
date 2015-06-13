@@ -958,6 +958,7 @@ describe Account do
         t1
         t3
         t2
+        checking.reload
         actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
         expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
       end
