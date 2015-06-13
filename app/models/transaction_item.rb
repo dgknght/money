@@ -172,4 +172,13 @@ class TransactionItem < ActiveRecord::Base
     def insert_into_account
       account.put_transaction_item(self)
     end
+
+    def remove_from_chain
+      if previous_transaction_item
+        previous_transaction_item.update_attribute(:next_transaction_item_id, next_transaction_item_id)
+      end
+      if next_transaction_item
+        next_transaction_item.update_attribute(:previous_transaction_item_id, previous_transaction_item_id)
+      end
+    end
 end
