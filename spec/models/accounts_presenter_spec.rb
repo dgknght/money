@@ -3,31 +3,16 @@ require 'spec_helper'
 describe AccountsPresenter do
   let (:entity) { FactoryGirl.create(:entity) }
 
-  it 'should be creatable from an entity' do
-    presenter = AccountsPresenter.new(entity)
-    expect(presenter).not_to be_nil
+  shared_context 'accounts' do
+    let!(:checking) { FactoryGirl.create(:asset_account, name: 'Checking', entity: entity) }
+    let!(:savings) { FactoryGirl.create(:asset_account, name: 'Savings', entity: entity) }
+    let!(:car_savings) { FactoryGirl.create(:asset_account, name: 'Car', entity: entity, parent: savings) }
+    let!(:reserve_savings) { FactoryGirl.create(:asset_account, name: 'Reserve', entity: entity, parent: savings) }
+    let!(:opening_balances) { FactoryGirl.create(:equity_account, name: 'Opening balances', entity: entity) }
+    let!(:salary) { FactoryGirl.create(:income_account, name: 'Salary', entity: entity) }
   end
 
-  context 'when no accounts are present' do
-    it 'should enumerate empty summary records' do
-      presenter = AccountsPresenter.new(entity)
-      expect(presenter).to have_account_display_records([
-        { caption: 'Assets', balance: 0, depth: 0 },
-        { caption: 'Liabilities', balance: 0, depth: 0 },
-        { caption: 'Equity', balance: 0, depth: 0 },
-        { caption: 'Income', balance: 0, depth: 0 },
-        { caption: 'Expense', balance: 0, depth: 0 }
-      ])
-    end
-  end
-
-  context 'when accounts are present' do
-    let (:checking) { FactoryGirl.create(:asset_account, name: 'Checking', entity: entity) }
-    let (:savings) { FactoryGirl.create(:asset_account, name: 'Savings', entity: entity) }
-    let (:car_savings) { FactoryGirl.create(:asset_account, name: 'Car', entity: entity, parent: savings) }
-    let (:reserve_savings) { FactoryGirl.create(:asset_account, name: 'Reserve', entity: entity, parent: savings) }
-    let (:opening_balances) { FactoryGirl.create(:equity_account, name: 'Opening balances', entity: entity) }
-    let (:salary) { FactoryGirl.create(:income_account, name: 'Salary', entity: entity) }
+  shared_context 'transactions' do
     let!(:paycheck) do
       FactoryGirl.create(:transaction, description: 'Paycheck',
                                        transaction_date: '2014-01-01',
@@ -49,6 +34,29 @@ describe AccountsPresenter do
                                        debit_account: reserve_savings,
                                        credit_account: opening_balances)
     end
+  end
+
+  it 'should be creatable from an entity' do
+    presenter = AccountsPresenter.new(entity)
+    expect(presenter).not_to be_nil
+  end
+
+  context 'when no accounts are present' do
+    it 'should enumerate empty summary records' do
+      presenter = AccountsPresenter.new(entity)
+      expect(presenter).to have_account_display_records([
+        { caption: 'Assets', balance: 0, depth: 0 },
+        { caption: 'Liabilities', balance: 0, depth: 0 },
+        { caption: 'Equity', balance: 0, depth: 0 },
+        { caption: 'Income', balance: 0, depth: 0 },
+        { caption: 'Expense', balance: 0, depth: 0 }
+      ])
+    end
+  end
+
+  context 'when accounts are present' do
+    include_context 'accounts'
+    include_context 'transactions'
 
     it 'should enumerate summary records and detail records' do
       presenter = AccountsPresenter.new(entity)
