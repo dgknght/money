@@ -262,6 +262,23 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def remove_transaction_item(item)
+    if item.previous_transaction_item
+      item.previous_transaction_item.update_attribute(:next_transaction_item_id, item.next_transaction_item_id)
+    else
+      # This is the first transaction item
+      update_attribute(:first_transaction_item_id, item.next_transaction_item_id)
+    end
+
+    if item.next_transaction_item
+      item.next_transaction_item.update_attribute(:previous_transaction_item_id, item.previous_transaction_item_id)
+    else
+      # This is the head transaction item
+      update_attributes!(head_transaction_item_id: item.previous_transaction_item_id,
+                         balance: item.previous_transaction_item ? item.previous_transaction_item.balance : 0)
+    end
+  end
+
   # replaces the first transaction item with the specified item,
   # appending the current first to the item
   def replace_first(item)
