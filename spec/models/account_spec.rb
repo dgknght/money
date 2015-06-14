@@ -897,6 +897,12 @@ describe Account do
                                        credit_account: opening_balances,
                                        debit_account: reserve)
     end
+    let (:st2) do
+      FactoryGirl.create(:transaction, amount: 234,
+                                       transaction_date: '2014-04-02',
+                                       credit_account: opening_balances,
+                                       debit_account: reserve)
+    end
 
     context 'the first time' do
       it 'updates the balance' do
@@ -920,7 +926,12 @@ describe Account do
         end.to change(checking, :balance).by(1_000)
       end
 
-      it 'updates the balance with children'
+      it 'updates the balance with children' do
+        st1
+        expect do
+          st2
+        end.to change(savings, :balance_with_children).by(234)
+      end
     end
 
     context 'with a prepending transaction' do
@@ -932,7 +943,13 @@ describe Account do
         end.to change(checking, :balance).by(999)
       end
 
-      it 'updates the balance with children'
+      it 'updates the balance with children' do
+        st2
+        expect do
+          st1
+          savings.reload
+        end.to change(savings, :balance_with_children).by(989)
+      end
     end
   end
 
