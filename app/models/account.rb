@@ -113,7 +113,7 @@ class Account < ActiveRecord::Base
   end
   
   def balance_with_children_as_of(date)
-    children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_as_of(date) }
+    children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_with_children_as_of(date) }
   end
   
   def balance_with_children_between(start_date, end_date)
