@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Transaction do
-  let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking', balance: 100) }
-  let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries', balance: 0) }
+  let(:checking) { FactoryGirl.create(:asset_account, name: 'Checking') }
+  let(:groceries) { FactoryGirl.create(:expense_account, name: 'Groceries') }
   let(:entity) { FactoryGirl.create(:entity) }
   let(:attributes) do
     {
@@ -15,6 +15,7 @@ describe Transaction do
       ]
     }
   end
+  let(:creating_a_transaction) { Transaction.create!(attributes) }
   
   it 'should be creatable from valid attributes' do
     transaction = Transaction.new(attributes)
@@ -22,13 +23,16 @@ describe Transaction do
     transaction.should have(2).items
   end
 
-  it 'should update the balance for all referenced accounts' do
-    checking.balance.should == 100
-    groceries.balance.should == 0
-    transaction = Transaction.create!(attributes)
-    
-    checking.balance.should == BigDecimal.new('65.57')
-    groceries.balance.should ==  BigDecimal.new('34.43')    
+  it 'should update the balance for the first referenced account' do
+    expect do
+      Transaction.create!(attributes)
+    end.to change(checking, :balance).by(-34.43)
+  end
+
+  it 'should update the balance for the second (and remaining) referenced account' do
+    expect do
+      Transaction.create!(attributes)
+    end.to change(groceries, :balance).by(34.43)
   end
 
   describe '#transaction_date' do
