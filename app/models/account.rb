@@ -234,8 +234,6 @@ class Account < ActiveRecord::Base
       # This is the very first item for the account
       # All calculations can be done right here
 
-      item.update_attribute(:balance, item.polarized_amount)
-
       self.first_transaction_item_id = item.id
       update_head_transaction_item(item)
     end
