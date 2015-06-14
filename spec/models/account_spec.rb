@@ -21,6 +21,9 @@ describe Account do
     let (:savings) { FactoryGirl.create(:asset_account, name: 'savings', entity: entity) }
     let (:car) { FactoryGirl.create(:asset_account, name: 'car', entity: entity, parent: savings) }
     let (:reserve) { FactoryGirl.create(:asset_account, name: 'reserve', entity: entity, parent: savings) }
+  end
+
+  shared_context 'savings transactions' do
     let!(:car_opening) { FactoryGirl.create(:transaction, amount: 1_000, debit_account: car, credit_account: opening_balances) }
     let!(:reserve_opening) { FactoryGirl.create(:transaction, amount: 24_000, debit_account: reserve, credit_account: opening_balances) }
   end
@@ -574,6 +577,8 @@ describe Account do
     include_context 'savings accounts'
 
     describe '#value' do
+      include_context 'savings transactions'
+
       it 'should return the balance' do
         expect(savings.value).to eq(0)
         expect(car.value).to eq(1_000)
@@ -607,6 +612,8 @@ describe Account do
     end
 
     describe '#cost' do
+      include_context 'savings transactions'
+
       it 'should return the balance' do
         expect(car.cost).to eq(1_000)
       end
@@ -883,6 +890,13 @@ describe Account do
 
   describe 'creating a transaction' do
     include_context 'misc transactions'
+    include_context 'savings accounts'
+    let (:st1) do
+      FactoryGirl.create(:transaction, amount: 989,
+                                       transaction_date: '2014-04-01',
+                                       credit_account: opening_balances,
+                                       debit_account: reserve)
+    end
 
     context 'the first time' do
       it 'updates the balance' do
@@ -891,7 +905,11 @@ describe Account do
         end.to change(checking, :balance).by(999)
       end
 
-      it 'updates the balance with children'
+      it 'updates the balance with children' do
+        expect do
+          st1
+        end.to change(savings, :balance_with_children).by(989)
+      end
     end
 
     context 'with an appending transaction' do
