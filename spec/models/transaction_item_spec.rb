@@ -170,19 +170,31 @@ describe TransactionItem do
   describe 'after update with account changed' do
     include_context 'buy groceries'
 
-    it 'should adjust the balance of the referenced account' do
-      expect(checking.balance.to_i).to eq(-100)
-      expect(groceries.balance.to_i).to eq(100)
-
-      groceries_item = trn.items.select{|i| i.account.id == groceries.id}.first
+    let (:changing_accounts) do
+      groceries_item = trn.items.select{|i| i.account_id == groceries.id}.first
       groceries_item.account = gasoline
       trn.save!
-      groceries.reload
-      gasoline.reload
-      
-      expect(checking.balance.to_i).to eq(-100)
-      expect(groceries.balance.to_i).to be_zero
-      expect(gasoline.balance.to_i).to eq(100)
+    end
+
+    it 'should not change the balance of the account that was not changed' do
+      expect do
+        changing_accounts
+        checking.reload
+      end.not_to change(checking, :balance)
+    end
+
+    it 'should adjust the balance of the newly specified account' do
+      expect do
+        changing_accounts
+        gasoline.reload
+      end.to change(gasoline, :balance).by(100)
+    end
+
+    it 'should adjust the balance of the original specified account' do
+      expect do
+        changing_accounts
+        groceries.reload
+      end.to change(groceries, :balance).by(-100)
     end
   end
   
@@ -248,11 +260,10 @@ describe TransactionItem do
 
     it 'is recalculated if any transaction items are inserted earlier in the account history' do
       c1 = t1.items.select{|i| i.account_id == checking.id}.first
-      expect(c1.balance.to_f).to eq(2_000)
-      c2 = t2.items.select{|i| i.account_id == checking.id}.first
-      expect(c2.balance.to_f).to eq(999)
-      c1.reload
-      expect(c1.balance.to_f).to eq(2_999)
+      expect do
+        t2
+        c1.reload
+      end.to change(c1, :balance).from(2_000).to(2_999)
     end
   end
 
