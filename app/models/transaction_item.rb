@@ -48,6 +48,7 @@ class TransactionItem < ActiveRecord::Base
   #      Set calculated_previous.next_transaction_item_id = instance.id
   #      Update balance down the chain
 
+  before_create :calculate_balance
   after_create :insert_into_account
 
   # When a transaction item is updated
@@ -63,7 +64,8 @@ class TransactionItem < ActiveRecord::Base
   #    Remove from the account chain
   #    Insert back into the account chain at the proper location (see creation notes above)
 
-  after_update :recalculate_balance!, if: :previous_transaction_item_id_changed? 
+  after_update :recalculate_balance!, if: :should_recalculate_balance?
+  after_update :move_accounts, if: :account_id_changed?
 
   before_destroy :ensure_not_reconciled
   after_destroy :remove_from_chain
@@ -98,7 +100,7 @@ class TransactionItem < ActiveRecord::Base
   scope :reconciled, -> { where(reconciled: true) }
   scope :unreconciled, -> { where(reconciled: false) }
   
-  delegate :transaction_date, to: :transaction, allow_nil: true
+  delegate :entity, :transaction_date, to: :transaction, allow_nil: true
 
   # Places the specified item after this instance in the chain, 
   # attaching the next item after the new item, if it exists. Also
@@ -143,10 +145,22 @@ class TransactionItem < ActiveRecord::Base
   end
 
   private
+    def calculate_balance
+      self.balance = previous_balance + amount
+    end
+
     def ensure_not_reconciled
       if reconciled?
         raise Money::CannotDeleteError, "The transaction item has already been reconciled. Undo the reconciliation, then delete the item."
       end
+    end
+
+    def move_accounts
+      return unless account_id_was
+
+      old_account = Account.find(account_id_was)
+      old_account.remove_transaction_item(self)
+      account.put_transaction_item(self)
     end
 
     def next_is_not_self
@@ -174,11 +188,10 @@ class TransactionItem < ActiveRecord::Base
     end
 
     def remove_from_chain
-      if previous_transaction_item
-        previous_transaction_item.update_attribute(:next_transaction_item_id, next_transaction_item_id)
-      end
-      if next_transaction_item
-        next_transaction_item.update_attribute(:previous_transaction_item_id, previous_transaction_item_id)
-      end
+      account.remove_transaction_item(self)
+    end
+
+    def should_recalculate_balance?
+      previous_transaction_item_id_changed? || amount_changed?
     end
 end
