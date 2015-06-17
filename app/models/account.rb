@@ -94,11 +94,15 @@ class Account < ActiveRecord::Base
     super({ methods: :depth })
   end
   
-  def balance_as_of(date)
-    balance_between Date.civil(1000, 1, 1), date
+  def balance_as_of(date, force_reload = false)
+    # force_reload is a no-op here because there is no caching
+
+    balance_between Date.civil(1000, 1, 1), date, force_reload
   end
   
-  def balance_between(start_date, end_date)
+  def balance_between(start_date, end_date, force_reload = false)
+    # force_reload is a no-op here because there is no caching
+
     start_date = ensure_date(start_date)
     end_date = ensure_date(end_date)
     
@@ -112,11 +116,15 @@ class Account < ActiveRecord::Base
     end
   end
   
-  def balance_with_children_as_of(date)
+  def balance_with_children_as_of(date, force_reload = false)
+    # force_reload is a no-op here because there is no caching
+
     children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_with_children_as_of(date) }
   end
   
-  def balance_with_children_between(start_date, end_date)
+  def balance_with_children_between(start_date, end_date, force_reload = false)
+    # force_reload is a no-op here because there is no caching
+
     children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
 
@@ -138,13 +146,13 @@ class Account < ActiveRecord::Base
     children.reduce(0) { |sum, child| sum + child.value }
   end
 
-  def cost_as_of(date)
-    return balance_as_of(date) unless commodity?
-    lots.reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
+  def cost_as_of(date, force_reload = false)
+    return balance_as_of(date, force_reload) unless commodity?
+    lots(force_reload).reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
   end
 
-  def cost_with_children_as_of(date)
-    return children.reduce(cost_as_of(date)) { |sum, child| sum + child.cost_with_children_as_of(date) }
+  def cost_with_children_as_of(date, force_reload = false)
+    return children(force_reload).reduce(cost_as_of(date, force_reload)) { |sum, child| sum + child.cost_with_children_as_of(date, force_reload) }
   end
 
   # Adjusts the balance of the account by the specified amount
@@ -181,12 +189,12 @@ class Account < ActiveRecord::Base
     segments.reduce(nil){|p, n| (p.try(:children) || Account).find_by_name(n)}
   end
 
-  def gains_as_of(date)
-    value_as_of(date) - cost_as_of(date)
+  def gains_as_of(date, force_reload = false)
+    value_as_of(date, force_reload) - cost_as_of(date, force_reload)
   end
 
-  def gains_with_children_as_of(date)
-    children.reduce(gains_as_of(date)) { |sum, child| sum + child.gains_with_children_as_of(date) }
+  def gains_with_children_as_of(date, force_reload = false)
+    children(force_reload).reduce(gains_as_of(date, force_reload)) { |sum, child| sum + child.gains_with_children_as_of(date, force_reload) }
   end
 
   def infer_action(amount)
@@ -289,9 +297,10 @@ class Account < ActiveRecord::Base
 
   def recalculate_balances(opts = {})
     with_children_only = opts.fetch(:with_children_only, false)
+    force_reload = opts.fetch(:force_reload, false)
     recalculation_fields(opts).each do |field|
-      recalculate_field(field) unless with_children_only
-      recalculate_field("#{field}_with_children")
+      recalculate_field(field, force_reload) unless with_children_only
+      recalculate_field("#{field}_with_children", force_reload)
     end
     parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent
   end
@@ -336,17 +345,17 @@ class Account < ActiveRecord::Base
   # Value is the current value of the account. For cash accounts
   # this will always be the same as the balance. For commodity
   # accounts, this will be the sum of the values of the lots
-  def value_as_of(date)
+  def value_as_of(date, force_reload = false)
     date = ensure_date(date)
     return balance_as_of(date) unless commodity?
     price = nearest_price(date)
-    shrs = shares_as_of(date, true)
+    shrs = shares_as_of(date, force_reload)
     price && shrs ? shrs * price : 0
   end
 
-  def value_with_children_as_of(date)
+  def value_with_children_as_of(date, force_reload = false)
     date = ensure_date(date)
-    children.reduce(value_as_of(date)){|sum, child| sum + child.value_with_children_as_of(date)}
+    children.reduce(value_as_of(date, force_reload)){|sum, child| sum + child.value_with_children_as_of(date, force_reload)}
   end
 
   def nearest_price(date)
@@ -406,11 +415,11 @@ class Account < ActiveRecord::Base
       end
     end
 
-    def recalculate_field(field)
+    def recalculate_field(field, force_reload = false)
       # Assume that most of the time the balance 
       # will not need to be updated
       method = "#{field}_as_of".to_sym
-      current = send(method, END_OF_TIME)
+      current = send(method, END_OF_TIME, force_reload)
       send("#{field}=", current)
     end
       
