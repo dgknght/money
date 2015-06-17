@@ -35,7 +35,7 @@ class CommodityExchanger
     lot.account_id = commodity_account.id
     if lot.save
       [original_account, lot.account].each do |account|
-        account.recalculate_balances(only: [:value, :cost, :gains])
+        account.recalculate_balances!(only: [:value, :cost, :gains], force_reload: true)
       end
       return true
     end
