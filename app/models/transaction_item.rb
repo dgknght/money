@@ -115,6 +115,8 @@ class TransactionItem < ActiveRecord::Base
     if next_transaction_item_id
       next_transaction_item.previous_transaction_item = item
       next_transaction_item.save!
+    else
+      account.update_head_transaction_item(item)
     end
 
     update_attribute(:next_transaction_item_id, item.id)
@@ -188,7 +190,7 @@ class TransactionItem < ActiveRecord::Base
     end
 
     def remove_from_chain
-      account.remove_transaction_item(self)
+      account.remove_transaction_item(self) if account
     end
 
     def should_recalculate_balance?
