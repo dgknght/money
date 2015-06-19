@@ -29,15 +29,11 @@ class CommodityExchanger
   end
 
   def exchange
-    original_account = lot.account
-
-    lot.commodity_id = commodity.id # go through the commodity object to be sure the commodity id is good
-    lot.account_id = commodity_account.id
-    if lot.save
-      [original_account, lot.account].each do |account|
-        account.recalculate_balances!(only: [:value, :cost, :gains], force_reload: true)
+    Commodity.transaction do
+      if update_lot
+        create_price
+        return true
       end
-      return true
     end
     false
   end
@@ -64,7 +60,26 @@ class CommodityExchanger
                                         entity: lot.account.entity)
   end
 
+  def create_price
+    commodity.prices.create!(trade_date: lot.purchase_date,
+                             price: lot.price)
+  end
+
   def find_or_create_commodity_account
     lot.account.parent.children.where(name: commodity.symbol).first || create_commodity_account
+  end
+
+  def update_lot
+    original_account = lot.account
+
+    lot.commodity_id = commodity.id # go through the commodity object to be sure the commodity id is good
+    lot.account_id = commodity_account.id
+    if lot.save
+      [original_account, lot.account].each do |account|
+        account.recalculate_balances!(only: [:value, :cost, :gains], force_reload: true)
+      end
+      return true
+    end
+    false
   end
 end
