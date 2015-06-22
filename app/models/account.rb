@@ -282,8 +282,9 @@ class Account < ActiveRecord::Base
       item.next_transaction_item.update_attribute(:previous_transaction_item_id, item.previous_transaction_item_id)
     else
       # This is the head transaction item
-      update_attributes!(head_transaction_item_id: item.previous_transaction_item_id,
-                         balance: item.previous_transaction_item ? item.previous_transaction_item.balance : 0)
+      self.head_transaction_item_id = item.previous_transaction_item_id
+      recalculate_balances
+      save!
     end
   end
 
