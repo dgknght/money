@@ -6,15 +6,13 @@ class TransactionDestroyer
 
   def destroy
     return false unless valid?
-    begin
-      transacted_destroy
-      self.notice = success_notice
-      true
-    rescue => e
-      Rails.logger.error "Unable to destroy the transaction #{@transaction.inspect} #{e.message}\n  #{e.backtrace.join("\n  ")}"
-      self.error = e.to_s
-      false
-    end
+    transacted_destroy
+    self.notice = success_notice
+    true
+  rescue => e
+    Rails.logger.error "Unable to destroy the transaction #{@transaction.inspect} #{e.message}\n  #{e.backtrace.join("\n  ")}"
+    self.error = e.to_s
+    false
   end
 
   def initialize(transaction)
