@@ -22,6 +22,12 @@ class TransactionDestroyer
 
   private
 
+  def effected_accounts
+    @transaction.lot_transactions.reduce([]) do |list, lt|
+      list += lt.transaction.items.map(&:account)
+    end
+  end
+
   def buy_transaction?
     !sell_transaction?
   end
@@ -54,9 +60,11 @@ class TransactionDestroyer
   end
 
   def transacted_destroy
+    accounts = effected_accounts
     Transaction.transaction do
       @transaction.destroy
       @transaction.lot_transactions.each { |lt| process_lot_transaction(lt) }
+      accounts.each{|a| a.recalculate_balances!}
     end
   end
 
