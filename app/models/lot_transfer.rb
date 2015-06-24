@@ -19,8 +19,7 @@ class LotTransfer
   def transfer
     return false unless valid?
 
-    lot.account_id = commodity_target_account.id
-    lot.save
+    transacted_transfer
   end
 
   def transfer!
@@ -40,5 +39,18 @@ class LotTransfer
                                       entity: target_account.entity,
                                       account_type: Account.asset_type,
                                       content_type: Account.commodity_content)
+  end
+
+  def transacted_transfer
+    old_account = lot.account
+    Lot.transaction do
+      lot.account_id = commodity_target_account.id
+      if lot.save
+        old_account.recalculate_balances!
+        lot.account(true).recalculate_balances!
+      else
+        false
+      end
+    end
   end
 end
