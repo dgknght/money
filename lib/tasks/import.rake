@@ -20,7 +20,21 @@ namespace :import do
                                      data: File.open(ENV['PATH']),
                                      trace_method: ->(m){print m})
       if importer.valid?
-        importer.import!
+        prof_result = nil
+        result = Benchmark.measure do
+          prof_result = RubyProf.profile do
+            importer.import!
+          end
+        end
+
+        prof_result.eliminate_methods! [/Nokogiri/]
+        printer = RubyProf::GraphPrinter.new(prof_result)
+        File.open("/Users/dougknight/Desktop/money_profile.txt", "w") do |f|
+          printer.print(f, min_percent: 2)
+        end
+
+        puts ""
+        puts result
       else
         Rails.logger.warn "Unable to perform the import: #{importer.errors.full_messages.to_sentince}"
       end
