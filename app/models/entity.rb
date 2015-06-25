@@ -30,6 +30,14 @@ class Entity < ActiveRecord::Base
     budgets.where(['start_date <= ?', today]).select{|b| b.end_date > today}.first
   end
 
+  def defer_balance_recalculations
+    update_attribute :suspend_balance_recalculations, true
+    yield
+  ensure
+    update_attribute :suspend_balance_recalculations, false
+    leaf_accounts.each{|a| a.recalculate_balances!}
+  end
+
   def fast_destroy!
     statements = [
       "DELETE FROM budget_item_periods USING budget_items, budgets WHERE budgets.id = budget_items.budget_id AND budget_items.id = budget_item_periods.budget_item_id AND budgets.entity_id = #{id}",
@@ -62,5 +70,11 @@ class Entity < ActiveRecord::Base
 
   def unrealized_gains_as_of(date)
     accounts.commodities.reduce(0) {|sum, account| sum + account.gains_with_children_as_of(date)}
+  end
+
+  private
+
+  def leaf_accounts
+    accounts.reject{|a| a.children.any?}
   end
 end

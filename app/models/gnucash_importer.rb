@@ -28,7 +28,9 @@ class GnucashImporter
     return unless valid?
     doc = HashingDocument.new(->(n, e) { process_element(n, e) }, *ELEMENTS_TO_PROCESS)
     parser = Nokogiri::XML::SAX::Parser.new(doc)
-    parser.parse(gzip_reader)
+    @entity.defer_balance_recalculations do
+      parser.parse(gzip_reader)
+    end
   end
 
   def lookup_account_id(source_id, raise_error_if_not_found = false)
