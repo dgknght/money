@@ -291,6 +291,8 @@ class Account < ActiveRecord::Base
   end
 
   def recalculate_balances(opts = {})
+    return if entity.suspend_balance_recalculations
+
     with_children_only = opts.fetch(:with_children_only, false)
     force_reload = opts.fetch(:force_reload, false)
     recalculation_fields(opts).each do |field|
