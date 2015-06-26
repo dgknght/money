@@ -930,6 +930,7 @@ describe Account do
         st1
         expect do
           st2
+          savings.reload
         end.to change(savings, :balance_with_children).by(234)
       end
     end
