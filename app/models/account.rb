@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
   belongs_to :head_transaction_item, class_name: 'TransactionItem'
   belongs_to :first_transaction_item, class_name: 'TransactionItem'
 
-  END_OF_TIME = Chronic.parse('9999-12-31')
+  END_OF_TIME = Chronic.parse('9999-12-31').to_date
   CONTENT_TYPES = %w(currency commodities commodity)
 
   class << self
@@ -105,15 +105,7 @@ class Account < ActiveRecord::Base
 
     start_date = ensure_date(start_date)
     end_date = ensure_date(end_date)
-    
-    sum_of_credits = sum_of_credit_transaction_items(start_date, end_date)
-    sum_of_debits = sum_of_debit_transaction_items(start_date, end_date)
-    
-    if left_side?
-      sum_of_debits - sum_of_credits
-    else
-      sum_of_credits - sum_of_debits
-    end
+    balances_cache[[start_date, end_date]]
   end
   
   def balance_with_children_as_of(date, force_reload = false)
@@ -224,6 +216,8 @@ class Account < ActiveRecord::Base
   # and ultimatley a the balances of the account and its parents
   def put_transaction_item(item)
     raise "The item #{item} cannot be inserted into the account #{name}" unless item.account_id == id
+
+    balances_cache.clear
 
     previous = calculate_previous(item)
     if previous
@@ -377,6 +371,23 @@ class Account < ActiveRecord::Base
   end
 
   private
+    def balances_cache
+      @balances_cache ||= Hash.new do |h, k|
+        h[k] = calculate_balance_between(*k)
+      end
+    end
+
+    def calculate_balance_between(start_date, end_date)
+      sum_of_credits = sum_of_credit_transaction_items(start_date, end_date)
+      sum_of_debits = sum_of_debit_transaction_items(start_date, end_date)
+
+      if left_side?
+        sum_of_debits - sum_of_credits
+      else
+        sum_of_credits - sum_of_debits
+      end
+    end
+
     def sum_of_credit_transaction_items(start_date, end_date)
       result = transaction_items.
         joins(:transaction).
@@ -393,6 +404,7 @@ class Account < ActiveRecord::Base
     
     def ensure_date(date)
       return Date.parse(date) if date.is_a?(String)
+      return date.to_date if date.respond_to?(:to_date)
       date
     end
     
