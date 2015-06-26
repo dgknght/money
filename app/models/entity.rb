@@ -62,6 +62,12 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  def recalculate_all_account_balances
+    child_first_account_list.each do |a|
+      a.recalculate_balances!(supress_bubbling: true)
+    end
+  end
+
   # Returns the unrealized gains in the commodities held by the entity
   # as of the specified date
   def unrealized_gains
@@ -79,18 +85,6 @@ class Entity < ActiveRecord::Base
     x.reduce(list) do |l, account|
       child_first_account_list account, l
       l << account
-    end
-  end
-
-  def recalculate_all_account_balances
-    puts ""
-    puts "recalculate_all_account_balances"
-
-    child_first_account_list.each do |a|
-
-      puts a.name
-
-      a.recalculate_balances!(supress_bubbling: true)
     end
   end
 end
