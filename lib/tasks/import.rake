@@ -29,7 +29,7 @@ namespace :import do
 
         prof_result.eliminate_methods! [/Nokogiri/]
         printer = RubyProf::GraphPrinter.new(prof_result)
-        File.open("/Users/dougknight/Desktop/money_profile.txt", "w") do |f|
+        File.open(Rails.root.join("reports", "money_profile.txt"), "w") do |f|
           printer.print(f, min_percent: 2)
         end
 
