@@ -299,7 +299,7 @@ class Account < ActiveRecord::Base
       recalculate_field(field, force_reload) unless with_children_only
       recalculate_field("#{field}_with_children", force_reload)
     end
-    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent
+    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
   end
 
   def recalculate_balances!(opts = {})

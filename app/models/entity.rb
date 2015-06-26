@@ -35,7 +35,7 @@ class Entity < ActiveRecord::Base
     yield
   ensure
     update_attribute :suspend_balance_recalculations, false
-    leaf_accounts.each{|a| a.recalculate_balances!}
+    recalculate_all_account_balances
   end
 
   def fast_destroy!
@@ -74,7 +74,23 @@ class Entity < ActiveRecord::Base
 
   private
 
-  def leaf_accounts
-    accounts.reject{|a| a.children.any?}
+  def child_first_account_list(account = nil, list = [])
+    x = account ? account.children : accounts.root
+    x.reduce(list) do |l, account|
+      child_first_account_list account, l
+      l << account
+    end
+  end
+
+  def recalculate_all_account_balances
+    puts ""
+    puts "recalculate_all_account_balances"
+
+    child_first_account_list.each do |a|
+
+      puts a.name
+
+      a.recalculate_balances!(supress_bubbling: true)
+    end
   end
 end
