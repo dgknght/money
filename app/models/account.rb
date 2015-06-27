@@ -265,6 +265,7 @@ class Account < ActiveRecord::Base
   end
 
   def remove_transaction_item(item)
+    balances_cache.clear
     if item.previous_transaction_item
       item.previous_transaction_item.update_attribute(:next_transaction_item_id, item.next_transaction_item_id)
     else
@@ -333,6 +334,7 @@ class Account < ActiveRecord::Base
   end
 
   def update_head_transaction_item(item)
+    balances_cache.clear
     self.balance = item.balance
     self.head_transaction_item_id = item.id
     recalculate_balances

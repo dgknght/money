@@ -155,7 +155,7 @@ describe TransactionItem do
     it 'should adjust the balance of the referenced account' do
       expect(checking.balance.to_i).to eq(-100)
       expect(groceries.balance.to_i).to eq(100)
-      
+
       trn.items.each { |i| i.amount = 101 }
       trn.save!
       
