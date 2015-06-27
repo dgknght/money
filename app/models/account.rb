@@ -2,22 +2,24 @@
 #
 # Table name: accounts
 #
-#  id                    :integer          not null, primary key
-#  name                  :string(255)      not null
-#  account_type          :string(255)      not null
-#  created_at            :datetime
-#  updated_at            :datetime
-#  balance               :decimal(, )      default(0.0), not null
-#  entity_id             :integer          not null
-#  parent_id             :integer
-#  content_type          :string(20)
-#  cost                  :decimal(, )      default(0.0), not null
-#  gains                 :decimal(, )      default(0.0), not null
-#  value                 :decimal(, )      default(0.0), not null
-#  balance_with_children :decimal(, )      default(0.0), not null
-#  cost_with_children    :decimal(, )      default(0.0), not null
-#  gains_with_children   :decimal(, )      default(0.0), not null
-#  value_with_children   :decimal(, )      default(0.0), not null
+#  id                        :integer          not null, primary key
+#  name                      :string(255)      not null
+#  account_type              :string(255)      not null
+#  created_at                :datetime
+#  updated_at                :datetime
+#  balance                   :decimal(, )      default(0.0), not null
+#  entity_id                 :integer          not null
+#  parent_id                 :integer
+#  content_type              :string(20)
+#  cost                      :decimal(, )      default(0.0), not null
+#  gains                     :decimal(, )      default(0.0), not null
+#  value                     :decimal(, )      default(0.0), not null
+#  balance_with_children     :decimal(, )      default(0.0), not null
+#  cost_with_children        :decimal(, )      default(0.0), not null
+#  gains_with_children       :decimal(, )      default(0.0), not null
+#  value_with_children       :decimal(, )      default(0.0), not null
+#  head_transaction_item_id  :integer
+#  first_transaction_item_id :integer
 #
 
 class Account < ActiveRecord::Base

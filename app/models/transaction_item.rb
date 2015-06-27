@@ -2,16 +2,19 @@
 #
 # Table name: transaction_items
 #
-#  id             :integer          not null, primary key
-#  transaction_id :integer          not null
-#  account_id     :integer          not null
-#  action         :string(255)      not null
-#  amount         :decimal(, )      not null
-#  created_at     :datetime
-#  updated_at     :datetime
-#  reconciled     :boolean          default(FALSE), not null
-#  memo           :string(100)
-#  confirmation   :string(50)
+#  id                           :integer          not null, primary key
+#  transaction_id               :integer          not null
+#  account_id                   :integer          not null
+#  action                       :string(255)      not null
+#  amount                       :decimal(, )      not null
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  reconciled                   :boolean          default(FALSE), not null
+#  memo                         :string(100)
+#  confirmation                 :string(50)
+#  balance                      :decimal(, )      default(0.0), not null
+#  next_transaction_item_id     :integer
+#  previous_transaction_item_id :integer
 #
 
 class TransactionItem < ActiveRecord::Base
