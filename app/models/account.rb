@@ -217,6 +217,8 @@ class Account < ActiveRecord::Base
   # This action also triggers a recalculation of the item balances
   # and ultimatley a the balances of the account and its parents
   def put_transaction_item(item)
+    return if entity.suspend_balance_recalculations
+
     raise "The item #{item} cannot be inserted into the account #{name}" unless item.account_id == id
 
     balances_cache.clear
@@ -261,12 +263,15 @@ class Account < ActiveRecord::Base
         last = item
     end
     if last.present?
-      update_attributes!(head_transaction_item_id: last.id,
-                         balance: last.balance)
+      self.head_transaction_item_id = last.id
+      self.balance = last.balance
     end
+    save!
   end
 
   def remove_transaction_item(item)
+    return if entity.suspend_balance_recalculations
+
     balances_cache.clear
     if item.previous_transaction_item
       item.previous_transaction_item.update_attribute(:next_transaction_item_id, item.next_transaction_item_id)
