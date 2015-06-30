@@ -30,9 +30,16 @@ namespace :admin do
       entity = user.entities.find_by(name: ENV['ENTITY'])
       raise "Unable to find an entity named #{ENV['ENTITY']}" unless entity
 
-      LOGGER.debug "Updating accounts in #{entity.name}"
+      accounts = if ENV['ACCOUNT']
+                   account = entity.accounts.find_by(name: ENV['ACCOUNT'])
+                   raise "Unable to find an account named #{ENV['ACCOUNT']}" unless account
+                   [account]
+                 else
+                   entity.accounts
+                 end
+      LOGGER.debug "Updating #{accounts.length} account(s) in #{entity.name}"
       entity.defer_balance_recalculations do
-        entity.accounts.each do |account|
+        accounts.each do |account|
           LOGGER.debug "Updating account #{account.name}"
           account.rebuild_transaction_item_links
         end
