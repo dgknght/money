@@ -217,8 +217,7 @@ class Account < ActiveRecord::Base
   # This action also triggers a recalculation of the item balances
   # and ultimatley a the balances of the account and its parents
   def put_transaction_item(item)
-    return if entity.suspend_balance_recalculations
-
+    return if suspend_chain_administration?
     raise "The item #{item} cannot be inserted into the account #{name}" unless item.account_id == id
 
     balances_cache.clear
@@ -246,6 +245,8 @@ class Account < ActiveRecord::Base
   end
 
   def rebuild_transaction_item_links
+    @suspend_local_chain_administration = true
+
     self.head_transaction_item_id = nil
     self.first_transaction_item_id = nil
     last = nil
@@ -267,6 +268,8 @@ class Account < ActiveRecord::Base
       self.balance = last.balance
     end
     save!
+  ensure
+    @suspend_local_chain_administration = false
   end
 
   def remove_transaction_item(item)
@@ -449,6 +452,10 @@ class Account < ActiveRecord::Base
       
     def set_defaults
       self.content_type ||= Account.currency_content
+    end
+
+    def suspend_chain_administration?
+      @suspend_local_chain_administration || entity.suspend_balance_recalculations
     end
 
     def update_local_balance(field, delta)
