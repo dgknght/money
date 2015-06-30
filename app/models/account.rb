@@ -251,7 +251,7 @@ class Account < ActiveRecord::Base
     self.first_transaction_item_id = nil
     last = nil
     transaction_items.
-      sort{|i| i.transaction.transaction_date}.
+      sort_by{|i| i.transaction_date}.
       each do |item|
         self.first_transaction_item_id = item.id if self.first_transaction_item_id.nil?
         if last.present?
