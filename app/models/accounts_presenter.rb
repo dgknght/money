@@ -44,8 +44,9 @@ class AccountsPresenter
   private
 
   def root_accounts(account_type)
+    account_type = account_type.to_s
     all_accounts.
-      select{|a| a.root? && a.send("#{account_type}?".to_sym)}.
+      select{|a| a.root? && a.account_type == account_type}.
       sort_by(&:name)
   end
 
