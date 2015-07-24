@@ -337,6 +337,7 @@ class Account < ActiveRecord::Base
     item = head_transaction_item(force_reload)
     Enumerator.new do |y|
       while item
+        item.account = self # don't want to look this up in the database
         y.yield item
         item = item.previous_transaction_item
       end
