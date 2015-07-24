@@ -53,12 +53,12 @@ class AccountsPresenter
     @all_accounts ||= @entity.accounts.to_a
   end
 
-  def account_to_adapters(account)
-    [AccountRecordAdapter.new(account)] + accounts_to_adapters(children(account))
+  def account_to_adapters(account, depth)
+    [AccountRecordAdapter.new(account, depth)] + accounts_to_adapters(children(account), depth + 1)
   end
 
-  def accounts_to_adapters(accounts)
-    accounts.reduce([]) { |list, account| list + account_to_adapters(account) }
+  def accounts_to_adapters(accounts, depth)
+    accounts.reduce([]) { |list, account| list + account_to_adapters(account, depth) }
   end
 
   def children(account)
@@ -76,7 +76,7 @@ class AccountsPresenter
 
   def summary(type, caption)
     accounts = root_accounts(type)
-    records = accounts_to_adapters(accounts)
+    records = accounts_to_adapters(accounts, 1)
     AccountSummaryRecord.new(caption, records)
   end
 

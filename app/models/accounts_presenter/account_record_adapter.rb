@@ -1,7 +1,5 @@
 class AccountRecordAdapter
-  def account
-    @account
-  end
+  attr_reader :account, :depth
 
   def balance
     @account.value_with_children
@@ -11,15 +9,12 @@ class AccountRecordAdapter
     @account.name
   end
 
-  def depth
-    @account.depth + 1
-  end
-
   def identifier
     "account_#{@account.id}"
   end
 
-  def initialize(account)
+  def initialize(account, depth)
     @account = account
+    @depth = depth
   end
 end
