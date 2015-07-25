@@ -11,7 +11,7 @@
 %div
   =label_tag 'transaction_item_creator[other_account_id]', 'Account'
   %br
-  =select_tag 'transaction_item_creator[other_account_id]', grouped_options_for_select(available_accounts(account.entity), transaction_item_creator.other_account_id)
+  =select_tag 'transaction_item_creator[other_account_id', available_accounts_options(account.entity, transaction_item_creator.other_account_id)
   
 %div
   =label_tag 'transaction_item_creator[amount]', 'Amount'
