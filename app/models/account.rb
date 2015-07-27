@@ -253,13 +253,17 @@ class Account < ActiveRecord::Base
     transaction_items.
       sort_by{|i| i.transaction_date}.
       each do |item|
+
+        item.previous_transaction_item_id = nil
+        item.next_transaction_item_id  = nil
+
         self.first_transaction_item_id = item.id if self.first_transaction_item_id.nil?
         if last.present?
           item.previous_transaction_item_id = last.id
           last.next_transaction_item_id = item.id
           last.save!
         end
-        item.balance = item.polarized_amount + (last.present? ? last.balance : 0)
+        item.balance = item.polarized_amount + (last.try(:balance) || 0)
         item.save!
         last = item
     end
