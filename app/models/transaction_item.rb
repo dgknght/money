@@ -197,6 +197,6 @@ class TransactionItem < ActiveRecord::Base
     end
 
     def should_recalculate_balance?
-      previous_transaction_item_id_changed? || amount_changed?
+      previous_transaction_item_id_changed? || amount_changed? || action_changed?
     end
 end
