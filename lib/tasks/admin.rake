@@ -4,7 +4,7 @@ namespace :admin do
   # --------------
   # Update balance
   # --------------
-  
+
   desc 'Recalculates the current balance for all accounts (required: ENTITY & EMAIL)'
   task :update_balances => :environment do
     if ENV['EMAIL'] && ENV['ENTITY']
@@ -47,5 +47,39 @@ namespace :admin do
     else
       LOGGER.error "EMAIL and ENTITY must be specified"
     end
+  end
+
+  desc 'Finds loops in transaction item linked lists (required: EMAIL, ENTITY. optional: ACCOUNT)'
+  task :find_link_loop => :environment do
+    unless %w(EMAIL ENTITY).all?{|k| ENV[k]}
+      LOGGER.error "EMAIL, and ENTITY are required"
+    else
+      user = User.find_by(email: ENV['EMAIL'])
+      entity = user.entities.find_by(name: ENV['ENTITY'])
+      accounts = if ENV['ACCOUNT']
+                   [entity.accounts.find_by(name: ENV['ACCOUNT'])]
+                 else
+                   entity.accounts
+                 end
+      loops = accounts.map{|a| find_loop(a)}.compact
+      LOGGER.info "Found #{loops.count} loop(s)"
+      loops.each do |item|
+        LOGGER.info "#{item.account.path}\n  #{item.previous_transaction_item_id}->#{item.id}->#{item.next_transaction_item_id}"
+      end
+    end
+  end
+
+  def find_loop(account)
+    puts ""
+    found = Set.new
+    account.transaction_items_backward.each do |item|
+      if found.include?(item.id)
+        return item
+      else
+        found << item.id
+      end
+      print '.'
+    end
+    nil
   end
 end
