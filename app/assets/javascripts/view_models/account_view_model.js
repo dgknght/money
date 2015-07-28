@@ -26,6 +26,14 @@ function AccountViewModel(account, entity) {
   this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
   this.reconciliation = ko.observable();
+  this.balance = ko.observable(account.balance);
+  this.balance_with_children = ko.observable(account.balance_with_children);
+  this.value = ko.observable(account.value);
+  this.value_with_children = ko.observable(account.value_with_children);
+  this.cost = ko.observable(account.cost);
+  this.cost_with_children = ko.observable(account.cost_with_children);
+  this.gains = ko.observable(account.gains);
+  this.gains_with_children = ko.observable(account.gains_with_children);
 
   this.entityDescription = function() {
     return this.name();
@@ -181,59 +189,28 @@ function AccountViewModel(account, entity) {
     });
   }, this);
 
-  this.balance = ko.computed(function() {
-    if (this.transaction_items.state() == 'new' || typeof this.transaction_items() === "undefined")
-      return this._balance();
-    
-    return this.transaction_items().sum(function(item) { return item.polarizedAmount(); });
-  }, this);
-
   this.formattedBalance = ko.computed(function() {
     return accounting.formatNumber(this.balance(), 2);
   }, this);
-
-  this.balanceWithChildren = ko.computed(function() {
-    return _.reduce(this.children(), function(sum, c) { return sum + c.balanceWithChildren(); }, this.balance());
-  }, this);
   
   this.formattedBalanceWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.balanceWithChildren(), 2);
-  }, this);
-  
-  this.value = ko.computed(function() {
-    return (this.content_type() == COMMODITY_CONTENT_TYPE)
-      ? this.sumOfLotValues()
-      : this.balance();
+    return accounting.formatNumber(this.balance_with_children(), 2);
   }, this);
 
   this.formattedValue = ko.computed(function() {
     return accounting.formatNumber(this.value(), 2);
   }, this);
 
-  this.valueWithChildren = ko.computed(function() {
-    return _.reduce(this.children(), function(sum, c) { return sum + c.valueWithChildren(); }, this.value());
-  }, this);
-
   this.formattedValueWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.valueWithChildren(), 2);
-  }, this);
-
-  this.cost = ko.computed(function() {
-    if (this.content_type() == COMMODITY_CONTENT_TYPE)
-      return _.reduce(this.lots(), function(sum, l) { return sum + l.cost(); }, 0);
-    return this.balance();
+    return accounting.formatNumber(this.value_with_children(), 2);
   }, this);
 
   this.formattedCost = ko.computed(function() {
     return accounting.formatNumber(this.cost(), 2);
   }, this);
 
-  this.costWithChildren = ko.computed(function() {
-    return _.reduce(this.children(), function(sum, c) { return sum + c.costWithChildren(); }, this.cost());
-  }, this);
-
   this.formattedCostWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.costWithChildren(), 2);
+    return accounting.formatNumber(this.cost_with_children(), 2);
   }, this);
 
   this.shares = ko.computed(function() {
@@ -243,21 +220,13 @@ function AccountViewModel(account, entity) {
   this.formattedShares = ko.computed(function() {
     return accounting.formatNumber(this.shares(), 4);
   }, this);
-  
-  this.gainLoss = ko.computed(function() {
-    return this.value() - this.cost();
-  }, this);
 
   this.formattedGainLoss = ko.computed(function() {
-    return accounting.formatNumber(this.gainLoss(), 2);
-  }, this);
-
-  this.gainLossWithChildren = ko.computed(function() {
-    return _.reduce(this.children(), function(sum, c) { return sum + c.gainLossWithChildren(); }, this.gainLoss());
+    return accounting.formatNumber(this.gains(), 2);
   }, this);
 
   this.formattedGainLossWithChildren = ko.computed(function() {
-    return accounting.formatNumber(this.gainLossWithChildren(), 2);
+    return accounting.formatNumber(this.gains_with_children(), 2);
   }, this);
 
   this.childrenValue = ko.computed(function() {
@@ -398,18 +367,18 @@ function AccountGroupViewModel(name, accounts) {
   this.accounts = ko.observableArray(accounts);
   this.cssClass = "account_category";
   
-  this.valueWithChildren = ko.computed(function() {
+  this.value_with_children = ko.computed(function() {
     var children = this.accounts().where(function(account) {
       return account.parent_id() == null;
     });
     
-    return children.sum(function(a) { return a.valueWithChildren(); });
+    return children.sum(function(a) { return a.value_with_children(); });
   }, this);
   
   this.display = function() {};
   
   this.formattedValueWithChildren = ko.computed(function() {
-    return accounting.formatMoney(this.valueWithChildren());
+    return accounting.formatMoney(this.value_with_children());
   }, this);
 
   this.canEdit = function() { return false; };
