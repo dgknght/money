@@ -38,6 +38,16 @@ describe AccountsController do
             get :index, entity_id: entity, format: :json
             JSON.parse(response.body).map{|a| a["name"]}.should =~ [cash, checking].map(&:name)
           end
+
+          context 'with "root_accounts_only" specified' do
+            let!(:savings) { FactoryGirl.create(:asset_account, entity: entity, name: 'savings') }
+            let!(:car) { FactoryGirl.create(:asset_account, entity: entity, name: 'car', parent: savings) }
+            let!(:reserve) { FactoryGirl.create(:asset_account, entity: entity, name: 'reserve', parent: savings) }
+            it 'should return only root accounts' do
+              get :index, entity_id: entity, root_accounts_only: 1, format: :json
+              JSON.parse(response.body).map{|a| a["name"]}.should =~ [cash, checking, savings].map(&:name)
+            end
+          end
         end
       end
 

@@ -16,8 +16,20 @@ class AccountsController < ApplicationController
   
   def index
     authorize! :show, @entity
+    respond_to do |format|
+      format.html{html_index}
+      format.json{json_index}
+    end
+  end
+
+  def html_index
     @accounts = AccountsPresenter.new(@entity, presenter_params)
-    respond_with @accounts
+  end
+
+  def json_index
+    accounts = @entity.accounts
+    accounts = accounts.root if params[:root_accounts_only]
+    render json: accounts
   end
 
   def show
