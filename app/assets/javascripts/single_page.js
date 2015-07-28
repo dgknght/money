@@ -52,7 +52,7 @@ function MoneyApp() {
         _self._registerEntity(_self.selectedEntity());
 
 
-      // listed for changes so we can update the cookie
+      // listen for changes so we can update the cookie
       _self.selectedEntity.subscribe(_self._registerEntity);
     });
   }, this);
