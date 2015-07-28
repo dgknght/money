@@ -122,6 +122,12 @@ function AccountViewModel(account, entity) {
     return parent.depth() + 1;
   }, this);
 
+  this.expandButtonVisible =  function() { return true; };
+
+  this.expandButtonClass = ko.computed(function() {
+    return "expand_button";
+  }, this);
+
   this.cssClass = ko.computed(function() {
     return "clickable account_depth_{depth}".format({ depth: this.depth() });
   }, this);
@@ -387,4 +393,6 @@ function AccountGroupViewModel(name, accounts) {
   this.destroy = function() {};
   this.canBeParent = function() { return false; }
   this.availableParents = function() { return []; }
+  this.expandButtonVisible = function() { return false; };
+  this.expandButtonClass = function() { return ""; };
 }

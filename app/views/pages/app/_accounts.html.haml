@@ -2,12 +2,15 @@
   .col-md-12
     %table.list#accounts_table{ cellspacing: 0, cellpadding: 0}
       %tr
+        %th &nbsp;
         %th Name
         %th Balance
         %th
           %a.small_header_add_button{ href: '#', title: 'Click here to add a new account.', data: { bind: "click: newAccount" } }Add
       <!-- ko foreach: groupedAccounts -->
       %tr{ data: { bind: "css: cssClass" }}
+        %td
+          %a{ data: { bind: "visible: expandButtonVisible(), css: expandButtonClass" }} expand
         %td{ data: { bind: "click: display" }}
           %span{ data: { bind: "text: name, css: cssClass" }}
         %td.number_column{ data: { bind: "text: formattedValueWithChildren,click: display" }}

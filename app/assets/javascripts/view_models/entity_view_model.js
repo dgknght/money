@@ -15,15 +15,10 @@
   this.accounts = ko.lazyObservableArray(function() {
     if (this.id() == null) return;
 
-    var path = "entities/{id}/accounts.json".format({id: this.id()});
+    var path = "entities/{id}/accounts.json?root_accounts_only=1".format({id: this.id()});
     $.getJSON(path, function(accounts) {
       var viewModels = $.map(accounts, function(account, index) {
         return new AccountViewModel(account, _self);
-      });
-      $.each(viewModels, function(index, viewModel) {
-        viewModels
-          .where(function(m) { return m.parent_id() == viewModel.id() })
-          .pushAllTo(viewModel.children);
       });
       viewModels.pushAllTo(_self.accounts);
     });
