@@ -14,6 +14,14 @@ class AccountsController < ApplicationController
     respond_with @account.entity, @account
   end
   
+  def children
+    authorize! :show, @account
+    respond_to do |format|
+      format.html { render status: 404 }
+      format.json { render json: @account.children }
+    end
+  end
+
   def index
     authorize! :show, @entity
     respond_to do |format|

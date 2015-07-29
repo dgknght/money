@@ -17,6 +17,11 @@ describe AccountsController do
     }
   end
 
+  shared_context 'savings' do
+    let!(:savings) { FactoryGirl.create(:asset_account, entity: entity, name: 'savings') }
+    let!(:car) { FactoryGirl.create(:asset_account, entity: entity, name: 'car', parent: savings) }
+    let!(:reserve) { FactoryGirl.create(:asset_account, entity: entity, name: 'reserve', parent: savings) }
+  end
   
   context 'for an authenticated user' do
     context 'that owns the entity' do
@@ -40,9 +45,7 @@ describe AccountsController do
           end
 
           context 'with "root_accounts_only" specified' do
-            let!(:savings) { FactoryGirl.create(:asset_account, entity: entity, name: 'savings') }
-            let!(:car) { FactoryGirl.create(:asset_account, entity: entity, name: 'car', parent: savings) }
-            let!(:reserve) { FactoryGirl.create(:asset_account, entity: entity, name: 'reserve', parent: savings) }
+            include_context 'savings'
             it 'should return only root accounts' do
               get :index, entity_id: entity, root_accounts_only: 1, format: :json
               JSON.parse(response.body).map{|a| a["name"]}.should =~ [cash, checking, savings].map(&:name)
@@ -255,6 +258,21 @@ describe AccountsController do
           expect(response).to be_success
         end
       end
+
+      describe 'get :children' do
+        include_context 'savings'
+
+        it 'should be successful' do
+          get :children, id: savings.id, format: :json
+          expect(response).to be_success
+        end
+
+        it 'should return the children for the specified account' do
+          get :children, id: savings.id, format: :json
+          returned = JSON.parse(response.body).map{|a| a['name']}
+          %w(car reserve).each{|a| expect(returned).to include(a)}
+        end
+      end
     end
 
     context 'that does not own the entity' do
@@ -371,6 +389,18 @@ describe AccountsController do
         it 'should redirect to the user home page' do
           get :holdings, id: ira
           expect(response).to redirect_to home_path
+        end
+      end
+
+      describe 'get :children' do
+        it 'should return "resource not found"' do
+          get :children, id: checking, format: :json
+          expect(response.response_code).to eq(404)
+        end
+
+        it 'should not return any account data' do
+          get :children, id: checking, format: :json
+          expect(response.body).to eq('[]')
         end
       end
     end
@@ -531,6 +561,20 @@ describe AccountsController do
       it 'should redirect to the sign in page' do
         get :holdings, id: ira
         expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    describe 'get :children' do
+      it 'should return "access denied"' do
+        get :children, id: checking, format: :json
+        expect(response.response_code).to eq(401)
+      end
+
+      it 'should not return any account data' do
+        get :children, id: checking, format: :json
+        returned = JSON.parse(response.body)
+        expect(returned).to have(1).item
+        expect(returned).to have_key("error")
       end
     end
   end

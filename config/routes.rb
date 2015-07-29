@@ -33,6 +33,7 @@ Money::Application.routes.draw do
       get :new_commodity_transaction
       post :create_commodity_transaction
       get :holdings
+      get :children
     end
   end
   resources :lots, only: [] do
