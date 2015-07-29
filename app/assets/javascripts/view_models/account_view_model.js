@@ -23,7 +23,6 @@ function AccountViewModel(account, entity) {
     includedIn: CONTENT_TYPES
   });
   this._balance = ko.observable(account.balance * 1);
-  this.children = ko.observableArray();
   this.parent_id = ko.observable(account.parent_id);
   this.reconciliation = ko.observable();
   this.balance = ko.observable(account.balance);
@@ -34,6 +33,22 @@ function AccountViewModel(account, entity) {
   this.cost_with_children = ko.observable(account.cost_with_children);
   this.gains = ko.observable(account.gains);
   this.gains_with_children = ko.observable(account.gains_with_children);
+
+  this.children = ko.lazyObservableArray(function() {
+    _self.getChildAccounts(function(a) {
+      a.pushAllTo(_self.children);
+    });
+  }, this);
+
+  this.getChildAccounts = function(callback) {
+    if (this.id() == null) {
+      callback([]);
+      return;
+    }
+
+    var path = "accounts/{id}/children.json".format({id: this.id()});
+    $.getJSON(path, callback);
+  };
 
   this.entityDescription = function() {
     return this.name();
@@ -122,11 +137,15 @@ function AccountViewModel(account, entity) {
     return parent.depth() + 1;
   }, this);
 
-  this.expandButtonVisible =  function() { return true; };
+  this.expanded = ko.observable(false);
 
   this.expandButtonClass = ko.computed(function() {
-    return "expand_button";
+    return _self.expanded() ? "collapse_button" : "expand_button";
   }, this);
+
+  this.toggleExpansion = function() {
+    _self.expanded(!_self.expanded());
+  };
 
   this.cssClass = ko.computed(function() {
     return "clickable account_depth_{depth}".format({ depth: this.depth() });
@@ -393,6 +412,14 @@ function AccountGroupViewModel(name, accounts) {
   this.destroy = function() {};
   this.canBeParent = function() { return false; }
   this.availableParents = function() { return []; }
-  this.expandButtonVisible = function() { return false; };
-  this.expandButtonClass = function() { return ""; };
+  this.expanded = ko.observable(false);
+
+  this.expandButtonClass = ko.computed(function() {
+    return this.expanded() ? "collapse_button" : "expand_button";
+  }, this);
+
+  this.toggleExpansion = function() {
+    this.expanded(!_self.expanded());
+  };
+
 }

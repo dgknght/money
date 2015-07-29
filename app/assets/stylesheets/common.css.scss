@@ -357,6 +357,11 @@ table.attributes {
   background-image: image-url("expand.png")
 }
 
+.collapse_button {
+  @extend .any_small_button;
+  background-image: image-url("collapse.png")
+}
+
 .standard_button {
   background-color: $white;
   border: 3px solid $dark-grey;
