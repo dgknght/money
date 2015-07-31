@@ -34,12 +34,19 @@ function AccountViewModel(account, entity) {
   this.gains = ko.observable(account.gains);
   this.gains_with_children = ko.observable(account.gains_with_children);
 
+  this._child_count = null;
+  this.childrenLoaded = function() {
+    return _self.child_count != null;
+  };
   this.children = ko.lazyObservableArray(function() {
     _self.getChildAccounts(function(a) {
       var vm = _.map(a, function(x) { return new AccountViewModel(x, _self.entity); });
       a.pushAllTo(_self.children);
     });
   }, this);
+  this.children.subscribe(function(c) {
+    this._child_count = c.length;
+  });
 
   this.getChildAccounts = function(callback) {
     if (this.id() == null) {
@@ -256,7 +263,7 @@ function AccountViewModel(account, entity) {
   }, this);
 
   this.childrenValue = ko.computed(function() {
-    return _.reduce(this.children(), function(sum, c) { return sum + c.value(); }, 0);
+    return this.value_with_children() - this.value();
   }, this);
 
   this.formattedChildrenValue = ko.computed(function() {
@@ -277,7 +284,13 @@ function AccountViewModel(account, entity) {
     _self.entity.editAccount(_self);
   };
 
-  this.canDestroy = function() { return _self.children().length == 0; };
+  this.canDestroy = function() {
+    return _self._child_count == 0;
+  };
+
+  this.showDeleteButton = function() {
+    return !_self.childrenLoaded() || _self.canDestroy();
+  };
 
   this.canBeParent = function() { return true; }
 
@@ -409,7 +422,7 @@ function AccountGroupViewModel(name, accounts) {
 
   this.canEdit = function() { return false; };
   this.edit = function() {};
-  this.canDestroy = function() { return false; };
+  this.showDeleteButton = function() { return false; };
   this.destroy = function() {};
   this.canBeParent = function() { return false; }
   this.availableParents = function() { return []; }
