@@ -10,7 +10,7 @@
       <!-- ko foreach: groupedAccounts -->
       %tr{ data: { bind: "css: cssClass" }}
         %td
-          %a{ data: { bind: "click: toggleExpansion, css: expandButtonClass()" }} expand
+          %a{ data: { bind: "visible: showToggleButton(), click: toggleExpansion, css: expandButtonClass()" }} expand
         %td{ data: { bind: "click: display" }}
           %span{ data: { bind: "text: name, css: cssClass" }}
         %td.number_column{ data: { bind: "text: formattedValueWithChildren,click: display" }}

@@ -34,9 +34,9 @@ function AccountViewModel(account, entity) {
   this.gains = ko.observable(account.gains);
   this.gains_with_children = ko.observable(account.gains_with_children);
 
-  this._child_count = null;
+  this._child_count = ko.observable(-1);
   this.childrenLoaded = function() {
-    return _self.child_count != null;
+    return _self._child_count() != -1;
   };
   this.children = ko.lazyObservableArray(function() {
     _self.getChildAccounts(function(a) {
@@ -45,7 +45,7 @@ function AccountViewModel(account, entity) {
     });
   }, this);
   this.children.subscribe(function(c) {
-    this._child_count = c.length;
+    _self._child_count(c.length);
     if (_self.expanded()) {
       _.chain(c)
         .filter(function(c) { return !_.contains(_self.entity.accounts(), c); })
@@ -155,6 +155,10 @@ function AccountViewModel(account, entity) {
 
   this.expandButtonClass = ko.computed(function() {
     return _self.expanded() ? "collapse_button" : "expand_button";
+  }, this);
+
+  this.showToggleButton = ko.computed(function() {
+    return _self._child_count() != 0; // child exist or are not yet loaded
   }, this);
 
   this.toggleExpansion = function() {
@@ -302,7 +306,7 @@ function AccountViewModel(account, entity) {
   };
 
   this.canDestroy = function() {
-    return _self._child_count == 0;
+    return _self._child_count() == 0;
   };
 
   this.showDeleteButton = function() {
@@ -444,6 +448,7 @@ function AccountGroupViewModel(name, accounts) {
   this.canBeParent = function() { return false; }
   this.availableParents = function() { return []; }
   this.expanded = ko.observable(false);
+  this.showToggleButton = function() { return true; }
 
   this.expandButtonClass = ko.computed(function() {
     return this.expanded() ? "collapse_button" : "expand_button";
