@@ -92,6 +92,9 @@ function MoneyApp() {
         this.href = this.href.replace(/entities\/\d*/, "entities/" + id);
       });
     }
+
+    // Make sure the root accounts are loaded
+    entity.rootAccounts();
   }
 
   this.editSelectedEntity = function() {

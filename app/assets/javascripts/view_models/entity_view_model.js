@@ -12,17 +12,30 @@
       this.name
     ]
   };
-  this.accounts = ko.lazyObservableArray(function() {
+
+  this.accounts = ko.observableArray();
+
+  this.rootAccounts = ko.lazyObservableArray(function() {
     if (this.id() == null) return;
 
     var path = "entities/{id}/accounts.json?root_accounts_only=1".format({id: this.id()});
-    $.getJSON(path, function(accounts) {
-      var viewModels = $.map(accounts, function(account, index) {
+    $.getJSON(path, function(a) {
+      var viewModels = _.map(a, function(account, index) {
         return new AccountViewModel(account, _self);
       });
-      viewModels.pushAllTo(_self.accounts);
+      viewModels.pushAllTo(_self.rootAccounts);
     });
   }, this);
+
+  this.rootAccounts.subscribe(function(a) {
+    var newAccounts = _.filter(a, function(x) {
+      return !_.contains(_self.accounts(), x);
+    });
+
+    newAccounts.pushAllTo(_self.accounts);
+
+    //TODO Need to remove accounts?
+  });
 
   this.commodities = ko.lazyObservableArray(function() {
     if (this.id() == null) return;
