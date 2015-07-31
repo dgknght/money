@@ -41,11 +41,17 @@ function AccountViewModel(account, entity) {
   this.children = ko.lazyObservableArray(function() {
     _self.getChildAccounts(function(a) {
       var vm = _.map(a, function(x) { return new AccountViewModel(x, _self.entity); });
-      a.pushAllTo(_self.children);
+      vm.pushAllTo(_self.children);
     });
   }, this);
   this.children.subscribe(function(c) {
     this._child_count = c.length;
+    if (_self.expanded()) {
+      _.chain(c)
+        .filter(function(c) { return !_.contains(_self.entity.accounts(), c); })
+        .each(function(c) { _self.entity.accounts.push(c); })
+        .value();
+    }
   });
 
   this.getChildAccounts = function(callback) {
@@ -153,6 +159,17 @@ function AccountViewModel(account, entity) {
 
   this.toggleExpansion = function() {
     _self.expanded(!_self.expanded());
+    if (_self.expanded()) {
+      // add the children the entity accounts collection
+      _.each(_self.children(), function(c) {
+        _self.entity.accounts.push(c);
+      });
+    } else {
+      // remove the children from the entity accounts collection
+      _.each(_self.children(), function(c) {
+        _self.entity.accounts.remove(c);
+      });
+    }
   };
 
   this.cssClass = ko.computed(function() {
