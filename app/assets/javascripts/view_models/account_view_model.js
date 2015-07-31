@@ -36,6 +36,7 @@ function AccountViewModel(account, entity) {
 
   this.children = ko.lazyObservableArray(function() {
     _self.getChildAccounts(function(a) {
+      var vm = _.map(a, function(x) { return new AccountViewModel(x, _self.entity); });
       a.pushAllTo(_self.children);
     });
   }, this);
