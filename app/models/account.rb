@@ -212,116 +212,6 @@ class Account < ActiveRecord::Base
     1
   end
 
-  # Inserts the transaction into the transaction linked list chain
-  #
-  # This action also triggers a recalculation of the item balances
-  # and ultimatley a the balances of the account and its parents
-  def put_transaction_item(item)
-    return if suspend_chain_administration?
-    raise "The item #{item} cannot be inserted into the account #{name}" unless item.account_id == id
-
-    balances_cache.clear
-
-    previous = calculate_previous(item)
-    if previous
-      # Item belongs somewhere after the beginning of the chain
-
-      previous.append_transaction_item(item)
-    elsif first_transaction_item_id && (first_transaction_item_id != item.id)
-      # This item occurs before all existing items
-
-      replace_first(item)
-
-      # The initial balance calculation for the item isn't triggered becase
-      # we never update previous_transaction_item_id
-      item.recalculate_balance!
-    else
-      # This is the very first item for the account
-      # All calculations can be done right here
-
-      self.first_transaction_item_id = item.id
-      update_head_transaction_item(item)
-    end
-  end
-
-  def rebuild_transaction_item_links
-    @suspend_local_chain_administration = true
-
-    self.head_transaction_item_id = nil
-    self.first_transaction_item_id = nil
-    last = nil
-    transaction_items.
-      sort_by{|i| i.transaction_date}.
-      each do |item|
-
-        item.previous_transaction_item_id = nil
-        item.next_transaction_item_id  = nil
-
-        self.first_transaction_item_id = item.id if self.first_transaction_item_id.nil?
-        if last.present?
-          item.previous_transaction_item_id = last.id
-          last.next_transaction_item_id = item.id
-          last.save!
-        end
-        item.balance = item.polarized_amount + (last.try(:balance) || 0)
-        item.save!
-        last = item
-    end
-    if last.present?
-      self.head_transaction_item_id = last.id
-      self.balance = last.balance
-    end
-    save!
-  ensure
-    @suspend_local_chain_administration = false
-  end
-
-  def remove_transaction_item(item)
-    return if entity.suspend_balance_recalculations
-
-    balances_cache.clear
-    if item.previous_transaction_item
-      item.previous_transaction_item.update_attribute(:next_transaction_item_id, item.next_transaction_item_id)
-    else
-      # This is the first transaction item
-      update_attribute(:first_transaction_item_id, item.next_transaction_item_id)
-    end
-
-    if item.next_transaction_item
-      item.next_transaction_item.update_attribute(:previous_transaction_item_id, item.previous_transaction_item_id)
-    else
-      # This is the head transaction item
-      self.head_transaction_item_id = item.previous_transaction_item_id
-      recalculate_balances
-      save!
-    end
-  end
-
-  # replaces the first transaction item with the specified item,
-  # appending the current first to the item
-  def replace_first(item)
-    old_first = first_transaction_item
-    update_attributes!(first_transaction_item_id: item.id)
-    item.append_transaction_item(old_first)
-  end
-
-  def recalculate_balances(opts = {})
-    return if entity.suspend_balance_recalculations
-
-    with_children_only = opts.fetch(:with_children_only, false)
-    force_reload = opts.fetch(:force_reload, false)
-    recalculation_fields(opts).each do |field|
-      recalculate_field(field, force_reload) unless with_children_only
-      recalculate_field("#{field}_with_children", force_reload)
-    end
-    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
-  end
-
-  def recalculate_balances!(opts = {})
-    recalculate_balances(opts)
-    save!
-  end
-
   def root?
     self.parent_id.nil?
   end
@@ -335,25 +225,6 @@ class Account < ActiveRecord::Base
     lots(force_reload).
       select{|l| l.purchase_date <= date}.
       reduce(0){|sum, lot| sum + lot.shares_as_of(date)}
-  end
-
-  def transaction_items_backward(force_reload = false)
-    item = head_transaction_item(force_reload)
-    Enumerator.new do |y|
-      while item
-        item.account = self # don't want to look this up in the database
-        y.yield item
-        item = item.previous_transaction_item
-      end
-    end
-  end
-
-  def update_head_transaction_item(item)
-    balances_cache.clear
-    self.balance = item.balance
-    self.head_transaction_item_id = item.id
-    recalculate_balances
-    save!
   end
 
   # Value is the current value of the account. For cash accounts
@@ -435,45 +306,7 @@ class Account < ActiveRecord::Base
       errors.add(:parent_id, 'must have the same account type') unless parent_is_same_type?
     end
 
-    def recalculation_fields(opts)
-      all_fields = %w(balance value cost gains)
-      if opts[:only]
-        Array(opts[:only])
-      elsif opts[:except]
-        except = Array(opts[:except])
-        all_fields.reject{|f| except.include?(f)}
-      else
-        all_fields
-      end
-    end
-
-    def recalculate_field(field, force_reload = false)
-      # Assume that most of the time the balance 
-      # will not need to be updated
-      method = "#{field}_as_of".to_sym
-      current = send(method, END_OF_TIME, force_reload)
-      send("#{field}=", current)
-    end
-      
     def set_defaults
       self.content_type ||= Account.currency_content
-    end
-
-    def suspend_chain_administration?
-      @suspend_local_chain_administration || entity.suspend_balance_recalculations
-    end
-
-    def update_local_balance(field, delta)
-      new_value = send(field) + delta
-      send("#{field}=", new_value)
-    end
-
-    def update_local_balances(delta)
-      %w(balance cost value).each do |field|
-        update_local_balance(field, delta)
-        update_local_balance("#{field}_with_children", delta)
-      end
-      parent.recalculate_balances(with_children_only: true) if parent
-      balance
     end
 end

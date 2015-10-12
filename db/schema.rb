@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150627160234) do
+ActiveRecord::Schema.define(version: 20151011235652) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+#  enable_extension "plpgsql"
 
   create_table "accounts", force: true do |t|
     t.string   "name",                                               null: false
@@ -174,19 +174,20 @@ ActiveRecord::Schema.define(version: 20150627160234) do
   add_index "reconciliations", ["account_id", "reconciliation_date"], name: "index_reconciliations_on_account_id_and_reconciliation_date", using: :btree
 
   create_table "transaction_items", force: true do |t|
-    t.integer  "transaction_id",                                           null: false
-    t.integer  "account_id",                                               null: false
-    t.string   "action",                                                   null: false
-    t.decimal  "amount",                                                   null: false
+    t.integer  "transaction_id",                             null: false
+    t.integer  "account_id",                                 null: false
+    t.string   "action",                                     null: false
+    t.decimal  "amount",                                     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "reconciled",                               default: false, null: false
-    t.string   "memo",                         limit: 100
-    t.string   "confirmation",                 limit: 50
-    t.decimal  "balance",                                  default: 0.0,   null: false
-    t.integer  "next_transaction_item_id"
-    t.integer  "previous_transaction_item_id"
+    t.boolean  "reconciled",                 default: false, null: false
+    t.string   "memo",           limit: 100
+    t.string   "confirmation",   limit: 50
+    t.decimal  "balance",                    default: 0.0,   null: false
+    t.integer  "index",                      default: 0,     null: false
   end
+
+  add_index "transaction_items", ["account_id", "index"], name: "index_transaction_items_on_account_id_and_index", using: :btree
 
   create_table "transactions", force: true do |t|
     t.date     "transaction_date", null: false

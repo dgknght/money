@@ -190,7 +190,7 @@ describe TransactionItem do
       end.to change(gasoline, :balance).by(100)
     end
 
-    it 'should adjust the balance of the original specified account' do
+    it 'should adjust the balance of the originally specified account' do
       expect do
         changing_accounts
         groceries.reload
