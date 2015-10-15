@@ -234,6 +234,16 @@ describe Account do
       account.path.should == 'Parent Account/Child'
     end
   end
+
+  describe '#parents' do
+    let (:p1) { FactoryGirl.create(:asset_account, 'P1') }
+    let (:p2) { FactoryGirl.create(:asset_account, 'P2', parent: p1) }
+    let!(:c) { FactoryGirl.create(:asset_account, 'C', parent: p2) }
+
+    it 'returns all of the parents in the chain for the account' do
+      expect(['P2', 'P1']).to eq(c.parents.map(&:name))
+    end
+  end
   
   describe '#children' do
     let (:parent) { FactoryGirl.create(:asset_account) }

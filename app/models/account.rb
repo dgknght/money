@@ -14,12 +14,12 @@
 #  cost                      :decimal(, )      default(0.0), not null
 #  gains                     :decimal(, )      default(0.0), not null
 #  value                     :decimal(, )      default(0.0), not null
-#  balance_with_children     :decimal(, )      default(0.0), not null
 #  cost_with_children        :decimal(, )      default(0.0), not null
 #  gains_with_children       :decimal(, )      default(0.0), not null
 #  value_with_children       :decimal(, )      default(0.0), not null
 #  head_transaction_item_id  :integer
 #  first_transaction_item_id :integer
+#  children_balance          :decimal(, )      default(0.0), not null
 #
 
 class Account < ActiveRecord::Base
@@ -110,6 +110,10 @@ class Account < ActiveRecord::Base
     balances_cache[[start_date, end_date]]
   end
   
+  def balance_with_children
+    balance + children_balance
+  end
+
   def balance_with_children_as_of(date, force_reload = false)
     # force_reload is a no-op here because there is no caching
 
@@ -201,6 +205,14 @@ class Account < ActiveRecord::Base
 
   def parent_name
     parent ? parent.name : nil
+  end
+
+  def parents
+    if parent
+      [parent] + parent.parents
+    else
+      []
+    end
   end
 
   def path

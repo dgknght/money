@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe TransactionManager do
   let (:entity) { FactoryGirl.create(:entity) }
-  let!(:checking) { FactoryGirl.create(:account, name: "Checking", entity: entity) }
-  let!(:salary) { FactoryGirl.create(:account, name: "Salary", account_type: Account.income_type, entity: entity) }
+  let!(:checking) { FactoryGirl.create(:asset_account, name: "Checking", entity: entity) }
+  let!(:salary) { FactoryGirl.create(:income_account, name: "Salary", entity: entity) }
   let (:transaction_attributes) do
     {
       transaction_date: Date.parse('2015-02-01'),
@@ -27,9 +27,9 @@ describe TransactionManager do
     end
   end
   shared_context :savings do
-    let (:savings) { FactoryGirl.create(:account, name: "Savings", entity: entity) }
-    let!(:car) { FactoryGirl.create(:account, name: "Car", entity: entity, parent: savings) }
-    let!(:reserve) { FactoryGirl.create(:account, name: "Reserve", entity: entity, parent: savings) }
+    let (:savings) { FactoryGirl.create(:asset_account, name: "Savings", entity: entity) }
+    let!(:car) { FactoryGirl.create(:asset_account, name: "Car", entity: entity, parent: savings) }
+    let!(:reserve) { FactoryGirl.create(:asset_account, name: "Reserve", entity: entity, parent: savings) }
   end
 
   describe '#create!' do
@@ -81,6 +81,7 @@ describe TransactionManager do
                                                                     { action: TransactionItem.debit,
                                                                       account_id: reserve.id,
                                                                       amount: 700 }])
+          savings.reload
         end.to change(savings, :children_balance).by(1_000)
       end
     end
