@@ -17,12 +17,6 @@
 #
 
 class TransactionItem < ActiveRecord::Base
-  before_create :process_insertion, if: :account_present?
-  before_update :process_update
-
-  before_destroy :ensure_not_reconciled
-  after_destroy :process_removal
-  
   ACTIONS = %w(debit credit)
   class << self
     ACTIONS.each do |action|
@@ -50,8 +44,8 @@ class TransactionItem < ActiveRecord::Base
   scope :reconciled, -> { where(reconciled: true) }
   scope :unreconciled, -> { where(reconciled: false) }
 
-  scope :occurring_before, -> (date) { joins(:transaction).where('transactions.transaction_date < ?', date).order('transactions.transaction_date').reverse_order }
-  scope :occurring_on_or_after, -> (date) { joins(:transaction).where('transactions.transaction_date >= ?', date).order('transactions.transaction_date') }
+  scope :occurring_before, -> (date) { joins(:transaction).where('transactions.transaction_date < ?', date).order('transaction_items."index"').reverse_order }
+  scope :occurring_on_or_after, -> (date) { joins(:transaction).where('transactions.transaction_date >= ?', date).order('transaction_items."index"') }
   
   delegate :entity, :transaction_date, to: :transaction, allow_nil: true
 
@@ -64,7 +58,7 @@ class TransactionItem < ActiveRecord::Base
   end
 
   def to_s
-    "#<TransactionItem: id=#{id} index=#{index}: #{action} #{account.try(:name)} #{amount.to_f} on #{transaction_date}>"
+    "#<TransactionItem: id=#{id} index=#{index}: #{action} #{account.try(:name)} #{amount.to_f} (#{balance.to_f}) on #{transaction_date}>"
   end
 
   private
@@ -119,9 +113,6 @@ class TransactionItem < ActiveRecord::Base
     end
 
     def process_after_items(starting_balance, starting_index, target_account = nil)
-
-      puts "process_after_items for #{self} on account #{(target_account || account).name}"
-
       last_balance = starting_balance
       last_index = starting_index
 

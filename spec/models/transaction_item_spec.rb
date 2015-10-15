@@ -140,84 +140,6 @@ describe TransactionItem do
     let!(:trn){FactoryGirl.create(:transaction, debit_account: groceries, credit_account: checking, amount: 100)}
   end
 
-  describe 'after create' do    
-    include_context 'buy groceries'
-
-    it 'should update the balance on the referenced account' do
-      expect(checking.balance.to_i).to eq(-100)
-      expect(groceries.balance.to_i).to eq(100)
-    end
-  end
-  
-  describe 'after update' do
-    include_context 'buy groceries'
-
-    it 'should adjust the balance of the referenced account' do
-      expect(checking.balance.to_i).to eq(-100)
-      expect(groceries.balance.to_i).to eq(100)
-
-      trn.items.each { |i| i.amount = 101 }
-      trn.save!
-      
-      checking.reload
-      groceries.reload
-      
-      expect(checking.balance.to_i).to eq(-101)
-      expect(groceries.balance.to_i).to eq(101)
-    end
-  end
-  
-  describe 'after update with account changed' do
-    include_context 'buy groceries'
-
-    let (:changing_accounts) do
-      groceries_item = trn.items.select{|i| i.account_id == groceries.id}.first
-      groceries_item.account = gasoline
-      trn.save!
-    end
-
-    it 'should not change the balance of the account that was not changed' do
-      expect do
-        changing_accounts
-        checking.reload
-      end.not_to change(checking, :balance)
-    end
-
-    it 'should adjust the balance of the newly specified account' do
-      expect do
-        changing_accounts
-        gasoline.reload
-      end.to change(gasoline, :balance).by(100)
-    end
-
-    it 'should adjust the balance of the originally specified account' do
-      expect do
-        changing_accounts
-        groceries.reload
-      end.to change(groceries, :balance).by(-100)
-    end
-  end
-  
-  describe 'after destroy' do
-    include_context 'buy groceries'
-
-    it 'should adjust the balance of the referenced account' do
-      expect(checking.balance.to_i).to eq(-100)
-      expect(groceries.balance.to_i).to eq(100)
-
-      groceries_item = trn.items.select{ |item| item.account.id == groceries.id }.first
-      groceries_item.destroy
-      trn.items.build(account: gasoline, action: TransactionItem.debit, amount: 100)
-      expect(trn).to be_valid
-      trn.save!
-      groceries.reload
-      
-      expect(checking.balance.to_i).to eq(-100)
-      expect(groceries.balance.to_i).to be_zero
-      expect(gasoline.balance.to_i).to eq(100)
-    end
-  end
-  
   describe '#reconciled?' do
     it 'should default to false' do
       item = TransactionItem.new(attributes)
@@ -232,38 +154,10 @@ describe TransactionItem do
     end
   end
   
-  shared_context 'balance transactions' do
-    let (:t1) do
-      FactoryGirl.create(:transaction, transaction_date: '2015-01-15',
-                                       amount: 2_000,
-                                       credit_account: salary,
-                                       debit_account: checking)
-    end
-    let (:t2) do
-      FactoryGirl.create(:transaction, transaction_date: '2015-01-01',
-                                       amount: 999,
-                                       credit_account: opening_balances,
-                                       debit_account: checking)
-    end
-  end
-
   describe '#balance' do
-    include_context 'balance transactions'
-
     it 'contains the balance of the account as a result of the inclusion if the transaction item' do
-      checking_item = t1.items.select{|i| i.account.id == checking.id}.first
-      expect(checking_item.balance.to_f).to eq(2_000)
-
-      ob_item = t1.items.select{|i| i.account.id == salary.id}.first
-      expect(ob_item.balance.to_f).to eq(2_000)
-    end
-
-    it 'is recalculated if any transaction items are inserted earlier in the account history' do
-      c1 = t1.items.select{|i| i.account_id == checking.id}.first
-      expect do
-        t2
-        c1.reload
-      end.to change(c1, :balance).from(2_000).to(2_999)
+      item = TransactionItem.new
+      expect(item.balance).to be_zero
     end
   end
 
