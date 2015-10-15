@@ -19,6 +19,10 @@ class TransactionManager
     transaction
   end
 
+  def update!(transaction)
+    transaction.save!
+  end
+
   private
 
   # Returns all of the items in the account associated with the
@@ -73,7 +77,7 @@ class TransactionManager
     first_item = items.first
     account = first_item.account
     before_item = account.transaction_items.occurring_before(first_item.transaction_date).first
-    last_index = before_item.try(:index) || 0
+    last_index = before_item.try(:index) || -1
     last_balance = before_item.try(:balance) || BigDecimal.new(0)
 
     last_index, last_balance = process_items(items, last_index, last_balance)
