@@ -68,7 +68,7 @@ describe TransactionManager do
     it 'sets the #index of each item in the transaction' do
       transaction = TransactionManager.new(entity).create!(transaction_attributes)
       checking_item = transaction.items.select{|i| i.account_id = checking.id}.first
-      expect(checking_item.index).to eq(1)
+      expect(checking_item.index).to eq(0)
     end
 
     it 'updates the #balance of each referenced account' do
