@@ -36,19 +36,6 @@ class TransactionManager
 
   private
 
-  # Returns all of the items in the account associated with the
-  # transaction item that occur on or after the date of the transaction
-  # to which the specified item belongs.
-  #
-  # Called during processing of a new transaction
-  def after_items_by_date(account, transaction_date)
-    ids = account.
-      transaction_items.
-      occurring_on_or_after(transaction_date).
-      map(&:id)
-    TransactionItem.find(ids)
-  end
-
   # Returns all of the itmes in the account associate with the
   # transaction item having an index greater than the specified 
   # item
@@ -110,13 +97,14 @@ class TransactionManager
   # that will be used to recalculate 'children_balance' values
   def process_new_item_group(account, items)
     first_item = items.first
-    basis_item = account.transaction_items.occurring_before(first_item.transaction_date).first
-    after_items = after_items_by_date(first_item.account, first_item.transaction_date)
+    basis_item = account.first_transaction_item_occurring_before(first_item.transaction_date)
+    after_items = first_item.account.transaction_items_occurring_on_or_after(first_item.transaction_date)
     process_item_sequence(account, basis_item, [], items, after_items)
   end
 
   def process_updated_item_group(account, items, new_date, old_date)
     sorted_items = items.sort_by(&:index)
+    current_ids = sorted_items.map(&:id)
     first_item = sorted_items.first
 
     if new_date == old_date
@@ -126,13 +114,18 @@ class TransactionManager
         account.transaction_items.where(index: first_item.index - 1).first
       before_items = []
       after_items = after_items_by_index(sorted_items.last)
+    elsif new_date < old_date
+      # treat it just like a new item
+      basis_item = account.first_transaction_item_occurring_before(first_item.transaction_date)
+      before_items = []
+      after_items = first_item.account.transaction_items_occurring_on_or_after(first_item.transaction_date).reject{|i| current_ids.include?(i.id)}
     else
-      # position is changed
-      earliest_date = [new_date, old_date].min
-      basis_item = account.transaction_items.occurring_before(earliest_date).first
-      after_items = after_items_by_date(account, new_date)
+      # items that were after but are now before must be corrected
+      basis_item = account.first_transaction_item_occurring_before(old_date)
+      before_items = account.transaction_items_occurring_between(old_date, new_date).reject{|i| current_ids.include?(i.id)}
+      after_items = account.transaction_items_occurring_on_or_after(new_date).reject{|i| current_ids.include?(i.id)}
     end
 
-    process_item_sequence(account, basis_item, [], sorted_items, after_items)
+    process_item_sequence(account, basis_item, before_items, sorted_items, after_items)
   end
 end

@@ -45,6 +45,7 @@ class TransactionItem < ActiveRecord::Base
   scope :unreconciled, -> { where(reconciled: false) }
 
   scope :occurring_before, -> (date) { joins(:transaction).where('transactions.transaction_date < ?', date).order('transaction_items."index"').reverse_order }
+  scope :occurring_between, -> (start_date, end_date) { joins(:transaction).where('? < transactions.transaction_date and transactions.transaction_date < ?', start_date, end_date).order('transaction_items."index"').reverse_order }
   scope :occurring_on_or_after, -> (date) { joins(:transaction).where('transactions.transaction_date >= ?', date).order('transaction_items."index"') }
   
   delegate :entity, :transaction_date, to: :transaction, allow_nil: true

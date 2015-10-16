@@ -187,6 +187,13 @@ class Account < ActiveRecord::Base
     segments.reduce(nil){|p, n| (p.try(:children) || Account).find_by_name(n)}
   end
 
+  def first_transaction_item_occurring_before(date)
+    ids = transaction_items.
+      occurring_before(date).
+      take(1)
+    TransactionItem.find(ids).first
+  end
+
   def gains_as_of(date, force_reload = false)
     value_as_of(date, force_reload) - cost_as_of(date, force_reload)
   end
@@ -270,6 +277,20 @@ class Account < ActiveRecord::Base
 
   def right_side?
     RIGHT_SIDE.include?(account_type)
+  end
+
+  def transaction_items_occurring_between(start_date, end_date)
+    ids = transaction_items.
+      occurring_between(start_date, end_date).
+      map(&:id)
+    TransactionItem.find(ids)
+  end
+
+  def transaction_items_occurring_on_or_after(date)
+    ids = transaction_items.
+      occurring_on_or_after(date).
+      map(&:id)
+    TransactionItem.find(ids)
   end
 
   private
