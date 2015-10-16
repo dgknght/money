@@ -184,11 +184,16 @@ describe TransactionManager do
         include_context :savings
 
         it 'updates the #children-balance of all accounts referened by the transaction items' do
+          car_item = savings_transaction.items.select{|i| i.account_id == car.id}.first
+          car_item.amount = 400
+          salary_item = savings_transaction.items.select{|i| i.account_id == salary.id}.first
+          salary_item.amount = 1_100
+
           savings.reload
-          transaction.items.each{|i| i.amount = 1_010}
           expect do
-            TransactionManager.new(entity).update!(transaction)
-          end.to change(savings, :children_balance).by(10)
+            TransactionManager.new(entity).update!(savings_transaction)
+            savings.reload
+          end.to change(savings, :children_balance).by(100)
         end
       end
     end
