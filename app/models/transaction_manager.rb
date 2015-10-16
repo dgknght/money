@@ -41,10 +41,10 @@ class TransactionManager
   # to which the specified item belongs.
   #
   # Called during processing of a new transaction
-  def after_items_by_date(item)
-    ids = item.account.
+  def after_items_by_date(account, transaction_date)
+    ids = account.
       transaction_items.
-      occurring_on_or_after(item.transaction_date).
+      occurring_on_or_after(transaction_date).
       map(&:id)
     TransactionItem.find(ids)
   end
@@ -76,10 +76,11 @@ class TransactionManager
       end
   end
 
-  def process_current_and_after_items(account, before_item, items, after_items)
-    last_index = before_item.try(:index) || -1
-    last_balance = before_item.try(:balance) || BigDecimal.new(0)
+  def process_item_sequence(account, basis_item, before_items, items, after_items)
+    last_index = basis_item.try(:index) || -1
+    last_balance = basis_item.try(:balance) || BigDecimal.new(0)
 
+    last_index, last_balance = process_items(before_items, last_index, last_balance, true)
     last_index, last_balance = process_items(items, last_index, last_balance)
     last_index, last_balance = process_items(after_items, last_index, last_balance, true)
 
@@ -109,23 +110,29 @@ class TransactionManager
   # that will be used to recalculate 'children_balance' values
   def process_new_item_group(account, items)
     first_item = items.first
-    before_item = account.transaction_items.occurring_before(first_item.transaction_date).first
-    after_items = after_items_by_date(first_item)
-    process_current_and_after_items(account, before_item, items, after_items)
+    basis_item = account.transaction_items.occurring_before(first_item.transaction_date).first
+    after_items = after_items_by_date(first_item.account, first_item.transaction_date)
+    process_item_sequence(account, basis_item, [], items, after_items)
   end
 
   def process_updated_item_group(account, items, new_date, old_date)
     sorted_items = items.sort_by(&:index)
+    first_item = sorted_items.first
+
     if new_date == old_date
-      # This is just like process_new_item_group, expect we're address items by index instead of by transaction date
-      first_item = sorted_items.first
-      before_item = first_item.index == 0 ?
+      # position is unchanged
+      basis_item = first_item.index == 0 ?
         nil :
         account.transaction_items.where(index: first_item.index - 1).first
+      before_items = []
       after_items = after_items_by_index(sorted_items.last)
-      process_current_and_after_items(account, before_item, sorted_items, after_items)
     else
-      []
+      # position is changed
+      earliest_date = [new_date, old_date].min
+      basis_item = account.transaction_items.occurring_before(earliest_date).first
+      after_items = after_items_by_date(account, new_date)
     end
+
+    process_item_sequence(account, basis_item, [], sorted_items, after_items)
   end
 end
