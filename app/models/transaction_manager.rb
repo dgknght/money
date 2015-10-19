@@ -23,14 +23,15 @@ class TransactionManager
 
   def update!(transaction)
     ActiveRecord::Base.transaction do
+      processing_date = [transaction.transaction_date, transaction.transaction_date_was].min
+      transaction.save!
       account_deltas = transaction.items.
         group_by(&:account).
-        flat_map do |account, items|
-          process_updated_item_group(account, items, transaction.transaction_date, transaction.transaction_date_was)
+        flat_map do |account, _|
+          process_items_as_of(account, processing_date)
       end
 
       process_account_deltas(account_deltas)
-      transaction.save!
     end
   end
 
@@ -63,11 +64,10 @@ class TransactionManager
       end
   end
 
-  def process_item_sequence(account, basis_item, before_items, items, after_items)
+  def process_item_sequence(account, basis_item, items, after_items)
     last_index = basis_item.try(:index) || -1
     last_balance = basis_item.try(:balance) || BigDecimal.new(0)
 
-    last_index, last_balance = process_items(before_items, last_index, last_balance, true)
     last_index, last_balance = process_items(items, last_index, last_balance)
     last_index, last_balance = process_items(after_items, last_index, last_balance, true)
 
@@ -99,33 +99,16 @@ class TransactionManager
     first_item = items.first
     basis_item = account.first_transaction_item_occurring_before(first_item.transaction_date)
     after_items = first_item.account.transaction_items_occurring_on_or_after(first_item.transaction_date)
-    process_item_sequence(account, basis_item, [], items, after_items)
+    process_item_sequence(account, basis_item, items, after_items)
   end
 
-  def process_updated_item_group(account, items, new_date, old_date)
-    sorted_items = items.sort_by(&:index)
-    current_ids = sorted_items.map(&:id)
-    first_item = sorted_items.first
+  def process_items_as_of(account, as_of_date)
+    basis_item = account.first_transaction_item_occurring_before(as_of_date)
+    basis_index = basis_item.try(:index) || -1
+    basis_balance = basis_item.try(:balance) || BigDecimal.new(0)
+    # The following should sort at the database layer, but for some reason it wouldn't for the test suite
+    items = account.transaction_items_occurring_on_or_after(as_of_date).sort_by{|i| i.transaction.transaction_date}
 
-    if new_date == old_date
-      # position is unchanged
-      basis_item = first_item.index == 0 ?
-        nil :
-        account.transaction_items.where(index: first_item.index - 1).first
-      before_items = []
-      after_items = after_items_by_index(sorted_items.last)
-    elsif new_date < old_date
-      # treat it just like a new item
-      basis_item = account.first_transaction_item_occurring_before(first_item.transaction_date)
-      before_items = []
-      after_items = first_item.account.transaction_items_occurring_on_or_after(first_item.transaction_date).reject{|i| current_ids.include?(i.id)}
-    else
-      # items that were after but are now before must be corrected
-      basis_item = account.first_transaction_item_occurring_before(old_date)
-      before_items = account.transaction_items_occurring_between(old_date, new_date).reject{|i| current_ids.include?(i.id)}
-      after_items = account.transaction_items_occurring_on_or_after(new_date).reject{|i| current_ids.include?(i.id)}
-    end
-
-    process_item_sequence(account, basis_item, before_items, sorted_items, after_items)
+    process_item_sequence(account, basis_item, [], items)
   end
 end

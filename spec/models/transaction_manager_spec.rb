@@ -116,7 +116,7 @@ describe TransactionManager do
 
   describe '#update!' do
     let!(:transaction) do
-      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-01-01'),
+      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-02-01'),
                                              description: "Paycheck",
                                              items_attributes: [{ account_id: checking.id,
                                                                  action: TransactionItem.debit,
@@ -155,6 +155,7 @@ describe TransactionManager do
         salary_item = transaction.items.select{|i| i.account_id == salary.id}.first
         expect do
           TransactionManager.new(entity).update!(transaction)
+          salary_item.reload
         end.to change(salary_item, :balance).by(234)
       end
 
@@ -251,6 +252,10 @@ describe TransactionManager do
       it 'updates the following transactions in the old account'
       it 'updates the balance of the old account'
       it 'updates the children_balance values of parents of the old account'
+    end
+
+    context 'with deleted transaction items' do
+      it 'updates indexes for the following items'
     end
   end
 
