@@ -2,9 +2,15 @@
 # necessary balance adjustments are made
 class TransactionManager
 
-  def initialize(entity)
-    raise 'An entity must be specified' unless entity
-    @entity = entity
+  def initialize(entity_or_transaction)
+    if entity_or_transaction.is_a?(Entity)
+      @entity = entity_or_transaction
+    elsif entity_or_transaction.is_a?(Transaction)
+      @transaction = entity_or_transaction
+      @entity = @transaction.entity
+    else
+      raise 'An entity or a transaction must be specified'
+    end
   end
 
   def create!(attributes)
@@ -21,26 +27,26 @@ class TransactionManager
     transaction
   end
 
-  def delete!(transaction)
-    items = transaction.items.to_a
+  def destroy!
+    items = @transaction.items.to_a
     ActiveRecord::Base.transaction do
-      transaction.destroy!
+      @transaction.destroy!
       account_deltas = items.
         group_by(&:account).
         flat_map do |account, _|
-          process_items_as_of(account, transaction.transaction_date)
+          process_items_as_of(account, @transaction.transaction_date)
       end
       process_account_deltas(account_deltas)
     end
   end
 
-  def update!(transaction)
+  def update!
     ActiveRecord::Base.transaction do
-      processing_date = [transaction.transaction_date, transaction.transaction_date_was].min
-      dereferenced_accounts = get_dereferenced_accounts(transaction)
+      processing_date = [@transaction.transaction_date, @transaction.transaction_date_was].min
+      dereferenced_accounts = get_dereferenced_accounts(@transaction)
 
-      transaction.save!
-      account_deltas = transaction.items.
+      @transaction.save!
+      account_deltas = @transaction.items.
         group_by(&:account).
         flat_map do |account, _|
           process_items_as_of(account, processing_date)

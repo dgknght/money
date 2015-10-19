@@ -128,20 +128,20 @@ describe TransactionManager do
     it 'does not create a new transaciton record' do
       expect do
         transaction.description = "Something else"
-        TransactionManager.new(entity).update!(transaction)
+        TransactionManager.new(transaction).update!
       end.not_to change(Transaction, :count)
     end
 
     it 'saves the specified transaction' do
       transaction.description = "Something else"
-      TransactionManager.new(entity).update!(transaction)
+      TransactionManager.new(transaction).update!
       fetched = Transaction.find(transaction.id)
       expect(fetched.description).to eq("Something else")
     end
 
     it 'saves the transaction items' do
       transaction.items.each{|i| i.amount = 1_001}
-      TransactionManager.new(entity).update!(transaction)
+      TransactionManager.new(transaction).update!
       fetched = Transaction.find(transaction.id)
       fetched.items.each do |item|
         expect(item.amount).to eq(1_001)
@@ -153,7 +153,7 @@ describe TransactionManager do
         transaction.items.each{|i| i.amount = 1_234}
         salary_item = transaction.items.select{|i| i.account_id == salary.id}.first
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary_item.reload
         end.to change(salary_item, :balance).by(234)
       end
@@ -165,7 +165,7 @@ describe TransactionManager do
           salary_item = after_transaction.items.where(account_id: salary.id).first
           transaction.items.each{|i| i.amount = 1_111}
           expect do
-            TransactionManager.new(entity).update!(transaction)
+            TransactionManager.new(transaction).update!
             salary_item.reload
           end.to change(salary_item, :balance).by(111)
         end
@@ -175,7 +175,7 @@ describe TransactionManager do
         salary.reload #must reload after creating the transaction in the setup
         transaction.items.each{|i| i.amount = 1_100}
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary.reload
         end.to change(salary, :balance).by(100)
       end
@@ -191,7 +191,7 @@ describe TransactionManager do
 
           savings.reload
           expect do
-            TransactionManager.new(entity).update!(savings_transaction)
+            TransactionManager.new(savings_transaction).update!
             savings.reload
           end.to change(savings, :children_balance).by(100)
         end
@@ -205,7 +205,7 @@ describe TransactionManager do
         transaction.transaction_date = Date.parse('2015-04-01')
         salary_item = transaction.items.where(account_id: salary.id).first
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary_item.reload
         end.to change(salary_item, :index).from(0).to(1)
       end
@@ -214,7 +214,7 @@ describe TransactionManager do
         transaction.transaction_date = Date.parse('2015-04-01')
         salary_item = after_transaction.items.where(account_id: salary.id).first
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary_item.reload
         end.to change(salary_item, :index).from(1).to(0)
       end
@@ -223,7 +223,7 @@ describe TransactionManager do
         transaction.transaction_date = Date.parse('2015-04-01')
         salary_item = after_transaction.items.where(account_id: salary.id).first
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary_item.reload
         end.to change(salary_item, :balance).from(2_000).to(1_000)
       end
@@ -232,7 +232,7 @@ describe TransactionManager do
         after_transaction.transaction_date = Date.parse('2015-01-01')
         salary_item = transaction.items.where(account_id: salary.id).first
         expect do
-          TransactionManager.new(entity).update!(after_transaction)
+          TransactionManager.new(after_transaction).update!
           salary_item.reload
         end.to change(salary_item, :index).from(0).to(1)
       end
@@ -241,7 +241,7 @@ describe TransactionManager do
         after_transaction.transaction_date = Date.parse('2015-01-01')
         salary_item = transaction.items.where(account_id: salary.id).first
         expect do
-          TransactionManager.new(entity).update!(after_transaction)
+          TransactionManager.new(after_transaction).update!
           salary_item.reload
         end.to change(salary_item, :balance).from(1_000).to(2_000)
       end
@@ -258,7 +258,7 @@ describe TransactionManager do
 
         salary_item = after_transaction.items.select{|i| i.account_id == salary.id}.first
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary_item.reload
         end.to change(salary_item, :balance).by(-1_000)
       end
@@ -269,7 +269,7 @@ describe TransactionManager do
 
         salary.reload
         expect do
-          TransactionManager.new(entity).update!(transaction)
+          TransactionManager.new(transaction).update!
           salary.reload
         end.to change(salary, :balance).by(-1_000)
       end
@@ -283,7 +283,7 @@ describe TransactionManager do
           savings.reload
 
           expect do
-            TransactionManager.new(entity).update!(savings_transaction)
+            TransactionManager.new(savings_transaction).update!
             savings.reload
           end.to change(savings, :children_balance).by(-300)
         end
@@ -309,7 +309,7 @@ describe TransactionManager do
         expect do
           to_delete.destroy
           savings_transaction.items.select{|i| !i.destroyed?}.each{|i| i.amount = 1000}
-          TransactionManager.new(entity).update!(savings_transaction)
+          TransactionManager.new(savings_transaction).update!
           car_item.reload
         end.to change(car_item, :index).by(-1)
       end
@@ -340,20 +340,20 @@ describe TransactionManager do
 
     it 'removes the transaction record from the system' do
       expect do
-        TransactionManager.new(entity).delete!(t1)
+        TransactionManager.new(t1).destroy!
       end.to change(Transaction, :count).by(-1)
     end
 
     it 'removes the transaction item records from the system' do
       expect do
-        TransactionManager.new(entity).delete!(t1)
+        TransactionManager.new(t1).destroy!
       end.to change(TransactionItem, :count).by(-2)
     end
 
     it 'updates the balance of the referenced accounts' do
       salary.reload
       expect do
-        TransactionManager.new(entity).delete!(t1)
+        TransactionManager.new(t1).destroy!
         salary.reload
       end.to change(salary, :balance).by(-999)
     end
@@ -364,7 +364,7 @@ describe TransactionManager do
       it 'updates the children_balance values of parents of the referenced accounts' do
         savings.reload
         expect do
-          TransactionManager.new(entity).delete!(savings_transaction)
+          TransactionManager.new(savings_transaction).destroy!
           savings.reload
         end.to change(savings, :children_balance).by(-1_000)
       end
