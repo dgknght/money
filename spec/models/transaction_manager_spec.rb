@@ -255,7 +255,28 @@ describe TransactionManager do
     end
 
     context 'with deleted transaction items' do
-      it 'updates indexes for the following items'
+      include_context :savings
+      let!(:another_transaction) do
+        TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-06-01'),
+                                               description: "Another bonus",
+                                               items_attributes: [{action: TransactionItem.credit,
+                                                                   account_id: salary.id,
+                                                                   amount: 1_000},
+                                                                  {action: TransactionItem.debit,
+                                                                   account_id: car.id,
+                                                                   amount: 1_000}])
+      end
+
+      it 'updates indexes for the following items' do
+        to_delete = savings_transaction.items.select{|i| i.account_id == car.id}.first
+        car_item = another_transaction.items(true).select{|i| i.account_id == car.id}.first
+        expect do
+          to_delete.destroy
+          savings_transaction.items.select{|i| !i.destroyed?}.each{|i| i.amount = 1000}
+          TransactionManager.new(entity).update!(savings_transaction)
+          car_item.reload
+        end.to change(car_item, :index).by(-1)
+      end
     end
   end
 
