@@ -21,6 +21,19 @@ class TransactionManager
     transaction
   end
 
+  def delete!(transaction)
+    items = transaction.items.to_a
+    ActiveRecord::Base.transaction do
+      transaction.destroy!
+      account_deltas = items.
+        group_by(&:account).
+        flat_map do |account, _|
+          process_items_as_of(account, transaction.transaction_date)
+      end
+      process_account_deltas(account_deltas)
+    end
+  end
+
   def update!(transaction)
     ActiveRecord::Base.transaction do
       processing_date = [transaction.transaction_date, transaction.transaction_date_was].min

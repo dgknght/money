@@ -30,7 +30,7 @@ describe TransactionManager do
     let (:savings) { FactoryGirl.create(:asset_account, name: "Savings", entity: entity) }
     let!(:car) { FactoryGirl.create(:asset_account, name: "Car", entity: entity, parent: savings) }
     let!(:reserve) { FactoryGirl.create(:asset_account, name: "Reserve", entity: entity, parent: savings) }
-    let (:savings_transaction) do
+    let!(:savings_transaction) do
       TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-01-01'),
                                               description: "Bonus",
                                               items_attributes: [{ action: TransactionItem.credit,
@@ -83,7 +83,6 @@ describe TransactionManager do
 
       it 'updates the #children-balance of each account in the parent chain of the referenced accounts' do
         expect do
-          savings_transaction # force the transaction to be created
           savings.reload
         end.to change(savings, :children_balance).by(1_000)
       end
@@ -281,8 +280,57 @@ describe TransactionManager do
   end
 
   describe '#delete!' do
-    it 'remove the transaction record from the system'
-    it 'updates the balance of the referenced accounts'
-    it 'updates the children_balance values of parents of the referenced accounts'
+    let!(:t1) do
+      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-01-01'),
+                                             description: 'Paycheck',
+                                             items_attributes: [{action: TransactionItem.credit,
+                                                                 account_id: salary.id,
+                                                                 amount: 999},
+                                                                {action: TransactionItem.debit,
+                                                                 account_id: checking.id,
+                                                                 amount: 999}])
+    end
+    let!(:t2) do
+      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-02-01'),
+                                             description: 'Paycheck',
+                                             items_attributes: [{action: TransactionItem.credit,
+                                                                 account_id: salary.id,
+                                                                 amount: 1_000},
+                                                                {action: TransactionItem.debit,
+                                                                 account_id: checking.id,
+                                                                 amount: 1_000}])
+    end
+
+    it 'removes the transaction record from the system' do
+      expect do
+        TransactionManager.new(entity).delete!(t1)
+      end.to change(Transaction, :count).by(-1)
+    end
+
+    it 'removes the transaction item records from the system' do
+      expect do
+        TransactionManager.new(entity).delete!(t1)
+      end.to change(TransactionItem, :count).by(-2)
+    end
+
+    it 'updates the balance of the referenced accounts' do
+      salary.reload
+      expect do
+        TransactionManager.new(entity).delete!(t1)
+        salary.reload
+      end.to change(salary, :balance).by(-999)
+    end
+
+    context 'when next accounts are present' do
+      include_context :savings
+
+      it 'updates the children_balance values of parents of the referenced accounts' do
+        savings.reload
+        expect do
+          TransactionManager.new(entity).delete!(savings_transaction)
+          savings.reload
+        end.to change(savings, :children_balance).by(-1_000)
+      end
+    end
   end
 end
