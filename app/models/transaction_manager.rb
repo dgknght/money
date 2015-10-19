@@ -37,6 +37,8 @@ class TransactionManager
   def update!(transaction)
     ActiveRecord::Base.transaction do
       processing_date = [transaction.transaction_date, transaction.transaction_date_was].min
+      dereferenced_accounts = get_dereferenced_accounts(transaction)
+
       transaction.save!
       account_deltas = transaction.items.
         group_by(&:account).
@@ -44,11 +46,29 @@ class TransactionManager
           process_items_as_of(account, processing_date)
       end
 
+      account_deltas += dereferenced_accounts.flat_map do |account|
+        process_items_as_of(account, processing_date)
+      end
+
       process_account_deltas(account_deltas)
     end
   end
 
   private
+
+  # Return a list of accounts that used to be referenced by one or
+  # more items in the transaction, but that are now no longer referenced
+  def get_dereferenced_accounts(transaction)
+    current_account_ids = transaction.items.map(&:account_id)
+    old_accounts = transaction.items.
+      lazy.
+      reject(&:destroyed?).
+      select(&:account_id_changed?).
+      map(&:account_id_was).
+      reject{|id| current_account_ids.include?(id)}.
+      map{|id| Account.find(id)}.
+      to_a
+  end
 
   # Given a list of maps where the keys are accounts
   # and the values are deltas, aggregate the deltas by
@@ -83,7 +103,7 @@ class TransactionManager
 
     account.parents.map do |parent|
       { account: parent, delta: delta }
-    end
+    end.reject{|d| d[:delta] == 0}
   end
 
   # Given a list of items in index order, recalculate the

@@ -248,9 +248,46 @@ describe TransactionManager do
     end
 
     context 'with updated accounts' do
-      it 'updates the following transactions in the old account'
-      it 'updates the balance of the old account'
-      it 'updates the children_balance values of parents of the old account'
+      include_context :after_transactions
+
+      let!(:bonus) { FactoryGirl.create(:income_account, name: 'Bonus', entity: entity) }
+
+      it 'updates the following transactions in the old account' do
+        income_item = transaction.items.select{|i| i.account_id == salary.id}.first
+        income_item.account = bonus
+
+        salary_item = after_transaction.items.select{|i| i.account_id == salary.id}.first
+        expect do
+          TransactionManager.new(entity).update!(transaction)
+          salary_item.reload
+        end.to change(salary_item, :balance).by(-1_000)
+      end
+
+      it 'updates the balance of the old account' do
+        income_item = transaction.items.select{|i| i.account_id == salary.id}.first
+        income_item.account = bonus
+
+        salary.reload
+        expect do
+          TransactionManager.new(entity).update!(transaction)
+          salary.reload
+        end.to change(salary, :balance).by(-1_000)
+      end
+
+      context 'when nested accounts are present' do
+        include_context :savings
+
+        it 'updates the children_balance values of parents of the old account' do
+          item = savings_transaction.items.select{|i| i.account_id == car.id}.first
+          item.account_id = checking.id
+          savings.reload
+
+          expect do
+            TransactionManager.new(entity).update!(savings_transaction)
+            savings.reload
+          end.to change(savings, :children_balance).by(-300)
+        end
+      end
     end
 
     context 'with deleted transaction items' do
