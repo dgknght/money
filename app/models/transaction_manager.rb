@@ -37,19 +37,12 @@ class TransactionManager
 
   private
 
-  # Returns all of the itmes in the account associate with the
-  # transaction item having an index greater than the specified 
-  # item
-  def after_items_by_index(item)
-    item.account.transaction_items.where(['transaction_items."index" > ?', item.index])
-  end
-
   # Given a list of maps where the keys are accounts
   # and the values are deltas, aggregate the deltas by
   # account, then update the children_balance for each
   # account with the aggregation of the deltas
   def process_account_deltas(deltas)
-    grouped = deltas.
+    deltas.
       group_by{|m| m[:account]}.
       map do |k, v|
         { account: k,
