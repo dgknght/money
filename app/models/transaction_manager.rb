@@ -20,6 +20,8 @@ class TransactionManager
   end
 
   def create!
+    raise "Cannot create a transaction that already exists." if transaction.persisted?
+
     ActiveRecord::Base.transaction do
       account_deltas = transaction.items.
         group_by(&:account).
@@ -30,6 +32,18 @@ class TransactionManager
       transaction.save!
     end
     transaction
+  end
+
+  def self.create_simple(entity, attributes)
+    expanded_attributes = {transaction_date: attributes[:transaction_date],
+                           description: attributes[:description],
+                           items_attributes: [{action: TransactionItem.debit,
+                                               account: attributes[:debit_account],
+                                               amount: attributes[:amount]},
+                                              {action: TransactionItem.credit,
+                                               account: attributes[:credit_account],
+                                               amount: attributes[:amount]}]}
+    create(entity, expanded_attributes)
   end
 
   def destroy
@@ -125,7 +139,7 @@ class TransactionManager
     last_index, last_balance = process_items(after_items, last_index, last_balance, true)
 
     delta = last_balance - account.balance
-    account.balance = last_balance
+    account.balance = account.value = account.cost = last_balance
     account.save!
 
     account.parents.map do |parent|
