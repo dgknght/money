@@ -24,8 +24,20 @@ describe Account do
   end
 
   shared_context 'savings transactions' do
-    let!(:car_opening) { FactoryGirl.create(:transaction, amount: 1_000, debit_account: car, credit_account: opening_balances) }
-    let!(:reserve_opening) { FactoryGirl.create(:transaction, amount: 24_000, debit_account: reserve, credit_account: opening_balances) }
+    let!(:car_opening) do
+      TransactionManager.create_simple(entity, transaction_date: Chronic.parse('2015-01-01'),
+                                               description: 'Opening balance',
+                                               amount: 1_000,
+                                               debit_account: car,
+                                               credit_account: opening_balances)
+    end
+    let!(:reserve_opening) do
+      TransactionManager.create_simple(entity, transaction_date: Chronic.parse('2015-01-01'),
+                                               description: 'Opening balance',
+                                               amount: 24_000,
+                                               debit_account: reserve,
+                                               credit_account: opening_balances)
+    end
   end
 
   shared_context 'investment accounts' do
@@ -57,16 +69,16 @@ describe Account do
   end
 
   shared_context 'currency as of' do
-    let!(:paycheck1) { FactoryGirl.create(:transaction, transaction_date: '2015-01-01',
-                                          description: 'Paycheck',
-                                          amount: 1_000,
-                                          debit_account: checking,
-                                          credit_account: salary) }
-    let!(:paycheck2) { FactoryGirl.create(:transaction, transaction_date: '2015-01-15',
-                                          description: 'Paycheck',
-                                          amount: 1_000,
-                                          debit_account: checking,
-                                          credit_account: salary) }
+    let!(:paycheck1) { TransactionManager.create_simple(entity, transaction_date: '2015-01-01',
+                                                                description: 'Paycheck',
+                                                                amount: 1_000,
+                                                                debit_account: checking,
+                                                                credit_account: salary) }
+    let!(:paycheck2) { TransactionManager.create_simple(entity, transaction_date: '2015-01-15',
+                                                                description: 'Paycheck',
+                                                                amount: 1_000,
+                                                                debit_account: checking,
+                                                                credit_account: salary) }
   end
 
   it 'should be creatable from valid attributes' do
@@ -155,28 +167,33 @@ describe Account do
     let!(:food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id) }
     let!(:non_food) { FactoryGirl.create(:expense_account, name: 'Food', parent_id: groceries.id) }
     let!(:t1) do
-      FactoryGirl.create(:transaction,
-                         amount: 1_000,
-                         debit_account: checking,
-                         credit_account: opening_balances)
-    end
-    let!(:t1) do
-      FactoryGirl.create(:transaction,
-                         amount: 1_000,
-                         debit_account: checking,
-                         credit_account: opening_balances)
+      TransactionManager.create_simple(entity, transaction_date: Date.parse('2015-01-01'),
+                                               description: 'Opening balance',
+                                               amount: 1_000,
+                                               debit_account: checking,
+                                               credit_account: opening_balances)
     end
     let!(:t2) do
-      FactoryGirl.create(:transaction,
-                         amount: 11,
-                         debit_account: food,
-                         credit_account: checking)
+      TransactionManager.create(entity, transaction_date: Date.parse('2015-01-02'),
+                                        description: 'Kroger',
+                                        items_attributes: [{action: TransactionItem.credit,
+                                                            account: checking,
+                                                            amount: 23},
+                                                           {action: TransactionItem.debit,
+                                                            account: food,
+                                                            amount: 11},
+                                                           {action: TransactionItem.debit,
+                                                            account: non_food,
+                                                            amount: 12}])
     end
-    let!(:t3) do
-      FactoryGirl.create(:transaction,
-                         amount: 12,
-                         debit_account: non_food,
-                         credit_account: checking)
+  end
+
+  describe '#children_balance' do
+    include_context 'groceries'
+
+    it 'should be the sum of the balance_with_children values of the children' do
+      groceries.reload
+      groceries.children_balance.should == 23
     end
   end
 
@@ -236,9 +253,9 @@ describe Account do
   end
 
   describe '#parents' do
-    let (:p1) { FactoryGirl.create(:asset_account, 'P1') }
-    let (:p2) { FactoryGirl.create(:asset_account, 'P2', parent: p1) }
-    let!(:c) { FactoryGirl.create(:asset_account, 'C', parent: p2) }
+    let (:p1) { FactoryGirl.create(:asset_account, name: 'P1') }
+    let (:p2) { FactoryGirl.create(:asset_account, name: 'P2', parent: p1) }
+    let!(:c) { FactoryGirl.create(:asset_account, name: 'C', parent: p2) }
 
     it 'returns all of the parents in the chain for the account' do
       expect(['P2', 'P1']).to eq(c.parents.map(&:name))
@@ -596,24 +613,24 @@ describe Account do
     end
 
     describe '#value_as_of' do
-      let!(:p1) { FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-01'),
-                                                   description: 'Paycheck',
-                                                   entity: entity,
-                                                   amount: 1000,
-                                                   debit_account: checking,
-                                                   credit_account: salary) }
-      let!(:g1) { FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-04'),
-                                                   description: 'Kroger',
-                                                   entity: entity,
-                                                   amount: 100,
-                                                   debit_account: groceries,
-                                                   credit_account: checking) }
-      let!(:p2) { FactoryGirl.create(:transaction, transaction_date: Chronic.parse('2015-01-15'),
-                                                   description: 'Paycheck',
-                                                   entity: entity,
-                                                   amount: 1000,
-                                                   debit_account: checking,
-                                                   credit_account: salary) }
+      let!(:p1) { TransactionManager.create_simple(entity, transaction_date: Chronic.parse('2015-01-01'),
+                                                           description: 'Paycheck',
+                                                           entity: entity,
+                                                           amount: 1000,
+                                                           debit_account: checking,
+                                                           credit_account: salary) }
+      let!(:g1) { TransactionManager.create_simple(entity, transaction_date: Chronic.parse('2015-01-04'),
+                                                           description: 'Kroger',
+                                                           entity: entity,
+                                                           amount: 100,
+                                                           debit_account: groceries,
+                                                           credit_account: checking) }
+      let!(:p2) { TransactionManager.create_simple(entity, transaction_date: Chronic.parse('2015-01-15'),
+                                                           description: 'Paycheck',
+                                                           entity: entity,
+                                                           amount: 1000,
+                                                           debit_account: checking,
+                                                           credit_account: salary) }
       it 'should return the balance_as_of value' do
         expect(checking.value_as_of('2015-01-02')).to eq(1000)
         expect(checking.value_as_of('2015-01-04')).to eq(900)
@@ -855,159 +872,6 @@ describe Account do
                                        description: 'paycheck',
                                        debit_account: checking,
                                        credit_account: salary)
-    end
-  end
-
-  describe '#first_transaction_item' do
-    include_context 'misc transactions'
-
-    it 'is nil for an account with no transaction items' do
-      expect(checking.first_transaction_item).to be_nil
-    end
-
-    it 'is the item with the earliest date for accounts with at least one transaction item' do
-      t2 # create the first transaction
-      checking.reload
-      expect(checking.first_transaction_item.transaction_date.to_s).to eq('2015-01-02')
-    end
-
-    it 'is updated when a new transaction is created with date that is earlier than the existing first' do
-      t2 # create the first transaction
-      item = t1.items.select{|i| i.account_id == checking.id}.first # create the second transaction
-
-      expect(checking.first_transaction_item_id).to eq(item.id)
-    end
-  end
-
-  describe '#head_transaction_item' do
-    include_context 'misc transactions'
-
-    it 'is nil for an account with no transaction items' do
-      expect(checking.head_transaction_item).to be_nil
-    end
-
-    it 'is the item with the latest date for accounts with at least one transaction item' do
-      t2 # create the first transaction item
-      expect(checking.head_transaction_item.transaction_date.to_s).to eq('2015-01-02')
-    end
-
-    it 'is updated when a new transaction is created with date that is later than the existing head' do
-      t1 # create the second transaction item
-      item = t2.items.select{|i| i.account_id == checking.id}.first  # create the first transaction item
-      expect(checking.head_transaction_item_id).to eq(item.id)
-    end
-  end
-
-  describe 'creating a transaction' do
-    include_context 'misc transactions'
-    include_context 'savings accounts'
-    let (:st1) do
-      FactoryGirl.create(:transaction, amount: 989,
-                                       transaction_date: '2014-04-01',
-                                       credit_account: opening_balances,
-                                       debit_account: reserve)
-    end
-    let (:st2) do
-      FactoryGirl.create(:transaction, amount: 234,
-                                       transaction_date: '2014-04-02',
-                                       credit_account: opening_balances,
-                                       debit_account: reserve)
-    end
-
-    context 'the first time' do
-      it 'updates the balance' do
-        expect do
-          t1
-        end.to change(checking, :balance).by(999)
-      end
-
-      it 'updates the balance with children' do
-        expect do
-          st1
-        end.to change(savings, :balance_with_children).by(989)
-      end
-    end
-
-    context 'with an appending transaction' do
-      it 'updates the balance' do
-        t1
-        expect do
-          t2
-        end.to change(checking, :balance).by(1_000)
-      end
-
-      it 'updates the balance with children' do
-        st1
-        expect do
-          st2
-          savings.reload
-        end.to change(savings, :balance_with_children).by(234)
-      end
-    end
-
-    context 'with a prepending transaction' do
-      it 'updates the balance' do
-        t2
-        expect do
-          t1
-          checking.reload
-        end.to change(checking, :balance).by(999)
-      end
-
-      it 'updates the balance with children' do
-        st2
-        expect do
-          st1
-          savings.reload
-        end.to change(savings, :balance_with_children).by(989)
-      end
-    end
-  end
-
-  describe '#transaction_items_backward' do
-    let (:t1) do
-      FactoryGirl.create(:transaction, entity: entity,
-                                       transaction_date: Chronic.parse('2015-01-01'),
-                                       description: 'Paycheck',
-                                       amount: 2_000,
-                                       debit_account: checking,
-                                       credit_account: salary)
-    end
-    let (:t2) do
-      FactoryGirl.create(:transaction, entity: entity,
-                                       transaction_date: Chronic.parse('2015-01-04'),
-                                       description: 'Market Street',
-                                       amount: 100,
-                                       debit_account: groceries,
-                                       credit_account: checking)
-    end
-    let (:t3) do
-      FactoryGirl.create(:transaction, entity: entity,
-                                       transaction_date: Chronic.parse('2015-01-15'),
-                                       description: 'Paycheck',
-                                       amount: 2_000,
-                                       debit_account: checking,
-                                       credit_account: salary)
-    end
-    context 'when items are added in sequence' do
-      it 'enumerates the transactions items in reverse chronological order' do
-        t1
-        t2
-        t3
-        actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
-        expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
-      end
-    end
-
-    context 'when items are added out of sequence' do
-      it 'enumerates the transactions items in reverse chronological order' do
-        t1
-        t3
-        t2
-        checking.reload
-        actual = checking.transaction_items_backward.map{|i| i.transaction_date.to_s}
-        expect(actual).to eq(%w(2015-01-15 2015-01-04 2015-01-01))
-      end
     end
   end
 end

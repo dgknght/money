@@ -112,6 +112,10 @@ class Account < ActiveRecord::Base
     balance + children_balance
   end
 
+  def balance_with_children=(value)
+    Rails.logger.warn "Attempt to set balance with children"
+  end
+
   def balance_with_children_as_of(date, force_reload = false)
     # force_reload is a no-op here because there is no caching
 
@@ -246,23 +250,6 @@ class Account < ActiveRecord::Base
     save!
   end
 
-  def recalculate_balances(opts = {})
-    return if entity.suspend_balance_recalculations
-
-    with_children_only = opts.fetch(:with_children_only, false)
-    force_reload = opts.fetch(:force_reload, false)
-    recalculation_fields(opts).each do |field|
-      recalculate_field(field, force_reload) unless with_children_only
-      recalculate_field("#{field}_with_children", force_reload)
-    end
-    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
-  end
-
-  def recalculate_balances!(opts = {})
-    recalculate_balances(opts)
-    save!
-  end
-
   def root?
     self.parent_id.nil?
   end
@@ -371,7 +358,41 @@ class Account < ActiveRecord::Base
       errors.add(:parent_id, 'must have the same account type') unless parent_is_same_type?
     end
 
+    def recalculation_fields(opts)
+      all_fields = %w(balance value cost gains)
+      if opts[:only]
+        Array(opts[:only])
+      elsif opts[:except]
+        except = Array(opts[:except])
+        all_fields.reject{|f| except.include?(f)}
+      else
+        all_fields
+      end
+    end
+
+    def recalculate_field(field, force_reload = false)
+      # Assume that most of the time the balance 
+      # will not need to be updated
+      method = "#{field}_as_of".to_sym
+      current = send(method, END_OF_TIME, force_reload)
+      send("#{field}=", current)
+    end
+
     def set_defaults
       self.content_type ||= Account.currency_content
+    end
+
+    def update_local_balance(field, delta)
+      new_value = send(field) + delta
+      send("#{field}=", new_value)
+    end
+
+    def update_local_balances(delta)
+      %w(balance cost value).each do |field|
+        update_local_balance(field, delta)
+        update_local_balance("#{field}_with_children", delta)
+      end
+      parent.recalculate_balances(with_children_only: true) if parent
+      balance
     end
 end
