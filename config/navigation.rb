@@ -5,7 +5,6 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.selected_class = 'active'
     primary.dom_class = 'nav nav-pills'
     if user_signed_in?
-      primary.item :single_page, 'Single page', app_path
       primary.item :home, 'Home', home_path
       primary.item :entities, 'Entities', entities_path
       if current_entity
