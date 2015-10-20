@@ -17,6 +17,8 @@
 #
 
 class TransactionItem < ActiveRecord::Base
+  before_destroy :ensure_not_reconciled
+
   ACTIONS = %w(debit credit)
   class << self
     ACTIONS.each do |action|
