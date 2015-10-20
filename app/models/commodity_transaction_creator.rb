@@ -192,7 +192,7 @@ class CommodityTransactionCreator
                                              amount: value + numeric_fee,
                                              action: TransactionItem.credit,
                                              memo: payment_memo)
-    transaction.save!
+    TransactionManager.new(transaction).create!
     transaction
   end
 
@@ -211,7 +211,7 @@ class CommodityTransactionCreator
     transaction = account.entity.transactions.new(transaction_date: transaction_date,
                                                   description: sale_description)
     add_sell_transaction_items transaction, sale_results
-    transaction.save!
+    TransactionManager.new(transaction).create!
     transaction
   rescue StandardError => e
     Rails.logger.error "Unable to create the transaction for the commodity sale:\n  #{transaction.errors.full_messages.to_sentence}\n  transaction=#{transaction.inspect}\n  items=#{transaction.items.map{|i| i.inspect}.join("\n    ")}"
