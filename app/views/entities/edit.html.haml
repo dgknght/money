@@ -1,8 +1,8 @@
-%h2#page_title Edit entity
-
-=render "shared/errors", :resource => @entity
-
 .row
-  .col-md-3
+  .col-md-4.col-md-offset-4
+    %h2#page_title Edit entity
+
+    =render "shared/errors", :resource => @entity
+
     =form_for(@entity) do |f|  
       =render "form_fields", entity: @entity, f: f

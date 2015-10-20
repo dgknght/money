@@ -23,7 +23,8 @@
       #navbar.collapse.navbar-collapse
         =render_navigation
   .container
-    =yield
+    .main-content
+      =yield
   =javascript_include_tag 'application'
   =javascript_include_tag params[:controller]
   =stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'

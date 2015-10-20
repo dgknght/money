@@ -1,6 +1,8 @@
-%h2#page_title Accounts
+.row
+  .col-md-6.col-md-offset-3
+    %h2#page_title Accounts
 
-=render 'accounts_table', accounts: @accounts
-.actions
-  =link_to 'Add', new_entity_account_path(@entity), class: 'add_button', title: 'Click here to add an account.'
-  =link_to 'Back', entities_path, class: 'back_button', title: 'Click here to return to the list of entities.'
+    =render 'accounts_table', accounts: @accounts
+    .actions.btn-group
+      =link_to 'Add', new_entity_account_path(@entity), class: 'btn btn-default', title: 'Click here to add an account.'
+      =link_to 'Back', entities_path, class: 'btn btn-default', title: 'Click here to return to the list of entities.'

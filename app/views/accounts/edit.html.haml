@@ -1,8 +1,8 @@
-%h2#page_title Edit account
-
-=render "shared/errors", :resource => @account
-
 .row
-  .col-md-4
+  .col-md-4.col-md-offset-4
+    %h2#page_title Edit account
+
+    =render "shared/errors", :resource => @account
+
     =form_for(@account) do |f|  
       =render "form_fields", account: @account, f: f

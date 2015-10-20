@@ -6,7 +6,8 @@
     =render 'shared/errors', :resource => @importer
     -if @error_message
       .alert.alert-danger
-        An error occurred while performing the import operation.
+        %strong
+          An error occurred while performing the import operation.
         %br
         =@error_message
 
@@ -17,4 +18,6 @@
       .form-group
         =f.label :data
         =f.file_field :data, class: 'form-control'
-      =submit_tag "Save", class: 'save_button'
+      .btn-group
+        =submit_tag "Save", class: 'btn btn-primary'
+        =link_to "Cancel", entities_path, class: 'btn btn-default'

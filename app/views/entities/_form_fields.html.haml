@@ -2,6 +2,6 @@
   =f.label :name
   %br
   =f.text_field :name, class: 'form-control', autofocus: true
-.actions
-  =f.submit "Save", class: 'save_button', title: 'Click here to save the entity.'
-  =link_to "Back", entities_path, class: 'back_button', title: 'Click here to return the list of entities.'
+.actions.btn-group
+  =f.submit "Save", class: 'btn btn-primary', title: 'Click here to save the entity.'
+  =link_to "Back", entities_path, class: 'btn btn-default', title: 'Click here to return the list of entities.'

@@ -35,4 +35,16 @@ module ApplicationHelper
   def html_true?(value)
     %w(1 true yes).include?(value)
   end
+
+  def edit_link(path, title)
+    link_to(path, class: 'btn btn-default btn-xs', title: title) do
+      content_tag :span, nil, class: 'glyphicon glyphicon-pencil', aria: {hidden: 'true'}
+    end
+  end
+
+  def delete_link(path, title, confirm)
+    button_to(path, method: :delete, class: 'btn btn-default btn-xs', title: title, confirm: confirm) do
+      content_tag :span, nil, class: 'glyphicon glyphicon-remove', area: {hidden: 'true'}
+    end
+  end
 end
