@@ -9,8 +9,4 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require common
- *= require jquery-ui-1.10.3.custom.min
  */
-@import "bootstrap-sprockets";
-@import "bootstrap";

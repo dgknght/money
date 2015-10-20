@@ -1,34 +1,29 @@
 !!!
-%html
+%html{:lang => "en"}
   %head
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    / The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+    %meta{:content => "", :name => "description"}/
+    %meta{:content => "", :name => "author"}/
     %title Money
-    = stylesheet_link_tag    "application", :media => "all"
-    = stylesheet_link_tag    params[:controller], :media => "all"
-    = javascript_include_tag "application"
-    = javascript_include_tag params[:controller]
-    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
-    = csrf_meta_tags
-    -unless suppress_ajax_redirect?
-      :javascript
-        $(function() {
-          // If javascript is enabled, hide the HTML only nav and show the ajax nav
-          $('#html_nav').hide();
-          $('#ajax_nav').show();
-        });
-  %body
-    .container-fluid
-      .row#header
-        .col-md-6
-          %nav{role: "navigation"}
-            #html_nav
-              =render_navigation levels: 1
-            #ajax_nav{ style: "display: none;" }
-              =render_navigation context: :ajax, levels: 1
-        .col-md-1
-          -if user_signed_in?
-            .current_user
-              =current_user.email
-
-      #content
-        = render "shared/flash", :flash => flash
-        = yield
+    =stylesheet_link_tag 'application', media: :all
+    =stylesheet_link_tag params[:controller], media: :all
+%body
+  %nav.navbar.navbar-inverse.navbar-fixed-top
+    .container
+      .navbar-header
+        %button.navbar-toggle.collapsed{"aria-controls" => "navbar", "aria-expanded" => "false", "data-target" => "#navbar", "data-toggle" => "collapse", :type => "button"}
+          %span.sr-only Toggle navigation
+          %span.icon-bar
+          %span.icon-bar
+          %span.icon-bar
+        =link_to 'Money', root_path, class: 'navbar-brand'
+      #navbar.collapse.navbar-collapse
+        =render_navigation
+  .container
+    =yield
+  =javascript_include_tag 'application'
+  =javascript_include_tag params[:controller]
+  =stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'

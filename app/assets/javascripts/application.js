@@ -12,6 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require lib/jquery-ui-1.10.3.custom.min
-//= require bootstrap-sprockets
+//= require jquery-ui
+//= require twitter/bootstrap
 //= require common
