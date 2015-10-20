@@ -23,18 +23,6 @@ describe Transaction do
     transaction.should have(2).items
   end
 
-  it 'should update the balance for the first referenced account' do
-    expect do
-      Transaction.create!(attributes)
-    end.to change(checking, :balance).by(-34.43)
-  end
-
-  it 'should update the balance for the second (and remaining) referenced account' do
-    expect do
-      Transaction.create!(attributes)
-    end.to change(groceries, :balance).by(34.43)
-  end
-
   describe '#transaction_date' do
     it "should default to today's date" do
       transaction = Transaction.new(attributes.without(:transaction_date))
