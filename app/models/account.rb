@@ -2,24 +2,22 @@
 #
 # Table name: accounts
 #
-#  id                        :integer          not null, primary key
-#  name                      :string(255)      not null
-#  account_type              :string(255)      not null
-#  created_at                :datetime
-#  updated_at                :datetime
-#  balance                   :decimal(, )      default(0.0), not null
-#  entity_id                 :integer          not null
-#  parent_id                 :integer
-#  content_type              :string(20)
-#  cost                      :decimal(, )      default(0.0), not null
-#  gains                     :decimal(, )      default(0.0), not null
-#  value                     :decimal(, )      default(0.0), not null
-#  cost_with_children        :decimal(, )      default(0.0), not null
-#  gains_with_children       :decimal(, )      default(0.0), not null
-#  value_with_children       :decimal(, )      default(0.0), not null
-#  head_transaction_item_id  :integer
-#  first_transaction_item_id :integer
-#  children_balance          :decimal(, )      default(0.0), not null
+#  id                  :integer          not null, primary key
+#  name                :string(255)      not null
+#  account_type        :string(255)      not null
+#  created_at          :datetime
+#  updated_at          :datetime
+#  balance             :decimal(, )      default(0.0), not null
+#  entity_id           :integer          not null
+#  parent_id           :integer
+#  content_type        :string(20)
+#  cost                :decimal(, )      default(0.0), not null
+#  gains               :decimal(, )      default(0.0), not null
+#  value               :decimal(, )      default(0.0), not null
+#  cost_with_children  :decimal(, )      default(0.0), not null
+#  gains_with_children :decimal(, )      default(0.0), not null
+#  value_with_children :decimal(, )      default(0.0), not null
+#  children_balance    :decimal(, )      default(0.0), not null
 #
 
 class Account < ActiveRecord::Base
@@ -229,6 +227,40 @@ class Account < ActiveRecord::Base
   def polarity(action)
     return -1 if (action == TransactionItem.credit && left_side?) || (action == TransactionItem.debit && right_side?)
     1
+  end
+
+  def recalculate_balances(opts = {})
+    return if entity.suspend_balance_recalculations
+
+    with_children_only = opts.fetch(:with_children_only, false)
+    force_reload = opts.fetch(:force_reload, false)
+    recalculation_fields(opts).each do |field|
+      recalculate_field(field, force_reload) unless with_children_only
+      recalculate_field("#{field}_with_children", force_reload)
+    end
+    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
+  end
+
+  def recalculate_balances!(opts = {})
+    recalculate_balances(opts)
+    save!
+  end
+
+  def recalculate_balances(opts = {})
+    return if entity.suspend_balance_recalculations
+
+    with_children_only = opts.fetch(:with_children_only, false)
+    force_reload = opts.fetch(:force_reload, false)
+    recalculation_fields(opts).each do |field|
+      recalculate_field(field, force_reload) unless with_children_only
+      recalculate_field("#{field}_with_children", force_reload)
+    end
+    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
+  end
+
+  def recalculate_balances!(opts = {})
+    recalculate_balances(opts)
+    save!
   end
 
   def root?
