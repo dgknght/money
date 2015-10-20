@@ -16,14 +16,14 @@ describe TransactionManager do
   end
   shared_context :after_transactions do
     let!(:after_transaction) do
-      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-03-01'),
-                                             description: "Paycheck",
-                                             items_attributes: [{ account_id: checking.id,
-                                                                 action: TransactionItem.debit,
-                                                                 amount: 1_000 },
-                                                               { account_id: salary.id,
-                                                                 action: TransactionItem.credit,
-                                                                 amount: 1_000 }])
+      TransactionManager.create(entity, transaction_date: Date.parse('2015-03-01'),
+                                        description: "Paycheck",
+                                        items_attributes: [{ account_id: checking.id,
+                                                            action: TransactionItem.debit,
+                                                            amount: 1_000 },
+                                                          { account_id: salary.id,
+                                                            action: TransactionItem.credit,
+                                                            amount: 1_000 }])
     end
   end
   shared_context :savings do
@@ -31,49 +31,67 @@ describe TransactionManager do
     let!(:car) { FactoryGirl.create(:asset_account, name: "Car", entity: entity, parent: savings) }
     let!(:reserve) { FactoryGirl.create(:asset_account, name: "Reserve", entity: entity, parent: savings) }
     let!(:savings_transaction) do
-      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-01-01'),
-                                              description: "Bonus",
-                                              items_attributes: [{ action: TransactionItem.credit,
-                                                                  account_id: salary.id,
-                                                                  amount: 1_000 },
-                                                                { action: TransactionItem.debit,
-                                                                  account_id: car.id,
-                                                                  amount: 300 },
-                                                                { action: TransactionItem.debit,
-                                                                  account_id: reserve.id,
-                                                                  amount: 700 }])
+      TransactionManager.create(entity, transaction_date: Date.parse('2015-01-01'),
+                                        description: "Bonus",
+                                        items_attributes: [{ action: TransactionItem.credit,
+                                                            account_id: salary.id,
+                                                            amount: 1_000 },
+                                                          { action: TransactionItem.debit,
+                                                            account_id: car.id,
+                                                            amount: 300 },
+                                                          { action: TransactionItem.debit,
+                                                            account_id: reserve.id,
+                                                            amount: 700 }])
+    end
+  end
+
+  shared_context :investments do
+    let (:ira) { FactoryGirl.create(:commodities_account, entity: entity) }
+    let!(:st_gains) { FactoryGirl.create(:income_account, entity: entity, name: 'Short-term capital gains') }
+    let!(:lt_gains) { FactoryGirl.create(:income_account, entity: entity, name: 'Long-term capital gains') }
+    let!(:commodity) { FactoryGirl.create(:commodity, symbol: 'KSS', entity: entity) }
+    let (:commodity_account) { Account.find_by_name('KSS') }
+    let!(:regular_transaction) { FactoryGirl.create(:transaction, entity: entity) }
+    let!(:commodity_purchase_transaction) do
+      CommodityTransactionCreator.new(
+        account: ira,
+        action: CommodityTransactionCreator.buy,
+        symbol: 'KSS',
+        shares: 100,
+        value: 1_000
+      ).create!
     end
   end
 
   describe '#create!' do
     it 'creates a new transaction record' do
       expect do
-        TransactionManager.new(entity).create!(transaction_attributes)
+        TransactionManager.create(entity, transaction_attributes)
       end.to change(Transaction, :count).by(1)
     end
 
     it 'returns the new transaction' do
-      transaction = TransactionManager.new(entity).create!(transaction_attributes)
+      transaction = TransactionManager.create(entity, transaction_attributes)
       expect(transaction).not_to be_nil
       expect(transaction.transaction_date).to eq(Date.parse('2015-02-01'))
       expect(transaction.description).to eq("Paycheck")
     end
 
     it 'sets the #balance of each item in the transaction' do
-      transaction = TransactionManager.new(entity).create!(transaction_attributes)
+      transaction = TransactionManager.create(entity, transaction_attributes)
       checking_item = transaction.items.select{|i| i.account_id = checking.id}.first
       expect(checking_item.balance).to eq(1_000)
     end
 
     it 'sets the #index of each item in the transaction' do
-      transaction = TransactionManager.new(entity).create!(transaction_attributes)
+      transaction = TransactionManager.create(entity, transaction_attributes)
       checking_item = transaction.items.select{|i| i.account_id = checking.id}.first
       expect(checking_item.index).to eq(0)
     end
 
     it 'updates the #balance of each referenced account' do
       expect do
-        TransactionManager.new(entity).create!(transaction_attributes)
+        TransactionManager.create(entity, transaction_attributes)
         checking.reload
       end.to change(checking, :balance).by(1_000)
     end
@@ -92,7 +110,7 @@ describe TransactionManager do
       include_context :after_transactions
 
       it 'updates the #balance of any transaction items after the items in the transaction' do
-        TransactionManager.new(entity).create!(transaction_attributes)
+        TransactionManager.create(entity, transaction_attributes)
         transaction = Transaction.where(transaction_date: Date.parse('2015-03-01')).first
 
         checking_item = transaction.items.where(account_id: checking.id).first
@@ -106,7 +124,7 @@ describe TransactionManager do
         transaction = Transaction.where(transaction_date: Date.parse('2015-03-01')).first
         checking_item = transaction.items.where(account_id: checking.id).first
         expect do
-          TransactionManager.new(entity).create!(transaction_attributes)
+          TransactionManager.create(entity, transaction_attributes)
           checking_item.reload
         end.to change(checking_item, :index).by(1)
       end
@@ -115,14 +133,14 @@ describe TransactionManager do
 
   describe '#update!' do
     let!(:transaction) do
-      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-02-01'),
-                                             description: "Paycheck",
-                                             items_attributes: [{ account_id: checking.id,
-                                                                 action: TransactionItem.debit,
-                                                                 amount: 1_000 },
-                                                               { account_id: salary.id,
-                                                                 action: TransactionItem.credit,
-                                                                 amount: 1_000 }])
+      TransactionManager.create(entity, transaction_date: Date.parse('2015-02-01'),
+                                        description: "Paycheck",
+                                        items_attributes: [{ account_id: checking.id,
+                                                            action: TransactionItem.debit,
+                                                            amount: 1_000 },
+                                                          { account_id: salary.id,
+                                                            action: TransactionItem.credit,
+                                                            amount: 1_000 }])
     end
 
     it 'does not create a new transaciton record' do
@@ -293,14 +311,14 @@ describe TransactionManager do
     context 'with deleted transaction items' do
       include_context :savings
       let!(:another_transaction) do
-        TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-06-01'),
-                                               description: "Another bonus",
-                                               items_attributes: [{action: TransactionItem.credit,
-                                                                   account_id: salary.id,
-                                                                   amount: 1_000},
-                                                                  {action: TransactionItem.debit,
-                                                                   account_id: car.id,
-                                                                   amount: 1_000}])
+        TransactionManager.create(entity, transaction_date: Date.parse('2015-06-01'),
+                                          description: "Another bonus",
+                                          items_attributes: [{action: TransactionItem.credit,
+                                                              account_id: salary.id,
+                                                              amount: 1_000},
+                                                             {action: TransactionItem.debit,
+                                                              account_id: car.id,
+                                                              amount: 1_000}])
       end
 
       it 'updates indexes for the following items' do
@@ -318,24 +336,24 @@ describe TransactionManager do
 
   describe '#delete!' do
     let!(:t1) do
-      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-01-01'),
-                                             description: 'Paycheck',
-                                             items_attributes: [{action: TransactionItem.credit,
-                                                                 account_id: salary.id,
-                                                                 amount: 999},
-                                                                {action: TransactionItem.debit,
-                                                                 account_id: checking.id,
-                                                                 amount: 999}])
+      TransactionManager.create(entity, transaction_date: Date.parse('2015-01-01'),
+                                        description: 'Paycheck',
+                                        items_attributes: [{action: TransactionItem.credit,
+                                                            account_id: salary.id,
+                                                            amount: 999},
+                                                           {action: TransactionItem.debit,
+                                                            account_id: checking.id,
+                                                            amount: 999}])
     end
     let!(:t2) do
-      TransactionManager.new(entity).create!(transaction_date: Date.parse('2015-02-01'),
-                                             description: 'Paycheck',
-                                             items_attributes: [{action: TransactionItem.credit,
-                                                                 account_id: salary.id,
-                                                                 amount: 1_000},
-                                                                {action: TransactionItem.debit,
-                                                                 account_id: checking.id,
-                                                                 amount: 1_000}])
+      TransactionManager.create(entity, transaction_date: Date.parse('2015-02-01'),
+                                        description: 'Paycheck',
+                                        items_attributes: [{action: TransactionItem.credit,
+                                                            account_id: salary.id,
+                                                            amount: 1_000},
+                                                            {action: TransactionItem.debit,
+                                                              account_id: checking.id,
+                                                              amount: 1_000}])
     end
 
     it 'removes the transaction record from the system' do

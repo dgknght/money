@@ -2,19 +2,24 @@
 # necessary balance adjustments are made
 class TransactionManager
 
-  def initialize(entity_or_transaction)
-    if entity_or_transaction.is_a?(Entity)
-      @entity = entity_or_transaction
-    elsif entity_or_transaction.is_a?(Transaction)
-      @transaction = entity_or_transaction
-      @entity = @transaction.entity
-    else
-      raise 'An entity or a transaction must be specified'
-    end
+  attr_accessor :error, :warning, :transaction, :notice
+
+  def initialize(transaction)
+    raise 'An entity or a transaction must be specified' unless transaction
+    self.transaction = transaction
   end
 
-  def create!(attributes)
-    transaction = @entity.transactions.new(attributes)
+  def self.create(entity, attributes)
+    transaction = entity.transactions.new(attributes)
+    TransactionManager.new(transaction).create if transaction.valid?
+    transaction
+  end
+
+  def create
+    handle_errors{create!}
+  end
+
+  def create!
     ActiveRecord::Base.transaction do
       account_deltas = transaction.items.
         group_by(&:account).
@@ -27,26 +32,34 @@ class TransactionManager
     transaction
   end
 
+  def destroy
+    handle_errors{destroy!}
+  end
+
   def destroy!
-    items = @transaction.items.to_a
+    items = transaction.items.to_a
     ActiveRecord::Base.transaction do
-      @transaction.destroy!
+      transaction.destroy!
       account_deltas = items.
         group_by(&:account).
         flat_map do |account, _|
-          process_items_as_of(account, @transaction.transaction_date)
+          process_items_as_of(account, transaction.transaction_date)
       end
       process_account_deltas(account_deltas)
     end
   end
 
+  def update
+    handle_errors{update!}
+  end
+
   def update!
     ActiveRecord::Base.transaction do
-      processing_date = [@transaction.transaction_date, @transaction.transaction_date_was].min
-      dereferenced_accounts = get_dereferenced_accounts(@transaction)
+      processing_date = [transaction.transaction_date, transaction.transaction_date_was].min
+      dereferenced_accounts = get_dereferenced_accounts(transaction)
 
-      @transaction.save!
-      account_deltas = @transaction.items.
+      transaction.save!
+      account_deltas = transaction.items.
         group_by(&:account).
         flat_map do |account, _|
           process_items_as_of(account, processing_date)
@@ -74,6 +87,14 @@ class TransactionManager
       reject{|id| current_account_ids.include?(id)}.
       map{|id| Account.find(id)}.
       to_a
+  end
+
+  def handle_errors
+    yield
+    true
+  rescue => e
+    self.error = e.message
+    false
   end
 
   # Given a list of maps where the keys are accounts
@@ -142,5 +163,8 @@ class TransactionManager
     items = account.transaction_items_occurring_on_or_after(as_of_date).sort_by{|i| i.transaction.transaction_date}
 
     process_item_sequence(account, basis_item, [], items)
+  end
+
+  def success_notice
   end
 end
