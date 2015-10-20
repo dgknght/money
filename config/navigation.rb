@@ -3,7 +3,7 @@
 SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
     primary.selected_class = 'active'
-    primary.dom_class = 'nav nav-pills'
+    primary.dom_class = 'nav navbar-nav'
     if user_signed_in?
       primary.item :home, 'Home', home_path
       primary.item :entities, 'Entities', entities_path
