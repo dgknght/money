@@ -6,12 +6,13 @@ module BudgetItemsHelper
   
   private
     def available_accounts(entity)
-      {
-        'Assets'      => Account.asset,
-        'Liabilities' => Account.liability,
-        'Equity'      => Account.equity,
-        'Income'      => Account.income,
-        'Expense'     => Account.expense
-      }
+      ['Asset', 'Liability', 'Equity', 'Income', 'Expense'].map do |label|
+        [
+          label,
+          entity.accounts.where(['account_type=?', label.downcase]).map do |account|
+            [account.name, account.id]
+          end
+        ]
+      end
     end
 end
