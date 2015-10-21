@@ -2,22 +2,22 @@
 #
 # Table name: accounts
 #
-#  id                  :integer          not null, primary key
-#  name                :string(255)      not null
-#  account_type        :string(255)      not null
-#  created_at          :datetime
-#  updated_at          :datetime
-#  balance             :decimal(, )      default(0.0), not null
-#  entity_id           :integer          not null
-#  parent_id           :integer
-#  content_type        :string(20)
-#  cost                :decimal(, )      default(0.0), not null
-#  gains               :decimal(, )      default(0.0), not null
-#  value               :decimal(, )      default(0.0), not null
-#  cost_with_children  :decimal(, )      default(0.0), not null
-#  gains_with_children :decimal(, )      default(0.0), not null
-#  value_with_children :decimal(, )      default(0.0), not null
-#  children_balance    :decimal(, )      default(0.0), not null
+#  id               :integer          not null, primary key
+#  name             :string(255)      not null
+#  account_type     :string(255)      not null
+#  created_at       :datetime
+#  updated_at       :datetime
+#  balance          :decimal(, )      default(0.0), not null
+#  entity_id        :integer          not null
+#  parent_id        :integer
+#  content_type     :string(20)
+#  cost             :decimal(, )      default(0.0), not null
+#  gains            :decimal(, )      default(0.0), not null
+#  value            :decimal(, )      default(0.0), not null
+#  children_balance :decimal(, )      default(0.0), not null
+#  children_cost    :decimal(, )      default(0.0), not null
+#  children_gains   :decimal(, )      default(0.0), not null
+#  children_value   :decimal(, )      default(0.0), not null
 #
 
 class Account < ActiveRecord::Base
@@ -151,6 +151,14 @@ class Account < ActiveRecord::Base
     lots(force_reload).reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
   end
 
+  def cost_with_children
+    cost + children_cost
+  end
+
+  def cost_with_children=(value)
+    Rails.logger.warn "attempt to write to cost_with_children"
+  end
+
   def cost_with_children_as_of(date, force_reload = false)
     return children(force_reload).reduce(cost_as_of(date, force_reload)) { |sum, child| sum + child.cost_with_children_as_of(date, force_reload) }
   end
@@ -198,6 +206,14 @@ class Account < ActiveRecord::Base
 
   def gains_as_of(date, force_reload = false)
     value_as_of(date, force_reload) - cost_as_of(date, force_reload)
+  end
+
+  def gains_with_children
+    gains + children_gains
+  end
+
+  def gains_with_children=(value)
+    Rails.logger.warn "attempt to write to gains_with_children"
   end
 
   def gains_with_children_as_of(date, force_reload = false)
@@ -274,6 +290,14 @@ class Account < ActiveRecord::Base
     price = nearest_price(date)
     shrs = shares_as_of(date, force_reload)
     price && shrs ? shrs * price : 0
+  end
+
+  def value_with_children
+    value + children_value
+  end
+
+  def value_with_children=(value)
+    Rails.logger.warn "attempt to write to value_with_children"
   end
 
   def value_with_children_as_of(date, force_reload = false)
