@@ -64,11 +64,6 @@ describe AttachmentsController do
       end
 
       describe "GET :show" do
-        it 'should be successful' do
-          get :show, id: attachment
-          expect(response).to be_success
-        end
-
         context 'in json' do
           it 'should be successful' do
             get :show, id: attachment, format: :json

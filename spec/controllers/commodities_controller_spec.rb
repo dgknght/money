@@ -64,11 +64,6 @@ describe CommoditiesController do
       end
 
       describe 'get :show' do
-        it 'should be successful' do
-          get :show, id: commodity
-          expect(response).to be_success
-        end
-
         context 'in json' do
           it 'should be successful' do
             get :show, id: commodity, format: :json
