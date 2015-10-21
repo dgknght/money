@@ -44,6 +44,13 @@ describe TransactionsController do
         end
       end
 
+      describe "get :new" do
+        it 'should be successful' do
+          get :new, entity_id: entity
+          expect(response).to be_success
+        end
+      end
+
       describe "post :create" do
         it "should create a new transaction" do
           lambda do

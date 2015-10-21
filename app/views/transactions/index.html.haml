@@ -1,19 +1,25 @@
-%h2#page_title Transactions
+=content_for :page_title do
+  Transactions
 
-.new_transaction_container
-  =form_for([@account || @entity, @transaction]) do |f|
-    =render 'form_fields', f: f, transaction: @transaction, items: @items
-%table#transactions_table.transaction_list{cellspacing: 0, cellpadding:0}
-  %tr
-    %th Transaction Date
-    %th Description
-    %th Amount
-    %th.action_cell &nbsp;
-  -@transactions.each_with_index do |transaction, index|
-    %tr{class: index % 2 == 0 ? 'table_row' : 'alt_table_row'}
-      %td.transaction_date_column= transaction.transaction_date.strftime("%-m/%-d/%Y")
-      %td.transaction_description_column= link_to(transaction.description, transaction_path(transaction))
-      %td.number_column= format_currency(transaction.total_credits.abs)
-      %td.action_cell
-        = link_to 'Attachments', transaction_attachments_path(transaction), class: 'attachments_button', title: 'Click here to see the attachments for this transaction.'
-        =delete_link transaction_path(transaction), 'this transaction'
+.row
+  .col-md-9
+    %table#transactions_table.table.table-striped
+      %tr
+        %th Transaction Date
+        %th Description
+        %th Amount
+        %th.action_cell &nbsp;
+      -@transactions.each do |transaction|
+        %tr
+          %td= transaction.transaction_date.strftime("%-m/%-d/%Y")
+          %td= link_to(transaction.description, transaction_path(transaction))
+          %td.text-right= format_currency(transaction.total_credits.abs)
+          %td.action_cell
+            .row
+              .col-md-1
+                =link_to transaction_attachments_path(transaction), class: 'btn btn-xs btn-default attachments_button', title: 'Click here to see the attachments for this transaction.' do
+                  %span.glyphicon.glyphicon-paperclip{ aria: {hidden: true}}
+              .col-md-1
+                =delete_link transaction_path(transaction), 'this transaction'
+    .btn-group
+      =link_to 'Add', new_entity_transaction_path(@entity), class: 'btn btn-primary'

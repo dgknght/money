@@ -31,6 +31,9 @@ Feature: Enter a transaction
     When I click "Transactions" within the navigation
     Then I should see "Transactions" within the page title
 
+    When I click "Add"
+    Then I should see "New transaction" within the page title
+
     When I fill in "description" with "Kroger"
 
     And I select "Checking" from the "Account" list within the 1st transaction item row
@@ -51,7 +54,7 @@ Feature: Enter a transaction
       |         1/2/2014 | Kroger          |  56.65 |
       |         1/1/2014 | Opening balance | 100.00 |
 
-    When I click "Back"
+    When I click "Accounts" within the navigation
     Then I should see the following accounts table
       | Name              | Balance |
       | Assets            |   43.35 |

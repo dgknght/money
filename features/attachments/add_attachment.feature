@@ -20,7 +20,7 @@ Feature: Add an attachment
       | Transaction Date | Description |   Amount | 
       | 1/1/2014         | Paycheck    | 1,000.00 |
 
-    When I click "Attachments" within the 1st transaction row
+    When I click the attachments button within the 1st transaction row
     Then I should see "Attachments" within the page title
 
     When I click "Add"

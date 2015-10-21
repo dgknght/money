@@ -1,0 +1,8 @@
+=content_for :page_title do
+  New transaction
+
+.row
+  .col-md-9
+    =render 'shared/errors', resource: @transaction
+    =form_tag(entity_transactions_path(@entity), method: :post) do
+      =render 'form_fields', transaction: @transaction

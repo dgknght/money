@@ -52,7 +52,7 @@ module ApplicationHelper
     title_text = "Click here to delete #{resource_description}"
     confirm_text = "Are you sure you want to delete #{resource_description}?"
     button_to(path, method: :delete, class: 'btn btn-default btn-xs delete_button', title: title_text, data: { confirm: confirm_text }) do
-      content_tag :span, nil, class: 'glyphicon glyphicon-remove', area: {hidden: 'true'}
+      content_tag :span, nil, class: 'glyphicon glyphicon-remove', aria: {hidden: 'true'}
     end
   end
 end

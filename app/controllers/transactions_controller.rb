@@ -3,7 +3,7 @@ class TransactionsController < ApplicationController
   
   before_filter :authenticate_user!
   before_filter :load_account, only: [ :index, :create ]
-  before_filter :load_entity, only: [ :index, :create]
+  before_filter :load_entity, only: [ :index, :create, :new ]
   before_filter :load_transaction, only: [:update, :show, :destroy]
   before_filter :set_current_entity
   
@@ -31,10 +31,26 @@ class TransactionsController < ApplicationController
     respond_with @transactions
   end
 
+  def new
+    authorize! :update, @entity
+    @transaction = @entity.transactions.new
+    @items = Array.new(10)
+  end
+
   def create
     authorize! :update, @entity
+
+    logger.debug "transaction_params=#{transaction_params.inspect}"
+
     @transaction = @entity.transactions.new(transaction_params)
-    flash[:notice] = "The transaction was created successfully." if @transaction.valid? && TransactionManager.new(@transaction).create
+    if @transaction.valid? && TransactionManager.new(@transaction).create
+      flash[:notice] = "The transaction was created successfully."
+    else
+      @items = Array.new(10)
+      @transaction.items.each_with_index do |item, index|
+        @items[index] = item
+      end
+    end
     respond_with @transaction, location: create_redirect_path
   end
 
@@ -77,7 +93,7 @@ class TransactionsController < ApplicationController
     end
     
     def transaction_params
-      params.require(:transaction).permit(:transaction_date,
+      result = params.require(:transaction).permit(:transaction_date,
                                           :description,
                                           :items_attributes => [ :id,
                                                                  :_destroy,
@@ -86,5 +102,8 @@ class TransactionsController < ApplicationController
                                                                  :memo,
                                                                  :confirmation,
                                                                  :action ])
+      result[:transaction_date] = Chronic.parse(result[:transaction_date])
+      result[:items_attributes] = result[:items_attributes].reject{|i| i[:account_id].blank?}
+      result
     end
 end
