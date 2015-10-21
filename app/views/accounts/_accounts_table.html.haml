@@ -1,18 +1,18 @@
 %table#accounts_table.table.table-striped
   %tr
     %th Name
-    %th Balance
+    %th.text-right Balance
     %th.action_cell &nbsp;
   -accounts.each do |record|
     %tr{ :id => "#{record.identifier}" }
-      %td
+      %td.col-md-6
         %div{class: "account_depth_#{record.depth}"}
           -if record.account
             =link_to record.caption, account_link(record.account)
           -else
             =record.caption
-      %td.number_column= format_currency(record.balance)
-      %td.action_cell
+      %td.col-md-3.text-right= format_currency(record.balance)
+      %td.col-md-3.action_cell
         -if record.account
           .row
             .col-md-1

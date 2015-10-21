@@ -1,8 +1,8 @@
-%h2#page_title New account
-
-=render "shared/errors", :resource => @account
+=content_for :page_title do
+  New account
 
 .row
   .col-md-4
+    =render "shared/errors", :resource => @account
     =form_for([@account.entity, @account]) do |f|  
       =render "form_fields", account: @account, f: f
