@@ -10,5 +10,5 @@ Feature: User sign-in
     When I fill in "Email" with "john@doe.com"
     And I fill in "Password" with "please01"
     And I click "Sign in" within the main content
-    Then I should see "Sign out"
-#    Then I should see "You have been signed in successfully." within the success notification area
+    Then I should see "Sign out" within the navigation
+    And I should see "Signed in successfully." within the notification area

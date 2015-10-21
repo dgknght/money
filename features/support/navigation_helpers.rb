@@ -5,7 +5,7 @@ module NavigationHelpers
 
   def locator_for(section)
     case section
-      when /the (notice|error) area/ then "#notifications"
+      when /the (notice|error|notifications?) area/ then "#notifications"
       when /the page title/ then "#page_title"
       when /the page subtitle/ then "#page_subtitle"
       when /the main content/ then "#main-content"
