@@ -18,7 +18,7 @@ Feature: Update a budget
       | Name | Start date | End date   |
       | 2014 | 1/1/2014   | 11/30/2014 |
     
-    When I click "Edit" within the budget row for "2014"
+    When I click the edit button within the budget row for "2014"
     Then I should see "Edit budget" within the page title
     
     When I fill in "Period count" with "12"

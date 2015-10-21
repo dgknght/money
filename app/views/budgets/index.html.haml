@@ -15,6 +15,6 @@
           %td= format_date(budget.end_date)
           %td.action_cell
             =link_to "Edit", edit_budget_path(budget), class: 'edit_button', title: 'Click here to edit the budget.'
-            =render "shared/delete_form", resource: budget, url: budget_url(budget)
+            =delete_link budget_url(budget), 'this budget'
     .actions
       =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget.'

@@ -9,7 +9,7 @@ Feature: Update an entity
       | Name     |
       | My stuff |
       
-    When I click on "Edit" within the entity row for "My stuff"
+    When I click the edit button within the entity row for "My stuff"
     Then I should see "Edit entity" within the page title
     
     When I fill in "Name" with "The new name"

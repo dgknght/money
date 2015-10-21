@@ -28,7 +28,7 @@ Feature: Remove transaction item
       |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
       |         1/1/2013 | Paycheck    | Salary    |      | 5,000.00 | 5,000.00 |
     
-    When I click "Delete" within the 2nd transaction item row
+    When I click the delete button within the 2nd transaction item row
     Then I should see "The transaction was removed successfully." within the notice area
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |
@@ -49,7 +49,7 @@ Feature: Remove transaction item
       |         1/2/2013 | Kroger      | Groceries |      |   -35.00 | 4,965.00 |
       |         1/1/2013 | Paycheck    | Salary    |  X   | 5,000.00 | 5,000.00 |
     
-    When I click "Delete" within the 1st transaction item row
+    When I click the delete button within the 1st transaction item row
     Then I should see "The transaction item has already been reconciled. Undo the reconciliation, then delete the item." within the error area
     And I should see the following transaction items table
       | Transaction date | Description | Account   | Rec. |   Amount |  Balance |

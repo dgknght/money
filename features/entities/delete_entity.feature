@@ -9,7 +9,7 @@ Feature: Delete an entity
       | Name     |
       | My stuff |
       
-    When I click "Delete" within the entity row for "My stuff"
+    When I click the delete button within the entity row for "My stuff"
     Then I should see "The entity was removed successfully." within the notice area
     And I should see the following entities table
       | Name |

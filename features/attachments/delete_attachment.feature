@@ -27,7 +27,7 @@ Feature: Delete an attachment
       | Name    | Content type |
       | Paystub | image/png    |
 
-    When I click "Delete" within the 1st attachment row
+    When I click the delete button within the 1st attachment row
     Then I should see "The attachment was removed successfully." within the notice area
     And I should see the following attachments table
       | Name    | Content type |

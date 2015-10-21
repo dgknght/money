@@ -34,14 +34,14 @@ class TransactionsController < ApplicationController
   def create
     authorize! :update, @entity
     @transaction = @entity.transactions.new(transaction_params)
-    flash[:notice] = "The transaction was created successfully." if @transaction.save
+    flash[:notice] = "The transaction was created successfully." if @transaction.valid? && TransactionManager.new(@transaction).create
     respond_with @transaction, location: create_redirect_path
   end
 
   def update
     authorize! :update, @transaction
     @transaction.attributes = transaction_params
-    flash[:notice] = "The transaction was updated successfully." if @transaction.save
+    flash[:notice] = "The transaction was updated successfully." if @transaction.valid? && TransactionManager.new(@transaction).update
     respond_with @transaction, location: entity_transactions_path(@transaction.entity)
   end
 

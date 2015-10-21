@@ -33,7 +33,7 @@ Feature: Delete a price
       |   1/2/2014 | 8.8888 |
       |   1/1/2014 | 7.7777 |
 
-    When I click "Delete" within the 1st price row
+    When I click the delete button within the 1st price row
     Then I should see "The price was deleted successfully." within the notice area
     And I should see the following prices table
       | Trade date |  Price |

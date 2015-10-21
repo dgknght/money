@@ -41,14 +41,17 @@ module ApplicationHelper
     %w(1 true yes).include?(value)
   end
 
-  def edit_link(path, title)
-    link_to(path, class: 'btn btn-default btn-xs edit_button', title: title) do
+  def edit_link(path, resource_description)
+    title_text = "Click here to edit #{resource_description}"
+    link_to(path, class: 'btn btn-default btn-xs edit_button', title: title_text) do
       content_tag :span, nil, class: 'glyphicon glyphicon-pencil', aria: {hidden: 'true'}
     end
   end
 
-  def delete_link(path, title, confirm)
-    button_to(path, { method: :delete, class: 'btn btn-default btn-xs delete_button', title: title }, data: { confirm: confirm }) do
+  def delete_link(path, resource_description)
+    title_text = "Click here to delete #{resource_description}"
+    confirm_text = "Are you sure you want to delete #{resource_description}?"
+    button_to(path, { method: :delete, class: 'btn btn-default btn-xs delete_button', title: title_text }, data: { confirm: confirm_text }) do
       content_tag :span, nil, class: 'glyphicon glyphicon-remove', area: {hidden: 'true'}
     end
   end

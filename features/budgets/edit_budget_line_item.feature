@@ -29,7 +29,7 @@ Feature: Edit a budget line item
       | Groceries |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 | -4,200.00 |
       | Total     |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 |  -350.00 | -4,200.00 |
 
-    When I click on "Edit" within the budget item row for "Groceries"
+    When I click the edit button within the budget item row for "Groceries"
     Then I should see "Edit budget item" within the page title
     
     When I select "total" from the "Method" list

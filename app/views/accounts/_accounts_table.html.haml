@@ -16,8 +16,8 @@
         -if record.account
           .row
             .col-md-1
-              =edit_link edit_account_path(record.account), 'Click here to edit this account.'
+              =edit_link edit_account_path(record.account), 'this account.'
             .col-md-5
               =link_to "Reconcile", new_account_reconciliation_path(record.account), class: 'btn btn-xs btn-default', title: 'Click here to reconcile this account with a bank statement.'
             .col-md-1
-              =delete_link account_path(record.account), 'Click here to delete this account.', 'Are you sure you want to delete this account?'
+              =delete_link account_path(record.account), 'this account'

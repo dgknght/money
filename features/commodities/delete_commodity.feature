@@ -18,6 +18,6 @@ Feature: Delete a commodity
       | Name | Symbol | Market |
       | ACME | ACME   | NYSE   |
 
-    When I click "Delete" within the 1st commodity row
+    When I click the delete button within the 1st commodity row
     Then I should see "The commodity was removed successfully" within the notice area
-    And I should not see "ACME"
+    And I should not see "ACME" within the main content

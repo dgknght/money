@@ -13,7 +13,7 @@
           %td.number_column= format_price(price.price)
           %td.action_cell
             =link_to 'Edit', edit_price_path(price), class: 'edit_button', title: 'Click here to edit this price.'
-            =render 'shared/delete_form', resource: price, url: price_url(price)
+            =delete_link price_path(price), 'this price'
     .actions
       =link_to 'Add', new_commodity_price_path(@commodity), class: 'add_button', title: 'Click here to add a new price.'
       =link_to 'Back', entity_commodities_path(@commodity.entity), class: 'back_button', title: 'Click here to return to the list of commodities.'

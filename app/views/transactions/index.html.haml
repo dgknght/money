@@ -16,4 +16,4 @@
       %td.number_column= format_currency(transaction.total_credits.abs)
       %td.action_cell
         = link_to 'Attachments', transaction_attachments_path(transaction), class: 'attachments_button', title: 'Click here to see the attachments for this transaction.'
-        = render 'shared/delete_form', resource: transaction, url: transaction_path(transaction)
+        =delete_link transaction_path(transaction), 'this transaction'

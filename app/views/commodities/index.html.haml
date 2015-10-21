@@ -18,7 +18,7 @@
           %td.action_cell
             =link_to 'Prices', commodity_prices_path(commodity), class: 'prices_button', title: 'Click here to manage prices for this commodity.'
             =link_to 'Edit', edit_commodity_path(commodity), class: 'edit_button', title: 'Click here to edit the commodity.'
-            =render 'shared/delete_form', resource: commodity, url: commodity_url(commodity)
+            =delete_link commodity_path(commodity), 'this commodity'
     .actions
       =link_to 'Add', new_entity_commodity_path(@entity), class: 'add_button', title: 'Click here to add a new commodity.'
       =link_to 'Back', entities_path, class: 'back_button', title: 'Click here to return to the list of entities.'

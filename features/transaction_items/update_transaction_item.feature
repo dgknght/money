@@ -25,7 +25,7 @@ Feature: Update a transaction item
      | 1/2/2013         | Kroger      | Groceries |      |   -50.00 |   950.00 |
      | 1/1/2013         | Paycheck    | Salary    |      | 1,000.00 | 1,000.00 |
      
-    When I click "Edit" within the 1st transaction item row
+    When I click the edit button within the 1st transaction item row
     Then I should see "Edit transaction item" within the page title
     
     When I fill in "Amount" with "-55"

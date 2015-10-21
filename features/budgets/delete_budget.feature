@@ -20,7 +20,7 @@ Feature: Delete a budget
       | 2011 | 1/1/2011   | 12/31/2011 |
       | 2012 | 1/1/2012   | 12/31/2012 |
     
-    When I click "Delete" within the budget row for "2011"
+    When I click the delete button within the budget row for "2011"
     Then I should see "The budget was removed successfully." within the notice area.
     And I should see the following budgets table
       | Name | Start date | End date   |

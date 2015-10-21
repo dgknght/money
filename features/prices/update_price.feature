@@ -29,7 +29,7 @@ Feature: Update a commodity price
       | Trade date |   Price |
       |   1/1/2014 | 10.0000 |
 
-    When I click "Edit" within the 1st price row
+    When I click the edit button within the 1st price row
     Then I should see "Edit price" within the page title
 
     When I fill in "Trade date" with "2014-02-01"
