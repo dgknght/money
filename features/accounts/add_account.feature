@@ -10,7 +10,7 @@ Feature: Add a new account
       | Business |
       
     When I click "Business" within the entities table
-    Then I should see "Entity" within the page title
+    Then I should see "Accounts" within the page title
     And I should see the following accounts table
       | Name        | Balance |
       | Assets      | 0.00    |
