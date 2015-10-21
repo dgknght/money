@@ -7,6 +7,11 @@ module ApplicationHelper
     @current_entity = entity
   end
   
+  def flash_key_to_bootstrap_class(key)
+    level = {notice: 'success'}.fetch(key, key)
+    "alert alert-#{level}"
+  end
+
   def format_currency(value)
     number_to_currency(value, unit: '')
   end
@@ -43,7 +48,7 @@ module ApplicationHelper
   end
 
   def delete_link(path, title, confirm)
-    button_to(path, method: :delete, class: 'btn btn-default btn-xs', title: title, confirm: confirm) do
+    button_to(path, { method: :delete, class: 'btn btn-default btn-xs', title: title }, data: { confirm: confirm }) do
       content_tag :span, nil, class: 'glyphicon glyphicon-remove', area: {hidden: 'true'}
     end
   end

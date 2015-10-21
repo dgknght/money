@@ -23,7 +23,11 @@
       #navbar.collapse.navbar-collapse
         =render_navigation
   .container
-    .main-content
+    #main-content
+      -if flash.any?
+        #notifications
+          -flash.each do |t, m|
+            %div{:class => flash_key_to_bootstrap_class(t)}= m
       =yield
   =javascript_include_tag 'application'
   =javascript_include_tag params[:controller]
