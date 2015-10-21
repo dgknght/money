@@ -20,12 +20,11 @@ Given(/^(#{ENTITY}) has the following transactions$/) do |entity, table|
     credit_account = find_account(row['Credit account'])
     debit_account = find_account(row['Debit account'])
     amount = BigDecimal.new(row['Amount'].gsub(/[^.0123456789]/, ""))
-    FactoryGirl.create(:transaction, entity: entity,
-                                     transaction_date: row['Transaction date'],
-                                     description: row['Description'],
-                                     amount: amount,
-                                     credit_account: credit_account,
-                                     debit_account: debit_account)
+    TransactionManager.create_simple(entity, transaction_date: row['Transaction date'],
+                                             description: row['Description'],
+                                             amount: amount,
+                                             credit_account: credit_account,
+                                             debit_account: debit_account)
   end
 end
 
