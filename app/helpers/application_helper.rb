@@ -9,7 +9,7 @@ module ApplicationHelper
   
   def flash_key_to_bootstrap_class(key)
     level = {notice: 'success'}.fetch(key, key)
-    "alert alert-#{level}"
+    "alert-#{level}"
   end
 
   def format_currency(value)

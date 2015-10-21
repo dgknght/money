@@ -1,9 +1,8 @@
-:javascript
-  $(document).ready(function() {
-    $('.alerts').delay(5000).fadeOut(2000);
-  });
-  
 -if flash.any?
-  .alerts
-    -flash.each do |name, message|
-      %div{:class => name}= message
+  #notifications
+    -flash.each do |t, m|
+      .alert.alert-dismissible{class: flash_key_to_bootstrap_class(t), role: 'alert'}
+        %button.close{type: 'button', data: {dismiss: 'alert'}, aria: {label: 'Close'}}
+          %span{aria: {hidden: 'true'}}
+            &times;
+        = m

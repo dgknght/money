@@ -200,6 +200,8 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
+    turbolinks (2.5.3)
+      coffee-rails
     twitter-bootstrap-rails (2.2.8)
       actionpack (>= 3.1)
       execjs
@@ -250,5 +252,6 @@ DEPENDENCIES
   sqlite3
   therubyracer
   timecop
+  turbolinks
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)

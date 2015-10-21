@@ -10,6 +10,7 @@
     %title Money
     =stylesheet_link_tag 'application', media: :all
     =stylesheet_link_tag params[:controller], media: :all
+    =csrf_meta_tags
 %body
   %nav.navbar.navbar-inverse.navbar-fixed-top
     .container
@@ -24,10 +25,7 @@
         =render_navigation
   .container
     #main-content
-      -if flash.any?
-        #notifications
-          -flash.each do |t, m|
-            %div{:class => flash_key_to_bootstrap_class(t)}= m
+      =render 'shared/flash'
       -if content_for? :page_title
         %h1#page_title
           =yield :page_title
