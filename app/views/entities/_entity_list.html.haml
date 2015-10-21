@@ -1,17 +1,15 @@
-.row
-  .col-md-4.col-md-offset-4
-    %table#entities_table.table.table-striped
-      %tr
-        %th Name
-        %th.action_cell &nbsp;
-      -entities.each do |entity|
-        %tr{id: "entity_#{entity.id}" }
-          %td.col-md-6= link_to entity.name, entity_accounts_path(entity)
-          %td.col-md-2.action_cell
-            .row
-              .col-md-1
-                =edit_link edit_entity_path(entity), 'this entity.'
-              .col-md-1
-                =delete_link entity_path(entity), 'this entity'
-    .btn-group
-      =link_to 'Add', new_entity_path, class: 'btn btn-default'
+%table#entities_table.table.table-striped
+  %tr
+    %th Name
+    %th.action_cell &nbsp;
+  -entities.each do |entity|
+    %tr{id: "entity_#{entity.id}" }
+      %td.col-md-6= link_to entity.name, entity_accounts_path(entity)
+      %td.col-md-2.action_cell
+        .row
+          .col-md-1
+            =edit_link edit_entity_path(entity), 'this entity.'
+          .col-md-1
+            =delete_link entity_path(entity), 'this entity'
+.btn-group
+  =link_to 'Add', new_entity_path, class: 'btn btn-default'

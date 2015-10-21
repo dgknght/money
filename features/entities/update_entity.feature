@@ -15,10 +15,6 @@ Feature: Update an entity
     When I fill in "Name" with "The new name"
     And I click "Save"
     Then I should see "The entity was updated successfully." within the notice area
-    And I should see the following entity attributes
-      | Name | The new name |
-     
-    When I click on "Entities" within the navigation
-    Then I should see the following entities table
+    And I should see the following entities table
       | Name         |
       | The new name |

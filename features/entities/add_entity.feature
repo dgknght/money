@@ -14,10 +14,11 @@ Feature: Add an entity
     And I click "Save"
     
     Then I should see "The entity was created successfully." within the notice area
-    And I should see the following entity attributes
-      | Name     | Personal |
-      
-    When I click on "Entities" within the navigation
-    Then I should see the following entities table
-      | Name     |
-      | Personal |
+    Then I should see "Accounts" within the page title
+    And I should see the following accounts table
+      | Name        | Balance |
+      | Assets      |    0.00 |
+      | Liabilities |    0.00 |
+      | Equity      |    0.00 |
+      | Income      |    0.00 |
+      | Expense     |    0.00 |

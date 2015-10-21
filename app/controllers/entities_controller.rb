@@ -22,7 +22,7 @@ class EntitiesController < ApplicationController
   def create
     @entity = current_user.entities.new(entity_params)
     flash[:notice] = 'The entity was created successfully.' if @entity.save && import
-    respond_with @entity
+    respond_with @entity, location: entity_accounts_path(@entity)
   end
 
   def edit
@@ -31,7 +31,7 @@ class EntitiesController < ApplicationController
   def update
     @entity.update_attributes(entity_params)
     flash[:notice] = 'The entity was updated successfully.' if @entity.save
-    respond_with @entity
+    respond_with @entity, location: entities_path
   end
 
   def destroy

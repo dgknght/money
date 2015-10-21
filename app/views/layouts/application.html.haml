@@ -28,6 +28,9 @@
         #notifications
           -flash.each do |t, m|
             %div{:class => flash_key_to_bootstrap_class(t)}= m
+      -if content_for? :page_title
+        %h1#page_title
+          =yield :page_title
       =yield
   =javascript_include_tag 'application'
   =javascript_include_tag params[:controller]

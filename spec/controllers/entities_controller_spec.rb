@@ -40,9 +40,9 @@ describe EntitiesController do
     end
     
     describe 'post :create' do
-      it 'should redirect to new entity detail page' do
+      it 'should redirect to the account index page for the new entity' do
         post :create, entity: attributes
-        response.should redirect_to entity_path(Entity.last)
+        response.should redirect_to entity_accounts_path(Entity.last)
       end
       
       it 'should create a new entity' do
@@ -84,9 +84,9 @@ describe EntitiesController do
       end
       
       describe 'put :update' do
-        it 'should redirect to the entity detail page' do
+        it 'should redirect to the entity index page' do
           put :update, id: entity, entity: { name: 'the new name' }
-          response.should redirect_to entity_path(entity)
+          response.should redirect_to entities_path
         end
         
         it 'should update the entity' do

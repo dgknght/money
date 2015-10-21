@@ -1,3 +1,6 @@
-%h2#page_title Entities
+=content_for :page_title do
+  Entities
 
-=render 'entity_list', entities: @entities
+.row
+  .col-md-4
+    =render 'entity_list', entities: @entities
