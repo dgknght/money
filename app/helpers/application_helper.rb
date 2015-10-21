@@ -42,13 +42,13 @@ module ApplicationHelper
   end
 
   def edit_link(path, title)
-    link_to(path, class: 'btn btn-default btn-xs', title: title) do
+    link_to(path, class: 'btn btn-default btn-xs edit_button', title: title) do
       content_tag :span, nil, class: 'glyphicon glyphicon-pencil', aria: {hidden: 'true'}
     end
   end
 
   def delete_link(path, title, confirm)
-    button_to(path, { method: :delete, class: 'btn btn-default btn-xs', title: title }, data: { confirm: confirm }) do
+    button_to(path, { method: :delete, class: 'btn btn-default btn-xs delete_button', title: title }, data: { confirm: confirm }) do
       content_tag :span, nil, class: 'glyphicon glyphicon-remove', area: {hidden: 'true'}
     end
   end

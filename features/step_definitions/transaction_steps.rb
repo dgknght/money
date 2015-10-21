@@ -11,7 +11,7 @@ When(/^I enter a transaction for (#{ENTITY}) called "([^"]+)" on (#{DATE_VALUE})
     { account: credit_account, action: TransactionItem.credit, amount: credit_amount },
     { account: debit_account, action: TransactionItem.debit, amount: debit_amount }
   ]
-  transaction = entity.transactions.create!(description: description, transaction_date: transaction_date, items_attributes: items)
+  TransactionManager.create(entity, description: description, transaction_date: transaction_date, items_attributes: items)
   visit entity_transactions_path(entity)
 end
 

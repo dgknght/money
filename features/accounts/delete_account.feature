@@ -15,7 +15,7 @@ Feature: Delete an account
       | Income             | 0.00    |
       | Expense            | 0.00    |
       
-    When I click "Delete" within the account row for "Ex-wife's checking"
+    When I click the delete button within the account row for "Ex-wife's checking"
     Then I should see "The account was successfully deleted." within the notice area
     And I should see the following accounts table
       | Name               | Balance |

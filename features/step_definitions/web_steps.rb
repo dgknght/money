@@ -48,6 +48,14 @@ When (/^I specify the file "([^"]+)" for "([^"]+)"$/) do |file, locator|
   attach_file(locator, path)
 end
 
+When (/^I click the edit button$/) do
+  find('.edit_button').click
+end
+
+When (/^I click the delete button$/) do
+  find('.delete_button').click
+end
+
 Then (/^I should see the following (.*) table$/) do |description, expected_table|
   id = "##{description_to_id(description)}_table"
   html_table = find(id)

@@ -15,7 +15,7 @@ Feature: Update an existing account
       | Income      | 0.00    |
       | Expense     | 0.00    |
       
-  When I click on "Edit" within the account row for "Checking"
+  When I click the edit button within the account row for "Checking"
   Then I should see "Edit account" within the page title
   
   When I fill in "Name" with "Savings"
