@@ -5,10 +5,10 @@ module NavigationHelpers
 
   def locator_for(section)
     case section
-      when /the (notice|error) area/ then ".#{$1}"
+      when /the (notice|error) area/ then "#notifications"
       when /the page title/ then "#page_title"
       when /the page subtitle/ then "#page_subtitle"
-      when /the main content/ then "#content"
+      when /the main content/ then "#main-content"
       when /the navigation/ then "nav"
       when /the (.*) table/ then "##{$1}_table"
       when /the account row for "([^"]+)"/ then "#account_#{account_id($1)}"
@@ -29,7 +29,7 @@ module NavigationHelpers
     case page_identifier
       when "the home" then "/"
       when "my home" then  "/home"
-      when /the "([^"]+)" entity/ then entity_path(find_entity($1))
+      when /the "([^"]+)" entity/ then entity_accounts_path(find_entity($1))
       when /the (\w+)/ then  "/#{$1}"
       else raise "unrecognized page identifier \"#{page_identifier}\""
     end
