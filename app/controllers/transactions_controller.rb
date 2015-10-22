@@ -4,7 +4,7 @@ class TransactionsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_account, only: [ :index, :create ]
   before_filter :load_entity, only: [ :index, :create, :new ]
-  before_filter :load_transaction, only: [:update, :show, :destroy]
+  before_filter :load_transaction, only: [:update, :show, :destroy, :edit]
   before_filter :set_current_entity
   
   respond_to :html, :json
@@ -46,12 +46,14 @@ class TransactionsController < ApplicationController
     if @transaction.valid? && TransactionManager.new(@transaction).create
       flash[:notice] = "The transaction was created successfully."
     else
-      @items = Array.new(10)
-      @transaction.items.each_with_index do |item, index|
-        @items[index] = item
-      end
+      @items = wrap_in_array(@transaction.items)
     end
     respond_with @transaction, location: create_redirect_path
+  end
+
+  def edit
+    authorize! :update, @transaction
+    @items = wrap_in_array(@transaction.items)
   end
 
   def update
@@ -105,6 +107,14 @@ class TransactionsController < ApplicationController
       result[:transaction_date] = Chronic.parse(result[:transaction_date])
       if result[:items_attributes]
         result[:items_attributes] = result[:items_attributes].reject{|i| i[:account_id].blank?}
+      end
+      result
+    end
+
+    def wrap_in_array(items)
+      result = Array.new(10)
+      items.each_with_index do |item, index|
+        result[index] = item
       end
       result
     end

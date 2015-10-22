@@ -1,0 +1,8 @@
+=content_for :page_title do
+  Edit transaction
+
+.row
+  .col-md-9
+    =render 'shared/errors', resource: @transaction
+    =form_tag(transaction_path(@transaction), method: :put) do
+      =render 'form_fields', transaction: @transaction

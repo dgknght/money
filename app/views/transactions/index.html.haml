@@ -16,7 +16,7 @@
           %td.text-right= format_currency(transaction.total_credits.abs)
           %td.action_cell
             .btn-group
-              =edit_link transaction_path(transaction), 'this transaction'
+              =edit_link edit_transaction_path(transaction), 'this transaction'
               =link_to transaction_attachments_path(transaction), class: 'btn btn-xs btn-default attachments_button', title: 'Click here to see the attachments for this transaction.' do
                 %span.glyphicon.glyphicon-paperclip{ aria: {hidden: true}}
               =delete_link transaction_path(transaction), 'this transaction'

@@ -95,6 +95,13 @@ describe TransactionsController do
         end
       end
 
+      describe 'get :edit' do
+        it 'should be successful' do
+          get :edit, id: transaction
+          expect(response).to be_success
+        end
+      end
+
       describe "put :update" do
         let(:updated_attributes) do
           {
@@ -194,6 +201,13 @@ describe TransactionsController do
         end
       end
       
+      describe 'get :new' do
+        it 'redirects to the user home page' do
+          get :new, entity_id: entity
+          expect(response).to redirect_to(home_path)
+        end
+      end
+
       describe 'post :create' do
         it "should redirect to the entity's home page" do
           post :create, entity_id: entity, transaction: attributes
@@ -207,6 +221,13 @@ describe TransactionsController do
           end
         end
       end      
+
+      describe 'get :edit' do
+        it 'should redirect to the entity home page' do
+          get :edit, id: transaction
+          expect(response).to redirect_to(home_path)
+        end
+      end
       
       describe 'put :update' do
         it "should redirect to the entity's home page" do
@@ -279,6 +300,13 @@ describe TransactionsController do
       end
     end
     
+    describe 'get :new' do
+      it 'should redirect to the sign in page' do
+        get :new, entity_id: entity
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
     describe 'post :create' do
       it 'should redirect to the sign in page' do
         post :create, entity_id: entity, transaction: attributes
@@ -290,6 +318,13 @@ describe TransactionsController do
           post :create, entity_id: entity, transaction: attributes, format: :json
           response.response_code.should == 401
         end
+      end
+    end
+
+    describe 'get :edit' do
+      it 'should redirect to the sign in page' do
+        get :edit, id: transaction
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
     
