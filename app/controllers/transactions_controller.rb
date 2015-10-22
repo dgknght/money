@@ -103,7 +103,9 @@ class TransactionsController < ApplicationController
                                                                  :confirmation,
                                                                  :action ])
       result[:transaction_date] = Chronic.parse(result[:transaction_date])
-      result[:items_attributes] = result[:items_attributes].reject{|i| i[:account_id].blank?}
+      if result[:items_attributes]
+        result[:items_attributes] = result[:items_attributes].reject{|i| i[:account_id].blank?}
+      end
       result
     end
 end
