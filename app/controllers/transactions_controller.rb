@@ -39,9 +39,6 @@ class TransactionsController < ApplicationController
 
   def create
     authorize! :update, @entity
-
-    logger.debug "transaction_params=#{transaction_params.inspect}"
-
     @transaction = @entity.transactions.new(transaction_params)
     if @transaction.valid? && TransactionManager.new(@transaction).create
       flash[:notice] = "The transaction was created successfully."
