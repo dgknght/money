@@ -1,10 +1,9 @@
-%table#accounts_table{cellspacing: 0, cellpadding: 0}
+%table#accounts_table.table.table-striped
   %tr
     %th Account
-    %th Balance
+    %th.text-right Balance
   -report.content.each do |r|
     %tr{class: r[:depth] == 0 ? 'report_header' : 'report_data'}
       %td
         %div{ class: "account_depth_#{r[:depth]}" }= r[:account]
-      %td
-        %div{ class: "number_column balance_depth_#{r[:depth]}"}= r[:balance]
+      %td.text-right= r[:balance]

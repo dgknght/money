@@ -4,7 +4,7 @@ class Filter
   def self.date_value(value, default = Date.today)
     if value
       begin
-        return value.is_a?(Date) ? value : Date.parse(value.to_s)
+        return value.is_a?(Date) ? value : Chronic.parse(value.to_s)
       rescue
         # just use the default
       end

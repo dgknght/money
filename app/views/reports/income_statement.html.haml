@@ -1,12 +1,19 @@
-%h2#page_title Income statement
+=content_for :page_title do
+  Income statement
 
-.filter
-  =form_tag(income_statement_entity_path(@entity), method: :get) do
-    =label_tag :from
-    =text_field_tag :from, @filter.from, placeholder: 'From', class: 'date_field'
-    =label_tag :to
-    =text_field_tag :to, @filter.to, placeholder: 'To', class: 'date_field'
-    =submit_tag 'Show'
+.row
+  .col-md-6
+    .panel.panel-default
+      .panel-body
+        =form_tag(income_statement_entity_path(@entity), method: :get, class: 'form-inline') do
+          .form-group
+            =label_tag :from
+            =text_field_tag :from, format_date(@filter.from), placeholder: 'From', class: 'date_field form-control'
+          .form-group
+            =label_tag :to
+            =text_field_tag :to, format_date(@filter.to), placeholder: 'To', class: 'date_field form-control'
+          =submit_tag 'Show', class: 'btn btn-primary'
     
-.report
-  =render 'table', report: @report
+.row
+  .col-md-6
+    =render 'table', report: @report

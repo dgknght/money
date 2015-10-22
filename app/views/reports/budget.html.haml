@@ -1,27 +1,38 @@
-%h2#page_title Budget Report
+=content_for :page_title do
+  Budget report
 
-.filter
-  =form_tag({ url: budget_entity_path(@entity) }, method: :get) do
-    =select_tag :budget_id, options_from_collection_for_select(@entity.budgets, :id, :name, @filter.budget_id)
-    =text_field_tag :start_date, @filter.start_date, class: 'date_field', placeholder: 'Start date'
-    =text_field_tag :end_date, @filter.end_date, class: 'date_field', placeholder: 'End date'
-    =submit_tag 'Show', class: 'show_button', title: 'Click here to view the report with these filter setttings.'
+.row
+  .col-md-12
+    .panel.panel-default
+      .panel-body
+        =form_tag(budget_entity_path(@entity), method: :get, class: 'form-inline') do
+          .form-group
+            =label_tag :budget_id, 'Budget'
+            =select_tag :budget_id, options_from_collection_for_select(@entity.budgets, :id, :name, @filter.budget_id), class: 'form-control'
+          .form-group
+            =label_tag :start_date, 'Start'
+            =text_field_tag :start_date, format_date(@filter.start_date), class: 'date_field form-control', placeholder: 'Start date'
+          .form-group
+            =label_tag :end_date, 'End'
+            =text_field_tag :end_date, format_date(@filter.end_date), class: 'date_field form-control', placeholder: 'End date'
+          =submit_tag 'Show', class: 'btn btn-primary', title: 'Click here to view the report with these filter setttings.'
 
 -if @report
-  .report
-    %table#budget_report_table{cellspacing: 0, cellpadding: 0}
-      %tr
-        %th.number_column Account
-        %th.number_column Budget
-        %th.number_column Actual
-        %th.number_column Difference
-        %th.number_column % Diff.
-        %th.number_column Actual/Mo.
-      -@report.content.each do |row|
-        %tr{ class: [row.evaluation, row.row_type] }
-          %td.number_column= row.account
-          %td.number_column= row.budget_amount
-          %td.number_column= row.actual_amount
-          %td.number_column= row.difference
-          %td.number_column= row.percent_difference
-          %td.number_column= row.actual_per_month
+  .row
+    .col-md-12
+      %table#budget_report_table.table.table-striped
+        %tr
+          %th.text-right Account
+          %th.text-right Budget
+          %th.text-right Actual
+          %th.text-right Difference
+          %th.text-right % Diff.
+          %th.text-right Actual/Mo.
+        -@report.content.each do |row|
+          %tr{ class: [row.evaluation, row.row_type] }
+            %td.text-right= row.account
+            %td.text-right= row.budget_amount
+            %td.text-right= row.actual_amount
+            %td.text-right= row.difference
+            %td.text-right= row.percent_difference
+            %td.text-right= row.actual_per_month
