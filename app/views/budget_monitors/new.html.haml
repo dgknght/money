@@ -1,10 +1,11 @@
-.row
-  .col-md-4.col-md-offset-4
-    %h2#page_title New Budget monitor
+=content_for :page_title do
+  New budget monitor
 
+.row
+  .col-md-4
     =form_for([@entity, @budget_monitor]) do |f|
-      .form_group
+      .form-group
         =f.label :account_id
-        =f.select :account_id, grouped_options_for_select(grouped_accounts(@entity)), {}, class: 'form-control'
-      .actions
-        =f.submit 'Save', class: 'save_button', title: 'Click here to create the monitor.'
+        =f.select :account_id, grouped_options_for_select(grouped_accounts(@entity)), {}, class: 'form-control', autofocus: true
+      .actions.btn-group
+        =f.submit 'Save', class: 'btn btn-primary', title: 'Click here to create the monitor.'
