@@ -62,7 +62,9 @@ class PricesController < ApplicationController
     end
 
     def price_params
-      params.require(:price).permit(:trade_date, :price)
+      result = params.require(:price).permit(:trade_date, :price)
+      result[:trade_date] = Chronic.parse(result[:trade_date]) if result[:trade_date].present?
+      result
     end
 
     def response_location

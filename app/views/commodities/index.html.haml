@@ -24,5 +24,4 @@
               =delete_link commodity_path(commodity), 'this commodity'
     .actions.btn-group
       =link_to 'Add', new_entity_commodity_path(@entity), class: 'btn btn-primary', title: 'Click here to add a new commodity.'
-      =link_to 'Back', entities_path, class: 'btn btn-default', title: 'Click here to return to the list of entities.'
       =link_to 'Download prices', download_entity_prices_path, method: :patch, class: 'btn btn-default', title: 'Click here to download prices'
