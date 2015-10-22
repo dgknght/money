@@ -15,7 +15,7 @@
   -@items.each_with_index do |item, index|
     %tr{ id: "transaction_item_#{index}" }
       %td
-        =hidden_field 'transaction[items_attributes][][id]', item.try(:id)
+        =hidden_field_tag 'transaction[items_attributes][][id]', item.try(:id)
         =label_tag 'transaction[items_attributes][][account_id]', 'Account', style: 'display: none'
         =select_tag 'transaction[items_attributes][][account_id]', grouped_options_for_select(available_accounts(transaction.entity), item.try(:account_id)), include_blank: true, class: 'form-control'
       %td
