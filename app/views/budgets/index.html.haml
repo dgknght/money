@@ -1,20 +1,24 @@
-%h2#page_title Budgets
+=content_for :page_title do
+  Budgets
 
 .row
-  .col-md-3
-    %table#budgets_table.table{cellspacing: 0, cellpadding: 0}
+  .col-md-4
+    %table#budgets_table.table.table-striped
       %tr
-        %th Name
-        %th Start date
-        %th End date
-        %th.action_cell &nbsp;
+        %th.col-md-3 Name
+        %th.col-md-3 Start date
+        %th.col-md-3 End date
+        %th.col-md-3 &nbsp;
       -@budgets.each do |budget|
         %tr{id: "budget_#{budget.id}" }
-          %td= link_to budget.name, budget_budget_items_path(budget)
+          %td= link_to budget.name, budget_budget_items_path(budget), title: 'Click here to manage line items for this budget.'
           %td= format_date(budget.start_date)
           %td= format_date(budget.end_date)
           %td.action_cell
-            =link_to "Edit", edit_budget_path(budget), class: 'edit_button', title: 'Click here to edit the budget.'
-            =delete_link budget_url(budget), 'this budget'
-    .actions
-      =link_to 'Add', new_entity_budget_path(@entity), class: 'add_button', title: 'Click here to create a new budget.'
+            .btn-group
+              =edit_link edit_budget_path(budget), 'this budget'
+              =link_to budget_budget_items_path(budget), class: 'btn btn-xs btn-default', title: 'Click here to manage line items for this budget.' do
+                %span.glyphicon.glyphicon-list{aria: {hidden: 'true'}}
+              =delete_link budget_url(budget), 'this budget'
+    .actions.btn-group
+      =link_to 'Add', new_entity_budget_path(@entity), class: 'btn btn-primary', title: 'Click here to create a new budget.'
