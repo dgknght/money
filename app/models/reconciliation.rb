@@ -64,22 +64,22 @@ class Reconciliation < ActiveRecord::Base
   end
   
   private
-    
-    def ensure_defaults
-      self.reconciliation_date ||= default_reconciliation_date
-    end
-    
-    def must_be_in_balance
-      errors.add(:balance_difference, "must be equal to zero.") unless balance_difference == 0
-    end
-    
-    def previous_reconciliation
-      return nil unless account
-      return account.reconciliations.last unless reconciliation_date
-      @previous_reconciliation ||= account.reconciliations.where('reconciliation_date < ?', reconciliation_date).last
-    end
-    
-    def selected?(transaction_item)
-      items.select { |i| i.transaction_item_id == transaction_item.id }.any?
-    end
+
+  def ensure_defaults
+    self.reconciliation_date ||= default_reconciliation_date
+  end
+
+  def must_be_in_balance
+    errors.add(:balance_difference, "must be equal to zero.") unless balance_difference == 0
+  end
+
+  def previous_reconciliation
+    return nil unless account
+    return account.reconciliations.last unless reconciliation_date
+    @previous_reconciliation ||= account.reconciliations.where('reconciliation_date < ?', reconciliation_date).last
+  end
+
+  def selected?(transaction_item)
+    items.select { |i| i.transaction_item_id == transaction_item.id }.any?
+  end
 end
