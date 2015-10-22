@@ -37,11 +37,11 @@ class Reconciliation < ActiveRecord::Base
   end
     
   def previous_balance
-    previous_reconciliation.nil? ? 0 : previous_reconciliation.closing_balance
+    previous_reconciliation.try(:closing_balance) || 0
   end
   
   def previous_reconciliation_date
-    previous_reconciliation.nil? ? nil : previous_reconciliation.reconciliation_date
+    previous_reconciliation.try(:reconciliation_date)
   end
   
   # Returns the sum of the amounts for the transactionitems
@@ -69,14 +69,17 @@ class Reconciliation < ActiveRecord::Base
     self.reconciliation_date ||= default_reconciliation_date
   end
 
+  def look_up_previous
+    return nil unless account
+    account.reconciliations.where('reconciliation_date < ?', reconciliation_date || Account::END_OF_TIME).select(&:persisted?).first
+  end
+
   def must_be_in_balance
     errors.add(:balance_difference, "must be equal to zero.") unless balance_difference == 0
   end
 
   def previous_reconciliation
-    return nil unless account
-    return account.reconciliations.last unless reconciliation_date
-    @previous_reconciliation ||= account.reconciliations.where('reconciliation_date < ?', reconciliation_date).last
+    @previous_reconciliation ||= look_up_previous
   end
 
   def selected?(transaction_item)
