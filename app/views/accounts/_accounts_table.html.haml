@@ -5,19 +5,17 @@
     %th.action_cell &nbsp;
   -accounts.each do |record|
     %tr{ :id => "#{record.identifier}" }
-      %td.col-md-6
+      %td.col-md-7
         %div{class: "account_depth_#{record.depth}"}
           -if record.account
             =link_to record.caption, account_link(record.account)
           -else
             =record.caption
       %td.col-md-3.text-right= format_currency(record.balance)
-      %td.col-md-3.action_cell
+      %td.col-md-2.action_cell
         -if record.account
-          .row
-            .col-md-1
-              =edit_link edit_account_path(record.account), 'this account.'
-            .col-md-5
-              =link_to "Reconcile", new_account_reconciliation_path(record.account), class: 'btn btn-xs btn-default', title: 'Click here to reconcile this account with a bank statement.'
-            .col-md-1
-              =delete_link account_path(record.account), 'this account'
+          .btn-group
+            =edit_link edit_account_path(record.account), 'this account.'
+            =link_to new_account_reconciliation_path(record.account), class: 'btn btn-xs btn-default reconcile_button', title: 'Click here to reconcile this account with a bank statement.' do
+              %span.glyphicon.glyphicon-check{aria: {hidden: 'true'}}
+            =delete_link account_path(record.account), 'this account'
