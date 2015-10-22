@@ -1,13 +1,22 @@
-%h2#page_title Budget items
+=content_for :page_title do
+  #{h @budget.name} budget items
 
-%table.table#budget_items_table{ cellspacing: 0, cellpadding: 0}
+%table#budget_items_table.table.table-striped
   %tr
     %th Account
     -@budget.periods.each do |period|
-      %th.number_column= period.start_date.strftime('%b %Y')
-    %th.number_column Total
+      %th.text-right= period.start_date.strftime('%b %Y')
+    %th.text-right Total
     %th.action_cell &nbsp;
   -@budget_summary.records.each do |record|
     =render 'row', record: record
-=link_to 'Add', new_budget_budget_item_path(@budget), class: 'add_button', title: 'Click here to add a new item to the budget.'
-=link_to 'Back', entity_budgets_path(@budget.entity), class: 'back_button', title: 'Click here to return to the list of budgets.'
+.btn-group
+  .btn-group
+    %button.btn.btn-primary.dropdown-toggle{type: 'button', data: {toggle: 'dropdown'}, aria: {haspopup: 'true', expanded: 'false'}}
+      Add
+      %span.caret
+    %ul.dropdown-menu
+      %li= link_to 'By average', new_budget_budget_item_path(@budget, method: BudgetItemDistributor.average)
+      %li= link_to 'By total', new_budget_budget_item_path(@budget, method: BudgetItemDistributor.total)
+      %li= link_to 'With detail', new_budget_budget_item_path(@budget, method: BudgetItemDistributor.direct)
+  =link_to 'Back', entity_budgets_path(@budget.entity), class: 'btn btn-default', title: 'Click here to return to the list of budgets.'

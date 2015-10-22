@@ -23,7 +23,7 @@ class BudgetItemsController < ApplicationController
   def new
     authorize! :update, @budget
     @budget_item = @budget.items.new
-    @distributor = BudgetItemDistributor.new(@budget_item)
+    @distributor = BudgetItemDistributor.new(@budget_item, params[:method])
   end
 
   def create

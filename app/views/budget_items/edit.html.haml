@@ -1,4 +1,5 @@
-%h2#page_title Edit budget item
+=content_for :page_title do
+  Edit #{h @budget_item.budget.name} budget item
 
 =render "shared/errors", :resource => @budget_item
 
@@ -6,6 +7,6 @@
   .col-md-3
     =form_for(@budget_item) do |f|
       =render 'form_fields', f: f, budget_item: @budget_item, distributor: @distributor
-      .actions
-        =f.submit 'Save', class: 'save_button', title: 'Click here to save the budget item.'
-        =link_to 'Back', budget_budget_items_path(@budget_item.budget), class: 'back_button', title: 'Click here to return the list of budget items.'
+      .actions.btn-group
+        =f.submit 'Save', class: 'btn btn-primary', title: 'Click here to save the budget item.'
+        =link_to 'Back', budget_budget_items_path(@budget_item.budget), class: 'btn btn-default', title: 'Click here to return the list of budget items.'

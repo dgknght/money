@@ -1,13 +1,8 @@
-.form-group
-  =f.label :account_id
-  %br
-  =f.select :account_id, account_options(budget_item), {}, class: 'form-control'
+.row
+  .col-md-5
+    .form-group
+      =f.label :account_id
+      =f.select :account_id, account_options(budget_item), {}, class: 'form-control'
 =fields_for(:distributor, distributor) do |distributor_fields|
-  .form-group
-    =distributor_fields.label :method, 'Method'
-    %br
-    =distributor_fields.select :method, options_for_select(BudgetItemDistributor.methods), {}, class: 'form-control'
   =distributor_fields.fields_for(:options) do |args_fields|
-    =render 'average_fields', form: args_fields, budget_item: budget_item, distributor: distributor
-    =render 'total_fields', form: args_fields, budget_item: budget_item, distributor: distributor
-    =render 'direct_fields', form: args_fields, budget: budget_item.budget, distributor: distributor
+    =render "#{distributor.method}_fields", form: args_fields, budget_item: budget_item, distributor: distributor

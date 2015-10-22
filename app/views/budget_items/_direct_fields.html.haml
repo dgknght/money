@@ -1,5 +1,7 @@
--budget.periods.each_with_index do |period, index|
-  .form-group.method_direct
-    =form.label "amounts_#{index}", period.start_date.strftime('%b %Y')
-    %br
-    =number_field_tag "distributor[options][amounts[#{index}]]", distributor.amounts[index], class: 'form-control', id: "distributor_options_amounts_#{index}"
+.row
+  -columnize(budget_item.budget.periods, 3).each do |column|
+    .col-md-4
+      -column.each do |period, index|
+        .form-group.method_direct
+          =form.label "amounts_#{index}", period.start_date.strftime('%b %Y')
+          =number_field_tag "distributor[options][amounts[#{index}]]", distributor.amounts[index], class: 'form-control', id: "distributor_options_amounts_#{index}"

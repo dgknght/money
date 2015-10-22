@@ -1,11 +1,13 @@
-%h2#page_title New budget item
+=content_for :page_title do
+  New #{h @budget.name} budget item
 
 =render "shared/errors", :resource => @budget_item
 
 .row
-  .col-md-3
+  .col-md-12
     =form_for([@budget, @budget_item]) do |f|
+      =hidden_field_tag 'distributor[method]', @distributor.method
       =render 'form_fields', f: f, budget_item: @budget_item, distributor: @distributor
-      .actions
-        =f.submit 'Save', class: 'save_button', title: 'Click here to save the budget item.'
-        =link_to 'Back', budget_budget_items_path(@budget), class: 'back_button', title: 'Click here to return the list of budget items.'
+      .actions.btn-group
+        =f.submit 'Save', class: 'btn btn-primary', title: 'Click here to save the budget item.'
+        =link_to 'Back', budget_budget_items_path(@budget), class: 'btn btn-default', title: 'Click here to return the list of budget items.'
