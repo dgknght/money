@@ -44,7 +44,7 @@ module ApplicationHelper
   def edit_link(path, resource_description)
     title_text = "Click here to edit #{resource_description}"
     link_to(path, class: 'btn btn-default btn-xs edit_button', title: title_text) do
-      content_tag :span, nil, class: 'glyphicon glyphicon-pencil', aria: {hidden: 'true'}
+      content_tag :span, nil, class: 'glyphicon glyphicon-pencil', 'aria-hidden' => 'true'
     end
   end
 
@@ -53,7 +53,7 @@ module ApplicationHelper
     confirm_text = "Are you sure you want to delete #{resource_description}?"
 
     link_to path, class: 'btn btn-xs btn-default delete_button', method: :delete, title: title_text, data: { confirm: confirm_text } do
-      content_tag :span, nil, class: 'glyphicon glyphicon-remove', aria: { hidden: 'true' }
+      content_tag :span, nil, class: 'glyphicon glyphicon-remove', 'aria-hidden' => 'true'
     end
   end
 end
