@@ -1,6 +1,7 @@
-%h2#page_title Edit commodity
-=render 'shared/errors', resource: @commodity
+=content_for :page_title do
+  Edit commodity
 
+=render 'shared/errors', resource: @commodity
 .row
   .col-md-4
     =form_for(@commodity) do |f|

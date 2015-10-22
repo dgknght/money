@@ -1,17 +1,15 @@
 .form-group
   =f.label :name
-  %br
-  =f.text_field :name, autofocus: true, class: 'form-control'
+  =f.text_field :name, autofocus: true, class: 'form-control', autofocus: true
 
 .form-group
   =f.label :symbol
-  %br
   =f.text_field :symbol, class: 'form-control'
 
 .form-group
   =f.label :market
-  %br
   =f.select :market, options_for_select(Commodity::MARKETS.map(&:upcase) , commodity.market), {}, class: 'form-control'
-.actions
-  =f.submit 'Save', class: 'save_button', title: 'Click here to save the new commodity.'
-  =link_to 'Back', entity_commodities_path(commodity.entity), class: 'back_button', title: 'Click here to return to the list of commodities'
+
+.actions.btn-group
+  =f.submit 'Save', class: 'btn btn-primary', title: 'Click here to save the new commodity.'
+  =link_to 'Back', entity_commodities_path(commodity.entity), class: 'btn btn-default', title: 'Click here to return to the list of commodities'

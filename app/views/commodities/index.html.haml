@@ -1,25 +1,28 @@
-%h2#page_title Commodities
+=content_for :page_title do
+  Commodities
 
 .row
   .col-md-8
-    %table.table#commodities_table{ cellspacing: 0, cellpadding: 0 }
+    %table.table#commodities_table.table.table-striped
       %tr
-        %th Name
-        %th Symbol
-        %th Market
-        %th.number_column Most recent price
-        %th.action_cell &nbsp;
+        %th.col-md-3 Name
+        %th.col-md-3 Symbol
+        %th.col-md-2 Market
+        %th.col-md-2.text-right Recent
+        %th.col-md-3 &nbsp;
       -@commodities.each do |commodity|
         %tr
           %td= commodity.name
           %td= commodity.symbol
           %td= commodity.market
-          %td.number_column= format_price(commodity.latest_price.try(:price))
+          %td.text-right= format_price(commodity.latest_price.try(:price))
           %td.action_cell
-            =link_to 'Prices', commodity_prices_path(commodity), class: 'prices_button', title: 'Click here to manage prices for this commodity.'
-            =link_to 'Edit', edit_commodity_path(commodity), class: 'edit_button', title: 'Click here to edit the commodity.'
-            =delete_link commodity_path(commodity), 'this commodity'
-    .actions
-      =link_to 'Add', new_entity_commodity_path(@entity), class: 'add_button', title: 'Click here to add a new commodity.'
-      =link_to 'Back', entities_path, class: 'back_button', title: 'Click here to return to the list of entities.'
-      =link_to 'Download prices', download_entity_prices_path, method: :patch, class: 'download_button', title: 'Click here to download prices'
+            .btn-group
+              =edit_link edit_commodity_path(commodity), 'this commodity'
+              =link_to commodity_prices_path(commodity), class: 'btn btn-xs btn-default prices_button', title: 'Click here to manage prices for this commodity.' do
+                %span.glyphicon.glyphicon-usd{aria: {hidden: 'true'}}
+              =delete_link commodity_path(commodity), 'this commodity'
+    .actions.btn-group
+      =link_to 'Add', new_entity_commodity_path(@entity), class: 'btn btn-primary', title: 'Click here to add a new commodity.'
+      =link_to 'Back', entities_path, class: 'btn btn-default', title: 'Click here to return to the list of entities.'
+      =link_to 'Download prices', download_entity_prices_path, method: :patch, class: 'btn btn-default', title: 'Click here to download prices'
