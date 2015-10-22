@@ -41,6 +41,7 @@ class TransactionItemsController < ApplicationController
   
   def index
     authorize! :show, @account
+    # TODO Add pagination here
     @transaction_items = @account.transaction_items.order('transaction_items."index" desc').take(10).to_a
     respond_with @transaction_items
   end

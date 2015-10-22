@@ -22,12 +22,8 @@ class TransactionsController < ApplicationController
   
   def index
     authorize! :show, @entity
-    @transactions = TransactionPresenter.new(entity: @entity, account: @account)
-    @transaction = @entity.transactions.new(transaction_date: Date.today)
-    @items = [
-      @transaction.items.new(action: :credit),
-      @transaction.items.new(action: :debit)
-    ]
+    # TODO Add pagination here
+    @transactions = TransactionPresenter.new(entity: @entity, account: @account).take(10)
     respond_with @transactions
   end
 

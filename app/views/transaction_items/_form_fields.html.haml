@@ -1,23 +1,19 @@
-%div
-  =label_tag 'transaction_item_creator[transaction_date]', 'Transaction date'
-  %br
-  =text_field_tag 'transaction_item_creator[transaction_date]', format_date(transaction_item_creator.transaction_date), autofocus: true
+.form-group
+  =label_tag 'transaction_item_creator[transaction_date]', 'Date'
+  =text_field_tag 'transaction_item_creator[transaction_date]', format_date(transaction_item_creator.transaction_date), autofocus: true, class: 'form-control date_field'
   
-%div
+.form-group
   =label_tag 'transaction_item_creator[description]', 'Description'
-  %br
-  =text_field_tag 'transaction_item_creator[description]', transaction_item_creator.description
+  =text_field_tag 'transaction_item_creator[description]', transaction_item_creator.description, class: 'form-control'
 
-%div
-  =label_tag 'transaction_item_creator[other_account_id]', 'Account'
-  %br
-  =select_tag 'transaction_item_creator[other_account_id', available_accounts_options(account.entity, transaction_item_creator.other_account_id)
+.form-group
+  =label_tag 'transaction_item_creator[other_account_id]', 'Other account'
+  =select_tag 'transaction_item_creator[other_account_id', available_accounts_options(account.entity, transaction_item_creator.other_account_id), class: 'form-control'
   
-%div
+.form-group
   =label_tag 'transaction_item_creator[amount]', 'Amount'
-  %br
-  =text_field_tag 'transaction_item_creator[amount]', transaction_item_creator.amount
+  =text_field_tag 'transaction_item_creator[amount]', transaction_item_creator.amount, class: 'form-control'
   
-.actions
-  =submit_tag 'Save', class: 'save_button'
-  =link_to 'Back', account_transaction_items_path(account), class: 'back_button'
+.actions.btn-group
+  =submit_tag 'Save', class: 'btn btn-primary'
+  =link_to 'Back', account_transaction_items_path(account), class: 'btn btn-default'

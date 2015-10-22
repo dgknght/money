@@ -71,7 +71,7 @@ class TransactionItemCreator
         transaction.items.new(account: other_account,
                               amount: amount.abs,
                               action: TransactionItem.opposite_action(result.action))
-        transaction.save!
+        TransactionManager.new(transaction).create!
       end
       result
     end
@@ -114,7 +114,7 @@ class TransactionItemCreator
           other_item.amount = amount.abs
           other_item.action = TransactionItem.opposite_action(@transaction_item.action)
         end
-        @transaction_item.transaction.save!
+        TransactionManager.new(@transaction_item.transaction).update!
       end
     end
 end
