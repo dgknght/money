@@ -1,40 +1,45 @@
-%h2#page_title #{h @account.name} Holdings
-%ul#nav_3
-  %li= link_to 'view Transactions', account_transaction_items_path(@account), title: 'Click here to view transaction items for this account.'
+=content_for :page_title do
+  #{h @account.name} Holdings
 
-%table#holdings_table.list{ cellspacing: 0, cellpadding: 0}
-  %tr
-    %th Symbol
-    %th.number_column Value
-    %th.number_column Shares
-    %th.number_column Cost
-    %th.number_column Gain/Loss
-  -active_children(@account).each do |child|
-    %tr
-      %td= link_to child.name, account_lots_path(child), title: 'Click here to view the lots for this commidity.'
-      %td.number_column= format_currency(child.value)
-      %td.number_column= format_shares(child.shares)
-      %td.number_column= format_currency(child.cost)
-      %td.number_column= format_currency(child.gains)
-  %tr.commodity_total_line
-    %td Commodity total
-    %td.number_column= format_currency(@account.children_value)
-    %td &nbsp;
-    %td &nbsp;
-    %td &nbsp;
-  %tr.cash_total_line
-    %td Cash
-    %td.number_column= format_currency(@account.balance)
-    %td &nbsp;
-    %td &nbsp;
-    %td &nbsp;
-  %tr.account_total_line
-    %td Total value
-    %td.number_column= format_currency(@account.value_with_children)
-    %td &nbsp;
-    %td.number_column= format_currency(@account.children_cost)
-    %td.number_column= format_currency(@account.gains_with_children)
-.actions
-  =link_to 'Add', new_commodity_transaction_account_path(@account), class: 'add_button', title: 'Click here to purchase shares of a commodity.'
-  =link_to 'Back', entity_accounts_path(@account.entity), class: 'back_button', title: 'Click here to return to the list of accounts.'
-  =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'reconcile_button', title: 'Click here to reconcile this account against a statement.'
+.row
+  .col-md-6
+    %ul.nav.nav-tabs
+      %li.active{role: 'presentation'}= link_to 'Holdings', holdings_account_path(@account), title: 'Click here to view holdings for this account.'
+      %li{role: 'presentation'}= link_to 'Transactions', account_transaction_items_path(@account), title: 'Click here to view transaction items for this account.'
+
+    %table#holdings_table.table
+      %tr
+        %th Symbol
+        %th.text-right Value
+        %th.text-right Shares
+        %th.text-right Cost
+        %th.text-right Gain/Loss
+      -active_children(@account).each do |child|
+        %tr
+          %td= link_to child.name, account_lots_path(child), title: 'Click here to view the lots for this commidity.'
+          %td.text-right= format_currency(child.value)
+          %td.text-right= format_shares(child.shares)
+          %td.text-right= format_currency(child.cost)
+          %td.text-right= format_currency(child.gains)
+      %tr.commodity_total_line
+        %td Commodity total
+        %td.text-right= format_currency(@account.children_value)
+        %td &nbsp;
+        %td &nbsp;
+        %td &nbsp;
+      %tr.cash_total_line
+        %td Cash
+        %td.text-right= format_currency(@account.balance)
+        %td &nbsp;
+        %td &nbsp;
+        %td &nbsp;
+      %tr.account_total_line
+        %td Total value
+        %td.text-right= format_currency(@account.value_with_children)
+        %td &nbsp;
+        %td.text-right= format_currency(@account.children_cost)
+        %td.text-right= format_currency(@account.gains_with_children)
+    .actions.btn-group
+      =link_to 'Add', new_commodity_transaction_account_path(@account), class: 'btn btn-primary', title: 'Click here to purchase shares of a commodity.'
+      =link_to 'Back', entity_accounts_path(@account.entity), class: 'btn btn-default', title: 'Click here to return to the list of accounts.'
+      =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'btn btn-default', title: 'Click here to reconcile this account against a statement.'

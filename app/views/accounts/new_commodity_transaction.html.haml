@@ -1,31 +1,29 @@
-%h2#page_title New commodity transaction
+=content_for :page_title do
+  New commodity transaction for #{h @account.name}
 
 =render 'shared/errors', resource: @creator
-=form_tag(create_commodity_transaction_account_path(@account), {method: :post}) do
-  =fields_for(:purchase, @creator) do |f|
-    %div
-      =f.label :transaction_date
-      %br
-      =f.text_field :transaction_date, class: 'date_field'
-    %div
-      =f.label :action
-      %br
-      =f.select :action, options_for_select(CommodityTransactionCreator::ACTIONS, @creator.action)
-    %div
-      =f.label :symbol
-      %br
-      =f.text_field :symbol
-    %div
-      =f.label :shares
-      %br
-      =f.number_field :shares
-    %div
-      =f.label :value
-      %br
-      =f.number_field :value
-    %div
-      =f.label :fee
-      %br
-      =f.number_field :fee
-  .actions
-    =submit_tag 'Save', class: 'save_button'
+.row
+  .col-md-4
+    =form_tag(create_commodity_transaction_account_path(@account), {method: :post}) do
+      =fields_for(:purchase, @creator) do |f|
+        .form-group
+          =f.label :transaction_date
+          =f.text_field :transaction_date, class: 'date_field', class: 'form-control'
+        .form-group
+          =f.label :action
+          =f.select :action, options_for_select(CommodityTransactionCreator::ACTIONS, @creator.action), {}, class: 'form-control'
+        .form-group
+          =f.label :symbol
+          =f.text_field :symbol, class: 'form-control'
+        .form-group
+          =f.label :shares
+          =f.number_field :shares, class: 'form-control'
+        .form-group
+          =f.label :value
+          =f.number_field :value, class: 'form-control'
+        .form-group
+          =f.label :fee
+          =f.number_field :fee, class: 'form-control'
+      .actions.btn-group
+        =submit_tag 'Save', class: 'btn btn-primary'
+        =link_to 'Back', holdings_account_path(@account), class: 'btn btn-default'

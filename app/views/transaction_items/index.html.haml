@@ -1,8 +1,10 @@
 =content_for :page_title do
   #{h @account.name} Transaction items
-  -if @account.commodities?
-    %ul#nav_3
-      %li= link_to 'view Holdings', holdings_account_path(@account), title: 'Click here to view holdings for this account.'
+
+-if @account.commodities?
+  %ul.nav.nav-tabs
+    %li{role: 'presentation'}= link_to 'Holdings', holdings_account_path(@account), title: 'Click here to view holdings for this account.'
+    %li.active{role: 'presentation'}= link_to 'Transactions', account_transaction_items_path(@account), title: 'Click here to view transaction items for this account.'
 
 %table#transaction_items_table.table.table-striped
   %tr
