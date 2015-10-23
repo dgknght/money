@@ -1,26 +1,32 @@
+=content_for :page_title do
+  #{h @account.name} Lots in #{h @account.parent.name}
+
 .row
-  .col-md-6.col-md-offset-3
-    %h2#page_title #{h @account.name} Lots in #{h @account.parent.name}
-    %table#lots_table.list{ cellspacing: 0, cellpadding: 0}
+  .col-md-8
+    %table#lots_table.table.table-striped
       %tr
-        %th Purchase date
-        %th Shares owned
-        %th Price
-        %th Cost
-        %th Current value
-        %th Gain/loss
-        %th &nbsp;
+        %th.text-right Purchase date
+        %th.text-right Shares owned
+        %th.text-right Price
+        %th.text-right Cost
+        %th.text-right Current value
+        %th.text-right Gain/loss
+        %th.text-right &nbsp;
       -@lots.each do |lot|
         %tr
-          %td.number_column= format_date(lot.purchase_date)
-          %td.number_column= format_shares(lot.shares_owned)
-          %td.number_column= format_price(lot.price)
-          %td.number_column= format_currency(lot.cost)
-          %td.number_column= format_currency(lot.current_value)
-          %td.number_column= format_currency(lot.gains)
+          %td.text-right= format_date(lot.purchase_date)
+          %td.text-right= format_shares(lot.shares_owned)
+          %td.text-right= format_price(lot.price)
+          %td.text-right= format_currency(lot.cost)
+          %td.text-right= format_currency(lot.current_value)
+          %td.text-right= format_currency(lot.gains)
           %td.action_cell
-            =link_to 'Split', new_split_commodity_path(lot.commodity, account_id: @account.id), class: 'split_button', title: 'Click here to record a stock split.'
-            =link_to 'Transfer', new_transfer_lot_path(lot, account_id: @account.parent.id), class: 'transfer_button', title: 'Click here to transfer this lot to another account.'
-            =link_to 'Exchange', new_exchange_lot_path(lot, account_id: @account.parent.id), class: 'exchange_button', title: 'Click here to exchange these share for shares of another commodity.'
-    .actions
-      =link_to 'Back', holdings_account_path(@account.parent), class: 'back_button', title: 'Click here to return to the account holdings page.'
+            .btn-group
+              =link_to new_split_commodity_path(lot.commodity, account_id: @account.id), class: 'btn btn-xs btn-default', title: 'Click here to record a stock split.' do
+                %span.glyphicon.glyphicon-resize-full{aria: {hidden: 'true'}}
+              =link_to new_transfer_lot_path(lot, account_id: @account.parent.id), class: 'btn btn-xs btn-default', title: 'Click here to transfer this lot to another account.' do
+                %span.glyphicon.glyphicon-log-out{aria: {hidden: 'true'}}
+              =link_to new_exchange_lot_path(lot, account_id: @account.parent.id), class: 'btn btn-xs btn-default', title: 'Click here to exchange these share for shares of another commodity.' do
+                %span.glyphicon.glyphicon-transfer{aria: {hidden: 'true'}}
+    .actions.btn-group
+      =link_to 'Back', holdings_account_path(@account.parent), class: 'btn btn-default', title: 'Click here to return to the account holdings page.'
