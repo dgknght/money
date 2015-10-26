@@ -32,6 +32,7 @@ class Account < ActiveRecord::Base
   belongs_to :head_transaction_item, class_name: 'TransactionItem'
   belongs_to :first_transaction_item, class_name: 'TransactionItem'
 
+  START_OF_TIME = Chronic.parse('1000-01-01').to_date
   END_OF_TIME = Chronic.parse('9999-12-31').to_date
   CONTENT_TYPES = %w(currency commodities commodity)
 
@@ -94,18 +95,19 @@ class Account < ActiveRecord::Base
     super({ methods: :depth })
   end
   
-  def balance_as_of(date, force_reload = false)
-    # force_reload is a no-op here because there is no caching
-
-    balance_between Date.civil(1000, 1, 1), date, force_reload
+  def balance_as_of(date)
+    balance_between START_OF_TIME, date
   end
   
-  def balance_between(start_date, end_date, force_reload = false)
-    # force_reload is a no-op here because there is no caching
+  def balance_between(start_date, end_date)
+    sum_of_credits = sum_of_credit_transaction_items(start_date, end_date)
+    sum_of_debits = sum_of_debit_transaction_items(start_date, end_date)
 
-    start_date = ensure_date(start_date)
-    end_date = ensure_date(end_date)
-    balances_cache[[start_date, end_date]]
+    if left_side?
+      sum_of_debits - sum_of_credits
+    else
+      sum_of_credits - sum_of_debits
+    end
   end
   
   def balance_with_children
@@ -116,9 +118,7 @@ class Account < ActiveRecord::Base
     Rails.logger.warn "Attempt to set balance with children"
   end
 
-  def balance_with_children_as_of(date, force_reload = false)
-    # force_reload is a no-op here because there is no caching
-
+  def balance_with_children_as_of(date)
     children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_with_children_as_of(date) }
   end
   
@@ -249,7 +249,42 @@ class Account < ActiveRecord::Base
     1
   end
 
-  def recalculate_balances(opts = {})
+  def recalculate_balance!(options = {})
+    options = { rebuild_item_indexes: false }.merge(options || {})
+    if options[:rebuild_item_indexes]
+      last_index = -1
+      last_balance = BigDecimal.new(0)
+      all_items_sorted_by_date.each do |item|
+        last_index = item.index = (last_index + 1)
+        last_balance = item.balance = (last_balance + item.polarized_amount)
+        item.save!
+      end
+      self.balance = last_balance
+    else
+      self.balance = balance_as_of(END_OF_TIME)
+    end
+    save!
+  end
+
+  def recalculate_children_balance
+    self.children_balance = children.reduce(0){|sum, c| sum + c.balance_with_children}
+  end
+
+  def recalculate_children_balance!
+    recalculate_children_balance
+    save!
+  end
+
+  def recalculate_value
+    recalculate_field(:value)
+  end
+
+  def recalculate_value!
+    recalculate_value
+    save!
+  end
+
+  def recalculate_balances!(opts = {})
     return if entity.suspend_balance_recalculations
 
     with_children_only = opts.fetch(:with_children_only, false)
@@ -259,11 +294,6 @@ class Account < ActiveRecord::Base
       recalculate_field("#{field}_with_children", force_reload)
     end
     parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
-  end
-
-  def recalculate_balances!(opts = {})
-    recalculate_balances(opts)
-    save!
   end
 
   def root?
@@ -337,22 +367,15 @@ class Account < ActiveRecord::Base
   end
 
   private
-    def balances_cache
-      @balances_cache ||= Hash.new do |h, k|
-        h[k] = calculate_balance_between(*k)
-      end
-    end
 
-    def calculate_balance_between(start_date, end_date)
-      sum_of_credits = sum_of_credit_transaction_items(start_date, end_date)
-      sum_of_debits = sum_of_debit_transaction_items(start_date, end_date)
-
-      if left_side?
-        sum_of_debits - sum_of_credits
-      else
-        sum_of_credits - sum_of_debits
-      end
-    end
+  def all_items_sorted_by_date
+    # TODO Probably want to do this in batches
+    ids = transaction_items.
+      joins(:transaction).
+      order('transactions.transaction_date asc, transaction_items."index" asc').
+      map(&:id)
+    TransactionItem.find(ids)
+  end
 
     def sum_of_credit_transaction_items(start_date, end_date)
       result = transaction_items.
@@ -394,11 +417,10 @@ class Account < ActiveRecord::Base
       end
     end
 
-    def recalculate_field(field, force_reload = false)
-      # Assume that most of the time the balance 
-      # will not need to be updated
+    # Recalculates the fields :value, :cost, :gains
+    def recalculate_field(field)
       method = "#{field}_as_of".to_sym
-      current = send(method, END_OF_TIME, force_reload)
+      current = send(method, END_OF_TIME)
       send("#{field}=", current)
     end
 

@@ -732,6 +732,18 @@ describe Account do
         expect(kss_account.shares).to eq(200)
       end
     end
+
+    describe '#recalculate_value!' do
+      before(:each) do
+        Account.connection.execute('update accounts set value = 0')
+      end
+      it 'should set the value attribute for the account' do
+        kss_account.reload
+        expect do
+          kss_account.recalculate_value!
+        end.to change(kss_account, :value).from(0).to(2_800)
+      end
+    end
   end
 
   context 'for a commodities account' do
@@ -873,6 +885,65 @@ describe Account do
                                        description: 'paycheck',
                                        debit_account: checking,
                                        credit_account: salary)
+    end
+  end
+
+  describe '#recalculate_balance!' do
+    # Not using transaction manager on purpose here to test the balance calculations
+    let!(:t1) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-01'),
+                                       description: 'Paycheck',
+                                       amount: 1_000,
+                                       debit_account: checking,
+                                       credit_account: salary)
+    end
+    let!(:t2) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-04'),
+                                       description: 'Kroger',
+                                       amount: 100,
+                                       debit_account: groceries,
+                                       credit_account: checking)
+    end
+    let!(:t3) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-11'),
+                                       description: 'Kroger',
+                                       amount: 100,
+                                       debit_account: groceries,
+                                       credit_account: checking)
+    end
+    let!(:t4) do
+      FactoryGirl.create(:transaction, entity: entity,
+                                       transaction_date: Chronic.parse('2015-01-15'),
+                                       description: 'Paycheck',
+                                       amount: 1_000,
+                                       debit_account: checking,
+                                       credit_account: salary)
+    end
+
+    context 'with option rebuild_item_indexes=true' do
+      it 'sets the balance attribute to the correct value' do
+        expect do
+          checking.recalculate_balance!(rebuild_item_indexes: true)
+        end.to change(checking, :balance).from(0).to(1_800)
+      end
+    end
+  end
+
+  describe '#recalculate_children_balance!' do
+    include_context 'savings accounts'
+    include_context 'savings transactions'
+    before(:each) do
+      Account.connection.execute('update accounts set children_balance = 0')
+    end
+
+    it 'updates the value of the children_balance attribute' do
+      savings.reload
+      expect do
+        savings.recalculate_children_balance!
+      end.to change(savings, :children_balance).from(0).to(25_000)
     end
   end
 end
