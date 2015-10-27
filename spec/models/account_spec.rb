@@ -770,7 +770,7 @@ describe Account do
 
     describe '#value_with_children_as_of' do
       it 'should return the value of the shares of the commidity based on the price that is before and closest to the specified date' do
-        expect(ira.value_with_children_as_of('2014-01-01', true)).to eq(3_000) # 2,000.00 in cash, 1,000 in KSS stock (1 100-share lot at $10/share)
+        expect(ira.value_with_children_as_of('2014-01-01')).to eq(3_000) # 2,000.00 in cash, 1,000 in KSS stock (1 100-share lot at $10/share)
         expect(ira.value_with_children_as_of('2014-02-01')).to eq(3_200) #   800.00 in cash, 2,400 in KSS stock (2 100-share lots at $12/share)
         expect(ira.value_with_children_as_of('2014-03-02')).to eq(3_600) #   800.00 in cash, 2,800 in KSS stock (2 100-share lots at $14/share)
       end
@@ -826,11 +826,10 @@ describe Account do
   describe '#gains_with_children' do
     include_context 'investment accounts'
 
-    it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today'
-#    it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
-#      ira.reload
-#      expect(ira.gains_with_children).to eq(600)
-#    end
+    it 'should return the amount that would be earned if all holdings in this account and all child accounts were sold today' do
+      ira.reload
+      expect(ira.gains_with_children).to eq(600)
+    end
   end
 
   describe '::find_by_path' do

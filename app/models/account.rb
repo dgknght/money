@@ -67,7 +67,30 @@ class Account < ActiveRecord::Base
       self.account_type == type
     end
   end
-  
+
+  BALANCE_FIELDS = %w(balance value cost gains)
+  BALANCE_FIELDS.each do |field|
+    define_method "recalculate_#{field}" do
+      recalculate_field(field)
+    end
+
+    unless field == 'balance'
+      define_method "recalculate_#{field}!" do
+        recalculate_field(field)
+        save!
+      end
+    end
+
+    define_method "recalculate_children_#{field}" do
+      recalculate_children_field(field)
+    end
+
+    define_method "recalculate_children_#{field}!" do
+      recalculate_children_field(field)
+      save!
+    end
+  end
+
   validates :name, presence: true,
                    uniqueness: { scope: [:entity, :parent] }
   validates :account_type, presence: true, 
@@ -114,17 +137,11 @@ class Account < ActiveRecord::Base
     balance + children_balance
   end
 
-  def balance_with_children=(value)
-    Rails.logger.warn "Attempt to set balance with children"
-  end
-
   def balance_with_children_as_of(date)
     children.reduce( self.balance_as_of(date) ) { |sum, child| sum += child.balance_with_children_as_of(date) }
   end
   
-  def balance_with_children_between(start_date, end_date, force_reload = false)
-    # force_reload is a no-op here because there is no caching
-
+  def balance_with_children_between(start_date, end_date)
     children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
 
@@ -146,21 +163,17 @@ class Account < ActiveRecord::Base
     children.reduce(0) { |sum, child| sum + child.value }
   end
 
-  def cost_as_of(date, force_reload = false)
-    return balance_as_of(date, force_reload) unless commodity?
-    lots(force_reload).reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
+  def cost_as_of(date)
+    return balance_as_of(date) unless commodity?
+    lots.reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
   end
 
   def cost_with_children
     cost + children_cost
   end
 
-  def cost_with_children=(value)
-    Rails.logger.warn "attempt to write to cost_with_children"
-  end
-
-  def cost_with_children_as_of(date, force_reload = false)
-    return children(force_reload).reduce(cost_as_of(date, force_reload)) { |sum, child| sum + child.cost_with_children_as_of(date, force_reload) }
+  def cost_with_children_as_of(date)
+    return children.reduce(cost_as_of(date)) { |sum, child| sum + child.cost_with_children_as_of(date) }
   end
 
   # Adjusts the balance of the account by the specified amount
@@ -204,20 +217,16 @@ class Account < ActiveRecord::Base
     TransactionItem.find(ids).first
   end
 
-  def gains_as_of(date, force_reload = false)
-    value_as_of(date, force_reload) - cost_as_of(date, force_reload)
+  def gains_as_of(date)
+    value_as_of(date) - cost_as_of(date)
   end
 
   def gains_with_children
     gains + children_gains
   end
 
-  def gains_with_children=(value)
-    Rails.logger.warn "attempt to write to gains_with_children"
-  end
-
-  def gains_with_children_as_of(date, force_reload = false)
-    children(force_reload).reduce(gains_as_of(date, force_reload)) { |sum, child| sum + child.gains_with_children_as_of(date, force_reload) }
+  def gains_with_children_as_of(date)
+    children.reduce(gains_as_of(date)) { |sum, child| sum + child.gains_with_children_as_of(date) }
   end
 
   def infer_action(amount)
@@ -266,34 +275,21 @@ class Account < ActiveRecord::Base
     save!
   end
 
-  def recalculate_children_balance
-    self.children_balance = children.reduce(0){|sum, c| sum + c.balance_with_children}
-  end
-
-  def recalculate_children_balance!
-    recalculate_children_balance
-    save!
-  end
-
-  def recalculate_value
-    recalculate_field(:value)
-  end
-
-  def recalculate_value!
-    recalculate_value
-    save!
+  def recalculate_children_field(field)
+    new_value = children.reduce(0){|sum, c| sum + c.send("#{field}_with_children")}
+    send("children_#{field}=", new_value)
   end
 
   def recalculate_balances!(opts = {})
     return if entity.suspend_balance_recalculations
 
-    with_children_only = opts.fetch(:with_children_only, false)
-    force_reload = opts.fetch(:force_reload, false)
+    children_balances_only = opts.fetch(:children_balances_only, false)
     recalculation_fields(opts).each do |field|
-      recalculate_field(field, force_reload) unless with_children_only
-      recalculate_field("#{field}_with_children", force_reload)
+      send("recalculate_#{field}") unless children_balances_only
+      send("recalculate_children_#{field}")
     end
-    parent.recalculate_balances!(opts.merge(with_children_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
+    save!
+    parent.recalculate_balances!(opts.merge(children_balances_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
   end
 
   def root?
@@ -314,11 +310,11 @@ class Account < ActiveRecord::Base
   # Value is the current value of the account. For cash accounts
   # this will always be the same as the balance. For commodity
   # accounts, this will be the sum of the values of the lots
-  def value_as_of(date, force_reload = false)
+  def value_as_of(date)
     date = ensure_date(date)
     return balance_as_of(date) unless commodity?
     price = nearest_price(date)
-    shrs = shares_as_of(date, force_reload)
+    shrs = shares_as_of(date)
     price && shrs ? shrs * price : 0
   end
 
@@ -326,13 +322,9 @@ class Account < ActiveRecord::Base
     value + children_value
   end
 
-  def value_with_children=(value)
-    Rails.logger.warn "attempt to write to value_with_children"
-  end
-
-  def value_with_children_as_of(date, force_reload = false)
+  def value_with_children_as_of(date)
     date = ensure_date(date)
-    children.reduce(value_as_of(date, force_reload)){|sum, child| sum + child.value_with_children_as_of(date, force_reload)}
+    children.reduce(value_as_of(date)){|sum, child| sum + child.value_with_children_as_of(date)}
   end
 
   def nearest_price(date)
@@ -436,9 +428,8 @@ class Account < ActiveRecord::Base
     def update_local_balances(delta)
       %w(balance cost value).each do |field|
         update_local_balance(field, delta)
-        update_local_balance("#{field}_with_children", delta)
       end
-      parent.recalculate_balances(with_children_only: true) if parent
+      parent.recalculate_balances(children_balances_only: true) if parent
       balance
     end
 end
