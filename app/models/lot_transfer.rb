@@ -47,7 +47,8 @@ class LotTransfer
       lot.account_id = commodity_target_account.id
       if lot.save
         old_account.recalculate_balances!
-        lot.account(true).recalculate_balances!
+        lot.account.recalculate_balances!
+        true
       else
         false
       end
