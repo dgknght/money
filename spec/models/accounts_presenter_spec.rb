@@ -160,13 +160,12 @@ describe AccountsPresenter do
       #  { caption: 'Short-term capital gains', balance:    100, depth: 1 },
 
       #  { caption: 'Expense', balance: 0, depth: 0 }]
-      it 'should include unrealized gains'
-#      it 'should include unrealized gains' do
-#        presenter = AccountsPresenter.new(entity)
-#        expect(presenter).to include_account_display_record(caption: 'Unrealized gains',
-#                                                            balance: 100,
-#                                                            depth: 1)
-#      end
+      it 'should include unrealized gains' do
+        presenter = AccountsPresenter.new(entity)
+        expect(presenter).to include_account_display_record(caption: 'Unrealized gains',
+                                                            balance: 100,
+                                                            depth: 1)
+      end
     end
   end
 end
