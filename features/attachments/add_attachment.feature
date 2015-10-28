@@ -17,8 +17,8 @@ Feature: Add an attachment
     When I click "Transactions" within the navigation
     Then I should see "Transactions" within the page title
     And I should see the following transactions table
-      | Transaction Date | Description |   Amount | 
-      | 1/1/2014         | Paycheck    | 1,000.00 |
+      | Date     | Description |   Amount | 
+      | 1/1/2014 | Paycheck    | 1,000.00 |
 
     When I click the attachments button within the 1st transaction row
     Then I should see "Attachments" within the page title

@@ -49,7 +49,7 @@ Feature: Add a child account
       | Food        |    0.00 |
     
     When I enter a transaction for entity "Personal" called "Kroger" on 1/1/2013 crediting "Checking" $15 and debiting "Food" $15
-    And I click "Back"
+    And I click "Accounts" within the navigation
     Then I should see the following accounts table
       | Name              | Balance |
       | Assets            |   85.00 |

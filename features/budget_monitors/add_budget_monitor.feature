@@ -20,7 +20,7 @@ Feature: Add a budget monitor
     Then I should not see "Dining" within the budget monitors area
 
     When I click "Add" within the budget monitors area
-    Then I should see "New Budget monitor" within the page title
+    Then I should see "New budget monitor" within the page title
 
     When I select "Dining" from the "Account" list
     And I click "Save"
