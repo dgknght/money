@@ -56,7 +56,7 @@ Feature: Exchange commodity shares
       | Purchase date | Shares owned |     Cost | Current value | Gain/loss |
       |      1/2/2015 |     100.0000 | 1,000.00 |      1,000.00 |      0.00 |
 
-    When I click "Exchange" within the 1st lots row
+    When I click the exchange button within the 1st lots row
     Then I should see "Exchange lot" within the page title
 
     When I select "KSE" from the "Commodity" list

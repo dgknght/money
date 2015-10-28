@@ -6,6 +6,7 @@
 .row
   .col-md-3
     =form_for(@budget_item) do |f|
+      =hidden_field_tag 'distributor[method]', @distributor.method
       =render 'form_fields', f: f, budget_item: @budget_item, distributor: @distributor
       .actions.btn-group
         =f.submit 'Save', class: 'btn btn-primary', title: 'Click here to save the budget item.'

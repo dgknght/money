@@ -1,3 +1,4 @@
+@timecop
 Feature: Add a budget monitor
   As a user
   In order to see up-to-the-day budget progress
@@ -11,6 +12,10 @@ Feature: Add a budget monitor
       | Salary   | income       |
       | Checking | asset        |
       | Dining   | expense      |
+
+    And entity "Personal" has a 12-month budget named "2015" starting on 1/1/2014
+    And budget "2015" allocates $500 a month for "Dining"
+    And today is 1/2/2014
 
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page

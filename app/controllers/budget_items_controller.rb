@@ -36,7 +36,7 @@ class BudgetItemsController < ApplicationController
 
   def edit
     authorize! :update, @budget_item
-    @distributor = BudgetItemDistributor.new(@budget_item)
+    @distributor = BudgetItemDistributor.new(@budget_item, BudgetItemDistributor.average)
   end
 
   def update
@@ -44,7 +44,7 @@ class BudgetItemsController < ApplicationController
     @budget_item.update_attributes(budget_item_params)
     distribute
     flash[:notice] = "The budget item was updated successfully." if @budget_item.save
-    respond_with @budget_item
+    respond_with @budget_item, location: budget_budget_items_path(@budget_item.budget)
   end
 
   def destroy

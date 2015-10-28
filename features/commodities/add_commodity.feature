@@ -14,7 +14,7 @@ Feature: Add a commodity
     When I click "Commodities" within the navigation
     Then I should see "Commodities" within the page title
     And I should see the following commodities table
-      | Name | Symbol | Market | Most recent price |
+      | Name | Symbol | Market | Recent |
     
     When I click "Add"
     Then I should see "New commodity" within the page title
@@ -26,5 +26,5 @@ Feature: Add a commodity
 
     Then I should see "The commodity was created successfully." within the notice area
     And I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Knight Software Services | KSS    | NYSE   |                   |
+      | Name                     | Symbol | Market | Recent |
+      | Knight Software Services | KSS    | NYSE   |        |

@@ -22,11 +22,11 @@
           %td.text-right= format_currency(lot.gains)
           %td.action_cell
             .btn-group
-              =link_to new_split_commodity_path(lot.commodity, account_id: @account.id), class: 'btn btn-xs btn-default', title: 'Click here to record a stock split.' do
+              =link_to new_split_commodity_path(lot.commodity, account_id: @account.id), class: 'btn btn-xs btn-default split_button', title: 'Click here to record a stock split.' do
                 %span.glyphicon.glyphicon-resize-full{aria: {hidden: 'true'}}
-              =link_to new_transfer_lot_path(lot, account_id: @account.parent.id), class: 'btn btn-xs btn-default', title: 'Click here to transfer this lot to another account.' do
+              =link_to new_transfer_lot_path(lot, account_id: @account.parent.id), class: 'btn btn-xs btn-default transfer_button', title: 'Click here to transfer this lot to another account.' do
                 %span.glyphicon.glyphicon-log-out{aria: {hidden: 'true'}}
-              =link_to new_exchange_lot_path(lot, account_id: @account.parent.id), class: 'btn btn-xs btn-default', title: 'Click here to exchange these share for shares of another commodity.' do
+              =link_to new_exchange_lot_path(lot, account_id: @account.parent.id), class: 'btn btn-xs btn-default exchange_button', title: 'Click here to exchange these share for shares of another commodity.' do
                 %span.glyphicon.glyphicon-transfer{aria: {hidden: 'true'}}
     .actions.btn-group
       =link_to 'Back', holdings_account_path(@account.parent), class: 'btn btn-default', title: 'Click here to return to the account holdings page.'

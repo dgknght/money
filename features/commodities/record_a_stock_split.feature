@@ -54,7 +54,7 @@ Feature: Record a stock split
    | Purchase date | Shares owned |   Price |     Cost | Current value | Gain/loss |
    |      1/2/2015 |     100.0000 | 20.0000 | 2,000.00 |      2,000.00 |      0.00 |
 
- When I click "Split" within the 1st lot row
+ When I click the split button within the 1st lot row
  Then I should see "KSS Split" within the page title
 
  When I fill in "Numerator" with "2"
