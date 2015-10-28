@@ -1,6 +1,9 @@
 class BudgetMonitorsController < ApplicationController
+  include ApplicationHelper
+
   before_filter :authenticate_user!
   before_filter :load_entity, only: [:index, :new, :create]
+  before_filter :set_current_entity
 
   def index
     authorize! :show, @entity
@@ -26,5 +29,9 @@ class BudgetMonitorsController < ApplicationController
 
   def load_entity
     @entity = current_user.entities.find(params[:entity_id])
+  end
+
+  def set_current_entity
+    self.current_entity = @entity || @transaction.entity
   end
 end
