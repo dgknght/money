@@ -11,7 +11,7 @@
         %th.col-md-2.text-right Recent
         %th.col-md-3 &nbsp;
       -@commodities.each do |commodity|
-        %tr
+        %tr{id: "commodity_#{commodity.id}"}
           %td= commodity.name
           %td= commodity.symbol
           %td= commodity.market

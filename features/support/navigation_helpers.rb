@@ -12,6 +12,7 @@ module NavigationHelpers
       when /the navigation/ then "nav"
       when /the (.*) table/ then "##{$1}_table"
       when /the account row for "([^"]+)"/ then "#account_#{account_id($1)}"
+      when /the commodity row for "([^"]+)"/ then "#commodity_#{commodity_id($1)}"
       when /the entity row for "([^"]+)"/ then "#entity_#{entity_id($1)}"
       when /the budget row for "([^"]+)"/ then "#budget_#{budget_id($1)}"
       when /the budget item row for "([^"]+)"/ then "#budget_item_#{budget_item_id($1)}"
@@ -56,6 +57,12 @@ module NavigationHelpers
       budget_item.id
     end
     
+    def commodity_id(symbol)
+      commodity = Commodity.find_by_symbol(symbol)
+      raise "No commodity found for symbol #{symbol}" unless commodity
+      commodity.id
+    end
+
     def entity_id(name)
       find_entity(name).id
     end
