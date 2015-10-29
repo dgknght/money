@@ -37,8 +37,8 @@ Feature: Add a commodity price
 
     When I click "Back"
     Then I should see the following commodities table
-      | Name                     | Symbol | Recent |
-      | Knight Software Services | KSS    |           11.3400 |
+      | Name                     | Symbol |  Recent |
+      | Knight Software Services | KSS    | 11.3400 |
 
   Scenario: A user views the effect of a new price on the value of a commodity holding
     Given there is a user with email address "john@doe.com" and password "please01"
