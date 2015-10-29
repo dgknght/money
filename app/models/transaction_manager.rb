@@ -50,16 +50,11 @@ class TransactionManager
     handle_errors{destroy!}
   end
 
-  def destroy!
-    items = transaction.items.to_a
-    ActiveRecord::Base.transaction do
-      transaction.destroy!
-      account_deltas = items.
-        group_by(&:account).
-        flat_map do |account, _|
-          process_items_as_of(account, transaction.transaction_date)
-      end
-      process_account_deltas(account_deltas)
+  def destroy!(options = {})
+    if options[:bypass_transaction]
+      naked_destroy
+    else
+      transacted_destroy
     end
   end
 
@@ -109,6 +104,17 @@ class TransactionManager
   rescue => e
     self.error = e.message
     false
+  end
+
+  def naked_destroy
+    items = transaction.items.to_a
+    transaction.destroy!
+    account_deltas = items.
+      group_by(&:account).
+      flat_map do |account, _|
+      process_items_as_of(account, transaction.transaction_date)
+      end
+    process_account_deltas(account_deltas)
   end
 
   # Given a list of maps where the keys are accounts
@@ -180,5 +186,11 @@ class TransactionManager
   end
 
   def success_notice
+  end
+
+  def transacted_destroy
+    ActiveRecord::Base.transaction do
+      naked_destroy
+    end
   end
 end

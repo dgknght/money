@@ -25,13 +25,14 @@ class TransactionItemsController < ApplicationController
   
   def destroy
     authorize! :destroy, @transaction_item
+
     destroyer = TransactionDestroyer.new(@transaction_item.transaction)
     if destroyer.destroy
       flash[:notice] = destroyer.notice
     else
       flash[:error] = destroyer.error
     end
-    respond_with @transaction, location: account_transaction_items_path(@transaction_item.account)
+    respond_with @transaction_item, location: account_transaction_items_path(@transaction_item.account)
   end
   
   def edit

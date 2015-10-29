@@ -62,7 +62,7 @@ class TransactionDestroyer
   def transacted_destroy
     accounts = affected_accounts
     Transaction.transaction do
-      TransactionManager.new(@transaction).destroy!
+      TransactionManager.new(@transaction).destroy!(bypass_transaction: true)
       @transaction.lot_transactions.each { |lt| process_lot_transaction(lt) }
     end
   end
