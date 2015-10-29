@@ -22,25 +22,25 @@ Feature: Delete a price
     When I click "Commodities" within the navigation
     Then I should see "Commodities" within the page title
     And I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Knight Software Services | KSS    | NYSE   |            9.9999 |
+      | Name                     | Symbol | Market | Recent |
+      | Knight Software Services | KSS    | NYSE   | 9.9999 |
 
-    When I click "Prices" within the 1st commodity row
-    Then I should see "KSS Prices" within the page title
+    When I click the prices button within the 1st commodity row
+    Then I should see "KSS prices" within the page title
     And I should see the following prices table
-      | Trade date |  Price |
-      |   1/3/2014 | 9.9999 |
-      |   1/2/2014 | 8.8888 |
-      |   1/1/2014 | 7.7777 |
+      |     Date |  Price |
+      | 1/3/2014 | 9.9999 |
+      | 1/2/2014 | 8.8888 |
+      | 1/1/2014 | 7.7777 |
 
     When I click the delete button within the 1st price row
     Then I should see "The price was deleted successfully." within the notice area
     And I should see the following prices table
-      | Trade date |  Price |
-      |   1/2/2014 | 8.8888 |
-      |   1/1/2014 | 7.7777 |
+      |     Date |  Price |
+      | 1/2/2014 | 8.8888 |
+      | 1/1/2014 | 7.7777 |
 
     When I click "Back"
     Then I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Knight Software Services | KSS    | NYSE   |            8.8888 |
+      | Name                     | Symbol | Market | Recent |
+      | Knight Software Services | KSS    | NYSE   | 8.8888 |
