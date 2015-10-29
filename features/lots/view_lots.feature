@@ -42,7 +42,7 @@ Feature: View lots
       | Total value     | 10,800.00 |             | 1,700.00 |    550.00 |
 
     When I click "KSS" within the main content
-    Then I should see "KSS Lots in 401k"
+    Then I should see "KSS Lots in 401k" within the main content
     And I should see the following lots table
       | Purchase date | Shares owned |   Price |     Cost | Current value | Gain/loss |
       | 2/1/2014      |      50.0000 | 10.0000 |   500.00 |        750.00 |    250.00 |
