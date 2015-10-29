@@ -37,17 +37,17 @@ Feature: Reconcile an account
     | Expense           |    200.00 |
     | Groceries         |    200.00 |
   
-  When I click "Reconcile" within the account row for "Checking"
-  Then I should see "Reconciliation" within the page title
+  When I click the reconcile button within the account row for "Checking"
+  Then I should see "Checking reconciliation" within the page title
   And I should see the following transactions table
-    | Transaction date | Description |   Amount |
-    | 1/1/2013         | My Employer | 5,000.00 |
-    | 1/6/2013         | Kroger      |   -40.00 |
-    | 1/13/2013        | Kroger      |   -40.00 |
-    | 1/15/2013        | My Employer | 5,000.00 |
-    | 1/20/2013        | Kroger      |   -40.00 |
-    | 1/27/2013        | Kroger      |   -40.00 |
-    | 2/3/2013         | Kroger      |   -40.00 |
+    |      Date | Description |   Amount |
+    |  1/1/2013 | My Employer | 5,000.00 |
+    |  1/6/2013 | Kroger      |   -40.00 |
+    | 1/13/2013 | Kroger      |   -40.00 |
+    | 1/15/2013 | My Employer | 5,000.00 |
+    | 1/20/2013 | Kroger      |   -40.00 |
+    | 1/27/2013 | Kroger      |   -40.00 |
+    |  2/3/2013 | Kroger      |   -40.00 |
 
   When I fill in "reconciliation_reconciliation_date" with "2013-01-31"
   And I fill in "reconciliation_closing_balance" with "9840"
@@ -62,7 +62,7 @@ Feature: Reconcile an account
   And I should see "Transaction items" within the page title
   
   When I click "Reconcile"
-  Then I should see "Reconciliation" within the page title
+  Then I should see "Checking reconciliation" within the page title
   And I should see the following reconciliation attributes
     |            | Date      |  Balance |
     | Previous   | 1/31/2013 | 9,840.00 |
@@ -71,6 +71,6 @@ Feature: Reconcile an account
     | Difference |           |     0.00 |
     
   And I should see the following transactions table
-    | Transaction date | Description |   Amount |
-    | 2/3/2013         | Kroger      |   -40.00 |
+    |     Date | Description |   Amount |
+    | 2/3/2013 | Kroger      |   -40.00 |
   

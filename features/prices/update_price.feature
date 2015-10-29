@@ -20,14 +20,14 @@ Feature: Update a commodity price
     When I click "Commodities" within the navigation
     Then I should see "Commodities" within the page title
     And I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Knight Software Services | KSS    | NYSE   |           10.0000 |
+      | Name                     | Symbol | Market |  Recent |
+      | Knight Software Services | KSS    | NYSE   | 10.0000 |
 
-    When I click "Prices" within the 1st commodity row
-    Then I should see "Prices" within the page title
+    When I click the prices button within the 1st commodity row
+    Then I should see "KSS prices" within the page title
     And I should see the following prices table
-      | Trade date |   Price |
-      |   1/1/2014 | 10.0000 |
+      |     Date |   Price |
+      | 1/1/2014 | 10.0000 |
 
     When I click the edit button within the 1st price row
     Then I should see "Edit price" within the page title
@@ -37,12 +37,12 @@ Feature: Update a commodity price
     And I click "Save"
     Then I should see "The price was updated successfully." within the notice area
     And I should see the following prices table
-      | Trade date |   Price |
-      |   2/1/2014 | 11.1234 |
+      |     Date |   Price |
+      | 2/1/2014 | 11.1234 |
 
     When I click "Back"
     Then I should see "Commodities" within the page title
     And I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Knight Software Services | KSS    | NYSE   |           11.1234 |
+      | Name                     | Symbol | Market |  Recent |
+      | Knight Software Services | KSS    | NYSE   | 11.1234 |
 
