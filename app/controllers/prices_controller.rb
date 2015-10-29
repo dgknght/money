@@ -4,12 +4,14 @@ class PricesController < ApplicationController
   before_filter :authenticate_user!
   before_filter :load_price, only: [:show, :edit, :update, :destroy]
   before_filter :load_commodity, only: [:index, :new, :create, :edit]
-  before_filter :set_current_entity
+  before_filter :set_current_entity, except: :download
   respond_to :html, :json
 
   def download
     entity = Entity.find(params[:entity_id])
     authorize! :update, entity
+
+    self.current_entity = entity
     StockPrices::PriceDownloader.new(entity).download
     redirect_to entity_commodities_path(entity)
   end

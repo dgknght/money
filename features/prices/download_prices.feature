@@ -57,15 +57,15 @@ Feature: Download prices
 
     When I click "Commodities" within the navigation
     Then I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Apple, Inc.              | AAPL   | NASDAQ |          30.0000  |
-      | Knight Software Services | KSS    | NYSE   |          10.0000  |
+      | Name                     | Symbol | Market |  Recent |
+      | Apple, Inc.              | AAPL   | NASDAQ | 30.0000 |
+      | Knight Software Services | KSS    | NYSE   | 10.0000 |
 
     When I click "Download prices"
     Then I should see the following commodities table
-      | Name                     | Symbol | Market | Most recent price |
-      | Apple, Inc.              | AAPL   | NASDAQ |           28.4500 |
-      | Knight Software Services | KSS    | NYSE   |           10.7500 |
+      | Name                     | Symbol | Market |  Recent |
+      | Apple, Inc.              | AAPL   | NASDAQ | 28.4500 |
+      | Knight Software Services | KSS    | NYSE   | 10.7500 |
 
     When I click on "Accounts" within the navigation
     Then I should see the following accounts table
