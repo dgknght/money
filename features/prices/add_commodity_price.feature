@@ -1,4 +1,3 @@
-@wip
 Feature: Add a commodity price
   As a user,
   In order to track the value of a commodity over time,
