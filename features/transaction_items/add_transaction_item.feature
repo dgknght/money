@@ -20,19 +20,19 @@ Feature: Add a transaction item
     When I click "Checking" within the main content
     Then I should see "Checking Transaction items" within the page title
     And I should see the following transaction items table
-     | Transaction date | Description | Account    | Rec. |   Amount |  Balance |
-     |         1/1/2013 | Paycheck    | Salary     |      | 1,000.00 | 1,000.00 |
+     |     Date | Description | Account    | Rec. |   Amount |  Balance |
+     | 1/1/2013 | Paycheck    | Salary     |      | 1,000.00 | 1,000.00 |
     
     When I click "Add" within the main content
-    Then I should see "New Transaction item" within the page title
+    Then I should see "New Checking transaction item" within the page title
     
-    When I fill in "Transaction date" with "2/1/2013"
+    When I fill in "Date" with "2/1/2013"
     And I fill in "Description" with "Kroger"
-    And I select "Groceries" from the "Account" list
+    And I select "Groceries" from the "Other account" list
     And I fill in "Amount" with "-43.21"
     And I click "Save"
     Then I should see "The transaction was created successfully." within the notice area
     And I should see the following transaction items table
-     | Transaction date | Description | Account    | Rec. |   Amount |  Balance |
-     |         2/1/2013 | Kroger      | Groceries  |      |   -43.21 |   956.79 |
-     |         1/1/2013 | Paycheck    | Salary     |      | 1,000.00 | 1,000.00 |
+     |     Date | Description | Account    | Rec. |   Amount |  Balance |
+     | 2/1/2013 | Kroger      | Groceries  |      |   -43.21 |   956.79 |
+     | 1/1/2013 | Paycheck    | Salary     |      | 1,000.00 | 1,000.00 |

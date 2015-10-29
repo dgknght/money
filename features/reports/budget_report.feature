@@ -30,7 +30,7 @@ Feature: View a budget report
     Then I should see "Budget" within the main content
 
     When I click "Budget" within the main content
-    Then I should see "Budget Report" within the page title
+    Then I should see "Budget report" within the page title
 
     When I fill in "start_date" with "2013-01-01"
     And I fill in "end_date" with "2013-02-28"
