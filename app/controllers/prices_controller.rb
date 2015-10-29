@@ -1,7 +1,10 @@
 class PricesController < ApplicationController
+  include ApplicationHelper
+
   before_filter :authenticate_user!
   before_filter :load_price, only: [:show, :edit, :update, :destroy]
   before_filter :load_commodity, only: [:index, :new, :create, :edit]
+  before_filter :set_current_entity
   respond_to :html, :json
 
   def download
@@ -69,5 +72,9 @@ class PricesController < ApplicationController
 
     def response_location
       commodity_prices_path(@commodity || @price.commodity)
+    end
+
+    def set_current_entity
+      self.current_entity = (@commodity || @price.commodity).entity
     end
 end
