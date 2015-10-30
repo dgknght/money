@@ -1,8 +1,8 @@
 .form-group
-  =label_tag 'transaction[transaction_date]'
+  =label_tag 'transaction[transaction_date]', 'Date'
   =text_field_tag 'transaction[transaction_date]', transaction.transaction_date, class: 'date_field form-control', autofocus: true
 .form-group
-  =label_tag 'transaction[description]'
+  =label_tag 'transaction[description]', 'Description'
   =text_field_tag 'transaction[description]', transaction.description, class: 'transaction_description_field form-control'
 
 %table#transaction_items_table.table.table-striped
@@ -17,7 +17,7 @@
       %td
         =hidden_field_tag 'transaction[items_attributes][][id]', item.try(:id)
         =label_tag 'transaction[items_attributes][][account_id]', 'Account', style: 'display: none'
-        =select_tag 'transaction[items_attributes][][account_id]', grouped_options_for_select(available_accounts(transaction.entity), item.try(:account_id)), include_blank: true, class: 'form-control'
+        =select_tag 'transaction[items_attributes][][account_id]', available_accounts_options(transaction.entity, item.try(:account_id)), include_blank: true, class: 'form-control'
       %td
         =label_tag 'transaction[items_attributes][][action]', 'Action', style: 'display: none'
         =select_tag 'transaction[items_attributes][][action]', options_for_select([:credit, :debit], item.try(:action)), class: 'form-control'

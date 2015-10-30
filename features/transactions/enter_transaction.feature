@@ -34,7 +34,7 @@ Feature: Enter a transaction
     When I click "Add"
     Then I should see "New transaction" within the page title
 
-    When I fill in "description" with "Kroger"
+    When I fill in "Description" with "Kroger"
 
     And I select "Checking" from the "Account" list within the 1st transaction item row
     And I fill in "amount" with "56.65" within the 1st transaction item row
@@ -50,9 +50,9 @@ Feature: Enter a transaction
     Then I should see "Transactions" within the page title
     And I should see "The transaction was created successfully." within the notice area
     And I should see the following transactions table
-      | Transaction Date | Description     | Amount |
-      |         1/2/2014 | Kroger          |  56.65 |
-      |         1/1/2014 | Opening balance | 100.00 |
+      |     Date | Description     | Amount |
+      | 1/2/2014 | Kroger          |  56.65 |
+      | 1/1/2014 | Opening balance | 100.00 |
 
     When I click "Accounts" within the navigation
     Then I should see the following accounts table

@@ -18,12 +18,12 @@ Feature: Delete a transaction
     
     When I click "Transactions" within the navigation
     Then I should see the following transactions table
-      | Transaction Date | Description | Amount |
-      | 1/2/2013         | Kroger      | 100.00 |
-      | 1/1/2013         | Kroger      | 100.00 |
+      |     Date | Description | Amount |
+      | 1/2/2013 | Kroger      | 100.00 |
+      | 1/1/2013 | Kroger      | 100.00 |
     
     When I click the delete button within the 1st transaction row
     Then I should see "The transaction was removed successfully." within the notice area
     And I should see the following transactions table
-      | Transaction Date | Description | Amount |
-      | 1/1/2013         | Kroger      | 100.00 |
+      |     Date | Description | Amount |
+      | 1/1/2013 | Kroger      | 100.00 |
