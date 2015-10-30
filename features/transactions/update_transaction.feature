@@ -20,15 +20,27 @@ Feature: Update a transaction
     When I am signed in as "john@doe.com/please01"
     And I am on the "Personal" entity page
     Then I should see "Transactions" within the navigation
+    And I should see the following accounts table
+      | Name              | Balance |
+      | Assets            |  800.00 |
+      | Checking          |  800.00 |
+      | Liabilities       |    0.00 |
+      | Equity            |  800.00 |
+      | Opening balances  |  900.00 |
+      | Retained earnings | -100.00 |
+      | Income            |    0.00 |
+      | Expense           |  100.00 |
+      | Gasoline          |    0.00 |
+      | Groceries         |  100.00 |
     
     When I click "Transactions" within the navigation
     Then I should see the following transactions table
-      | Transaction Date | Description  | Amount |
-      | 1/1/2013         | Opening bal. | 900.00 |
-      | 1/1/2013         | Kroger       | 100.00 |
+      |     Date | Description  | Amount |
+      | 1/1/2013 | Opening bal. | 900.00 |
+      | 1/1/2013 | Kroger       | 100.00 |
       
-    When I click on "Kroger" within the 2nd transaction row
-    And I select "Gasoline" from the "transaction_items_attributes_1_account_id" list within the 2nd transaction item row
+    When I click the edit button within the 2nd transaction row
+    And I select "Gasoline" from the "Account" list with "Groceries" selected
     And I click "Save"
     Then I should see "The transaction was updated successfully." within the notice area
     

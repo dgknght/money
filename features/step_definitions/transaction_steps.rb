@@ -15,6 +15,13 @@ When(/^I enter a transaction for (#{ENTITY}) called "([^"]+)" on (#{DATE_VALUE})
   visit entity_transactions_path(entity)
 end
 
+When (/^I select "([^"]+)" from the "Account" list with "([^"]+)" selected$/) do |value, current_selection|
+  selected_account = Account.find_by(name: current_selection)
+  list = find_field('Account', with: selected_account.id)
+  option = list.all('option').select{|o| o.text == value}.first
+  option.select_option
+end
+
 Given(/^(#{ENTITY}) has the following transactions$/) do |entity, table|
   table.hashes.each do |row|
     credit_account = find_account(row['Credit account'])

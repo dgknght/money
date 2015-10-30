@@ -68,13 +68,13 @@ Feature: Reverse a commodity purchase
     When I click on "KSS"
     Then I should see "KSS Transaction items" within the page title
     And I should see the following transaction items table
-      | Transaction date | Description                               | Account | Rec. |   Amount |  Balance |
-      |         1/2/2014 | Purchase 100.0 share(s) of KSS at 10.0000 | 401k    |      | 1,000.00 | 1,000.00 |
+      |     Date | Description                               | Account | Rec. |   Amount |  Balance |
+      | 1/2/2014 | Purchase 100.0 share(s) of KSS at 10.0000 | 401k    |      | 1,000.00 | 1,000.00 |
 
     When I click the delete button within the 1st transaction item row
     Then I should see "The commodity transaction was removed successfully." within the notice area
     And I should see the following transaction items table
-      | Transaction date | Description                             | Account | Rec. |   Amount |  Balance |
+      | Date | Description                             | Account | Rec. |   Amount |  Balance |
 
     When I click "Back"
     Then I should see "Accounts" within the page title
