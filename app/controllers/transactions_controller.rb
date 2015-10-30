@@ -23,7 +23,7 @@ class TransactionsController < ApplicationController
   def index
     authorize! :show, @entity
     # TODO Add pagination here
-    @transactions = TransactionPresenter.new(entity: @entity, account: @account).take(10)
+    @transactions = TransactionPresenter.new(entity: @entity, account: @account).take(50)
     respond_with @transactions
   end
 
