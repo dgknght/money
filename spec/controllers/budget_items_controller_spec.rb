@@ -115,9 +115,9 @@ describe BudgetItemsController do
       end
 
       describe "put :update" do
-        it "should redirect to the budget item detail page" do
+        it "should redirect to the budget item index page" do
           put :update, id: budget_item, budget_item: attributes, distributor: distributor
-          response.should redirect_to budget_item_path(budget_item)
+          response.should redirect_to budget_budget_items_path(budget_item.budget)
         end
         
         it 'should update the budget item' do
