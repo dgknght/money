@@ -1,3 +1,4 @@
+@wip
 Feature: Import from gnucash
   As a user
   In order to migrate from GnuCash
@@ -16,7 +17,7 @@ Feature: Import from gnucash
     When I specify the file "sample.gnucash" for "Data"
     And I fill in "Name" with "Imported"
     And I click "Save"
-    Then I should see "Entity" within the page title
+    Then I should see "Accounts" within the page title
     And I should see the following accounts table
       | Name                  |    Balance |
       | Assets                | 249,639.51 |
