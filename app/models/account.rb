@@ -285,8 +285,8 @@ class Account < ActiveRecord::Base
 
     children_balances_only = opts.fetch(:children_balances_only, false)
     recalculation_fields(opts).each do |field|
-      send("recalculate_#{field}") unless children_balances_only
-      send("recalculate_children_#{field}")
+      recalculate_field field unless children_balances_only
+      recalculate_children_field field
     end
     save!
     parent.recalculate_balances!(opts.merge(children_balances_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
