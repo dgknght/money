@@ -258,6 +258,10 @@ class Account < ActiveRecord::Base
     1
   end
 
+  def recalculate_balance
+    recalculate_balance!
+  end
+
   def recalculate_balance!(options = {})
     options = { rebuild_item_indexes: false }.merge(options || {})
     if options[:rebuild_item_indexes]
@@ -285,11 +289,11 @@ class Account < ActiveRecord::Base
 
     children_balances_only = opts.fetch(:children_balances_only, false)
     recalculation_fields(opts).each do |field|
-      recalculate_field field unless children_balances_only
+      send("recalculate_#{field}") unless children_balances_only
       recalculate_children_field field
     end
     save!
-    parent.recalculate_balances!(opts.merge(children_balances_only: true)) if parent && !opts.fetch(:supress_bubbling, false)
+    parent.recalculate_balances!(opts.merge(children_balances_only: true)) if parent && !opts.fetch(:suppress_bubbling, false)
   end
 
   def root?

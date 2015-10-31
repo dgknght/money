@@ -64,9 +64,12 @@ class Entity < ActiveRecord::Base
   end
 
   def recalculate_all_account_balances
+    Rails.logger.info "recalculating balances for entity #{name}"
     child_first_account_list.each do |a|
-      a.recalculate_balances!(supress_bubbling: true)
+      a.recalculate_balances!(suppress_bubbling: true)
+      Rails.logger.info "recalculated balances for #{a.path} value=#{a.value} children_value=#{a.children_value}"
     end
+    Rails.logger.info "recalculation complete"
   end
 
   # Returns the unrealized gains in the commodities held by the entity
