@@ -210,6 +210,7 @@ describe Account do
     include_context 'groceries'
 
     it 'should return the sum of the #value results of the children' do
+      groceries.reload
       expect(groceries.children_value).to eq(23)
     end
   end
