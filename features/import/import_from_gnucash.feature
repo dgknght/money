@@ -1,4 +1,3 @@
-@wip
 Feature: Import from gnucash
   As a user
   In order to migrate from GnuCash
