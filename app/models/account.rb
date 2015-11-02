@@ -155,14 +155,6 @@ class Account < ActiveRecord::Base
       first
   end
   
-  def children_cost
-    children.reduce(0) { |sum, child| sum + child.cost }
-  end
-
-  def children_value
-    children.reduce(0) { |sum, child| sum + child.value }
-  end
-
   def cost_as_of(date)
     return balance_as_of(date) unless commodity?
     lots.reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
