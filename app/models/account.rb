@@ -425,7 +425,7 @@ class Account < ActiveRecord::Base
       %w(balance cost value).each do |field|
         update_local_balance(field, delta)
       end
-      parent.recalculate_balances(children_balances_only: true) if parent
+      parent.recalculate_balances!(children_balances_only: true) if parent
       balance
     end
 end
