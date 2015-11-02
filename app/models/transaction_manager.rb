@@ -133,7 +133,7 @@ class TransactionManager
       each do |m|
         account = m[:account]
         account.children_balance += m[:delta]
-        account.save!
+        account.recalculate_balances!(only: [:value, :cost, :gains], children_balances_only: true)
       end
   end
 
