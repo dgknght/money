@@ -35,7 +35,7 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
-    @entity.destroy
+    @entity.fast_destroy!
     flash[:notice] = 'The entity was removed successfully.'
     respond_with @entity
   end

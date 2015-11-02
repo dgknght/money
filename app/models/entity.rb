@@ -41,26 +41,26 @@ class Entity < ActiveRecord::Base
 
   def fast_destroy!
     statements = [
-      "DELETE FROM budget_item_periods USING budget_items, budgets WHERE budgets.id = budget_items.budget_id AND budget_items.id = budget_item_periods.budget_item_id AND budgets.entity_id = #{id}",
-      "DELETE FROM budget_items USING budgets WHERE budgets.id = budget_items.budget_id AND budgets.entity_id = #{id}",
+      "DELETE FROM budget_item_periods WHERE budget_item_id in (SELECT bi.id FROM budget_items bi INNER JOIN budgets b ON b.id = bi.budget_id WHERE b.entity_id = #{id})",
+      "DELETE FROM budget_items WHERE budget_id in (SELECT id FROM budgets WHERE entity_id = #{id})",
       "DELETE FROM budgets WHERE entity_id = #{id}",
       "DELETE FROM attachment_contents WHERE entity_id = #{id}",
       "DELETE FROM budget_monitors WHERE entity_id = #{id}",
-      "DELETE FROM reconciliation_items USING reconciliations, accounts WHERE accounts.id = reconciliations.account_id AND reconciliations.id = reconciliation_items.reconciliation_id AND accounts.entity_id = #{id}",
-      "DELETE FROM reconciliations USING accounts WHERE accounts.id = reconciliations.account_id AND accounts.entity_id = #{id}",
-      "DELETE FROM transaction_items USING accounts WHERE accounts.id = transaction_items.account_id AND accounts.entity_id = #{id}",
-      "DELETE FROM lot_transactions USING accounts, lots WHERE accounts.id = lots.account_id AND lots.id = lot_transactions.lot_id AND accounts.entity_id = #{id}",
-      "DELETE FROM lots USING accounts WHERE accounts.id = lots.account_id AND accounts.entity_id = #{id}",
+      "DELETE FROM reconciliation_items WHERE reconciliation_id in (SELECT r.id FROM reconciliations r INNER JOIN accounts a ON a.id = r.account_id WHERE a.entity_id = #{id})",
+      "DELETE FROM reconciliations WHERE account_id IN (SELECT id FROM accounts WHERE entity_id = #{id})",
+      "DELETE FROM transaction_items WHERE account_id IN (SELECT id FROM accounts WHERE entity_id = #{id})",
+      "DELETE FROM lot_transactions WHERE transaction_id IN (SELECT id FROM transactions WHERE entity_id = #{id})",
+      "DELETE FROM lots WHERE account_id IN (SELECT id FROM accounts WHERE entity_id = #{id})",
       "DELETE FROM accounts WHERE entity_id = #{id}",
-      "DELETE FROM attachments USING transactions WHERE transactions.id = attachments.transaction_id AND transactions.entity_id = #{id}",
+      "DELETE FROM attachments WHERE transaction_id IN (SELECT id FROM transactions WHERE entity_id = #{id})",
       "DELETE FROM transactions WHERE entity_id = #{id}",
-      "DELETE FROM prices USING commodities WHERE commodities.id = prices.commodity_id AND commodities.entity_id = #{id}",
-      "DELETE FROM commodities WHERE entity_id = #{id}",
-      "DELETE FROM entities WHERE id=#{id}"
+      "DELETE FROM prices WHERE commodity_id in (SELECT id FROM commodities WHERE entity_id = #{id})",
+      "DELETE FROM commodities WHERE entity_id = #{id}"
     ]
     statements.each do |s|
       Entity.connection.execute(s)
     end
+    destroy!
   end
 
   def recalculate_all_account_balances
