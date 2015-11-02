@@ -37,7 +37,7 @@ class Price < ActiveRecord::Base
   private
 
   def all_accounts
-    commodity.lots.active.map(&:account).uniq{|a| a.id}
+    Account.find(commodity.lots.active.map(&:account_id).uniq)
   end
 
   def update_account

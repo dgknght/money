@@ -71,7 +71,7 @@ class CommodityTransactionCreator
   end
 
   def commodity
-    @commodity ||= Commodity.find_by_symbol(symbol)
+    @commodity ||= lookup_commodity
   end
 
   def create
@@ -218,6 +218,10 @@ class CommodityTransactionCreator
     raise e
   end
 
+  def entity
+    account.try(:entity)
+  end
+
   def find_account(id)
     return nil unless id
     Account.find(id)
@@ -264,6 +268,11 @@ class CommodityTransactionCreator
 
   def investment_expense_account
     find_first_account_with_name(INVESTMENT_EXPENSE_NAMES) || raise("Unable to find an account with these names: #{INVESTMENT_EXPENSE_NAMES.join(', ')}")
+  end
+
+  def lookup_commodity
+    return nil unless entity
+    entity.commodities.find_by(symbol: symbol)
   end
 
   def numeric_fee
