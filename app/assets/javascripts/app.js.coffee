@@ -1,6 +1,8 @@
 #= require angular.min
-app = angular.module 'moneyApp', []
+#= require app/entities
+
+app = angular.module 'moneyApp', ['entities']
 app.controller 'SearchController',
   class SearchController
-    searchText: ""
+    input: ""
     matches: []

@@ -1,0 +1,4 @@
+%form.navbar-form.navbar-right
+  .form-group
+    %select#entity-selector.form-control
+      %option{ 'ng-repeat' => 'entity in entitiesCtrl.entities', value: ' {{ entity.id }}' } {{ entity.name }}

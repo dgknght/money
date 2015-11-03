@@ -26,6 +26,8 @@
         %ul.nav.navbar-nav
           %li
             %a{:href => entities_path} Basic Version
+        .entity-selector-container{ 'ng-controller' => 'EntitiesController as entitiesCtrl' }
+          <entity-selector></entity-selector>
   .container
     #main-content
       =yield

@@ -1,0 +1,24 @@
+//= depends_on_asset 'entity-selector'
+
+(function() {
+  app = angular.module('entities', []);
+
+  app.controller('EntitiesController', ['$http', function($http) {
+    var _self = this;
+    this.entities = []
+    $http.get('/entities.json').success(function(data) {
+      _self.entities = data;
+    });
+  }]);
+
+  app.directive('entitySelector', function() {
+    return {
+      restrict: 'E',
+      templateUrl: '<%= asset_path('entity-selector.html') %>'
+    };
+  });
+
+  console.log("created the entitySelector directive");
+
+})();
+
