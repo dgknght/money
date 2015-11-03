@@ -1,0 +1,5 @@
+#searchContainer{'ng-controller' => 'SearchController as search'}
+  %input.form-control{type: 'text', 'ng-model' => 'search.input', placeholder: 'Enter search text here', autofocus: true}
+  #matches.list-group
+    %a.list-group-item{:href => '#', 'ng-repeat' => 'match in search.matches'}
+      {{ match.description }}

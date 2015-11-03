@@ -1,0 +1,31 @@
+!!!
+%html{:lang => 'en', 'ng-app' => 'moneyApp'}
+  %head
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    / The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+    %meta{:content => "", :name => "description"}/
+    %meta{:content => "", :name => "author"}/
+    %title Money
+    =stylesheet_link_tag 'application', media: :all
+    =javascript_include_tag 'app'
+    =stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'
+    =csrf_meta_tags
+%body
+  %nav.navbar.navbar-inverse.navbar-fixed-top
+    .container
+      .navbar-header
+        %button.navbar-toggle.collapsed{"aria-controls" => "navbar", "aria-expanded" => "false", "data-target" => "#navbar", "data-toggle" => "collapse", :type => "button"}
+          %span.sr-only Toggle navigation
+          %span.icon-bar
+          %span.icon-bar
+          %span.icon-bar
+        =link_to 'Money', root_path, class: 'navbar-brand'
+      #navbar.collapse.navbar-collapse
+        %ul.nav.navbar-nav
+          %li
+            %a{:href => entities_path} Basic Version
+  .container
+    #main-content
+      =yield

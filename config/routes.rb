@@ -65,6 +65,7 @@ Money::Application.routes.draw do
   resources :reconciliations, only: [:show]
   
   get 'home' => 'entities#index'
+  get 'app' => 'pages#app'
   
   root :to => 'pages#welcome'
   

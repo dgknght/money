@@ -6,6 +6,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.dom_class = 'nav navbar-nav'
     if user_signed_in?
       primary.item :home, 'Home', home_path
+      primary.item :app, 'Ajax', app_path
       primary.item :entities, 'Entities', entities_path
       if current_entity
         primary.item :accounts, 'Accounts', entity_accounts_path(current_entity)
