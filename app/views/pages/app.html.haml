@@ -1,6 +1,6 @@
 #searchContainer{'ng-controller' => 'SearchController as search'}
   .input-group
-    %input.form-control{type: 'text', 'ng-model' => 'search.input', 'ng-change' => 'search.execute()', placeholder: 'Enter search text here', autofocus: true}
+    %input.form-control{type: 'text', 'ng-model' => 'search.input', 'ng-change' => 'search.execute()', 'ng-keypress' => 'search.selectFirst($event)', placeholder: 'Enter search text here', autofocus: true}
     %span.input-group-btn
       %button.btn.btn-default{ 'ng-click' => 'search.execute()' }
         %span.glyphicon.glyphicon-search{ 'aria-hidden' => 'true' }
