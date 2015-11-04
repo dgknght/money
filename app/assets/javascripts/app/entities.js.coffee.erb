@@ -1,0 +1,29 @@
+#= depends_on_asset 'entity-selector'
+
+app = angular.module 'entities', []
+
+app.controller 'EntitiesController', ['$http', ($http) ->
+  _self = this
+  @entities = []
+  @currentEntity = null
+  @currentEntityId = null
+  @setCurrentEntity = ->
+    selectedId = parseInt(_self.currentEntityId)
+    filteredList = _self.entities.filter (e) ->
+      e.id == selectedId
+    _self.currentEntity = filteredList[0]
+  $http.get('/entities.json').success (data) ->
+    console.log "get entities:"
+    console.log data
+    _self.entities = data
+    unless data.length == 0
+      _self.currentEntity = data[0]
+      _self.currentEntityId = _self.currentEntity.id.toString()
+  return
+]
+
+app.directive 'entitySelector', ->
+  {
+    restrict: 'E',
+    templateUrl: '<%= asset_path('entity-selector.html') %>'
+  }
