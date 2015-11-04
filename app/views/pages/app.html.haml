@@ -1,5 +1,9 @@
 #searchContainer{'ng-controller' => 'SearchController as search'}
-  %input.form-control{type: 'text', 'ng-model' => 'search.input', placeholder: 'Enter search text here', autofocus: true}
+  .input-group
+    %input.form-control{type: 'text', 'ng-model' => 'search.input', 'ng-change' => 'search.execute()', placeholder: 'Enter search text here', autofocus: true}
+    %span.input-group-btn
+      %button.btn.btn-default{ 'ng-click' => 'search.execute()' }
+        %span.glyphicon.glyphicon-search{ 'aria-hidden' => 'true' }
   #matches.list-group
-    %a.list-group-item{:href => '#', 'ng-repeat' => 'match in search.matches'}
+    %a.list-group-item{:href => '#', 'ng-click' => 'search.select($index)', 'ng-repeat' => 'match in search.matches'}
       {{ match.description }}

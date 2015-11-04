@@ -12,7 +12,7 @@
     =javascript_include_tag 'app'
     =stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'
     =csrf_meta_tags
-%body
+%body{ 'ng-controller' => 'EntitiesController as entitiesCtrl' }
   %nav.navbar.navbar-inverse.navbar-fixed-top
     .container
       .navbar-header
@@ -26,8 +26,7 @@
         %ul.nav.navbar-nav
           %li
             %a{:href => entities_path} Basic Version
-        .entity-selector-container{ 'ng-controller' => 'EntitiesController as entitiesCtrl' }
-          <entity-selector></entity-selector>
+        <entity-selector></entity-selector>
   .container
     #main-content
       =yield

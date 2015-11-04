@@ -1,4 +1,5 @@
 %form.navbar-form.navbar-right
   .form-group
-    %select#entity-selector.form-control
+    %label{'for' => 'entity-selector', 'aria-hidden' => 'true', 'style' => 'display:none;'} Entity
+    %select#entity-selector.form-control{ 'ng-model' => 'entitiesCtrl.currentEntityId', 'ng-change' => 'entitiesCtrl.setCurrentEntity()' }
       %option{ 'ng-repeat' => 'entity in entitiesCtrl.entities', value: ' {{ entity.id }}' } {{ entity.name }}
