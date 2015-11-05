@@ -1,6 +1,11 @@
 class ApplicationController < ActionController::Base
+  CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+  CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
+
   protect_from_forgery
   respond_to :html, :json
+
+  after_filter :set_csrf_cookie
   
   def after_sign_in_path_for(resource)
     home_path
@@ -24,5 +29,19 @@ class ApplicationController < ActionController::Base
         redirect_to home_path
       end
     end
+  end
+
+  protected
+
+  def verified_request?
+    super || form_authenticity_token == request.headers[CSRF_HEADER_NAME]
+    # Rails 4.2 and above
+    #super || valid_authenticity_token?(session, request.headers[CSRF_TOKEN_NAME])
+  end
+
+  private
+
+  def set_csrf_cookie
+    cookies[CSRF_COOKIE_NAME] = form_authenticity_token if protect_against_forgery?
   end
 end
