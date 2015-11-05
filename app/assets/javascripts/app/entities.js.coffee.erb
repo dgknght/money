@@ -30,6 +30,9 @@ app.controller 'EntitiesController', ['$http', ($http) ->
       index = _.map(_self.entities, (e) -> e.id).indexOf(id)
       _self.entities.splice(index, 1)
 
+
+  @save = (entity) ->
+    $http.put "/entities/#{entity.id}.json", { entity: entity }
   return
 ]
 
