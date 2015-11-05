@@ -13,12 +13,23 @@ app.controller 'EntitiesController', ['$http', ($http) ->
       e.id == selectedId
     _self.currentEntity = filteredList[0]
   $http.get('/entities.json').success (data) ->
-    console.log "get entities:"
-    console.log data
     _self.entities = data
     unless data.length == 0
       _self.currentEntity = data[0]
       _self.currentEntityId = _self.currentEntity.id.toString()
+
+  @newEntityName = ""
+  @add = ->
+    newEntity = { name: _self.newEntityName }
+    $http.post('/entities.json', { entity: newEntity }).success (data) ->
+      _self.entities.push(data)
+      _self.newEntityName = ""
+
+  @delete = (id) ->
+    $http.delete("/entities/#{id}.json").success (data) ->
+      index = _.map(_self.entities, (e) -> e.id).indexOf(id)
+      _self.entities.splice(index, 1)
+
   return
 ]
 
@@ -26,4 +37,10 @@ app.directive 'entitySelector', ->
   {
     restrict: 'E',
     templateUrl: '<%= asset_path('entity-selector.html') %>'
+  }
+
+app.directive 'entityManager', ->
+  {
+    restrcit: 'E',
+    templateUrl: '<%= asset_path('entity-manager.html') %>'
   }

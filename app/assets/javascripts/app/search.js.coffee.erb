@@ -9,6 +9,7 @@ app.controller 'SearchController',
       new ManageEntitiesHandler(),
       new AddAccountHandler()
     ]
+    @selected = null
     @execute = ->
       if @input && @input.length > 2
         matches = for handler in @handlers
@@ -17,12 +18,17 @@ app.controller 'SearchController',
       else
         _self.matches = []
     @select = (index) ->
-      _self.matches[index].handler.render()
+      match = _self.matches[index]
+      _self.selected = match.key
       _self.matches = []
       _self.input = ""
+      return
+    @isSelected = (key) ->
+      _self.selected == key
     @selectFirst = (e) ->
       return unless e.keyCode == 13
       _self.select(0)
+      return
     return
 
 ManageEntitiesHandler = ->
@@ -33,11 +39,9 @@ ManageEntitiesHandler = ->
       result || re.test(term)
     , false
     if isMatch
-      return {description: "Manage entities", handler: _self}
+      return {description: "Manage entities", handler: _self, key: "entity-manager"}
     else
       return null
-  @render = ->
-    console.log "Manage entities"
   return
 
 AddAccountHandler = ->
@@ -45,9 +49,7 @@ AddAccountHandler = ->
   @handle = (input) ->
     re = RegExp(input, "i")
     if re.test("add")
-      return {description: "Add account", handler: _self}
+      return {description: "Add account", handler: _self, key: "add-account"}
     else
       return null
-  @render = ->
-    console.log "add an account"
   return

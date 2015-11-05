@@ -7,3 +7,5 @@
   #matches.list-group
     %a.list-group-item{:href => '#', 'ng-click' => 'search.select($index)', 'ng-repeat' => 'match in search.matches'}
       {{ match.description }}
+
+  %entity-manager{ 'ng-show' => 'search.isSelected("entity-manager")' }
