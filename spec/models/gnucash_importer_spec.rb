@@ -73,10 +73,10 @@ describe GnucashImporter do
       GnucashImporter.new(attributes).import!
       account = Account.find_by(name: '401k')
 
-      item = account.transaction_items.select{|i| /AAPL/ =~ i.transaction.description}.first
+      item = account.transaction_items.select{|i| /AAPL/ =~ i.owning_transaction.description}.first
       expect(item.memo).to eq('comment about the account')
 
-      other_item = item.transaction.items.reject{|i| i.id == item.id}.first
+      other_item = item.owning_transaction.items.reject{|i| i.id == item.id}.first
       expect(other_item.memo).to eq('comment about the shares')
     end
 
@@ -84,7 +84,7 @@ describe GnucashImporter do
       GnucashImporter.new(attributes).import!
       checking = Account.find_by(name: 'Checking')
       r = checking.transaction_items.
-            joins(:transaction).
+            joins(:owning_transaction).
             where('transactions.transaction_date' => Chronic.parse('2015-01-01 00:00:00 UTC')..Chronic.parse('2015-01-31 23:59:59 UTC')).
             map(&:reconciled)
       expect(Set.new(r)).to eq(Set.new([true]))
@@ -94,7 +94,7 @@ describe GnucashImporter do
       GnucashImporter.new(attributes).import!
       checking = Account.find_by(name: 'Checking')
       r = checking.transaction_items.
-            joins(:transaction).
+            joins(:owning_transaction).
             where('transactions.transaction_date' => Chronic.parse('2015-02-01 00:00:00 UTC')..Chronic.parse('2015-02-28 23:59:59 UTC')).
             map(&:reconciled)
       expect(Set.new(r)).to eq(Set.new([false]))

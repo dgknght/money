@@ -168,10 +168,10 @@ describe TransactionItemCreator do
       item.should respond_to :action
       item.action.should == TransactionItem.credit
       item.should respond_to :transaction
-      item.transaction.should respond_to :transaction_date
-      item.transaction.transaction_date.should == Date.civil(2013, 1, 1)
-      item.transaction.should respond_to :description
-      item.transaction.description.should == 'Market Street'
+      item.owning_transaction.should respond_to :transaction_date
+      item.owning_transaction.transaction_date.should == Date.civil(2013, 1, 1)
+      item.owning_transaction.should respond_to :description
+      item.owning_transaction.description.should == 'Market Street'
     end
     
     it 'should return null with invalid attributes' do
@@ -191,7 +191,7 @@ describe TransactionItemCreator do
       item.amount.should == 100
       item.action.should == TransactionItem.debit
 
-      other_item = item.transaction.items.select { |i| i != item }.first
+      other_item = item.owning_transaction.items.select { |i| i != item }.first
       other_item.amount.should == 100
       other_item.action.should == TransactionItem.credit
     end
@@ -209,10 +209,10 @@ describe TransactionItemCreator do
       item.should respond_to :action
       item.action.should == TransactionItem.credit
       item.should respond_to :transaction
-      item.transaction.should respond_to :transaction_date
-      item.transaction.transaction_date.should == Date.civil(2013, 1, 1)
-      item.transaction.should respond_to :description
-      item.transaction.description.should == 'Market Street'
+      item.owning_transaction.should respond_to :transaction_date
+      item.owning_transaction.transaction_date.should == Date.civil(2013, 1, 1)
+      item.owning_transaction.should respond_to :description
+      item.owning_transaction.description.should == 'Market Street'
     end
     
     it 'should raise InvalidStateError with invalid attributes' do
@@ -224,7 +224,7 @@ describe TransactionItemCreator do
   describe 'update' do
     it 'should return true for success' do
       creator = TransactionItemCreator.new(transaction_item, attributes)
-      creator.update.should be_true
+      expect(creator.update).to be true
     end
     
     it 'should update the specified transaction with the specified description' do

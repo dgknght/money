@@ -46,13 +46,13 @@ describe LotTransaction do
     context 'when shares_traded is negative' do
       it 'should be true' do
         lot_transaction = LotTransaction.new attributes.merge(shares_traded: -100)
-        expect(lot_transaction.sale?).to be_true
+        expect(lot_transaction.sale?).to be true
       end
     end
     context 'when shares_traded is positive' do
       it 'should be false' do
         lot_transaction = LotTransaction.new attributes
-        expect(lot_transaction.sale?).to be_false
+        expect(lot_transaction.sale?).to be false
       end
     end
   end
@@ -61,13 +61,13 @@ describe LotTransaction do
     context 'when shares_traded is negative' do
       it 'should be false' do
         lot_transaction = LotTransaction.new attributes.merge(shares_traded: -100)
-        expect(lot_transaction.purchase?).to be_false
+        expect(lot_transaction.purchase?).to be false
       end
     end
     context 'when shares_traded is positive' do
       it 'should be true' do
         lot_transaction = LotTransaction.new attributes
-        expect(lot_transaction.purchase?).to be_true
+        expect(lot_transaction.purchase?).to be true
       end
     end
   end
@@ -90,7 +90,7 @@ describe LotTransaction do
   describe '#transaction' do
     it 'should reference the associated transaction' do
       transaction = LotTransaction.new attributes
-      expect(transaction.transaction).not_to be_nil
+      expect(transaction.owning_transaction).not_to be_nil
     end
   end
 end

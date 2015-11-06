@@ -24,7 +24,7 @@ class TransactionDestroyer
 
   def affected_accounts
     @transaction.lot_transactions.reduce([]) do |list, lt|
-      list += lt.transaction.items.map(&:account)
+      list += lt.owning_transaction.items.map(&:account)
     end
   end
 

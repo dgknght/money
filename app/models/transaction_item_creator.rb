@@ -27,8 +27,8 @@ class TransactionItemCreator
       @account = @transaction_item.account
     end
     
-    self.transaction_date = as_date(attributes[:transaction_date]) || (@transaction_item ? @transaction_item.transaction.transaction_date : nil)
-    self.description = attributes[:description] || (@transaction_item ? @transaction_item.transaction.description : nil)
+    self.transaction_date = as_date(attributes[:transaction_date]) || (@transaction_item ? @transaction_item.transaction_date : nil)
+    self.description = attributes[:description] || (@transaction_item ? @transaction_item.owning_transaction.description : nil)
     self.other_account_id = attributes[:other_account_id] || (@transaction_item ? other_item.account_id : nil)
     self.other_account = attributes[:other_account] if attributes.has_key?(:other_account)
     self.amount = attributes[:amount].try(:to_f) || (@transaction_item ? @transaction_item.polarized_amount : nil)
@@ -51,6 +51,7 @@ class TransactionItemCreator
   def update
     return false unless valid?
     update_transaction_item
+    true
   end
   
   private
@@ -88,7 +89,7 @@ class TransactionItemCreator
     
     def other_item
       return nil unless @transaction_item
-      @transaction_item.transaction.items.select{ |i| i.account_id != @transaction_item.account_id }.first
+      @transaction_item.owning_transaction.items.select{ |i| i.account_id != @transaction_item.account_id }.first
     end
     
     #TODO This should be in a more sharable location
@@ -100,13 +101,13 @@ class TransactionItemCreator
     
     # Get a reference to the same item as the transaction to avoid having two instance of the same item
     def read_from_transaction(item)
-      item.transaction.items.select { |i| i.id == item.id }.first
+      item.owning_transaction.items.select { |i| i.id == item.id }.first
     end
 
     def update_transaction_item
       Transaction.transaction do
-        @transaction_item.transaction.description = description if description
-        @transaction_item.transaction.transaction_date = transaction_date if transaction_date
+        @transaction_item.owning_transaction.description = description if description
+        @transaction_item.owning_transaction.transaction_date = transaction_date if transaction_date
         other_item.account = other_account if other_account
         if amount
           @transaction_item.amount = amount.abs
@@ -114,7 +115,7 @@ class TransactionItemCreator
           other_item.amount = amount.abs
           other_item.action = TransactionItem.opposite_action(@transaction_item.action)
         end
-        TransactionManager.new(@transaction_item.transaction).update!
+        TransactionManager.new(@transaction_item.owning_transaction).update!
       end
     end
 end

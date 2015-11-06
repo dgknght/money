@@ -5,9 +5,9 @@ describe TransactionPresenter do
     let (:entity) { FactoryGirl.create(:entity) }
     let (:account) { FactoryGirl.create(:account, entity: entity) }
     let!(:transaction1) { FactoryGirl.create(:transaction, entity: entity) }
-    let!(:item1) { FactoryGirl.create(:transaction_item, transaction: transaction1, account: account) }
+    let!(:item1) { FactoryGirl.create(:transaction_item, owning_transaction: transaction1, account: account) }
     let!(:transaction2) { FactoryGirl.create(:transaction, entity: entity) }
-    let!(:item2) { FactoryGirl.create(:transaction_item, transaction: transaction2) }
+    let!(:item2) { FactoryGirl.create(:transaction_item, owning_transaction: transaction2) }
     
     context 'and an account' do
       it 'should list the transactions for the entity that include that account' do

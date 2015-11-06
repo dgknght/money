@@ -28,7 +28,7 @@ describe TransactionDestroyer do
 
       it 'should return true on success' do
         result = TransactionDestroyer.new(regular_transaction).destroy
-        expect(result).to be_true
+        expect(result).to be true
       end
 
       context 'for lot-creating transactions' do
@@ -97,7 +97,7 @@ describe TransactionDestroyer do
 
       it 'should return false' do
           destroyer = TransactionDestroyer.new(commodity_sale_transaction)
-          expect(destroyer.destroy).to be_false
+          expect(destroyer.destroy).to be false
       end
 
       it 'should not destroy the transaction' do
@@ -144,7 +144,7 @@ describe TransactionDestroyer do
       describe '#destroy' do
         it 'should return false' do
           destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
-          expect(destroyer.destroy).to be_false
+          expect(destroyer.destroy).to be false
         end
       end
 
