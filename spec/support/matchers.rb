@@ -41,3 +41,43 @@ RSpec::Matchers.define :include_account_display_record do |expected|
     end
   end
 end
+
+RSpec::Matchers.define :json_match do |expected|
+
+  # expect(this_result_from_the_service).to json_match(this_model)
+
+  # Currently, this will not distinguish between a single return value and an array return value with a single element 
+  match do |actual|
+    diff = difference(actual)
+    diff.length == 0
+  end
+
+  failure_message do |actual|
+    "expected #{json_to_comparable(actual)} to match #{active_record_to_comparable(expected)}, but they differed as follows: #{difference(actual)}"
+  end
+
+  failure_message_when_negated do |actual|
+    "expected #{json_to_comparable(actual)} not to match #{active_record_to_comparable(expected)}, but they are the same"
+  end
+
+  def difference(actual)
+    actual = json_to_comparable(actual)
+    expected = active_record_to_comparable(expected)
+    expected.each_with_index do |e, index|
+      a = actual[index]
+      [
+        e - a,
+        a - e,
+        e & a
+      ]
+    end.reject{|a| a.first.length == 0 && a.second.length == 0}
+  end
+
+  def active_record_to_comparable(record)
+    Array(record).map(&:serializable_hash)
+  end
+
+  def json_to_comparable(json)
+    Array(JSON.parse(actual))
+  end
+end

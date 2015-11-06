@@ -58,7 +58,7 @@ describe CommoditiesController do
 
           it 'should return the list of commodities' do
             get :index, entity_id: entity, format: :json
-            expect(response.body).to eq([commodity].to_json)
+            expect(response.body).to json_match([commodity])
           end
         end
       end
@@ -72,7 +72,7 @@ describe CommoditiesController do
 
           it 'should return the specified commodity' do
             get :show, id: commodity, format: :json
-            expect(response.body).to eq(commodity.to_json)
+            expect(response.body).to json_match(commodity)
           end
         end
       end
