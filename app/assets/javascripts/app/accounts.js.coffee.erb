@@ -1,0 +1,22 @@
+app = angular.module 'accounts', []
+
+app.controller 'AccountsController', ['$http', ($http) ->
+  _self = this
+  @accounts = []
+  @displayRecords = []
+
+  $http.get("/entities/14/accounts.json").success (data) ->
+    console.log data
+    _self.accounts = data
+    _self.displayRecords = _.reduce data, (list, account) ->
+      list.push {caption: account.name, balance: account.value + account.children_value }
+      return list
+    , []
+  return
+]
+
+app.directive 'accountManager', ->
+  {
+    restrict: 'E',
+    templateUrl: '<%= asset_path('account-manager.html') %>'
+  }

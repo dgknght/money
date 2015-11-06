@@ -1,9 +1,10 @@
 #= require angular.min
 #= require underscore
-#= require app/entities
 #= require app/search
+#= require app/entities
+#= require app/accounts
 
-app = angular.module 'moneyApp', ['search', 'entities']
+app = angular.module 'moneyApp', ['search', 'entities', 'accounts']
 
 app.directive 'confirmationNeeded', ->
   return {

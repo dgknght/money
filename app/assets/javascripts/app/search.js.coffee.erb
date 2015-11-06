@@ -6,8 +6,8 @@ app.controller 'SearchController',
     @input = ""
     @matches = []
     @handlers = [
-      new ManageEntitiesHandler(),
-      new AddAccountHandler()
+      new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
+      new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts']),
     ]
     @selected = null
     @execute = ->
@@ -31,25 +31,15 @@ app.controller 'SearchController',
       return
     return
 
-ManageEntitiesHandler = ->
-  _self = this
-  @handle = (input) ->
+class SimpleMatchingHandler
+  constructor: (elementKey, description, matchingTerms) ->
+    @elementKey = elementKey
+    @description = description
+    @matchingTerms = matchingTerms
+  handle: (input) ->
     re = RegExp(input, "i")
-    isMatch = ["entity", "entities"].reduce (result, term) ->
+    isMatch = @matchingTerms.reduce (result, term) ->
       result || re.test(term)
-    , false
+    ,false
     if isMatch
-      return {description: "Manage entities", handler: _self, key: "entity-manager"}
-    else
-      return null
-  return
-
-AddAccountHandler = ->
-  _self = this
-  @handle = (input) ->
-    re = RegExp(input, "i")
-    if re.test("add")
-      return {description: "Add account", handler: _self, key: "add-account"}
-    else
-      return null
-  return
+      return {description: @description, key: @elementKey}

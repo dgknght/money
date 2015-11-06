@@ -1,0 +1,9 @@
+.row
+  .col-md-12
+    .panel.panel-primary{ 'ng-controller' => 'AccountsController as accountsCtrl' }
+      .panel-heading Accounts
+
+      %table.table.table-striped
+        %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords' }
+          %td {{ record.caption }}
+          %td {{ record.balance }}
