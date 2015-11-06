@@ -292,7 +292,7 @@ class CommodityTransactionCreator
                                price: price,
                                purchase_date: transaction_date)
     # Should this action trigger the above action?
-    lot_transaction = lot.transactions.create!(transaction: transaction, 
+    lot_transaction = lot.transactions.create!(transaction_id: transaction.id, 
                                                shares_traded: shares,
                                                price: price)
     lot
@@ -303,7 +303,7 @@ class CommodityTransactionCreator
     sale_results.each{ |r| lots << r.lot }
     transaction = create_sell_transaction(sale_results)
     sale_results.each do |result|
-      result.lot.transactions.create!(transaction: transaction,
+      result.lot.transactions.create!(transaction_id: transaction.id,
                                       shares_traded: -result.shares,
                                       price: price)
     end

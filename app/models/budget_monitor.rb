@@ -50,7 +50,7 @@ class BudgetMonitor < ActiveRecord::Base
 
   def items
     account.transaction_items.
-      joins(:transaction).
+      joins(:owning_transaction).
       where(['transaction_date >= ? and transaction_date <= ?',
              start_date,
              Date.today])

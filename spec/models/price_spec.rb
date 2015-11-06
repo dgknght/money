@@ -80,14 +80,14 @@ describe Price do
       it 'should not create a price record if one exists for the specified date' do
         expect do
           Price.put_price(commodity, '2014-02-27', 100)
-        end.not_to change(Price, :count).by(1)
+        end.not_to change(Price, :count)
       end
 
       it 'should update a price record if one exists for the specified date' do
         expect do
           Price.put_price(commodity, '2014-02-27', 100)
           price.reload
-        end.not_to change(price, :price).from(100).to(123.4567)
+        end.not_to change(price, :price)
       end
     end
   end

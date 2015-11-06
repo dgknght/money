@@ -11,7 +11,7 @@ describe TransactionItem do
   let (:opening_balances) { FactoryGirl.create(:equity_account, entity: entity, name: 'Opening balances') }
   let (:attributes) do
     {
-      transaction: transaction,
+      transaction_id: transaction.id,
       account: checking,
       action: TransactionItem.credit,
       memo: "dinner party food",
@@ -27,7 +27,7 @@ describe TransactionItem do
   
   describe '#transaction' do
     it 'should be required' do
-      item = TransactionItem.new(attributes.without(:transaction))
+      item = TransactionItem.new(attributes.without(:transaction_id))
       expect(item).not_to be_valid
     end
     

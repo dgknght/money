@@ -13,10 +13,12 @@
 #
 
 class Attachment < ActiveRecord::Base
-  belongs_to :transaction, inverse_of: :attachments
+  belongs_to :owning_transaction, inverse_of: :attachments, class_name: 'Transaction', foreign_key: :transaction_id
   validates_presence_of :name, :transaction_id, :content_type
   before_validation :ensure_entity
   before_create :ensure_content
+
+  delegate :entity_id, to: :owning_transaction, allow_nil: true
 
   def raw_file=(input)
     @content = AttachmentContent.new(raw_file: input)
@@ -34,7 +36,6 @@ class Attachment < ActiveRecord::Base
     end
 
     def ensure_entity
-      return unless @content && self.transaction
-      @content.entity_id = self.transaction.entity_id
+      @content.entity_id = self.entity_id if @content.present?
     end
 end

@@ -25,12 +25,10 @@ class Account < ActiveRecord::Base
   belongs_to :parent, class_name: 'Account', inverse_of: :children
   has_many :children, -> { order :name }, class_name: 'Account', inverse_of: :parent, foreign_key: 'parent_id'
   has_many :reconciliations, -> { order :reconciliation_date }, inverse_of: :account, autosave: true
-  has_many :transaction_items
+  has_many :transaction_items, inverse_of: :account
   has_many :lots
   has_many :budget_items
   has_many :budget_monitors
-  belongs_to :head_transaction_item, class_name: 'TransactionItem'
-  belongs_to :first_transaction_item, class_name: 'TransactionItem'
 
   START_OF_TIME = Chronic.parse('1000-01-01').to_date
   END_OF_TIME = Chronic.parse('9999-12-31').to_date
@@ -145,16 +143,6 @@ class Account < ActiveRecord::Base
     children.reduce( self.balance_between(start_date, end_date) ) { |sum, child| sum += child.balance_between(start_date, end_date) }
   end
 
-  def calculate_previous(item)
-    return nil unless head_transaction_item
-
-    result = transaction_items_backward.
-      lazy.
-      reject{|i| i.id == item.id}.
-      select{|i| i.transaction_date <= item.transaction_date}.
-      first
-  end
-  
   def cost_as_of(date)
     return balance_as_of(date) unless commodity?
     lots.reduce(0){|sum, lot| sum + lot.cost_as_of(date)}
@@ -205,6 +193,7 @@ class Account < ActiveRecord::Base
   def first_transaction_item_occurring_before(date)
     ids = transaction_items.
       occurring_before(date).
+      map(&:id).
       take(1)
     TransactionItem.find(ids).first
   end
@@ -359,7 +348,7 @@ class Account < ActiveRecord::Base
   def all_items_sorted_by_date
     # TODO Probably want to do this in batches
     ids = transaction_items.
-      joins(:transaction).
+      joins(:owning_transaction).
       order('transactions.transaction_date asc, transaction_items."index" asc').
       map(&:id)
     TransactionItem.find(ids)
@@ -367,14 +356,14 @@ class Account < ActiveRecord::Base
 
     def sum_of_credit_transaction_items(start_date, end_date)
       result = transaction_items.
-        joins(:transaction).
+        joins(:owning_transaction).
         where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.credit, start_date, end_date).
         sum(:amount)
     end
     
     def sum_of_debit_transaction_items(start_date, end_date)
       result = transaction_items.
-        joins(:transaction).
+        joins(:owning_transaction).
         where("action=? and transactions.transaction_date >= ? and transactions.transaction_date <= ?", TransactionItem.debit, start_date, end_date).
         sum(:amount)
     end

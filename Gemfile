@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.2'
 
-gem 'rails', '4.0.0'
+gem 'rails', '4.2.0'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -24,6 +24,7 @@ gem 'nokogiri'
 
 group :test, :development do
   gem 'rspec-rails'
+  gem 'rspec-collection_matchers'
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'factory_girl_rails'
@@ -41,7 +42,6 @@ end
 group :development do
   gem 'annotate'
   gem 'rails-erd' # requires Graphbiz available at http://graphviz.org/Download_windows.php
-  gem 'therubyracer'
   gem 'ruby-prof'
 end
 

@@ -36,10 +36,10 @@ describe Attachment do
     end
   end
 
-  describe 'transaction' do
+  describe '#owning_transaction' do
     it 'should refer to the transaction to which the attachment belongs' do
       attachment = Attachment.new(attributes);
-      expect(attachment.transaction).not_to be_nil
+      expect(attachment.owning_transaction).not_to be_nil
     end
   end
 
@@ -51,7 +51,7 @@ describe Attachment do
 
     it 'should prevent saving if not set' do
       attachment = Attachment.new(attributes.without(:raw_file).merge( name: 'test', content_type: 'text'))
-      expect(attachment.save).not_to be_true
+      expect(attachment.save).not_to be true
     end
   end
 end

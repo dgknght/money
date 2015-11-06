@@ -5,7 +5,7 @@ FactoryGirl.define do
     transaction_date "2013-09-17"
     description "The Payee"
     entity
-    ignore do
+    transient do
       amount 100
       credit_account { FactoryGirl.create(:account, entity: entity) }
       debit_account { FactoryGirl.create(:account, entity: entity) }

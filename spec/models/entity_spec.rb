@@ -82,7 +82,7 @@ describe Entity do
     let!(:t1) { FactoryGirl.create(:transaction, entity: entity,
                                                  debit_account: checking,
                                                  credit_account: salary) }
-    let!(:attachment) { FactoryGirl.create(:attachment, transaction: t1) }
+    let!(:attachment) { FactoryGirl.create(:attachment, owning_transaction: t1) }
     let!(:budget) { FactoryGirl.create(:budget, entity: entity) }
     let!(:budget_monitor) { FactoryGirl.create(:budget_monitor, entity: entity) }
     let!(:commodity) { FactoryGirl.create(:commodity, entity: entity) }
