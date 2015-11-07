@@ -164,7 +164,7 @@ describe PricesController do
         end
 
         it 'should initiate a price download' do
-          StockPrices::PriceDownloader.stub(:download)
+          allow(StockPrices::PriceDownloader).to receive(:download)
           patch :download, entity_id: entity
         end
       end
@@ -323,7 +323,7 @@ describe PricesController do
         end
 
         it 'should not initiate a price download' do
-          StockPrices::PriceDownloader.stub(:download).never
+          allow(StockPrices::PriceDownloader).to receive(:download).never
           patch :download, entity_id: entity
         end
       end
@@ -475,7 +475,7 @@ describe PricesController do
       end
 
       it 'should not initiate a price download' do
-        StockPrices::PriceDownloader.stub(:download).never
+        allow(StockPrices::PriceDownloader).to receive(:download).never
         patch :download, entity_id: entity
       end
     end
