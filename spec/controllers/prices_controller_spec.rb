@@ -31,7 +31,7 @@ describe PricesController do
 
           it 'should return the list of prices' do
             get :index, commodity_id: commodity, format: :json
-            expect(response.body).to eq([price_2, price].to_json)
+            expect(response.body).to json_match([price_2, price])
           end
         end
       end
@@ -50,7 +50,7 @@ describe PricesController do
 
           it 'should return the specified price' do
             get :show, id: price, format: :json
-            expect(response.body).to eq(price.to_json)
+            expect(response.body).to json_match(price)
           end
         end
       end
