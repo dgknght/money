@@ -12,7 +12,7 @@ class TransactionItemsController < ApplicationController
     transaction_item = @transaction_item_creator.create
     if transaction_item
       flash[:notice] = "The transaction was created successfully."
-      respond_with(transaction_item.transaction) do |format|
+      respond_with(transaction_item.owning_transaction) do |format|
         format.html { redirect_to account_transaction_items_path(@account) }
       end
     else
@@ -26,7 +26,7 @@ class TransactionItemsController < ApplicationController
   def destroy
     authorize! :destroy, @transaction_item
 
-    destroyer = TransactionDestroyer.new(@transaction_item.transaction)
+    destroyer = TransactionDestroyer.new(@transaction_item.owning_transaction)
     if destroyer.destroy
       flash[:notice] = destroyer.notice
     else

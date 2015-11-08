@@ -21,10 +21,10 @@ class Ability
       user.entities.include? transaction.entity
     end
     can :manage, TransactionItem do |transaction_item|
-      user.entities.include? transaction_item.transaction.entity
+      user.entities.include? transaction_item.owning_transaction.entity
     end
     can :manage, Attachment do |attachment|
-      user.entities.include? attachment.transaction.entity
+      user.entities.include? attachment.owning_transaction.entity
     end
     can :manage, Budget do |budget|
       user.entities.include? budget.entity

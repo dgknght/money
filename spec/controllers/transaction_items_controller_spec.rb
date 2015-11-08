@@ -33,7 +33,7 @@ describe TransactionItemsController do
           
           it 'should return the transactions for the account' do
             get :index, account_id: checking, format: :json
-            response.body.should == [transaction_item].to_json
+            response.body.should json_match [transaction_item]
           end
         end
       end
@@ -71,7 +71,7 @@ describe TransactionItemsController do
           
           it 'should not return any data' do
             delete :destroy, id: transaction_item, format: :json
-            response.body.should == ''
+            response.body.should be_blank
           end
         end
       end
