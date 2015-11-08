@@ -5,7 +5,7 @@ describe AttachmentsController do
   let (:user) { FactoryGirl.create(:user) }
   let (:entity) { FactoryGirl.create(:entity, user: user) }
   let (:transaction) { FactoryGirl.create(:transaction, entity: entity) }
-  let!(:attachment) { FactoryGirl.create(:attachment, transaction: transaction) }
+  let!(:attachment) { FactoryGirl.create(:attachment, owning_transaction: transaction) }
   let (:attributes) do
     {
       raw_file: Rack::Test::UploadedFile.new(Rails.root.join('spec', 'resources', 'attachment.png'), 'images/png')

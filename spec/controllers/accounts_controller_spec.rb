@@ -92,7 +92,7 @@ describe AccountsController do
         context 'in json' do
           it 'should return the specified account' do
             get :show, id: checking, format: :json
-            response.body.should == checking.to_json
+            response.body.should json_match checking
           end
         end     
       end

@@ -32,7 +32,7 @@ describe BudgetsController do
 
           it 'should return the list of budgets for the entity' do
             get :index, entity_id: entity, format: :json
-            response.body.should == [budget].to_json
+            response.body.should json_match [budget]
           end
         end
       end
@@ -51,7 +51,7 @@ describe BudgetsController do
 
           it 'should return the specified budget' do
             get :show, id: budget, format: :json
-            response.body.should == budget.to_json
+            response.body.should json_match budget
           end
         end
       end
@@ -125,7 +125,7 @@ describe BudgetsController do
           
           it 'should not return any data' do
             put :update, id: budget, budget: attributes, format: :json
-            response.body.should == ""
+            response.body.should be_blank
           end
         end
       end
@@ -156,7 +156,7 @@ describe BudgetsController do
           
           it 'should not return any data' do
             delete :destroy, id: budget, format: :json
-            response.body.should == ""
+            response.body.should be_blank
           end
         end
       end

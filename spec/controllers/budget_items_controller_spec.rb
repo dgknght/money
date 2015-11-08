@@ -38,7 +38,7 @@ describe BudgetItemsController do
           
           it 'should return the budget item list' do
             get :index, budget_id: budget, format: :json
-            response.body.should == [budget_item].to_json
+            response.body.should json_match [budget_item]
           end
         end
       end
@@ -57,7 +57,7 @@ describe BudgetItemsController do
           
           it 'should return the budget item' do
             get :show, id: budget_item, format: :json
-            response.body.should == budget_item.to_json
+            response.body.should json_match budget_item
           end
         end
       end
@@ -142,7 +142,7 @@ describe BudgetItemsController do
           
           it 'should not return any data' do
             put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
-            response.body.should == ""
+            response.body.should be_blank
           end
         end
       end

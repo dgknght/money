@@ -6,7 +6,7 @@ describe AttachmentContentsController do
 
   context 'for an authenticated user' do
     context 'to which the entity belongs' do
-      before(:each) { sign_in attachment.transaction.entity.user }
+      before(:each) { sign_in attachment.owning_transaction.entity.user }
 
       describe "GET 'show'" do
         it "should be successful" do

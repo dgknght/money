@@ -39,7 +39,7 @@ describe TransactionsController do
           
           it 'should return the list of transactions' do
             get :index, entity_id: entity, format: :json
-            response.body.should == [transaction, t1, t2].to_json
+            response.body.should json_match [transaction, t1, t2]
           end
         end
       end
@@ -131,7 +131,7 @@ describe TransactionsController do
           it 'should not return any data' do
             put :update, id: transaction, transaction: updated_attributes, format: :json
             transaction.reload
-            response.body.should == ""
+            response.body.should be_blank
           end
         end
       end
@@ -150,7 +150,7 @@ describe TransactionsController do
           
           it 'should return the transaction' do
             get :show, id: transaction, format: :json
-            response.body.should == transaction.to_json
+            response.body.should json_match transaction
           end
         end
       end
