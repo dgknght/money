@@ -16,9 +16,9 @@ describe BudgetSummary do
   let!(:groceries_item) { FactoryGirl.create(:budget_item, budget: budget, account: groceries, budget_amount: 300) }
   
   describe 'headers' do
-    it 'should contain the the correct column headers' do
+    it 'contains the the correct column headers' do
       summary = BudgetSummary.new(budget)
-      summary.headers.should == [
+      expect(summary.headers).to match_array [
         'Account',
         'Jan 2014',
         'Feb 2014',
@@ -38,16 +38,16 @@ describe BudgetSummary do
   end
   
   describe 'records' do
-    it 'should contain the correct header data' do
+    it 'contains the correct header data' do
       summary = BudgetSummary.new(budget)
-      summary.should have(7).records
-      summary.records.map{ |r| r.header }.should == ['Income', 'Bonus', 'Salary', 'Expense', 'Dining', 'Groceries', 'Total']
+      expect(summary).to have(7).records
+      expect(summary.records.map(&:header)).to match_array ['Income', 'Bonus', 'Salary', 'Expense', 'Dining', 'Groceries', 'Total']
     end
     
-    it 'should contain the correct total data' do
+    it 'contains the correct total data' do
       summary = BudgetSummary.new(budget)
-      summary.should have(7).records
-      summary.records.map{ |r| r.total }.should == [49_200, 1_200, 48_000, -9_600, -6_000, -3_600, 39_600]
+      expect(summary).to have(7).records
+      expect(summary.records.map(&:total)).to match_array [49_200, 1_200, 48_000, -9_600, -6_000, -3_600, 39_600]
     end  
   end
 end
