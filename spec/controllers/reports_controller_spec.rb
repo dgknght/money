@@ -10,30 +10,30 @@ describe ReportsController do
       before(:each) { sign_in entity.user }
       
       describe "get :index" do
-        it 'should be successful' do
+        it 'is successful' do
           get :index, id: entity
-          response.should be_success
+          expect(response).to be_success
         end
       end
       
       describe "get :balance_sheet" do
-        it 'should be successful' do
+        it 'is successful' do
           get :balance_sheet, id: entity
-          response.should be_success
+          expect(response).to be_success
         end
       end
 
       describe "get :income_statement" do
-        it 'should be successful' do
+        it 'is successful' do
           get :income_statement, id: entity
-          response.should be_success
+          expect(response).to be_success
         end
       end
 
       describe "get :budget" do
-        it 'should be successful' do
+        it 'is successful' do
           get :budget, id: entity, filter: { budget_id: budget.id }
-          response.should be_success
+          expect(response).to be_success
         end
       end
     end
@@ -44,30 +44,30 @@ describe ReportsController do
       before(:each) { sign_in other_user }
       
       describe "get :index" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :index, id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
 
       describe "get :balance_sheet" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :balance_sheet, id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
 
       describe "get :income_statement" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :income_statement, id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
 
       describe "get :budget" do
-        it 'should be successful' do
+        it 'is successful' do
           get :budget, id: entity, filter: { budget_id: budget.id }
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
     end
@@ -75,30 +75,30 @@ describe ReportsController do
   
   context 'for an unauthenticated user' do
     describe "get :index" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
           get :index, id: entity
-          response.should redirect_to new_user_session_path
+          expect(response).to redirect_to new_user_session_path
         end
     end
 
     describe "get :balance_sheet" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
           get :balance_sheet, id: entity
-          response.should redirect_to new_user_session_path
+          expect(response).to redirect_to new_user_session_path
         end
     end
 
     describe "get :income_statement" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :income_statement, id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
     end
 
     describe "get :budget" do
-      it 'should be successful' do
+      it 'is successful' do
         get :budget, id: entity, filter: { budget_id: budget.id }
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
     end
   end
