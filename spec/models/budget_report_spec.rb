@@ -43,7 +43,7 @@ describe BudgetReport do
 						 { action: TransactionItem.debit, account_id: rent.id, amount: 1_200 }
 					       ])}
 
-  it 'should be creatable given a budget and a filter' do
+  it 'is creatable given a budget and a filter' do
     report = BudgetReport.new(budget, filter)
     expect(report).not_to be_nil
   end
