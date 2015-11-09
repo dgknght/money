@@ -28,127 +28,126 @@ describe AccountsController do
       before(:each) { sign_in entity.user }
       
       describe 'get :index' do
-        it 'should be successful' do
+        it 'is successful' do
           get :index, entity_id: entity
-          response.should be_success
+          expect(response).to be_success
         end
 
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :index, entity_id: entity, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should return the list of accounts' do
+          it 'returns the list of accounts' do
             get :index, entity_id: entity, format: :json
-            JSON.parse(response.body).map{|a| a["name"]}.should =~ [cash, checking].map(&:name)
+            expect(response.body).to json_match [cash, checking]
           end
 
           context 'with "root_accounts_only" specified' do
             include_context 'savings'
-            it 'should return only root accounts' do
+            it 'returns only root accounts' do
               get :index, entity_id: entity, root_accounts_only: 1, format: :json
-              JSON.parse(response.body).map{|a| a["name"]}.should =~ [cash, checking, savings].map(&:name)
+              expect(response.body).to json_match [cash, checking, savings]
             end
           end
         end
       end
 
       describe 'get :new' do
-        it 'should be successful' do
+        it 'is successful' do
           get :new, entity_id: entity
-          response.should be_success
+          expect(response).to be_success
         end
       end
     
       describe 'post :create' do
-        it 'should redirect to the account list page' do
+        it 'redirects to the account list page' do
           post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
-          response.should redirect_to entity_accounts_path(entity)
+          expect(response).to redirect_to entity_accounts_path(entity)
         end
         
         context 'in json' do
-          it 'should create a new account' do
-            lambda do
+          it 'creates a new account' do
+            expect do
               post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account), format: :json
-            end.should change(Account, :count).by(1)
+            end.to change(Account, :count).by(1)
           end
           
-          it 'should return the new account' do
+          it 'returns the new account' do
             attributes = FactoryGirl.attributes_for(:account)
             post :create, entity_id: entity, account: attributes, format: :json
-            actual = JSON.parse(response.body)
-            attributes.each { |k, v| actual[k.to_s].to_s.should == v.to_s }
+            expect(response.body).to json_match attributes
           end
         end
       end
 
       describe 'get :show' do
-        it 'should be successful' do
+        it 'is successful' do
           get :show, :id => checking
-          response.should be_success
+          expect(response).to be_success
         end
         
         context 'in json' do
-          it 'should return the specified account' do
+          it 'returns the specified account' do
             get :show, id: checking, format: :json
-            response.body.should json_match checking
+            expect(response.body).to json_match checking
           end
         end     
       end
     
       describe 'get :edit' do
-        it 'should be successful' do
+        it 'is successful' do
           get :edit, id: checking
-          response.should be_success
+          expect(response).to be_success
         end
       end
     
       describe 'put :update' do
-        it 'should redirect to the account list page' do
+        it 'redirects to the account list page' do
           put :update, id: checking, account: { name: 'The new name' }
-          response.should redirect_to entity_accounts_path(entity)
+          expect(response).to redirect_to entity_accounts_path(entity)
         end
         
-        it 'should update the account' do
-          lambda do
+        it 'updates the account' do
+          expect do
             put :update, id: checking, account: { name: 'The new name' }
             checking.reload
-          end.should change(checking, :name).from('checking').to('The new name')
+          end.to change(checking, :name).from('checking').to('The new name')
         end
         
         context 'in json' do
-          it 'should update the account' do
-            lambda do
+          it 'updates the account' do
+            expect do
               put :update, id: checking, account: { name: 'The new name' }, format: :json
               checking.reload
-            end.should change(checking, :name).from('checking').to('The new name')
+            end.to change(checking, :name).from('checking').to('The new name')
           end
         end
       end
   
       describe 'delete :destroy' do
-        it 'should redirect to the account list page' do
+        it 'redirects to the account list page' do
           delete :destroy, id: checking
-          response.should redirect_to entity_accounts_path(entity)
+          expect(response).to redirect_to entity_accounts_path(entity)
         end
         
-        it 'should delete the specified account' do
-          lambda do
+        it 'deletes the specified account' do
+          expect do
             delete :destroy, id: checking
-          end.should change(Account, :count).by(-1)
+          end.to change(Account, :count).by(-1)
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             delete :destroy, id: checking, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should delete the specified account' do
-            lambda do
+          it 'deletes the specified account' do
+            expect do
               delete :destroy, id: checking, format: :json
-            end.should change(Account, :count).by(-1)
+            end.to change(Account, :count).by(-1)
           end
         end
       end
@@ -161,37 +160,37 @@ describe AccountsController do
       end
 
       describe 'post :create_commodity_transaction' do
-        it 'should redirect to the holdings page' do
+        it 'redirects to the holdings page' do
           post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           expect(response).to redirect_to holdings_account_path(ira)
         end
 
-        it 'should create a new commodity transaction' do
+        it 'creates a new commodity transaction' do
           expect do
             post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           end.to change(Transaction, :count).by(1)
         end
 
         context 'for a purchase' do
-          it 'should create a new lot' do
+          it 'creates a new lot' do
             expect do
               post :create_commodity_transaction, id: ira, purchase: purchase_attributes
             end.to change(Lot, :count).by(1)
           end
 
           context 'in json' do
-            it 'should be successful' do
+            it 'is successful' do
               post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               expect(response).to be_success
             end
 
-            it 'should return the new transaction' do
+            it 'returns the new transaction' do
               post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               json = JSON.parse(response.body)
               expect(json).to include('transaction')
             end
 
-            it 'should return the new lot' do
+            it 'returns the new lot' do
               post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               json = JSON.parse(response.body)
               lots = json['lots']
@@ -199,13 +198,13 @@ describe AccountsController do
               expect(lots).to have(1).item
             end
 
-            it 'should create a new commodity transaction' do
+            it 'creates a new commodity transaction' do
               expect do
                 post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               end.to change(Transaction, :count).by(1)
             end
 
-            it 'should create a new lot' do
+            it 'creates a new lot' do
               expect do
                 post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
               end.to change(Lot, :count).by(1)
@@ -241,7 +240,7 @@ describe AccountsController do
               }
             end
 
-            it 'should return any affected lots for a sale' do
+            it 'returns any affected lots for a sale' do
               post :create_commodity_transaction, id: ira, purchase: sale_attributes, format: :json
               json = JSON.parse(response.body)
               lots = json['lots']
@@ -253,7 +252,7 @@ describe AccountsController do
       end
 
       describe 'get :holdings' do
-        it 'should be successful' do
+        it 'is successful' do
           get :holdings, id: ira
           expect(response).to be_success
         end
@@ -262,12 +261,12 @@ describe AccountsController do
       describe 'get :children' do
         include_context 'savings'
 
-        it 'should be successful' do
+        it 'is successful' do
           get :children, id: savings.id, format: :json
           expect(response).to be_success
         end
 
-        it 'should return the children for the specified account' do
+        it 'returns the children for the specified account' do
           get :children, id: savings.id, format: :json
           returned = JSON.parse(response.body).map{|a| a['name']}
           %w(car reserve).each{|a| expect(returned).to include(a)}
@@ -280,26 +279,26 @@ describe AccountsController do
       before(:each) { sign_in other_user }
 
       describe 'get :index' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :index, entity_id: entity
           expect(response).to redirect_to home_path
         end
       end
 
       describe 'get :new' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :new, entity_id: entity
           expect(response).to redirect_to home_path
         end
       end
 
       describe 'post :create' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account, entity: entity)
           expect(response).to redirect_to home_path
         end
 
-        it 'should not create a new account' do
+        it 'does not create a new account' do
           expect do
             post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account, entity: entity)
           end.not_to change(Account, :count)
@@ -307,19 +306,19 @@ describe AccountsController do
       end
 
       describe 'get :edit' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :edit, id: checking
           expect(response).to redirect_to home_path
         end
       end
 
       describe 'put :update' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           put :update, id: checking, account: { name: 'the new name' }
           expect(response).to redirect_to home_path
         end
 
-        it 'should not update the account' do
+        it 'does not update the account' do
           expect do
             put :update, id: checking, account: { name: 'the new name' }
             checking.reload
@@ -328,12 +327,12 @@ describe AccountsController do
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           delete :destroy, id: checking
           expect(response).to redirect_to home_path
         end
 
-        it 'should not delete the account' do
+        it 'does not delete the account' do
           expect do
             delete :destroy, id: checking
           end.not_to change(Account, :count)
@@ -341,43 +340,43 @@ describe AccountsController do
       end
 
       describe 'get :new_commodity_transaction' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :new_commodity_transaction, id: ira
           expect(response).to redirect_to home_path
         end
       end
 
       describe 'post :create_commodity_transaction' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           expect(response).to redirect_to home_path
         end
 
-        it 'should not create a new commodity transaction' do
+        it 'does not create a new commodity transaction' do
           expect do
             post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           end.not_to change(Transaction, :count)
         end
 
-        it 'should not create a new lot' do
+        it 'does not create a new lot' do
           expect do
             post :create_commodity_transaction, id: ira, purchase: purchase_attributes
           end.not_to change(Lot, :count)
         end
 
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not create a new commodity transaction' do
+          it 'does not create a new commodity transaction' do
             expect do
               post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
             end.not_to change(Transaction, :count)
           end
 
-          it 'should not create a new lot' do
+          it 'does not create a new lot' do
             expect do
               post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
             end.not_to change(Lot, :count)
@@ -386,19 +385,19 @@ describe AccountsController do
       end
 
       describe 'get :holdings' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :holdings, id: ira
           expect(response).to redirect_to home_path
         end
       end
 
       describe 'get :children' do
-        it 'should return "resource not found"' do
+        it 'returns "resource not found"' do
           get :children, id: checking, format: :json
           expect(response.response_code).to eq(404)
         end
 
-        it 'should not return any account data' do
+        it 'does not return any account data' do
           get :children, id: checking, format: :json
           expect(response.body).to eq('[]')
         end
@@ -408,148 +407,148 @@ describe AccountsController do
 
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :index, entity_id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :index, entity_id: entity, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'get :new' do
-      it 'should be redirect to the sign in page' do
+      it 'is redirect to the sign in page' do
         get :new, entity_id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :new, entity_id: entity, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'post :create' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account)
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create, entity_id: entity, account: FactoryGirl.attributes_for(:account), format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'get :show' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
           get :show, id: checking
-          response.should redirect_to new_user_session_path
+          expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :show, id: checking, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'get :edit' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :edit, id: checking
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :edit, id: checking, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'put :update' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         put :update, id: checking, account: { name: 'The new name' }
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           put :update, id: checking, account: { name: 'The new name' }, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
   
     describe 'delete :destroy' do
-      it 'should redirect to sign in' do
+      it 'redirects to sign in' do
         delete :destroy, id: checking
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
-      it 'should not delete the specified account' do
-        lambda do
+      it 'does not delete the specified account' do
+        expect do
           delete :destroy, id: checking
-        end.should_not change(Account, :count)
+        end.to_not change(Account, :count)
       end
       
       context 'in json' do
-        it 'should not delete the specified account' do
-          lambda do
+        it 'does not delete the specified account' do
+          expect do
             delete :destroy, id: checking, format: :json
-          end.should_not change(Account, :count)
+          end.to_not change(Account, :count)
         end
       end
     end
 
     describe 'get :new_commodity_transaction' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new_commodity_transaction, id: ira
         expect(response).to redirect_to(new_user_session_path)
       end
     end
 
     describe 'post :create_commodity_transaction' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create_commodity_transaction, id: ira, purchase: purchase_attributes
         expect(response).to redirect_to(new_user_session_path)
       end
 
-      it 'should not create a new commodity transaction' do
+      it 'does not create a new commodity transaction' do
         expect do
           post :create_commodity_transaction, id: ira, purchase: purchase_attributes
         end.not_to change(Transaction, :count)
       end
 
-      it 'should not create a new lot' do
+      it 'does not create a new lot' do
         expect do
           post :create_commodity_transaction, id: ira, purchase: purchase_attributes
         end.not_to change(Lot, :count)
       end
 
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create_commodity_transaction, id:ira, purchase: purchase_attributes, format: :json
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not create a new commodity transaction' do
+        it 'does not create a new commodity transaction' do
           expect do
             post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
           end.not_to change(Transaction, :count)
         end
 
-        it 'should not create a new lot' do
+        it 'does not create a new lot' do
           expect do
             post :create_commodity_transaction, id: ira, purchase: purchase_attributes, format: :json
           end.not_to change(Lot, :count)
@@ -558,19 +557,19 @@ describe AccountsController do
     end
 
     describe 'get :holdings' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :holdings, id: ira
         expect(response).to redirect_to(new_user_session_path)
       end
     end
 
     describe 'get :children' do
-      it 'should return "access denied"' do
+      it 'returns "access denied"' do
         get :children, id: checking, format: :json
         expect(response.response_code).to eq(401)
       end
 
-      it 'should not return any account data' do
+      it 'does not return any account data' do
         get :children, id: checking, format: :json
         returned = JSON.parse(response.body)
         expect(returned).to have(1).item
