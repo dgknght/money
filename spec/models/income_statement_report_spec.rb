@@ -218,9 +218,9 @@ describe IncomeStatementReport do
                                 ])
   end
   
-  it 'should render an income statement' do
+  it 'renders an income statement' do
     report = IncomeStatementReport.new(entity, from: '2013-01-01', to: '2013-01-31')
-    report.content.should == [
+    expect(report.content).to eq([
       { account: 'Income',            balance: '6,000.00', depth: 0 },
       { account: 'Gifts',             balance:     '0.00', depth: 1 },
       { account: 'Salary',            balance: '6,000.00', depth: 1 },
@@ -229,6 +229,6 @@ describe IncomeStatementReport do
       { account: 'Groceries',         balance:   '200.00', depth: 1 },
       { account: 'Mortgage Interest', balance:   '900.00', depth: 1 },
       { account: 'Net',               balance: '4,875.00', depth: 0 }
-    ]
+    ])
   end
 end
