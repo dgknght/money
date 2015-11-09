@@ -17,30 +17,30 @@ describe TransactionItemCreator do
   
   it 'should be creatable with an account' do
     creator = TransactionItemCreator.new(checking)
-    creator.should_not be_nil
+    expect(creator).not_to be_nil
   end
   
   it 'should be creatable with an account and valid attributes' do
     creator = TransactionItemCreator.new(checking, attributes)
-    creator.should be_valid
+    expect(creator).to be_valid
   end
   
   describe 'transaction_date' do
     it 'should be required' do
       creator = TransactionItemCreator.new(checking, attributes.without(:transaction_date))
-      creator.should have(1).error_on(:transaction_date)
+      expect(creator).to have(1).error_on(:transaction_date)
     end
 
     it 'should be a date, or a date-parsable string' do
       creator = TransactionItemCreator.new(checking, attributes)
-      creator.transaction_date.should == Date.civil(2013, 1, 1)
+      expect(creator.transaction_date).to eq(Date.civil(2013, 1, 1))
     end
   end
   
   describe 'description' do
     it 'should be required' do
       creator = TransactionItemCreator.new(checking, attributes.without(:description))
-      creator.should have(1).error_on(:description)
+      expect(creator).to have(1).error_on(:description)
     end
   end
   
@@ -49,19 +49,19 @@ describe TransactionItemCreator do
     
     it 'should be required' do
       creator = TransactionItemCreator.new(checking, attributes.without(:other_account_id))
-      creator.should have(1).error_on(:other_account_id)
+      expect(creator).to have(1).error_on(:other_account_id)
     end
     
     it 'should belong to the same entity as the creating account' do
       creator = TransactionItemCreator.new(checking, attributes.merge(other_account_id: invalid_account.id))
-      creator.should have(1).error_on(:other_account_id)
+      expect(creator).to have(1).error_on(:other_account_id)
     end
   end
   
   describe 'amount' do
     it 'should be required' do
       creator = TransactionItemCreator.new(checking, attributes.without(:amount))
-      creator.should have(1).error_on(:amount)
+      expect(creator).to have(1).error_on(:amount)
     end
 
     context 'for an asset account' do
@@ -71,14 +71,14 @@ describe TransactionItemCreator do
         transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should > 0
+        expect(creator.amount).to be > 0
       end
 
       it 'should be negative with a credit action' do
         transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should < 0
+        expect(creator.amount).to be < 0
       end
     end
 
@@ -89,14 +89,14 @@ describe TransactionItemCreator do
         transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should > 0
+        expect(creator.amount).to be > 0
       end
 
       it 'should be negative with a credit action' do
         transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should < 0
+        expect(creator.amount).to be < 0
       end
     end
 
@@ -107,14 +107,14 @@ describe TransactionItemCreator do
         transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should < 0
+        expect(creator.amount).to be < 0
       end
 
       it 'should be positive with a credit action' do
         transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should > 0
+        expect(creator.amount).to be > 0
       end
     end
 
@@ -125,14 +125,14 @@ describe TransactionItemCreator do
         transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should < 0
+        expect(creator.amount).to be < 0
       end
 
       it 'should be positive with a credit action' do
         transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should > 0
+        expect(creator.amount).to be > 0
       end
     end
 
@@ -143,14 +143,14 @@ describe TransactionItemCreator do
         transaction = FactoryGirl.create(:transaction, amount: 100, debit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should < 0
+        expect(creator.amount).to be < 0
       end
 
       it 'should be positive with a credit action' do
         transaction = FactoryGirl.create(:transaction, amount: 100, credit_account: account)
         transaction_item = transaction.items.select { |i| i.account == account }.first
         creator = TransactionItemCreator.new(transaction_item)
-        creator.amount.should > 0
+        expect(creator.amount).to be > 0
       end
     end
   end
@@ -160,40 +160,40 @@ describe TransactionItemCreator do
     it 'should create a new transaction item with valid attributes' do
       creator = TransactionItemCreator.new(checking, attributes)
       item = creator.create
-      item.should_not be_nil
-      item.should respond_to :account
-      item.account.should == checking
-      item.should respond_to :amount
-      item.amount.should == 100
-      item.should respond_to :action
-      item.action.should == TransactionItem.credit
-      item.should respond_to :transaction
-      item.owning_transaction.should respond_to :transaction_date
-      item.owning_transaction.transaction_date.should == Date.civil(2013, 1, 1)
-      item.owning_transaction.should respond_to :description
-      item.owning_transaction.description.should == 'Market Street'
+      expect(item).not_to be_nil
+      expect(item).to respond_to :account
+      expect(item.account).to eq(checking)
+      expect(item).to respond_to :amount
+      expect(item.amount).to eq(100)
+      expect(item).to respond_to :action
+      expect(item.action).to eq(TransactionItem.credit)
+      expect(item).to respond_to :transaction
+      expect(item.owning_transaction).to respond_to :transaction_date
+      expect(item.owning_transaction.transaction_date).to eq(Date.civil(2013, 1, 1))
+      expect(item.owning_transaction).to respond_to :description
+      expect(item.owning_transaction.description).to eq('Market Street')
     end
     
     it 'should return null with invalid attributes' do
       creator = TransactionItemCreator.new(checking, attributes.without(:description))
-      creator.create.should be_nil
+      expect(creator.create).to be_nil
     end
 
     it 'should adjust credit and debit actions for negative amounts' do
       item = TransactionItemCreator.new(checking, attributes.merge(amount: 100)).create
-      item.amount.should == 100
-      item.action.should == TransactionItem.debit;
+      expect(item.amount).to eq(100)
+      expect(item.action).to eq(TransactionItem.debit)
     end
 
     it 'should adjust credit and debit actions for the account type' do
       car_loan = FactoryGirl.create(:liability_account, entity: checking.entity)
       item = TransactionItemCreator.new(car_loan, attributes.merge(other_account: checking, amount: -100)).create
-      item.amount.should == 100
-      item.action.should == TransactionItem.debit
+      expect(item.amount).to eq(100)
+      expect(item.action).to eq(TransactionItem.debit)
 
       other_item = item.owning_transaction.items.select { |i| i != item }.first
-      other_item.amount.should == 100
-      other_item.action.should == TransactionItem.credit
+      expect(other_item.amount).to eq(100)
+      expect(other_item.action).to eq(TransactionItem.credit)
     end
   end
   
@@ -201,18 +201,18 @@ describe TransactionItemCreator do
     it 'should create a new transaction item with valid attributes' do
       creator = TransactionItemCreator.new(checking, attributes)
       item = creator.create!
-      item.should_not be_nil
-      item.should respond_to :account
-      item.account.should == checking
-      item.should respond_to :amount
-      item.amount.should == 100
-      item.should respond_to :action
-      item.action.should == TransactionItem.credit
-      item.should respond_to :transaction
-      item.owning_transaction.should respond_to :transaction_date
-      item.owning_transaction.transaction_date.should == Date.civil(2013, 1, 1)
-      item.owning_transaction.should respond_to :description
-      item.owning_transaction.description.should == 'Market Street'
+      expect(item).not_to be_nil
+      expect(item).to respond_to :account
+      expect(item.account).to eq(checking)
+      expect(item).to respond_to :amount
+      expect(item.amount).to eq(100)
+      expect(item).to respond_to :action
+      expect(item.action).to eq(TransactionItem.credit)
+      expect(item).to respond_to :transaction
+      expect(item.owning_transaction).to respond_to :transaction_date
+      expect(item.owning_transaction.transaction_date).to eq(Date.civil(2013, 1, 1))
+      expect(item.owning_transaction).to respond_to :description
+      expect(item.owning_transaction.description).to eq('Market Street')
     end
     
     it 'should raise InvalidStateError with invalid attributes' do
