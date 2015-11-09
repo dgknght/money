@@ -4,7 +4,7 @@ RSpec::Matchers.define :have_account_display_records do |expected|
     expect(hashes).to eq(expected)
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "Expected\n#{make_readable(expected)}\n\ngot\n#{make_readable(actual)}"
   end
 

@@ -36,13 +36,13 @@ describe AccountsPresenter do
     end
   end
 
-  it 'should be creatable from an entity' do
+  it 'is creatable from an entity' do
     presenter = AccountsPresenter.new(entity)
     expect(presenter).not_to be_nil
   end
 
   context 'when no accounts are present' do
-    it 'should enumerate empty summary records' do
+    it 'enumerates empty summary records' do
       presenter = AccountsPresenter.new(entity)
       expect(presenter).to have_account_display_records([
         { caption: 'Assets', balance: 0, depth: 0 },
@@ -58,7 +58,7 @@ describe AccountsPresenter do
     include_context 'accounts'
     include_context 'transactions'
 
-    it 'should enumerate summary records and detail records' do
+    it 'enumerates summary records and detail records' do
       entity.recalculate_all_account_balances
       presenter = AccountsPresenter.new(entity)
       expect(presenter).to have_account_display_records([
@@ -84,7 +84,7 @@ describe AccountsPresenter do
     describe '#hide_zero_balances' do
       let!(:rent) { FactoryGirl.create(:expense_account, entity: entity, name: 'Rent') }
 
-      it 'should cause accounts with zero balance not to be displayed when true' do
+      it 'causes accounts with zero balance not to be displayed when true' do
         entity.recalculate_all_account_balances
         presenter = AccountsPresenter.new(entity, hide_zero_balances: true)
         expect(presenter).to have_account_display_records([
@@ -160,7 +160,7 @@ describe AccountsPresenter do
       #  { caption: 'Short-term capital gains', balance:    100, depth: 1 },
 
       #  { caption: 'Expense', balance: 0, depth: 0 }]
-      it 'should include unrealized gains' do
+      it 'includes unrealized gains' do
         presenter = AccountsPresenter.new(entity)
         expect(presenter).to include_account_display_record(caption: 'Unrealized gains',
                                                             balance: 100,
