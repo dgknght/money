@@ -88,7 +88,7 @@ describe TransactionDestroyer do
           value: 600
         ).create!
       end
-      before(:each) { LotTransaction.any_instance.stub(:destroy).and_raise('Testing, 1, 2, 3') }
+      before(:each) { allow_any_instance_of(LotTransaction).to receive(:destroy).and_raise('Testing, 1, 2, 3') }
       it 'does not raise an exception' do
         expect do
           TransactionDestroyer.new(commodity_sale_transaction).destroy
@@ -160,7 +160,7 @@ describe TransactionDestroyer do
 
   describe '#notice' do
     context 'when unsuccessful' do
-      before(:each) { LotTransaction.any_instance.stub(:destroy).and_raise('Testing, 1, 2, 3') }
+      before(:each) { allow_any_instance_of(LotTransaction).to receive(:destroy).and_raise('Testing, 1, 2, 3') }
       it 'is blank' do
         destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
         destroyer.destroy
@@ -188,7 +188,7 @@ describe TransactionDestroyer do
 
   describe '#error' do
     context 'when unsuccessful' do
-      before(:each) { LotTransaction.any_instance.stub(:destroy).and_raise('Testing 1, 2, 3') }
+      before(:each) { allow_any_instance_of(LotTransaction).to receive(:destroy).and_raise('Testing 1, 2, 3') }
       it 'contains a description of the error' do
           destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
           destroyer.destroy

@@ -1,6 +1,6 @@
 ACCOUNT = Transform(/^account "([^"]+)"$/) do |name|
   account = Account.find_by_name(name)
-  account.should_not be_nil
+  expect(account).not_to be_nil
   account
 end
 

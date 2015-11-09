@@ -30,11 +30,11 @@ When (/^I select "([^"]+)" from the (\d(?:st|nd|rd|th)) (\w+) (\w+) (\w+) list$/
 end
 
 Then (/^I should see "([^"]+)"$/) do |content|
-  page.should have_content(content)
+  expect(page).to have_content(content)
 end
 
 Then (/^I should not see "([^"]+)"$/) do |content|
-  page.should_not have_content(content)
+  expect(page).not_to have_content(content)
 end
 
 When (/^(.*) within (.*)$/) do |step_content, section|
