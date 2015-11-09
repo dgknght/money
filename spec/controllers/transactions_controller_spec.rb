@@ -22,9 +22,9 @@ describe TransactionsController do
       before(:each) { sign_in entity.user }
       
       describe "get :index" do
-        it "should be successful" do
+        it "is successful" do
           get :index, entity_id: entity
-          response.should be_success
+          expect(response).to be_success
         end
         
         context 'in json' do
@@ -32,62 +32,62 @@ describe TransactionsController do
           let!(:t2) { FactoryGirl.create(:transaction, entity: entity) }
           let!(:different_entity) { FactoryGirl.create(:transaction) }
           
-          it 'should be successful' do
+          it 'is successful' do
             get :index, entity_id: entity, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should return the list of transactions' do
+          it 'returns the list of transactions' do
             get :index, entity_id: entity, format: :json
-            response.body.should json_match [transaction, t1, t2]
+            expect(response.body).to json_match [transaction, t1, t2]
           end
         end
       end
 
       describe "get :new" do
-        it 'should be successful' do
+        it 'is successful' do
           get :new, entity_id: entity
           expect(response).to be_success
         end
       end
 
       describe "post :create" do
-        it "should create a new transaction" do
-          lambda do
+        it "creates a new transaction" do
+          expect do
             post 'create', entity_id: entity, transaction: attributes
-          end.should change(Transaction, :count).by(1)
+          end.to change(Transaction, :count).by(1)
         end
 
-        it 'should create the transaction items' do
+        it 'creates the transaction items' do
           post 'create', entity_id: entity, transaction: attributes
           transaction = Transaction.last
-          transaction.should_not be_nil
-          transaction.should have(2).items
+          expect(transaction).to_not be_nil
+          expect(transaction).to have(2).items
         end
         
-        it "should redirect to the index page" do
+        it "redirects to the index page" do
           post 'create', entity_id: entity, transaction: attributes
-          response.should redirect_to entity_transactions_path(entity)
+          expect(response).to redirect_to entity_transactions_path(entity)
         end
 
         context 'in json' do
-          it 'should create a new transaction' do
-            lambda do
+          it 'creates a new transaction' do
+            expect do
               post 'create', entity_id: entity, transaction: attributes, format: :json
-            end.should change(Transaction, :count).by(1)
+            end.to change(Transaction, :count).by(1)
           end
           
-          it 'should return the new transaction' do
+          it 'returns the new transaction' do
             post 'create', entity_id: entity, transaction: attributes, format: :json
             returned = JSON.parse(response.body)
 
             # TODO Need a one-line way to do these comparisons
             attributes.each do |k, v|
               if v.is_a?(Date)
-                Date.parse(returned[k.to_s]).should == v
+                expect(Date.parse(returned[k.to_s])).to eq(v)
               elsif v.is_a?(Array)
               else
-                returned[k.to_s].should == v
+                expect(returned[k.to_s]).to eq(v)
               end
             end
 
@@ -96,7 +96,7 @@ describe TransactionsController do
       end
 
       describe 'get :edit' do
-        it 'should be successful' do
+        it 'is successful' do
           get :edit, id: transaction
           expect(response).to be_success
         end
@@ -108,75 +108,75 @@ describe TransactionsController do
             description: 'Some other payee'
           }
         end
-        it "should update the transaction" do
-          lambda do
+        it "updates the transaction" do
+          expect do
             put :update, id: transaction, transaction: updated_attributes
             transaction.reload
-          end.should change(transaction, :description).from('The payee').to('Some other payee')
+          end.to change(transaction, :description).from('The payee').to('Some other payee')
         end
         
-        it 'should redirect to the index page' do 
+        it 'redirects to the index page' do 
           put :update, id: transaction, transaction: updated_attributes
-          response.should redirect_to entity_transactions_path(entity)
+          expect(response).to redirect_to entity_transactions_path(entity)
         end
         
         context 'in json' do
-          it 'should update the transaction' do
-            lambda do
+          it 'updates the transaction' do
+            expect do
               put :update, id: transaction, transaction: updated_attributes, format: :json
               transaction.reload
-            end.should change(transaction, :description).from('The payee').to('Some other payee')
+            end.to change(transaction, :description).from('The payee').to('Some other payee')
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             put :update, id: transaction, transaction: updated_attributes, format: :json
             transaction.reload
-            response.body.should be_blank
+            expect(response.body).to be_blank
           end
         end
       end
 
       describe "get :show" do
-        it "should be successful" do
+        it "is successful" do
           get 'show', id: transaction
-          response.should be_success
+          expect(response).to be_success
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :show, id: transaction, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should return the transaction' do
+          it 'returns the transaction' do
             get :show, id: transaction, format: :json
-            response.body.should json_match transaction
+            expect(response.body).to json_match transaction
           end
         end
       end
       
       describe 'delete :destroy' do
-        it 'should delete the transaction' do
-          lambda do
+        it 'deletes the transaction' do
+          expect do
             delete :destroy, id: transaction
-          end.should change(Transaction, :count).by(-1)
+          end.to change(Transaction, :count).by(-1)
         end
         
-        it 'should redirect to the transaction index page' do
+        it 'redirects to the transaction index page' do
           delete :destroy, id: transaction
-          response.should redirect_to entity_transactions_path(entity)
+          expect(response).to redirect_to entity_transactions_path(entity)
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             delete :destroy, id: transaction, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should delete the transaction' do
-            lambda do
+          it 'deletes the transaction' do
+            expect do
               delete :destroy, id: transaction, format: :json
-            end.should change(Transaction, :count).by(-1)
+            end.to change(Transaction, :count).by(-1)
           end
         end
       end
@@ -188,15 +188,15 @@ describe TransactionsController do
       before(:each) { sign_in other_user }
       
       describe 'get :index' do
-        it "should redirect to the entity's home page" do
+        it "redirects to the entity's home page" do
           get :index, entity_id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should not return any records' do
+          it 'does not return any records' do
             get :index, entity_id: entity, format: :json            
-            JSON.parse(response.body).should == []
+            expect(JSON.parse(response.body)).to eq([])
           end
         end
       end
@@ -209,76 +209,76 @@ describe TransactionsController do
       end
 
       describe 'post :create' do
-        it "should redirect to the entity's home page" do
+        it "redirects to the entity's home page" do
           post :create, entity_id: entity, transaction: attributes
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             post :create, entity_id: entity, transaction: attributes, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
         end
       end      
 
       describe 'get :edit' do
-        it 'should redirect to the entity home page' do
+        it 'redirects to the entity home page' do
           get :edit, id: transaction
           expect(response).to redirect_to(home_path)
         end
       end
       
       describe 'put :update' do
-        it "should redirect to the entity's home page" do
+        it "redirects to the entity's home page" do
           put :update, id: transaction, entity_id: entity, transaction: attributes.merge(description: 'some new payee')
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             put :update, id: transaction, entity_id: entity, transaction: attributes.merge(description: 'some new payee'), format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
         end
       end      
       
       describe 'get :show' do
-        it "should redirect to the entity's home page" do
+        it "redirects to the entity's home page" do
           get :show, id: transaction
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :show, id: transaction, format: :json
-            response.response_code.should == 404            
+            expect(response.response_code).to eq(404            )
           end
         end
       end
       
       describe 'delete :destroy' do
-        it "should redirect to the entity's home page" do
+        it "redirects to the entity's home page" do
           delete :destroy, id: transaction
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
-        it 'should not delete the transaction' do
-          lambda do
+        it 'does not delete the transaction' do
+          expect do
             delete :destroy, id: transaction          
-          end.should_not change(Transaction, :count)
+          end.to_not change(Transaction, :count)
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             delete :destroy, id: transaction, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not delete the transaction' do
-            lambda do
+          it 'does not delete the transaction' do
+            expect do
               delete :destroy, id: transaction, format: :json
-            end.should_not change(Transaction, :count)
+            end.to_not change(Transaction, :count)
           end
         end
       end
@@ -287,97 +287,97 @@ describe TransactionsController do
   
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :index, entity_id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :index, entity_id: entity, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'get :new' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new, entity_id: entity
         expect(response).to redirect_to(new_user_session_path)
       end
     end
 
     describe 'post :create' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create, entity_id: entity, transaction: attributes
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create, entity_id: entity, transaction: attributes, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
 
     describe 'get :edit' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :edit, id: transaction
         expect(response).to redirect_to(new_user_session_path)
       end
     end
     
     describe 'put :update' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         put :update, id: transaction, entity_id: entity, transaction: attributes.merge(description: 'the new payee')
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           put :update, id: transaction, entity_id: entity, transaction: attributes.merge(description: 'the new payee'), format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
     
     describe 'get :show' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :show, id: transaction
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :show, id: transaction, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
       end
     end
       
     describe 'delete :destroy' do
-      it "should redirect to the sign in page" do
+      it "redirects to the sign in page" do
         delete :destroy, id: transaction
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
-      it 'should not delete the transaction' do
-        lambda do
+      it 'does not delete the transaction' do
+        expect do
           delete :destroy, id: transaction
-        end.should_not change(Transaction, :count)
+        end.to_not change(Transaction, :count)
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           delete :destroy, id: transaction, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not delete the transaction' do
-          lambda do
+        it 'does not delete the transaction' do
+          expect do
             delete :destroy, id: transaction, format: :json
-          end.should_not change(Transaction, :count)
+          end.to_not change(Transaction, :count)
         end
       end
     end
