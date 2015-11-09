@@ -17,8 +17,8 @@
     %th.col-md-1.actions &nbsp;
   -@transaction_items.each_with_index do |item, index|
     %tr
-      %td.transaction_date_cell= format_date(item.transaction.transaction_date)
-      %td.description_cell= item.transaction.description
+      %td.transaction_date_cell= format_date(item.transaction_date)
+      %td.description_cell= item.owning_transaction.description
       %td.account_cell= other_account(item)
       %td.reconciled_cell.check_column= item.reconciled? ? 'X' : ''
       %td.amount_cell.number_column= format_currency(item.polarized_amount)
