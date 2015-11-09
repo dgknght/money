@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe HashingDocument do
-  it 'should be creatable with valid parameters' do
+  it 'is creatable with valid parameters' do
     doc = HashingDocument.new(->(data){}, "test")
     expect(doc).not_to be_nil
   end
@@ -14,25 +14,25 @@ describe HashingDocument do
     data
   end
 
-  it 'should notify on named elements' do
+  it 'notifies on named elements' do
     data = parse("root", '<?xml version="1.0"?><root>This is a test</root>')
     expect(data).to have(1).item
     expect(data.first).to eq(["root", "This is a test"])
   end
 
-  it 'should include multiple lines of content' do
+  it 'includes multiple lines of content' do
     data = parse("root", "<?xml version=\"1.0\"?><root>This is\na test</root>")
     expect(data).to have(1).item
     expect(data.first).to eq(["root", "This is\na test"])
   end
 
-  it 'should include inner elements in hash values' do
+  it 'includes inner elements in hash values' do
     data = parse("person", '<people><person><name>Doug</name><job>Programmer</job></person></people>')
     expect(data).to have(1).items
     expect(data.first).to eq(["person", {"name" => "Doug", "job" => "Programmer"}])
   end
 
-  it 'should handle ampersands correctly' do
+  it 'handles ampersands correctly' do
     xml = <<-eos
       <?xml version="1.0"?>
       <places>
@@ -45,7 +45,7 @@ describe HashingDocument do
     expect(data.first).to eq(["place", "Dave & Busters"])
   end
 
-  it 'should included nested hashes for nested elements' do
+  it 'includes nested hashes for nested elements' do
     xml = <<-eos
       <?xml version="1.0"?>
       <people>
@@ -63,7 +63,7 @@ describe HashingDocument do
     expect(data.first).to eq(["person", {"name" => "Doug", "car" => {"make" => "Mazda", "model" => "Mazda 3"}}])
   end
 
-  it 'should included nested hashes for deeply nested elements' do
+  it 'includes nested hashes for deeply nested elements' do
     xml = <<-eos
       <?xml version="1.0"?>
       <people>
@@ -83,7 +83,7 @@ describe HashingDocument do
     expect(data.first).to eq(["person", {"name" => "Doug", "transportation" => {"car" => {"make" => "Mazda", "model" => "Mazda 3"}}}])
   end
 
-  it 'should put multiple values with the same element name in an array' do
+  it 'puts multiple values with the same element name in an array' do
     xml = <<-eos
       <?xml version="1.0"?>
       <people>
@@ -102,7 +102,7 @@ describe HashingDocument do
                         ["person", {"name" => "Eli"}]])
   end
 
-  it 'should put multiple nested values with the same element name in an array' do
+  it 'puts multiple nested values with the same element name in an array' do
     xml = <<-eos
       <?xml version="1.0"?>
       <people>
