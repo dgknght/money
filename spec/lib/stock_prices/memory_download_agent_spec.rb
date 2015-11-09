@@ -6,7 +6,7 @@ describe StockPrices::MemoryDownloadAgent do
       StockPrices::MemoryDownloadAgent.reset
     end
 
-    it 'should plat the price data in memory for later access' do
+    it 'puts the price data in memory for later access' do
       symbol = 'KSS'
       date = '2014-07-04'
       price = 12.34
