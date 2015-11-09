@@ -16,51 +16,51 @@ describe LotTransfer do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     transfer = LotTransfer.new(attributes)
     expect(transfer).to be_valid
   end
 
   describe '#target_account_id' do
-    it 'should be required' do
+    it 'is required' do
       transfer = LotTransfer.new(attributes.except(:target_account_id))
       expect(transfer).to have_at_least(1).error_on(:target_account_id)
     end
   end
 
   describe '#lot' do
-    it 'should be required' do
+    it 'is required' do
       transfer = LotTransfer.new(attributes.except(:lot))
       expect(transfer).to have_at_least(1).error_on(:lot)
     end
   end
 
   describe '#transfer' do
-    it 'should remove the lot from the source commodity account' do
+    it 'removes the lot from the source commodity account' do
       kss_account = four01k.children.find_by_name('KSS')
       expect do
         LotTransfer.new(attributes).transfer
       end.to change(kss_account.lots, :count).from(1).to(0)
     end
 
-    it 'should create the target commodity account, if it does not exist' do
+    it 'creates the target commodity account, if it does not exist' do
       LotTransfer.new(attributes).transfer
       expect(ira).to have(1).child
     end
 
-    it 'should add the lot to the target commodity account' do
+    it 'adds the lot to the target commodity account' do
       LotTransfer.new(attributes).transfer
       expect(ira.children.find_by_name('KSS')).to have(1).lot
     end
 
-    it 'should not change the shares in the lot' do
+    it 'does not change the shares in the lot' do
       expect do
         LotTransfer.new(attributes).transfer
         lot.reload
       end.not_to change(lot, :shares_owned)
     end
 
-    it 'should not change the current value of the lot' do
+    it 'does not change the current value of the lot' do
       expect do
         LotTransfer.new(attributes).transfer
         lot.reload
