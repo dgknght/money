@@ -45,11 +45,11 @@ describe BudgetReport do
 
   it 'should be creatable given a budget and a filter' do
     report = BudgetReport.new(budget, filter)
-    report.should_not be_nil
+    expect(report).not_to be_nil
   end
 
   describe 'content' do
-    it 'should have the correct report rows' do
+    it 'has the correct report rows' do
       report = BudgetReport.new(budget, filter)
       expected = [
         OpenStruct.new(account: 'Income' , budget_amount: '10,000.00', actual_amount:  '9,900.00', difference: '-100.00', percent_difference: '-1.0%', actual_per_month:  '9,900.00', evaluation: 'negative', row_type: 'report_header'),
@@ -58,12 +58,12 @@ describe BudgetReport do
         OpenStruct.new(account: 'Rent'   , budget_amount: '-1,100.00', actual_amount: '-1,200.00', difference: '-100.00', percent_difference: '-9.1%', actual_per_month: '-1,200.00', evaluation: 'negative', row_type: nil),
         OpenStruct.new(account: 'Net'    , budget_amount: '8,900.00' , actual_amount:  '8,700.00', difference: '-200.00', percent_difference: '-2.2%', actual_per_month:  '8,700.00', evaluation: 'negative', row_type: 'report_header')
       ]
-      report.content.should have(5).items
-      report.content[0].should == expected[0]
-      report.content[1].should == expected[1]
-      report.content[2].should == expected[2]
-      report.content[3].should == expected[3]
-      report.content[4].should == expected[4]
+      expect(report.content).to have(5).items
+      expect(report.content[0]).to eq(expected[0])
+      expect(report.content[1]).to eq(expected[1])
+      expect(report.content[2]).to eq(expected[2])
+      expect(report.content[3]).to eq(expected[3])
+      expect(report.content[4]).to eq(expected[4])
     end
   end
 end
