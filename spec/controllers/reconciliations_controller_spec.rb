@@ -21,22 +21,22 @@ describe ReconciliationsController do
       before(:each) { sign_in entity.user }
       
       describe "get :new" do
-        it 'should be successful' do
+        it 'is successful' do
           get :new, account_id: checking
-          response.should be_success
+          expect(response).to be_success
         end
 
         context 'in JSON' do
-          it 'should be successful' do
+          it 'is successful' do
             get :new, account_id: checking, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
 
-          it 'should return the new reconciliation information' do
+          it 'returns the new reconciliation information' do
             Timecop.freeze(Time.parse('2014-02-27 12:00:00 UTC')) do
               get :new, account_id: checking, format: :json
               content = JSON.parse(response.body)
-              content.should == {
+              expect(content).to eq({
                 'id' => nil,
                 'account_id' => checking.id,
                 'reconciliation_date' => '2014-02-27',
@@ -45,34 +45,34 @@ describe ReconciliationsController do
                 'updated_at' => nil,
                 'previous_reconciliation_date' => nil,
                 'previous_balance' => 0
-              }
+              })
             end
           end
         end
       end
 
       describe "post :create" do
-        it 'should create the reconciliation' do
-          lambda do
+        it 'creates the reconciliation' do
+          expect do
             post :create, account_id: checking, reconciliation: attributes
-          end.should change(Reconciliation, :count).by(1)
+          end.to change(Reconciliation, :count).by(1)
         end
         
-        it 'should redirect to the account transaction item index page' do
+        it 'redirects to the account transaction item index page' do
           post :create, account_id: checking, reconciliation: attributes
-          response.should redirect_to account_transaction_items_path(entity)
+          expect(response).to redirect_to account_transaction_items_path(entity)
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             post :create, account_id: checking, reconciliation: attributes, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should create the reconciliation' do
-            lambda do
+          it 'creates the reconciliation' do
+            expect do
               post :create, account_id: checking, reconciliation: attributes, format: :json
-            end.should change(Reconciliation, :count).by(1)
+            end.to change(Reconciliation, :count).by(1)
           end
         end
       end
@@ -83,46 +83,46 @@ describe ReconciliationsController do
       before(:each) { sign_in other_user }
       
       describe "get :new" do
-        it "should redirect to the user's home page" do
+        it "redirects to the user's home page" do
           get :new, account_id: checking
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
 
         context 'in JSON' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :new, account_id: checking, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
 
-          it 'should not return any data' do
+          it 'does not return any data' do
             get :new, account_id: checking, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
 
       describe "post :create" do
-        it "should redirect to the user's home page" do
+        it "redirects to the user's home page" do
           post :create, account_id: checking, reconciliation: attributes
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
-        it 'should not create the reconciliation' do
-          lambda do
+        it 'does not create the reconciliation' do
+          expect do
             post :create, account_id: checking, reconciliation: attributes
-          end.should_not change(Reconciliation, :count)
+          end.to_not change(Reconciliation, :count)
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             post :create, account_id: checking, reconciliation: attributes, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
         
-          it 'should not create the reconciliation' do
-            lambda do
+          it 'does not create the reconciliation' do
+            expect do
               post :create, account_id: checking, reconciliation: attributes
-            end.should_not change(Reconciliation, :count)
+            end.to_not change(Reconciliation, :count)
           end
         end
       end
@@ -131,48 +131,48 @@ describe ReconciliationsController do
   
   context 'for an unauthenticated user' do
     describe "get :new" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new, account_id: checking
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
 
         context 'in JSON' do
-          it 'should return "access denied"' do
+          it 'returns "access denied"' do
             get :new, account_id: checking, format: :json
-            response.response_code.should == 401
+            expect(response.response_code).to eq(401)
           end
 
-          it 'should return an error' do
+          it 'returns an error' do
             get :new, account_id: checking, format: :json
             content = JSON.parse(response.body)
-            content.delete('error').should_not be_nil
-            content.should be_empty
+            expect(content.delete('error')).to_not be_nil
+            expect(content).to be_empty
           end
         end
     end
 
     describe "post :create" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create, account_id: checking, reconciliation: attributes
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
-      it 'should not create a reconciliation' do
-        lambda do
+      it 'does not create a reconciliation' do
+        expect do
           post :create, account_id: checking, reconciliation: attributes
-        end.should_not change(Reconciliation, :count)
+        end.to_not change(Reconciliation, :count)
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create, account_id: checking, reconciliation: attributes, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not create the reconciliation' do
-          lambda do
+        it 'does not create the reconciliation' do
+          expect do
             post :create, account_id: checking, reconciliation: attributes, format: :json
-          end.should_not change(Reconciliation, :count)
+          end.to_not change(Reconciliation, :count)
         end
       end
     end
