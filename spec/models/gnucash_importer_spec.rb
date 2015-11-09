@@ -10,34 +10,34 @@ describe GnucashImporter do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     importer = GnucashImporter.new(attributes)
     expect(importer).to be_valid
   end
 
   describe '#entity' do
-    it 'should be required' do
+    it 'is required' do
       importer = GnucashImporter.new(attributes.except(:entity))
       expect(importer).not_to be_valid
     end
   end
 
   describe '#data' do
-    it 'should be required' do
+    it 'is required' do
       importer = GnucashImporter.new(attributes.except(:data))
       expect(importer).not_to be_valid
     end
   end
 
   describe '#import!' do
-    it 'should create the correct number of accounts' do
+    it 'creates the correct number of accounts' do
       importer = GnucashImporter.new(attributes)
       expect do
         importer.import!
       end.to change(Account, :count).by(23)
     end
 
-    it 'should create the correct accounts' do
+    it 'creates the correct accounts' do
       GnucashImporter.new(attributes).import!
       expect(Account.all.map(&:name).sort).to eq(["401k", "AAPL", "Checking", "Current Assets", "Federal Income", "Fixed Assets",
                                                  "Groceries", "House", "Imbalance-USD", "Interest", "Investment Expenses", "Investments",
@@ -45,31 +45,31 @@ describe GnucashImporter do
                                                  "Taxes", "VTSAX", "Vehicle", "Vehicle Loan", "Vehicle Loan Interest"])
     end
 
-    it 'should assign commodity accounts the commodity content type' do
+    it 'assigns commodity accounts the commodity content type' do
       GnucashImporter.new(attributes).import!
       aapl = Account.find_by_name("AAPL")
       expect(aapl.content_type).to eq(Account.commodity_content)
     end
 
-    it 'should assign commodity container accounts (i.e., investment accounts) the commodities content type' do
+    it 'assigns commodity container accounts (i.e., investment accounts) the commodities content type' do
       GnucashImporter.new(attributes).import!
       four_oh_one_k = Account.find_by_name("401k")
       expect(four_oh_one_k.content_type).to eq(Account.commodities_content)
     end
 
-    it 'should create the specified commodities' do
+    it 'creates the specified commodities' do
       expect do
         GnucashImporter.new(attributes).import!
       end.to change(Commodity, :count).by(2)
     end
 
-    it 'should import commodity prices' do
+    it 'imports commodity prices' do
       expect do
         GnucashImporter.new(attributes).import!
       end.to change(Price, :count).by(8)
     end
 
-    it 'should include memos in commodity transactions' do
+    it 'includes memos in commodity transactions' do
       GnucashImporter.new(attributes).import!
       account = Account.find_by(name: '401k')
 
@@ -80,7 +80,7 @@ describe GnucashImporter do
       expect(other_item.memo).to eq('comment about the shares')
     end
 
-    it 'should mark reconciled items as reconciled' do
+    it 'marks reconciled items as reconciled' do
       GnucashImporter.new(attributes).import!
       checking = Account.find_by(name: 'Checking')
       r = checking.transaction_items.
@@ -90,7 +90,7 @@ describe GnucashImporter do
       expect(Set.new(r)).to eq(Set.new([true]))
     end
 
-    it 'should leave unreconciled items unreconciled' do
+    it 'leaves unreconciled items unreconciled' do
       GnucashImporter.new(attributes).import!
       checking = Account.find_by(name: 'Checking')
       r = checking.transaction_items.
@@ -100,20 +100,20 @@ describe GnucashImporter do
       expect(Set.new(r)).to eq(Set.new([false]))
     end
 
-    it 'should create the specified transactions' do
+    it 'creates the specified transactions' do
       importer = GnucashImporter.new(attributes)
       expect do
         importer.import!
       end.to change(Transaction, :count).by(22)
     end
 
-    it 'should include transaction item memos' do
+    it 'includes transaction item memos' do
       GnucashImporter.new(attributes).import!
       groceries = Account.find_by(name: 'Groceries')
       expect(groceries.transaction_items.first.memo).to eq('comment about the groceries')
     end
 
-    it 'should result in a balance sheet report with correct balances' do
+    it 'results in a balance sheet report with correct balances' do
       GnucashImporter.new(attributes).import!
       report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2015-02-28'))
       expected = [{account: "Assets"              , balance: "249,711.00", depth: 0},
@@ -136,7 +136,7 @@ describe GnucashImporter do
       expect(report.content).to eq(expected)
     end
 
-    it 'should result in an income statement with correct balances' do
+    it 'results in an income statement with correct balances' do
       GnucashImporter.new(attributes).import!
       report = IncomeStatementReport.new(entity, IncomeStatementFilter.new(from: Chronic.parse("2015-01-01"), to: Chronic.parse("2015-12-31")))
       expected = [{account: "Income"                , balance: "8,000.00", depth: 0},
