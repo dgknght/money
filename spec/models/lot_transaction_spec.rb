@@ -13,13 +13,13 @@ describe LotTransaction do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     transaction = LotTransaction.new attributes
     expect(transaction).to be_valid
   end
 
   describe '#lot_id' do
-    it 'should be required' do
+    it 'is required' do
       transaction = LotTransaction.new attributes.except(:lot_id)
       expect(transaction).not_to be_valid
       expect(transaction).to have(1).error_on(:lot_id)
@@ -27,7 +27,7 @@ describe LotTransaction do
   end
 
   describe '#transaction_id' do
-    it 'should be required' do
+    it 'is required' do
       transaction = LotTransaction.new attributes.except(:transaction_id)
       expect(transaction).not_to be_valid
       expect(transaction).to have(1).error_on(:transaction_id)
@@ -35,7 +35,7 @@ describe LotTransaction do
   end
 
   describe '#shares_traded' do
-    it 'should be required' do
+    it 'is required' do
       transaction = LotTransaction.new attributes.except(:shares_traded)
       expect(transaction).not_to be_valid
       expect(transaction).to have(1).error_on(:shares_traded)
@@ -44,13 +44,13 @@ describe LotTransaction do
 
   describe '#sale?'do
     context 'when shares_traded is negative' do
-      it 'should be true' do
+      it 'is true' do
         lot_transaction = LotTransaction.new attributes.merge(shares_traded: -100)
         expect(lot_transaction.sale?).to be true
       end
     end
     context 'when shares_traded is positive' do
-      it 'should be false' do
+      it 'is false' do
         lot_transaction = LotTransaction.new attributes
         expect(lot_transaction.sale?).to be false
       end
@@ -59,13 +59,13 @@ describe LotTransaction do
 
   describe '#purchase' do
     context 'when shares_traded is negative' do
-      it 'should be false' do
+      it 'is false' do
         lot_transaction = LotTransaction.new attributes.merge(shares_traded: -100)
         expect(lot_transaction.purchase?).to be false
       end
     end
     context 'when shares_traded is positive' do
-      it 'should be true' do
+      it 'is true' do
         lot_transaction = LotTransaction.new attributes
         expect(lot_transaction.purchase?).to be true
       end
@@ -73,7 +73,7 @@ describe LotTransaction do
   end
 
   describe '#price' do
-    it 'should be required' do
+    it 'is required' do
       transaction = LotTransaction.new attributes.except(:price)
       expect(transaction).not_to be_valid
       expect(transaction).to have(1).error_on(:price)
@@ -81,14 +81,14 @@ describe LotTransaction do
   end
 
   describe '#lot' do
-    it 'should reference the owning lot' do
+    it 'references the owning lot' do
       transaction = LotTransaction.new attributes
       expect(transaction.lot).not_to be_nil
     end
   end
 
   describe '#transaction' do
-    it 'should reference the associated transaction' do
+    it 'references the associated transaction' do
       transaction = LotTransaction.new attributes
       expect(transaction.owning_transaction).not_to be_nil
     end
