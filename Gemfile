@@ -21,6 +21,7 @@ gem 'rails-footnotes', '~> 4.0'
 gem 'pg'
 gem 'chronic'
 gem 'nokogiri'
+gem 'activesupport-json_encoder'
 
 group :test, :development do
   gem 'rspec-rails'

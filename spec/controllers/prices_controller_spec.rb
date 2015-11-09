@@ -7,7 +7,7 @@ describe PricesController do
   let (:attributes) do
     {
       trade_date: '2014-02-28',
-      price: '12.3456'
+      price: 12.3456
     }
   end
 
@@ -88,10 +88,7 @@ describe PricesController do
 
           it 'returns the new price' do
             post :create, commodity_id: commodity, price: attributes, format: :json
-            returned = JSON.parse(response.body)
-            attributes.each do |key, value|
-              expect(returned[key.to_s]).to eq(value)
-            end
+            expect(response.body).to json_match attributes
           end
         end
       end

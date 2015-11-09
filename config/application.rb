@@ -9,6 +9,8 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
+ActiveSupport.encode_big_decimal_as_string = false
+
 module Money
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
