@@ -6,7 +6,7 @@ class IncomeStatementFilter < Filter
   def initialize (attributes = {})
     attributes ||= {}
     self.from = Filter.date_value(attributes[:from], previous_month_start)
-    self.to = Filter.date_value(attributes[:to], current_month_end)
+    self.to = Filter.date_value(attributes[:to], previous_month_end)
   end
   
   private
@@ -16,8 +16,8 @@ class IncomeStatementFilter < Filter
       end
     end
     
-    def current_month_end
-      today = Date.today
+    def previous_month_end
+      today = Date.today << 1
       Date.civil(today.year, today.month, -1)
     end
     
