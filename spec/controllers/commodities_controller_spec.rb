@@ -45,64 +45,64 @@ describe CommoditiesController do
       before(:each) { sign_in entity.user }
 
       describe 'get :index' do
-        it 'should be successful' do
+        it 'is successful' do
           get :index, entity_id: entity
           expect(response).to be_success
         end
 
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :index, entity_id: entity, format: :json
             expect(response).to be_success
           end
 
-          it 'should return the list of commodities' do
+          it 'returns the list of commodities' do
             get :index, entity_id: entity, format: :json
-            expect(response.body).to eq([commodity].to_json)
+            expect(response.body).to json_match([commodity])
           end
         end
       end
 
       describe 'get :show' do
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :show, id: commodity, format: :json
             expect(response).to be_success
           end
 
-          it 'should return the specified commodity' do
+          it 'returns the specified commodity' do
             get :show, id: commodity, format: :json
-            expect(response.body).to eq(commodity.to_json)
+            expect(response.body).to json_match(commodity)
           end
         end
       end
 
       describe 'get :new' do
-        it 'should be successful' do
+        it 'is successful' do
           get :new, entity_id: entity
           expect(response).to be_success
         end
       end
 
       describe 'post :create' do
-        it 'should redirect to the commodity list page' do
+        it 'redirects to the commodity list page' do
           post :create, entity_id: entity, commodity: attributes
           expect(response).to redirect_to(entity_commodities_path(entity))
         end
 
-        it 'should create the new commodity' do
+        it 'creates the new commodity' do
           expect do
             post :create, entity_id: entity, commodity: attributes
           end.to change(Commodity, :count).by(1)
         end
 
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             post :create, entity_id: entity, commodity: attributes, format: :json
             expect(response).to be_success
           end
 
-          it 'should create the new commodity' do
+          it 'creates the new commodity' do
             expect do
               post :create, entity_id: entity, commodity: attributes, format: :json
             end.to change(Commodity, :count).by(1)
@@ -111,19 +111,19 @@ describe CommoditiesController do
       end
 
       describe 'get :edit' do
-        it 'should be successful' do
+        it 'is successful' do
           get :edit, id: commodity
           expect(response).to be_success
         end
       end
 
       describe 'put :update' do
-        it 'should redirect to the commodity list page' do
+        it 'redirects to the commodity list page' do
           put :update, id: commodity, commodity: attributes
           expect(response).to redirect_to(entity_commodities_path(entity))
         end
 
-        it 'should update the commodity' do
+        it 'updates the commodity' do
           expect do
             put :update, id: commodity, commodity: attributes
             commodity.reload
@@ -131,12 +131,12 @@ describe CommoditiesController do
         end
 
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             put :update, id: commodity, commodity: attributes, format: :json
             expect(response).to be_success
           end
 
-          it 'should update the commodity' do
+          it 'updates the commodity' do
             expect do
               put :update, id: commodity, commodity: attributes, format: :json
               commodity.reload
@@ -146,24 +146,24 @@ describe CommoditiesController do
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the commodity list page' do
+        it 'redirects to the commodity list page' do
           delete :destroy, id: commodity
           expect(response).to redirect_to(entity_commodities_path(entity))
         end
 
-        it 'should delete the commodity' do
+        it 'deletes the commodity' do
           expect do
             delete :destroy, id: commodity
           end.to change(Commodity, :count).by(-1)
         end
 
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             delete :destroy, id: commodity, format: :json
             expect(response).to be_success
           end
 
-          it 'should delete the commodity' do
+          it 'deletes the commodity' do
             expect do
               delete :destroy, id: commodity, format: :json
             end.to change(Commodity, :count).by(-1)
@@ -174,7 +174,7 @@ describe CommoditiesController do
       describe 'get :new_split' do
         include_context 'split'
 
-        it 'should be successful' do
+        it 'is successful' do
           get :new_split, id: commodity
           expect(response).to be_success
         end
@@ -183,12 +183,12 @@ describe CommoditiesController do
       describe 'put :split' do
         include_context 'split'
 
-        it 'should redirect to the lot index page' do
+        it 'redirects to the lot index page' do
           put :split, id: commodity, split: split_attributes, account_id: ira.id
           expect(response).to redirect_to(account_lots_path(ira))
         end
 
-        it 'should record the stock split' do
+        it 'records the stock split' do
           lots = commodity.lots.to_a
           expect do
             put :split, id: commodity, split: split_attributes, account_id: ira.id
@@ -203,18 +203,18 @@ describe CommoditiesController do
       before(:each) { sign_in other_user }
 
       describe 'get :index' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :index, entity_id: entity
           expect(response).to redirect_to(home_path)
         end
 
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :index, entity_id: entity, format: :json
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not return any data' do
+          it 'does not return any data' do
             get :index, entity_id: entity, format: :json
             expect(response.body).to eq([].to_json)
           end
@@ -222,18 +222,18 @@ describe CommoditiesController do
       end
 
       describe 'get :show' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :show, id: commodity
           expect(response).to redirect_to(home_path)
         end
 
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :show, id: commodity, format: :json
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not return any data' do
+          it 'does not return any data' do
             get :show, id: commodity, format: :json
             expect(response.body).to eq([].to_json)
           end
@@ -241,37 +241,37 @@ describe CommoditiesController do
       end
 
       describe 'get :new' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :new, entity_id: entity
           expect(response).to redirect_to(home_path)
         end
       end
 
       describe 'post :create' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           post :create, entity_id: entity, commodity: attributes
           expect(response).to redirect_to(home_path)
         end
 
-        it 'should not create the new commodity' do
+        it 'does not create the new commodity' do
           expect do
             post :create, entity_id: entity, commodity: attributes
           end.not_to change(Commodity, :count)
         end
 
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             post :create, entity_id: entity, commodity: attributes, format: :json
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not create the new commodity' do
+          it 'does not create the new commodity' do
             expect do
               post :create, entity_id: entity, commodity: attributes, format: :json
             end.not_to change(Commodity, :count)
           end
 
-          it 'should not return any data' do
+          it 'does not return any data' do
             post :create, entity_id: entity, commodity: attributes, format: :json
             expect(response.body).to eq([].to_json)
           end
@@ -279,19 +279,19 @@ describe CommoditiesController do
       end
 
       describe 'get :edit' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :edit, id: commodity
           expect(response).to redirect_to(home_path)
         end
       end
 
       describe 'put :update' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           put :update, id: commodity, commodity: attributes
           expect(response).to redirect_to(home_path)
         end
 
-        it 'should not update the commodity' do
+        it 'does not update the commodity' do
           expect do
             put :update, id: commodity, commodity: attributes
             commodity.reload
@@ -299,19 +299,19 @@ describe CommoditiesController do
         end
 
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             put :update, id: commodity, commodity: attributes, format: :json
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not update the commodity' do
+          it 'does not update the commodity' do
             expect do
               put :update, id: commodity, commodity: attributes, format: :json
               commodity.reload
             end.not_to change(commodity, :name)
           end
 
-          it 'should not return any data' do
+          it 'does not return any data' do
             put :update, id: commodity, commodity: attributes, format: :json
             expect(response.body).to eq([].to_json)
           end
@@ -319,30 +319,30 @@ describe CommoditiesController do
       end
 
       describe 'delete :destroy' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           delete :destroy, id: commodity
           expect(response).to redirect_to(home_path)
         end
 
-        it 'should not delete the commodity' do
+        it 'does not delete the commodity' do
           expect do
             delete :destroy, id: commodity
           end.not_to change(Commodity, :count)
         end
 
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             delete :destroy, id: commodity, format: :json
             expect(response.response_code).to eq(404)
           end
 
-          it 'should not delete the commodity' do
+          it 'does not delete the commodity' do
             expect do
               delete :destroy, id: commodity, format: :json
             end.not_to change(Commodity, :count)
           end
 
-          it 'should not return any data' do
+          it 'does not return any data' do
             delete :destroy, id: commodity, format: :json
             expect(response.body).to eq([].to_json)
           end
@@ -350,7 +350,7 @@ describe CommoditiesController do
       end
 
       describe 'get :new_split' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :new_split, id: commodity
           expect(response).to redirect_to home_path
         end
@@ -359,12 +359,12 @@ describe CommoditiesController do
       describe 'put :split' do
         include_context 'split'
 
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           put :split, id: commodity, split: split_attributes, account_id: ira.id
           expect(response).to redirect_to home_path
         end
 
-        it 'should not record the stock split' do
+        it 'does not record the stock split' do
           lots = commodity.lots.to_a
           expect do
             put :split, id: commodity, split: split_attributes, account_id: ira.id
@@ -377,18 +377,18 @@ describe CommoditiesController do
 
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :index, entity_id: entity
         expect(response).to redirect_to(new_user_session_path)
       end
 
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :index, entity_id: entity, format: :json
           expect(response.response_code).to eq(401)
         end
 
-        it 'should return an error' do
+        it 'returns an error' do
           get :index, entity_id: entity, format: :json
           data = JSON.parse(response.body)
           expect(data).to have_only('error')
@@ -397,18 +397,18 @@ describe CommoditiesController do
     end
 
     describe 'get :show' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :show, id: commodity
         expect(response).to redirect_to(new_user_session_path)
       end
 
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :show, id: commodity, format: :json
           expect(response.response_code).to eq(401)
         end
 
-        it 'should return an error' do
+        it 'returns an error' do
           get :show, id: commodity, format: :json
           expect(JSON.parse(response.body)).to have_only('error')
         end
@@ -416,37 +416,37 @@ describe CommoditiesController do
     end
 
     describe 'get :new' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new, entity_id: entity
         expect(response).to redirect_to(new_user_session_path)
       end
     end
 
     describe 'post :create' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create, entity_id: entity, commodity: attributes
         expect(response).to redirect_to(new_user_session_path)
       end
 
-      it 'should not create the new commodity' do
+      it 'does not create the new commodity' do
         expect do
           post :create, entity_id: entity, commodity: attributes
         end.not_to change(Commodity, :count)
       end
 
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create, entity_id: entity, commodity: attributes, format: :json
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not create the new commodity' do
+        it 'does not create the new commodity' do
           expect do
             post :create, entity_id: entity, commodity: attributes, format: :json
           end.not_to change(Commodity, :count)
         end
 
-        it 'should return an error' do
+        it 'returns an error' do
           post :create, entity_id: entity, commodity: attributes, format: :json
           expect(JSON.parse(response.body)).to have_only('error')
         end
@@ -454,19 +454,19 @@ describe CommoditiesController do
     end
 
     describe 'get :edit' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :edit, id: commodity
         expect(response).to redirect_to(new_user_session_path)
       end
     end
 
     describe 'put :update' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         put :update, id: commodity, commodity: attributes
         expect(response).to redirect_to(new_user_session_path)
       end
 
-      it 'should not update the commodity' do
+      it 'does not update the commodity' do
         expect do
           put :update, id: commodity, commodity: attributes
           commodity.reload
@@ -474,19 +474,19 @@ describe CommoditiesController do
       end
 
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           put :update, id: commodity, commodity: attributes, format: :json
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not update the commodity' do
+        it 'does not update the commodity' do
           expect do
             put :update, id: commodity, commodity: attributes, format: :json
             commodity.reload
           end.not_to change(commodity, :name)
         end
 
-        it 'should return an error' do
+        it 'returns an error' do
           put :update, id: commodity, commodity: attributes, format: :json
           expect(JSON.parse(response.body)).to have_only('error')
         end
@@ -494,30 +494,30 @@ describe CommoditiesController do
     end
 
     describe 'delete :destroy' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         delete :destroy, id: commodity
         expect(response).to redirect_to(new_user_session_path)
       end
 
-      it 'should not delete the commodity' do
+      it 'does not delete the commodity' do
         expect do
           delete :destroy, id: commodity
         end.not_to change(Commodity, :count)
       end
 
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           delete :destroy, id: commodity, format: :json
           expect(response.response_code).to eq(401)
         end
 
-        it 'should not delete the commodity' do
+        it 'does not delete the commodity' do
           expect do
             delete :destroy, id: commodity, format: :json
           end.not_to change(Commodity, :count)
         end
 
-        it 'should return an error' do
+        it 'returns an error' do
           delete :destroy, id: commodity, format: :json
           expect(JSON.parse(response.body)).to have_only('error')
         end
@@ -525,7 +525,7 @@ describe CommoditiesController do
     end
 
     describe 'get :new_split' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new_split, id: commodity
         expect(response).to redirect_to new_user_session_path
       end
@@ -534,12 +534,12 @@ describe CommoditiesController do
     describe 'put :split' do
       include_context 'split'
 
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         put :split, id: commodity, split: split_attributes, account_id: ira.id
         expect(response).to redirect_to new_user_session_path
       end
 
-      it 'should not record the stock split' do
+      it 'does not record the stock split' do
         lots = commodity.lots.to_a
         expect do
           put :split, id: commodity, split: split_attributes, account_id: ira.id

@@ -1,27 +1,35 @@
 require 'spec_helper'
 
 describe IncomeStatementFilter do  
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     filter = IncomeStatementFilter.new(from: '2013-01-01', to: '2013-01-31')
-    filter.should_not be_nil
-    filter.should be_valid
-    filter.from.should == Date.civil(2013, 1, 1)
-    filter.to.should == Date.civil(2013, 1, 31)
+    expect(filter).to_not be_nil
+    expect(filter).to be_valid
+    expect(filter.from).to eq(Date.civil(2013, 1, 1))
+    expect(filter.to).to eq(Date.civil(2013, 1, 31))
   end
    
-# TODO Add suspension library and test these specs 
-#  describe 'start_date' do
-#    it 'should default to the start of the previous month'
-#  end
+  describe '#from' do
+    it 'defaults to the start of the previous month' do
+      Timecop.freeze(Chronic.parse('2015-02-27')) do
+        filter = IncomeStatementFilter.new
+        expect(filter.from).to eq(Date.parse('2015-01-01'))
+      end
+    end
+  end
   
-  describe 'end_date' do
+  describe '#to' do
   
-    it 'cannot be before the start date' do
+    it 'cannot be before #from' do
       filter = IncomeStatementFilter.new(from: '2013-02-01', to: '2013-01-01')
-      filter.should_not be_valid
+      expect(filter).to_not be_valid
     end
   
-# TODO Add suspension library and test these specs 
-#    it 'should default to the end of the previous month'
+    it 'defaults to the end of the previous month' do
+      Timecop.freeze(Chronic.parse('2015-02-27')) do
+        filter = IncomeStatementFilter.new
+        expect(filter.to).to eq(Date.parse('2015-01-31'))
+      end
+    end
   end
 end

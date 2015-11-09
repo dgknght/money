@@ -32,7 +32,7 @@ class AttachmentsController < ApplicationController
     authorize! :destroy, @attachment
     @attachment.destroy
     flash[:notice] = "The attachment was removed successfully."
-    respond_with @attachment, location: transaction_attachments_path(@attachment.transaction)
+    respond_with @attachment, location: transaction_attachments_path(@attachment.owning_transaction)
   end
 
   private

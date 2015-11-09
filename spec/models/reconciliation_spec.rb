@@ -16,62 +16,62 @@ describe Reconciliation do
     }
   end
   
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     reconciliation = Reconciliation.new(attributes)
-    reconciliation.should be_valid
+    expect(reconciliation).to be_valid
   end
   
   describe 'account_id' do
-    it 'should be required' do
+    it 'is required' do
       reconciliation = Reconciliation.new(attributes.without(:account_id))
-      reconciliation.should have(1).error_on(:account_id)
+      expect(reconciliation).to have(1).error_on(:account_id)
     end
   end
   
   describe 'reconciliation_date' do
-    it 'should default to one month after the previous close, if available' do
+    it 'defaults to one month after the previous close, if available' do
       r1 = Reconciliation.create!(attributes)
       
       r2 = Reconciliation.new(attributes.without(:reconciliation_date).merge(closing_balance: 0, items_attributes: []))            
-      r2.should be_valid
-      r2.reconciliation_date.should == Date.civil(2013, 3, 28)
+      expect(r2).to be_valid
+      expect(r2.reconciliation_date).to eq(Date.civil(2013, 3, 28))
     end
     
-    it 'should default to today if no previous close is available' do
+    it 'defaults to today if no previous close is available' do
       reconciliation = Reconciliation.new(attributes.without(:reconciliation_date))
-      reconciliation.should be_valid
-      reconciliation.reconciliation_date.should == Date.today
+      expect(reconciliation).to be_valid
+      expect(reconciliation.reconciliation_date).to eq(Date.today)
     end
   end
   
   describe 'closing_balance' do
-    it 'should be required' do
+    it 'is required' do
       reconciliation = Reconciliation.new(attributes.without(:closing_balance))
-      reconciliation.should have(1).error_on(:closing_balance)
+      expect(reconciliation).to have(1).error_on(:closing_balance)
     end
   end
   
   describe 'prevous_balance' do
     context 'when there are no previous reconciliations for the account' do
-      it 'should be zero' do
+      it 'is zero' do
         reconciliation = Reconciliation.new(attributes)
-        reconciliation.previous_balance.should == 0
+        expect(reconciliation.previous_balance).to eq(0)
       end
     end
     
     context 'when there is at least one previous reconciliation for the account' do
       let!(:previous) { FactoryGirl.create(:reconciliation, account: checking, reconciliation_date: '2013-01-31', closing_balance: 1_000) }
-      it 'should be the closing balance from the previous reconciliation for the same account' do
+      it 'is the closing balance from the previous reconciliation for the same account' do
         reconciliation = Reconciliation.new(attributes)
-        reconciliation.previous_balance.should == 1_000
+        expect(reconciliation.previous_balance).to eq(1_000)
       end
     end
   end
   
   describe 'items' do
-    it 'should be empty by default' do
+    it 'is empty by default' do
       reconciliation = Reconciliation.new(attributes.without(:items_attributes))
-      reconciliation.items.should be_empty
+      expect(reconciliation.items).to be_empty
     end
   end
   
@@ -80,12 +80,12 @@ describe Reconciliation do
     let (:checking_item) do
       t1.items.select{ |i| i.account_id == checking.id}.first
     end
-    it 'should be the previous_balance plus any selected transaction items' do
+    it 'is the previous_balance plus any selected transaction items' do
       reconciliation = Reconciliation.new(attributes.without(:items_attributes))
-      reconciliation.reconciled_balance.should == 0
+      expect(reconciliation.reconciled_balance).to eq(0)
       
       reconciliation << checking_item
-      reconciliation.reconciled_balance.should == 1_000
+      expect(reconciliation.reconciled_balance).to eq(1_000)
     end
   end
   
@@ -96,10 +96,10 @@ describe Reconciliation do
     end
     it 'must be zero' do
       reconciliation = Reconciliation.new(attributes.without(:items_attributes))
-      reconciliation.should have(1).error_on(:balance_difference)
+      expect(reconciliation).to have(1).error_on(:balance_difference)
       
       item = reconciliation << checking_item
-      reconciliation.should be_valid
+      expect(reconciliation).to be_valid
     end
   end
 end

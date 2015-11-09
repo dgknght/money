@@ -7,7 +7,7 @@ end
 
 Given(/^(#{USER}) has an? (liability|asset|equity|income|expense) account named "([^"]+)"(?: with a balance of (#{DOLLAR_AMOUNT}))?$/) do |user, type, name, balance|
   entity = user.entities.first
-  entity.should_not be_nil
+  expect(entity).not_to be_nil
   typed_balance = balance.nil? ? 0 : BigDecimal.new(balance)
   entity.accounts.find_by_name(name) || entity.accounts.create!(name: name, account_type: type, balance: typed_balance)
 end

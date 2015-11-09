@@ -22,7 +22,7 @@ describe CommodityExchanger do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     exchanger = CommodityExchanger.new(attributes)
     expect(exchanger).to be_valid
   end

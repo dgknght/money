@@ -5,7 +5,7 @@ describe PagesController do
   describe "GET 'welcome'" do
     it "returns http success" do
       get 'welcome'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 

@@ -41,8 +41,8 @@
           %th.col-md-2.text-center Cleared
         -@reconciliation.account.transaction_items.unreconciled.each do |item|
           %tr
-            %td= format_date(item.transaction.transaction_date)
-            %td= item.transaction.description
+            %td= format_date(item.transaction_date)
+            %td= item.owning_transaction.description
             %td.text-right= format_currency(item.polarized_amount)
             %td.text-center
               =check_box_tag "reconciliation[items_attributes][][transaction_item_id]", item.id, is_selected(item, @reconciliation)

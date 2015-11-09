@@ -6,10 +6,10 @@ describe AttachmentContentsController do
 
   context 'for an authenticated user' do
     context 'to which the entity belongs' do
-      before(:each) { sign_in attachment.transaction.entity.user }
+      before(:each) { sign_in attachment.owning_transaction.entity.user }
 
       describe "GET 'show'" do
-        it "should be successful" do
+        it "is successful" do
           get :show, id: attachment.attachment_content_id
           expect([200, 302]).to include(response.response_code)
         end
@@ -21,7 +21,7 @@ describe AttachmentContentsController do
       before(:each) { sign_in other_user }
 
       describe "GET 'show'" do
-        it "should redirect to the home page" do
+        it "redirects to the home page" do
           get :show, id: attachment.attachment_content_id
           expect(response).to redirect_to home_path
         end
@@ -31,7 +31,7 @@ describe AttachmentContentsController do
 
   context 'for an unauthenticated user' do
     describe "GET 'show'" do
-      it "should redirect to the sign in page" do
+      it "redirects to the sign in page" do
         get :show, id: attachment.attachment_content_id
         expect(response).to redirect_to new_user_session_path
       end

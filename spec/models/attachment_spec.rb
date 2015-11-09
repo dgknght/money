@@ -11,7 +11,7 @@ describe Attachment do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     attachment = Attachment.new(attributes)
     expect(attachment).not_to be_nil
     expect(attachment).to be_valid
@@ -21,7 +21,7 @@ describe Attachment do
   end
 
   describe 'raw_file' do
-    it 'should be required' do
+    it 'is required' do
       attachment = Attachment.new(attributes.without(:raw_file))
       expect(attachment).not_to be_valid
       expect(attachment).to have(1).error_on(:name)
@@ -29,29 +29,29 @@ describe Attachment do
   end
 
   describe 'transaction_id' do
-    it 'should be required' do
+    it 'is required' do
       attachment = Attachment.new(attributes.without(:transaction_id))
       expect(attachment).not_to be_valid
       expect(attachment).to have(1).error_on(:transaction_id)
     end
   end
 
-  describe 'transaction' do
-    it 'should refer to the transaction to which the attachment belongs' do
+  describe '#owning_transaction' do
+    it 'refers to the transaction to which the attachment belongs' do
       attachment = Attachment.new(attributes);
-      expect(attachment.transaction).not_to be_nil
+      expect(attachment.owning_transaction).not_to be_nil
     end
   end
 
   describe 'attachment_content_id' do
-    it 'should point to the content record for the attachment' do
+    it 'points to the content record for the attachment' do
       attachment = Attachment.create!(attributes);
       expect(attachment.attachment_content_id).not_to be_nil
     end
 
-    it 'should prevent saving if not set' do
+    it 'prevents saving if not set' do
       attachment = Attachment.new(attributes.without(:raw_file).merge( name: 'test', content_type: 'text'))
-      expect(attachment.save).not_to be_true
+      expect(attachment.save).not_to be true
     end
   end
 end

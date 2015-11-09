@@ -10,18 +10,18 @@ describe BudgetFilter do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     filter = BudgetFilter.new(attributes)
-    filter.should be_valid
-    filter.start_date.should == Date.civil(2013, 1, 1)
-    filter.end_date.should == Date.civil(2013, 12, 31)
-    filter.budget_id.should == budget.id
+    expect(filter).to be_valid
+    expect(filter.start_date).to eq(Date.civil(2013, 1, 1))
+    expect(filter.end_date).to eq(Date.civil(2013, 12, 31))
+    expect(filter.budget_id).to eq(budget.id)
   end
   
   describe 'budget_id' do
-    it 'should be required' do
+    it 'is required' do
       filter = BudgetFilter.new(attributes.without(:budget_id))
-      filter.should_not be_valid
+      expect(filter).to_not be_valid
     end
   end
 end

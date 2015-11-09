@@ -25,150 +25,149 @@ describe BudgetItemsController do
       before(:each) { sign_in budget.entity.user }
       
       describe "get :index" do
-        it "should be successful" do
+        it "is successful" do
           get :index, budget_id: budget
-          response.should be_success
+          expect(response).to be_success
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :index, budget_id: budget, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should return the budget item list' do
+          it 'returns the budget item list' do
             get :index, budget_id: budget, format: :json
-            response.body.should == [budget_item].to_json
+            expect(response.body).to json_match [budget_item]
           end
         end
       end
 
       describe "get :show" do
-        it "should be successful" do
+        it "is successful" do
           get :show, id: budget_item
-          response.should be_success
+          expect(response).to be_success
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :show, id: budget_item, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should return the budget item' do
+          it 'returns the budget item' do
             get :show, id: budget_item, format: :json
-            response.body.should == budget_item.to_json
+            expect(response.body).to json_match budget_item
           end
         end
       end
 
       describe "get :new" do
-        it "should be successful" do
+        it "is successful" do
           get :new, budget_id: budget
-          response.should be_success
+          expect(response).to be_success
         end
       end
 
       describe "post :create" do
-        it "should redirect to the budget item detail page" do
+        it "redirects to the budget item detail page" do
           post :create, budget_id: budget, budget_item: attributes, distributor: distributor
-          response.should redirect_to budget_budget_items_path(budget)
+          expect(response).to redirect_to budget_budget_items_path(budget)
         end
         
-        it 'should create a new budget item' do
-          lambda do
+        it 'creates a new budget item' do
+          expect do
             post :create, budget_id: budget, budget_item: attributes, distributor: distributor
-          end.should change(BudgetItem, :count).by(1)
+          end.to change(BudgetItem, :count).by(1)
         end
         
-        it 'should create the correct budget amounts for each period' do
+        it 'creates the correct budget amounts for each period' do
           post :create, budget_id: budget, budget_item: attributes, distributor: distributor
           budget_item = BudgetItem.last
-          budget_item.periods.map{ |p| p.budget_amount }.should == (1..12).map{ |i| 100}
+          expect(budget_item.periods.map{ |p| p.budget_amount }).to eq((1..12).map{ |i| 100})
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should create a new budget item' do
-            lambda do
+          it 'creates a new budget item' do
+            expect do
               post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
-            end.should change(BudgetItem, :count).by(1)
+            end.to change(BudgetItem, :count).by(1)
           end
           
-          it 'should return the new budget item' do
+          it 'returns the new budget item' do
             post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
-            result = JSON.parse(response.body)
-            attributes.each { |k, v| result[k.to_s].should == v }
+            expect(response.body).to json_match attributes
           end
         end
       end
 
       describe "get :edit" do
-        it "should be successful" do
+        it "is successful" do
           get :edit, id: budget_item
-          response.should be_success
+          expect(response).to be_success
         end
       end
 
       describe "put :update" do
-        it "should redirect to the budget item index page" do
+        it "redirects to the budget item index page" do
           put :update, id: budget_item, budget_item: attributes, distributor: distributor
-          response.should redirect_to budget_budget_items_path(budget_item.budget)
+          expect(response).to redirect_to budget_budget_items_path(budget_item.budget)
         end
         
-        it 'should update the budget item' do
-          lambda do
+        it 'updates the budget item' do
+          expect do
             put :update, id: budget_item, budget_item: attributes, distributor: distributor
             budget_item.reload
-          end.should change(budget_item, :account_id).to(account.id)
+          end.to change(budget_item, :account_id).to(account.id)
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should update the specified budget item' do
-            lambda do
+          it 'updates the specified budget item' do
+            expect do
               put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
               budget_item.reload
-            end.should change(budget_item, :account_id).to(account.id)
+            end.to change(budget_item, :account_id).to(account.id)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             put :update, id: budget_item, budget_item: attributes, distributor: distributor, format: :json
-            response.body.should == ""
+            expect(response.body).to be_blank
           end
         end
       end
 
       describe "delete :destroy" do
-        it "should redirect to the budget item index page" do
+        it "redirects to the budget item index page" do
           delete :destroy, id: budget_item
-          response.should redirect_to budget_budget_items_path(budget)
+          expect(response).to redirect_to budget_budget_items_path(budget)
         end
         
-        it 'should delete the budget item' do
-          lambda do
+        it 'deletes the budget item' do
+          expect do
             delete :destroy, id: budget_item
-          end.should change(BudgetItem, :count).by(-1)
+          end.to change(BudgetItem, :count).by(-1)
         end
         
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             delete :destroy, id: budget_item, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should delete the specified budget item' do
-            lambda do
+          it 'deletes the specified budget item' do
+            expect do
               delete :destroy, id: budget_item, format: :json
-            end.should change(BudgetItem, :count).by(-1)
+            end.to change(BudgetItem, :count).by(-1)
           end
         end
       end
@@ -179,142 +178,142 @@ describe BudgetItemsController do
       before(:each) { sign_in other_user }
       
       describe "get :index" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :index, budget_id: budget
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :index, budget_id: budget, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             get :index, budget_id: budget, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
 
       describe "get :show" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :show, id: budget_item
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :show, id: budget_item, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             get :show, id: budget_item, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
 
       describe "get :new" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :new, budget_id: budget
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
 
       describe "post :create" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           post :create, budget_id: budget, budget_item: attributes
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             post :create, budget_id: budget, budget_item: attributes, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not create a new budget item' do
-            lambda do
+          it 'does not create a new budget item' do
+            expect do
               post :create, budget_id: budget, budget_item: attributes, format: :json
-            end.should_not change(BudgetItem, :count)
+            end.not_to change(BudgetItem, :count)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             post :create, budget_id: budget, budget_item: attributes, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
 
       describe "get :edit" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :edit, id: budget_item
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
 
       describe "put :update" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           put :update, id: budget_item, budget_item: attributes
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
-        it 'should not update the item' do
-          lambda do
+        it 'does not update the item' do
+          expect do
             put :update, id: budget_item, budget_item: attributes
             budget_item.reload
-          end.should_not change(budget_item, :account_id)
+          end.not_to change(budget_item, :account_id)
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             put :update, id: budget_item, budget_item: attributes, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not update the specified budget item' do
-            lambda do
+          it 'does not update the specified budget item' do
+            expect do
               put :update, id: budget_item, budget_item: attributes, format: :json
               budget_item.reload
-            end.should_not change(budget_item, :account_id)
+            end.not_to change(budget_item, :account_id)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             put :update, id: budget_item, budget_item: attributes, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
 
       describe "delete :destroy" do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           delete :destroy, id: budget_item
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
-        it 'should not delete the budget item' do
-          lambda do
+        it 'does not delete the budget item' do
+          expect do
             delete :destroy, id: budget_item
-          end.should_not change(BudgetItem, :count)
+          end.not_to change(BudgetItem, :count)
         end
         
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             delete :destroy, id: budget_item, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not delete the item' do
-            lambda do
+          it 'does not delete the item' do
+            expect do
               delete :destroy, id: budget_item, format: :json
-            end.should_not change(BudgetItem, :count)
+            end.not_to change(BudgetItem, :count)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             delete :destroy, id: budget_item, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
@@ -323,137 +322,137 @@ describe BudgetItemsController do
   
   context "for an unauthenticated user" do
     describe "get :index" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :index, budget_id: budget
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :index, budget_id: budget, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should return an error message' do
+        it 'returns an error message' do
           get :index, budget_id: budget, format: :json
           result = JSON.parse(response.body)
-          result.should include('error')
-          result.should have(1).item
+          expect(result).to include('error')
+          expect(result).to have(1).item
         end
       end
     end
 
     describe "get :show" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :show, id: budget_item
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :show, id: budget_item, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should return an error message' do
+        it 'returns an error message' do
           get :show, id: budget_item, format: :json
           result = JSON.parse(response.body)
-          result.should include('error')
-          result.should have(1).item
+          expect(result).to include('error')
+          expect(result).to have(1).item
         end
       end
     end
 
     describe "get :new" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new, budget_id: budget
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
     end
 
     describe "post :create" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create, budget_id: budget, budget_item: attributes
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create, budget_id: budget, budget_item: attributes, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not create a new budget item' do
-          lambda do
+        it 'does not create a new budget item' do
+          expect do
             post :create, budget_id: budget, budget_item: attributes, format: :json
-          end.should_not change(BudgetItem, :count)
+          end.not_to change(BudgetItem, :count)
         end
         
-        it 'should return an error message' do
+        it 'returns an error message' do
           post :create, budget_id: budget, budget_item: attributes, format: :json
           result = JSON.parse(response.body)
-          result.should include('error')
-          result.should have(1).item
+          expect(result).to include('error')
+          expect(result).to have(1).item
         end
       end
     end
 
     describe "get :edit" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :edit, id: budget_item
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
     end
 
     describe "put :update" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         put :update, id: budget_item, budget_item: attributes
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           put :update, id: budget_item, budget_item: attributes, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not update the specified budget item' do
-          lambda do
+        it 'does not update the specified budget item' do
+          expect do
             put :update, id: budget_item, budget_item: attributes, format: :json
             budget_item.reload
-          end.should_not change(budget_item, :account_id)
+          end.not_to change(budget_item, :account_id)
         end
         
-        it 'should return an error message' do
+        it 'returns an error message' do
           put :update, id: budget_item, budget_item: attributes, format: :json
           result = JSON.parse(response.body)
-          result.should include('error')
-          result.should have(1).item
+          expect(result).to include('error')
+          expect(result).to have(1).item
         end
       end
     end
 
     describe "delete :destroy" do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         delete :destroy, id: budget_item
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           delete :destroy, id: budget_item, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not delete the item' do
-          lambda do
+        it 'does not delete the item' do
+          expect do
             delete :destroy, id: budget_item, format: :json
-          end.should_not change(BudgetItem, :count)
+          end.not_to change(BudgetItem, :count)
         end
         
-        it 'should return an error message' do
+        it 'returns an error message' do
           delete :destroy, id: budget_item, format: :json
           result = JSON.parse(response.body)
-          result.should include('error')
-          result.should have(1).item
+          expect(result).to include('error')
+          expect(result).to have(1).item
         end
       end
     end

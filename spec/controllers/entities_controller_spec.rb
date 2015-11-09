@@ -14,58 +14,58 @@ describe EntitiesController do
     before(:each) { sign_in user }
     
     describe 'get :index' do
-      it 'should be successful' do
+      it 'is successful' do
         get :index
-        response.should be_success
+        expect(response).to be_success
       end
       
       context 'in json' do
-        it 'should be successful' do
+        it 'is successful' do
           get :index, format: :json
-          response.should be_success
+          expect(response).to be_success
         end
         
-        it 'should return the list of entities' do
+        it 'returns the list of entities' do
           get :index, format: :json
-          response.body.should == [entity].to_json
+          expect(response.body).to eq([entity].to_json)
         end
       end
     end
     
     describe 'get :new' do
-      it 'should be successful' do
+      it 'is successful' do
         get :new
-        response.should be_success
+        expect(response).to be_success
       end
     end
     
     describe 'post :create' do
-      it 'should redirect to the account index page for the new entity' do
+      it 'redirects to the account index page for the new entity' do
         post :create, entity: attributes
-        response.should redirect_to entity_accounts_path(Entity.last)
+        expect(response).to redirect_to entity_accounts_path(Entity.last)
       end
       
-      it 'should create a new entity' do
-        lambda do
+      it 'creates a new entity' do
+        expect do
           post :create, entity: attributes
-        end.should change(Entity, :count).by(1)
+        end.to change(Entity, :count).by(1)
       end
       
       context 'in json' do
-        it 'should be successful' do
+        it 'is successful' do
           post :create, entity: attributes, format: :json
-          response.should be_success
+          expect(response).to be_success
         end
         
-        it 'should return the newly created entity' do
-          lambda do
+        it 'returns the newly created entity' do
+          expect do
             post :create, entity: attributes, format: :json
-          end.should change(Entity, :count).by(1)
+          end.to change(Entity, :count).by(1)
         end
       end
 
       context 'with a data file' do
-        it 'should import the data' do
+        it 'imports the data' do
           post :create, entity: attributes.merge(data: gnucash_data)
           entity = Entity.last
           expect(entity).to have_at_least(1).account
@@ -77,87 +77,87 @@ describe EntitiesController do
     
     context 'that owns the entity' do
       describe 'get :edit' do
-        it 'should be successful' do
+        it 'is successful' do
           get :edit, id: entity
-          response.should be_success
+          expect(response).to be_success
         end
       end
       
       describe 'put :update' do
-        it 'should redirect to the entity index page' do
+        it 'redirects to the entity index page' do
           put :update, id: entity, entity: { name: 'the new name' }
-          response.should redirect_to entities_path
+          expect(response).to redirect_to entities_path
         end
         
-        it 'should update the entity' do
-          lambda do
+        it 'updates the entity' do
+          expect do
             put :update, id: entity, entity: { name: 'the new name' }
             entity.reload
-          end.should change(entity, :name).to('the new name')
+          end.to change(entity, :name).to('the new name')
         end
       
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             put :update, id: entity, entity: { name: 'the new name' }, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should update the entity'do
-            lambda do
+          it 'updates the entity'do
+            expect do
               put :update, id: entity, entity: { name: 'the new name' }, format: :json
               entity.reload
-            end.should change(entity, :name).to('the new name')
-            response.should be_success
+            end.to change(entity, :name).to('the new name')
+            expect(response).to be_success
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             put :update, id: entity, entity: { name: 'the new name' }, format: :json
-            response.body.should == ""
+            expect(response.body).to be_blank
           end
         end
       end
       
       describe 'get :show' do
-        it 'should be successful' do
+        it 'is successful' do
           get :show, id: entity
-          response.should be_success
+          expect(response).to be_success
         end
       
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             get :show, id: entity, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
       
-          it 'should return the specified entity' do
+          it 'returns the specified entity' do
             get :show, id: entity, format: :json
-            response.body.should == entity.to_json
+            expect(response.body).to json_match entity
           end
         end
       end
       
       describe 'delete :destroy' do
-        it 'should redirect to the entity index page' do
+        it 'redirects to the entity index page' do
           delete :destroy, id: entity
-          response.should redirect_to entities_path
+          expect(response).to redirect_to entities_path
         end
         
-        it 'should delete the entity' do
-          lambda do
+        it 'deletes the entity' do
+          expect do
             delete :destroy, id: entity
-          end.should change(Entity, :count).by(-1)
+          end.to change(Entity, :count).by(-1)
         end
       
         context 'in json' do
-          it 'should be successful' do
+          it 'is successful' do
             delete :destroy, id: entity, format: :json
-            response.should be_success
+            expect(response).to be_success
           end
           
-          it 'should delete the specified entity' do
-            lambda do
+          it 'deletes the specified entity' do
+            expect do
               delete :destroy, id: entity, format: :json
-            end.should change(Entity, :count).by(-1)
+            end.to change(Entity, :count).by(-1)
           end
         end
       end
@@ -169,86 +169,86 @@ describe EntitiesController do
       before(:each) { sign_in other_user }
       
       describe 'get :edit' do
-        it 'should redirect to user home page' do
+        it 'redirects to user home page' do
           get :edit, id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       end
       
       describe 'put :update' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           put :update, id: entity, entity: { name: 'some new name' }
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
-        it 'should not update the entity' do
-          lambda do
+        it 'does not update the entity' do
+          expect do
             put :update, id: entity, entity: { name: 'some new name' }
             entity.reload
-          end.should_not change(entity, :name)
+          end.to_not change(entity, :name)
         end
       
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             put :update, id: entity, entity: { name: 'some new name' }, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             put :update, id: entity, entity: { name: 'some new name' }, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
           
-          it 'should not update the entity' do
-            lambda do
+          it 'does not update the entity' do
+            expect do
               put :update, id: entity, entity: { name: 'some new name' }, format: :json
               entity.reload
-            end.should_not change(entity, :name)
+            end.to_not change(entity, :name)
           end
           
         end
       end
       
       describe 'get :show' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           get :show, id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
       
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             get :show, id: entity, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             get :show, id: entity, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
       
       describe 'delete :destroy' do
-        it 'should redirect to the user home page' do
+        it 'redirects to the user home page' do
           delete :destroy, id: entity
-          response.should redirect_to home_path
+          expect(response).to redirect_to home_path
         end
         
-        it 'should not delete the entity' do
-          lambda do
+        it 'does not delete the entity' do
+          expect do
             delete :destroy, id: entity
-          end.should_not change(Entity, :count)
+          end.to_not change(Entity, :count)
         end
       
         context 'in json' do
-          it 'should return "resource not found"' do
+          it 'returns "resource not found"' do
             delete :destroy, id: entity, format: :json
-            response.response_code.should == 404
+            expect(response.response_code).to eq(404)
           end
           
-          it 'should not return any data' do
+          it 'does not return any data' do
             delete :destroy, id: entity, format: :json
-            response.body.should == [].to_json
+            expect(response.body).to eq([].to_json)
           end
         end
       end
@@ -257,128 +257,128 @@ describe EntitiesController do
 
   context 'for an unauthenticated user' do
     describe 'get :index' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :index, id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :index, id: entity, format: :json
-          response.response_code.should == 401          
+          expect(response.response_code).to eq(401          )
         end
         
-        it 'should not return any data' do
+        it 'does not return any data' do
           get :index, id: entity, format: :json
-          response.body.should == { error: 'You need to sign in or sign up before continuing.' }.to_json
+          expect(response.body).to eq({ error: 'You need to sign in or sign up before continuing.' }.to_json)
         end
       end
     end
     
     describe 'get :new' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :new
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
     end
     
     describe 'post :create' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         post :create, entity: attributes
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           post :create, entity: attributes, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not return any data' do
+        it 'does not return any data' do
           post :create, entity: attributes, format: :json
-          response.body.should == { error: 'You need to sign in or sign up before continuing.' }.to_json
+          expect(response.body).to eq({ error: 'You need to sign in or sign up before continuing.' }.to_json)
         end
         
-        it 'should not create an entity' do
-          lambda do
+        it 'does not create an entity' do
+          expect do
             post :create, entity: attributes, format: :json
-          end.should_not change(Entity, :count)
+          end.to_not change(Entity, :count)
         end
       end
     end
     
     describe 'get :edit' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :edit, id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
     end
     
     describe 'put :update' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         put :update, id: entity, entity: { name: 'some new name' }
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           put :update, id: entity, entity: { name: 'some new name' }, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not return any data' do
+        it 'does not return any data' do
           put :update, id: entity, entity: { name: 'some new name' }, format: :json
-          response.body.should == { error: 'You need to sign in or sign up before continuing.' }.to_json
+          expect(response.body).to eq({ error: 'You need to sign in or sign up before continuing.' }.to_json)
         end
         
-        it 'should not update the entity' do
-          lambda do
+        it 'does not update the entity' do
+          expect do
             put :update, id: entity, entity: { name: 'some new name' }, format: :json            
-          end.should_not change(Entity, :count)
+          end.to_not change(Entity, :count)
         end
       end
     end
     
     describe 'get :show' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         get :show, id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           get :show, id: entity, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not return any data' do
+        it 'does not return any data' do
           get :show, id: entity, format: :json
-          response.body.should == { error: 'You need to sign in or sign up before continuing.' }.to_json
+          expect(response.body).to eq({ error: 'You need to sign in or sign up before continuing.' }.to_json)
         end
       end
     end
     
     describe 'delete :destroy' do
-      it 'should redirect to the sign in page' do
+      it 'redirects to the sign in page' do
         delete :destroy, id: entity
-        response.should redirect_to new_user_session_path
+        expect(response).to redirect_to new_user_session_path
       end
       
       context 'in json' do
-        it 'should return "access denied"' do
+        it 'returns "access denied"' do
           delete :destroy, id: entity, format: :json
-          response.response_code.should == 401
+          expect(response.response_code).to eq(401)
         end
         
-        it 'should not return any data' do
+        it 'does not return any data' do
           delete :destroy, id: entity, format: :json
-          response.body.should == { error: 'You need to sign in or sign up before continuing.' }.to_json
+          expect(response.body).to eq({ error: 'You need to sign in or sign up before continuing.' }.to_json)
         end
         
-        it 'should not delete the entity' do
-          lambda do
+        it 'does not delete the entity' do
+          expect do
             delete :destroy, id: entity, format: :json
-          end.should_not change(Entity, :count)
+          end.to_not change(Entity, :count)
         end
       end
     end

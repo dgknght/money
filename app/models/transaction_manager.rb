@@ -180,7 +180,7 @@ class TransactionManager
     basis_index = basis_item.try(:index) || -1
     basis_balance = basis_item.try(:balance) || BigDecimal.new(0)
     # The following should sort at the database layer, but for some reason it wouldn't for the test suite
-    items = account.transaction_items_occurring_on_or_after(as_of_date).sort_by{|i| i.transaction.transaction_date}
+    items = account.transaction_items_occurring_on_or_after(as_of_date).sort_by{|i| i.transaction_date}
 
     process_item_sequence(account, basis_item, [], items)
   end

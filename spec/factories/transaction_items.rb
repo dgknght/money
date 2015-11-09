@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :transaction_item do
-    transaction
+    association :owning_transaction, factory: :transaction
     account
     action TransactionItem.debit
     memo { Faker::Lorem.sentence(3) }

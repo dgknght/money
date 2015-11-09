@@ -11,8 +11,8 @@
 #
 
 class Transaction < ActiveRecord::Base
-  has_many :items, class_name: 'TransactionItem', inverse_of: :transaction, dependent: :destroy
-  has_many :attachments, inverse_of: :transaction, dependent: :destroy
+  has_many :items, class_name: 'TransactionItem', dependent: :destroy, inverse_of: :owning_transaction
+  has_many :attachments, dependent: :destroy
   has_many :lot_transactions
   accepts_nested_attributes_for :items, allow_destroy: true
   belongs_to :entity

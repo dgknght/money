@@ -20,25 +20,25 @@ describe TransactionDestroyer do
 
   describe '#destroy' do
     context 'when successful' do
-      it 'should destroy the transaction' do
+      it 'destroys the transaction' do
         expect do
           TransactionDestroyer.new(regular_transaction).destroy
         end.to change(Transaction, :count).by(-1)
       end
 
-      it 'should return true on success' do
+      it 'returns true on success' do
         result = TransactionDestroyer.new(regular_transaction).destroy
-        expect(result).to be_true
+        expect(result).to be true
       end
 
       context 'for lot-creating transactions' do
-        it 'should destroy the associated lot' do
+        it 'destroys the associated lot' do
           expect do
             TransactionDestroyer.new(commodity_purchase_transaction).destroy
           end.to change(Lot, :count).by(-1)
         end
 
-        it 'should destroy the associating lot-transaction record' do
+        it 'destroys the associating lot-transaction record' do
           expect do
             TransactionDestroyer.new(commodity_purchase_transaction).destroy
           end.to change(LotTransaction, :count).by(-1)
@@ -56,7 +56,7 @@ describe TransactionDestroyer do
           ).create!
         end
 
-        it 'should restore the shares to the lot' do
+        it 'restores the shares to the lot' do
           lot = commodity_account.lots.first
           expect do
             TransactionDestroyer.new(commodity_sale_transaction).destroy
@@ -64,13 +64,13 @@ describe TransactionDestroyer do
           end.to change(lot, :shares_owned).from(50).to(100)
         end
 
-        it 'should not destroy the lot' do
+        it 'does not destroy the lot' do
           expect do
             TransactionDestroyer.new(commodity_sale_transaction).destroy
           end.not_to change(Lot, :count)
         end
 
-        it 'should destroy the lot-transaction link' do
+        it 'destroys the lot-transaction link' do
           expect do
             TransactionDestroyer.new(commodity_sale_transaction).destroy
           end.to change(LotTransaction, :count).by(-1)
@@ -88,26 +88,26 @@ describe TransactionDestroyer do
           value: 600
         ).create!
       end
-      before(:each) { LotTransaction.any_instance.stub(:destroy).and_raise('Testing, 1, 2, 3') }
-      it 'should not raise an exception' do
+      before(:each) { allow_any_instance_of(LotTransaction).to receive(:destroy).and_raise('Testing, 1, 2, 3') }
+      it 'does not raise an exception' do
         expect do
           TransactionDestroyer.new(commodity_sale_transaction).destroy
         end.not_to raise_error
       end
 
-      it 'should return false' do
+      it 'returns false' do
           destroyer = TransactionDestroyer.new(commodity_sale_transaction)
-          expect(destroyer.destroy).to be_false
+          expect(destroyer.destroy).to be false
       end
 
-      it 'should not destroy the transaction' do
+      it 'does not destroy the transaction' do
         expect do
           TransactionDestroyer.new(commodity_sale_transaction).destroy
         end.not_to change(Transaction, :count)
       end
 
       context 'for commodity purchase transactions' do
-        it 'should not destroy the associated lot' do
+        it 'does not destroy the associated lot' do
           expect do
             TransactionDestroyer.new(commodity_purchase_transaction).destroy
           end.not_to change(Lot, :count)
@@ -115,7 +115,7 @@ describe TransactionDestroyer do
       end
 
       context 'for commodity sale transactions' do
-        it 'should not change the balance of shares owned for the lot' do
+        it 'does not change the balance of shares owned for the lot' do
           lot = commodity_sale_transaction.lot_transactions.first.lot
           expect do
             TransactionDestroyer.new(commodity_sale_transaction).destroy
@@ -123,7 +123,7 @@ describe TransactionDestroyer do
           end.not_to change(lot, :shares_owned)
         end
 
-        it 'should not destroy the lot-transaction link' do
+        it 'does not destroy the lot-transaction link' do
           expect do
             TransactionDestroyer.new(commodity_sale_transaction).destroy
           end.not_to change(LotTransaction, :count)
@@ -142,14 +142,14 @@ describe TransactionDestroyer do
         ).create!
       end
       describe '#destroy' do
-        it 'should return false' do
+        it 'returns false' do
           destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
-          expect(destroyer.destroy).to be_false
+          expect(destroyer.destroy).to be false
         end
       end
 
       describe '#error' do
-        it 'should indicate why the transaction cannot be deleted' do
+        it 'indicates why the transaction cannot be deleted' do
           destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
           destroyer.destroy
           expect(destroyer.error).to eq('Cannot delete commodity purchase transactions with associated sale transactions.')
@@ -160,8 +160,8 @@ describe TransactionDestroyer do
 
   describe '#notice' do
     context 'when unsuccessful' do
-      before(:each) { LotTransaction.any_instance.stub(:destroy).and_raise('Testing, 1, 2, 3') }
-      it 'should be blank' do
+      before(:each) { allow_any_instance_of(LotTransaction).to receive(:destroy).and_raise('Testing, 1, 2, 3') }
+      it 'is blank' do
         destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
         destroyer.destroy
         expect(destroyer.notice).to be_blank
@@ -170,14 +170,14 @@ describe TransactionDestroyer do
 
     context 'when successful' do
       context 'for transactions associated with commodities' do
-        it 'should indicate that the commodity transaction was removed' do
+        it 'indicates that the commodity transaction was removed' do
           destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
           destroyer.destroy
           expect(destroyer.notice).to eq("The commodity transaction was removed successfully.")
         end
       end
       context 'for transactions that are not associated with commodities' do
-        it 'should indicate that the transaction was removed' do
+        it 'indicates that the transaction was removed' do
           destroyer = TransactionDestroyer.new(regular_transaction)
           destroyer.destroy
           expect(destroyer.notice).to eq("The transaction was removed successfully.")
@@ -188,15 +188,15 @@ describe TransactionDestroyer do
 
   describe '#error' do
     context 'when unsuccessful' do
-      before(:each) { LotTransaction.any_instance.stub(:destroy).and_raise('Testing 1, 2, 3') }
-      it 'should contain a description of the error' do
+      before(:each) { allow_any_instance_of(LotTransaction).to receive(:destroy).and_raise('Testing 1, 2, 3') }
+      it 'contains a description of the error' do
           destroyer = TransactionDestroyer.new(commodity_purchase_transaction)
           destroyer.destroy
           expect(destroyer.error).to eq('Testing 1, 2, 3')
       end
     end
     context 'when successful' do
-      it 'should be blank' do
+      it 'is blank' do
           destroyer = TransactionDestroyer.new(regular_transaction)
           destroyer.destroy
           expect(destroyer.error).to be_blank

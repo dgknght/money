@@ -11,24 +11,24 @@ describe ReconciliationItem do
     }
   end
   
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     item = ReconciliationItem.new(attributes)
-    item.should be_valid
+    expect(item).to be_valid
   end
   
-  it 'should mark the transaction item as reconciled on save' do
-    transaction_item.should_not be_reconciled
+  it 'marks the transaction item as reconciled on save' do
+    expect(transaction_item).to_not be_reconciled
     
     reconciliation << transaction_item
     reconciliation.save!
     
-    transaction_item.should be_reconciled
+    expect(transaction_item).to be_reconciled
   end
   
   describe 'transaction_item_id' do
-    it 'should be required' do
+    it 'is required' do
       item = ReconciliationItem.new(attributes.without(:transaction_item))
-      item.should have(1).error_on(:transaction_item_id)
+      expect(item).to have(1).error_on(:transaction_item_id)
     end
   end
   
@@ -37,14 +37,14 @@ describe ReconciliationItem do
     
     it 'must be from the account being reconciled' do
       item = ReconciliationItem.new(attributes.merge(transaction_item: from_other_account))
-      item.should have(1).error_on(:transaction_item)
+      expect(item).to have(1).error_on(:transaction_item)
     end
   end
   
   describe 'reconciliation' do
-    it 'should be required' do
+    it 'is required' do
       item = ReconciliationItem.new(attributes.without(:reconciliation))
-      item.should have(1).error_on(:reconciliation)
+      expect(item).to have(1).error_on(:reconciliation)
     end
   end
 end

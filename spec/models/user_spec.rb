@@ -13,16 +13,16 @@ describe User do
     }
   end
 
-  it 'should be creatable given valid parameters' do
+  it 'is creatable given valid parameters' do
     user = User.new(attributes)
-    user.should_not be_nil
-    user.should be_valid
+    expect(user).not_to be_nil
+    expect(user).to be_valid
   end
   
   describe 'email' do
-    it 'should be required' do
+    it 'is required' do
       user = User.new(attributes.without(:email))
-      user.should_not be_valid
+      expect(user).not_to be_valid
     end
   end
   
@@ -30,8 +30,8 @@ describe User do
     let!(:entity1) { FactoryGirl.create(:entity, user: user) }
     let!(:entity2) { FactoryGirl.create(:entity, user: user) }
     let!(:someone_else) { FactoryGirl.create(:entity) }
-    it 'should list the entities that belong to the user' do
-      user.entities.should == [entity1, entity2]
+    it 'lists the entities that belong to the user' do
+      expect(user.entities).to eq([entity1, entity2])
     end
   end
 end

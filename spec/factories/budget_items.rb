@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :budget_item do
-    ignore do
+    transient do
       budget_amount 100
     end
     

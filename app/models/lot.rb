@@ -46,7 +46,7 @@ class Lot < ActiveRecord::Base
   def shares_as_of(date)
     date = Chronic.parse(date) if date.is_a? String
     transactions.
-      select{|t| t.transaction && t.transaction.transaction_date <= date}.
+      select{|t| t.transaction_date && t.transaction_date <= date}.
       reduce(0){|sum, t| sum + t.shares_traded}
   end
 
