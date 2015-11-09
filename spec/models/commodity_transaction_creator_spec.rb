@@ -17,7 +17,7 @@ describe CommodityTransactionCreator do
     }
   end
 
-  it 'should be creatable with an account and valid attributes' do
+  it 'is creatable with an account and valid attributes' do
     creator = CommodityTransactionCreator.new(attributes)
     expect(creator).to be_valid
     expect(creator.transaction_date).to eq(Date.parse('2014-04-15'))
@@ -27,7 +27,7 @@ describe CommodityTransactionCreator do
   end
 
   describe '#account_id' do
-    it 'should be required' do
+    it 'is required' do
       creator = CommodityTransactionCreator.new(attributes.except(:account_id))
       expect(creator).not_to be_valid
       expect(creator).to have(1).error_on(:account_id)
@@ -35,7 +35,7 @@ describe CommodityTransactionCreator do
   end
 
   describe '#transaction_date' do
-    it 'should default to the current date' do
+    it 'defaults to the current date' do
       Timecop.freeze(Time.local(2014, 1, 1, 0, 0, 0)) do
         creator = CommodityTransactionCreator.new(attributes.except(:transaction_date))
         expect(creator).to be_valid
@@ -45,7 +45,7 @@ describe CommodityTransactionCreator do
   end
 
   describe '#symbol' do
-    it 'should be required' do
+    it 'is required' do
       creator = CommodityTransactionCreator.new(attributes.except(:symbol))
       expect(creator).not_to be_valid
       expect(creator).to have(2).error_on(:symbol)
@@ -53,23 +53,23 @@ describe CommodityTransactionCreator do
   end
 
   describe '#action' do
-    it 'should be required' do
+    it 'is required' do
       creator = CommodityTransactionCreator.new(attributes.except(:action))
       expect(creator).not_to be_valid
       expect(creator).to have(2).errors_on(:action)
     end
 
-    it 'should accept "buy"' do
+    it 'accepts "buy"' do
       creator = CommodityTransactionCreator.new(attributes.merge(:action => 'buy'))
       expect(creator).to be_valid
     end
 
-    it 'should accept "sell"' do
+    it 'accepts "sell"' do
       creator = CommodityTransactionCreator.new(attributes.merge(:action => 'sell'))
       expect(creator).to be_valid
     end
 
-    it 'should not accept anything else' do
+    it 'does not accept anything else' do
       creator = CommodityTransactionCreator.new(attributes.merge(action: 'notvalid'))
       expect(creator).not_to be_valid
       expect(creator).to have(1).error_on(:action)
@@ -77,19 +77,19 @@ describe CommodityTransactionCreator do
   end
 
   describe '#shares' do
-    it 'should be required' do
+    it 'is required' do
       creator = CommodityTransactionCreator.new(attributes.except(:shares))
       expect(creator).not_to be_valid
       expect(creator).to have(2).errors_on(:shares)
     end
 
-    it 'should be a number' do
+    it 'is a number' do
       creator = CommodityTransactionCreator.new(attributes.merge(shares: 'notanumber'))
       expect(creator).not_to be_valid
       expect(creator).to have(1).error_on(:shares)
     end
 
-    it 'should not be zero' do
+    it 'does not be zero' do
       creator = CommodityTransactionCreator.new(attributes.merge(shares: 0))
       expect(creator).not_to be_valid
       expect(creator).to have(1).error_on(:shares)
@@ -97,20 +97,20 @@ describe CommodityTransactionCreator do
   end
 
   describe '#price' do
-    it 'should be calculated based on the value and shares' do
+    it 'is calculated based on the value and shares' do
       creator = CommodityTransactionCreator.new(attributes)
       expect(creator.price).to eq(12.34)
     end
   end
 
   describe '#value' do
-    it 'should be required' do
+    it 'is required' do
       creator = CommodityTransactionCreator.new(attributes.except(:value))
       expect(creator).not_to be_valid
       expect(creator).to have(2).errors_on(:value)
     end
 
-    it 'should be a number' do
+    it 'is a number' do
       creator = CommodityTransactionCreator.new(attributes.merge(value: 'notanumber'))
       expect(creator).not_to be_valid
       expect(creator).to have(1).error_on(:value)
@@ -118,12 +118,12 @@ describe CommodityTransactionCreator do
   end
 
   describe '#fee' do
-    it 'should default to zero' do
+    it 'defaults to zero' do
       creator = CommodityTransactionCreator.new(attributes)
       expect(creator.fee).to be_zero
     end
 
-    it 'should not allow non-numbers' do
+    it 'does not allow non-numbers' do
       creator = CommodityTransactionCreator.new(attributes.merge(fee: 'notanumber'))
       expect(creator).not_to be_valid
       expect(creator).to have_at_least(1).error_on(:fee)
@@ -132,7 +132,7 @@ describe CommodityTransactionCreator do
 
   describe '#create' do
     context 'with a "buy" action' do
-      it 'should create a new transaction' do
+      it 'creates a new transaction' do
         transaction = nil
         expect do
           creator = CommodityTransactionCreator.new(attributes)
@@ -143,61 +143,61 @@ describe CommodityTransactionCreator do
         expect(transaction.total_debits.to_i).to eq(1_234)
       end
 
-      it 'should create an account to track money used to purchase this commodity, if the account does not exist' do
+      it 'creates an account to track money used to purchase this commodity, if the account does not exist' do
         CommodityTransactionCreator.new(attributes).create
         new_account = Account.find_by_name('KSS')
         expect(new_account).not_to be_nil
         expect(new_account).to be_commodity
       end
 
-      it 'should debit the account dedicated to tracking purchases of this commodity' do
+      it 'debits the account dedicated to tracking purchases of this commodity' do
         CommodityTransactionCreator.new(attributes).create
         new_account = Account.find_by_name('KSS')
         expect(new_account.balance).to eq(1_234)
       end
 
-      it 'should credit the account from which frunds for taken to make the purchase' do
+      it 'credits the account from which frunds for taken to make the purchase' do
         expect do
           CommodityTransactionCreator.new(attributes).create
           ira.reload
         end.to change(ira, :balance).by(-1_234)
       end
 
-      it 'should use the supplied memo for the payment account' do
+      it 'uses the supplied memo for the payment account' do
         memo = 'An important side note'
         trans = CommodityTransactionCreator.new(attributes.merge(payment_memo: memo)).create!
         item = trans.items.reject{|i| i.account.commodity?}.first
         expect(item.memo).to eq(memo)
       end
 
-      it 'should use the supplied memo for the commodity account' do
+      it 'uses the supplied memo for the commodity account' do
         memo = 'An important side note'
         trans = CommodityTransactionCreator.new(attributes.merge(commodity_memo: memo)).create!
         item = trans.items.select{|i| i.account.commodity?}.first
         expect(item.memo).to eq(memo)
       end
 
-      it 'should create a new lot transaction' do
+      it 'creates a new lot transaction' do
         expect do
           CommodityTransactionCreator.new(attributes).create
         end.to change(LotTransaction, :count).by(1)
       end
 
-      it 'should create a new lot' do
+      it 'creates a new lot' do
         transaction = nil
         expect do
           CommodityTransactionCreator.new(attributes).create
         end.to change(Lot, :count).by(1)
       end
 
-      it 'should create a new price entry for the commodity' do
+      it 'creates a new price entry for the commodity' do
         expect do
           CommodityTransactionCreator.new(attributes).create
         end.to change(Price, :count).by(1)
       end
 
       context 'and a fee' do
-        it 'should debit the fee account' do
+        it 'debits the fee account' do
           CommodityTransactionCreator.new(attributes.merge(fee: 10)).create!
           exp.reload
           expect(exp.balance).to eq(10)
@@ -243,7 +243,7 @@ describe CommodityTransactionCreator do
       context 'that sells some of the shares owned' do
 
         context 'using FILO' do
-          it 'should subtract the shares sold from the lot' do
+          it 'subtracts the shares sold from the lot' do
             expect do
               CommodityTransactionCreator.new(sell_attributes).create
               lot2.reload
@@ -251,14 +251,14 @@ describe CommodityTransactionCreator do
           end
 
           context 'for commodities held one year or less' do
-            it 'should debit the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+            it 'debits the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
               expect do
                 CommodityTransactionCreator.new(sell_attributes).create
                 st_gains.reload
               end.to change(st_gains, :balance).by(234)
             end
 
-            it 'should credit the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+            it 'credits the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
               expect do
                 CommodityTransactionCreator.new(sell_attributes.merge(value: 900)).create
                 st_gains.reload
@@ -267,14 +267,14 @@ describe CommodityTransactionCreator do
           end
 
           context 'for commodities held longer than one year' do
-            it 'should debit the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+            it 'debits the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
               expect do
                 CommodityTransactionCreator.new(sell_attributes.merge(transaction_date: '2015-04-15')).create
                 lt_gains.reload
               end.to change(lt_gains, :balance).by(234)
             end
 
-            it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+            it 'credits the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
               expect do
                 CommodityTransactionCreator.new(sell_attributes.merge(transaction_date: '2015-04-15', value: 900)).create
                 lt_gains.reload
@@ -286,7 +286,7 @@ describe CommodityTransactionCreator do
         context 'using FIFO' do
           let (:fifo_sell_attributes) { sell_attributes.merge(valuation_method: CommodityTransactionCreator.fifo) }
 
-          it 'should subtract the shares sold from the lot' do
+          it 'subtracts the shares sold from the lot' do
             expect do
               CommodityTransactionCreator.new(fifo_sell_attributes).create
               lot1.reload
@@ -294,14 +294,14 @@ describe CommodityTransactionCreator do
           end
 
           context 'for commodities held one year or less' do
-            it 'should debit the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+            it 'debits the short-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
               expect do
                 CommodityTransactionCreator.new(fifo_sell_attributes).create
                 st_gains.reload
               end.to change(st_gains, :balance).by(434)
             end
 
-            it 'should credit the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+            it 'credits the short-term capital gains account if the sale amount was less than the cost of the cold commodities' do
               expect do
                 CommodityTransactionCreator.new(fifo_sell_attributes.merge(value: 700)).create
                 st_gains.reload
@@ -310,14 +310,14 @@ describe CommodityTransactionCreator do
           end
 
           context 'for commodities held longer than one year' do
-            it 'should debit the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
+            it 'debits the long-term capital gains account if the sale amount was greater than the cost of the sold commodities' do
               expect do
                 CommodityTransactionCreator.new(fifo_sell_attributes.merge(transaction_date: '2015-04-15')).create
                 lt_gains.reload
               end.to change(lt_gains, :balance).by(434)
             end
 
-           it 'should credit the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
+           it 'credits the long-term capital gains account if the sale amount was less than the cost of the cold commodities' do
               expect do
                 CommodityTransactionCreator.new(fifo_sell_attributes.merge(transaction_date: '2015-04-15', value: 700)).create
                 lt_gains.reload
@@ -326,27 +326,27 @@ describe CommodityTransactionCreator do
           end
         end
 
-        it 'should create a new transaction' do
+        it 'creates a new transaction' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
           end.to change(Transaction, :count).by(1)
         end
 
-        it 'should credit the account dedicated to tracking purchases of this commodity' do
+        it 'credits the account dedicated to tracking purchases of this commodity' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             kss_account.reload
           end.to change(kss_account, :balance).by(-1_000)
         end
 
-        it 'should debit the specified account' do
+        it 'debits the specified account' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             ira.reload
           end.to change(ira, :balance).by(1_234)
         end
 
-        it 'should create a new lot transaction record' do
+        it 'creates a new lot transaction record' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
           end.to change(LotTransaction, :count).by(1)
@@ -360,21 +360,21 @@ describe CommodityTransactionCreator do
         let (:sell_attributes) do
           attributes.merge(action: 'sell', shares: 200, value: 2_468)
         end
-        it 'should debit the gains account the correct amount' do
+        it 'debits the gains account the correct amount' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             st_gains.reload
           end.to change(st_gains, :balance).by(234 + 434)
         end
 
-        it 'should subtract shares owned from the first lot' do
+        it 'subtracts shares owned from the first lot' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             lot1.reload
           end.to change(lot1, :shares_owned).by(-100)
         end
 
-        it 'should subtract shares owned from the second lot' do
+        it 'subtracts shares owned from the second lot' do
           expect do
             CommodityTransactionCreator.new(sell_attributes).create
             lot2.reload
@@ -396,7 +396,7 @@ describe CommodityTransactionCreator do
                                             amount: 500)
         end
 
-        it 'should debit the long-term gains account the correct amount' do
+        it 'debits the long-term gains account the correct amount' do
           creator = CommodityTransactionCreator.new(account: ira,
                                                     transaction_date: '2014-02-01',
                                                     symbol: 'KSS',
@@ -410,7 +410,7 @@ describe CommodityTransactionCreator do
           end.to change(lt_gains, :balance).by(500)
         end
 
-        it 'should debit the short-term gains account the correct amount' do
+        it 'debits the short-term gains account the correct amount' do
           creator = CommodityTransactionCreator.new(account: ira,
                                                     transaction_date: '2014-02-01',
                                                     symbol: 'KSS',
@@ -425,7 +425,7 @@ describe CommodityTransactionCreator do
         end
       end
 
-      it 'should create a price history record' do
+      it 'creates a price history record' do
         expect do
           CommodityTransactionCreator.new(sell_attributes).create
         end.to change(Price, :count).by(1)
