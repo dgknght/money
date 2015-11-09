@@ -13,32 +13,32 @@ describe BudgetItemPeriod do
       budget_amount: 100
     }
   end
-  
-  it 'should be creatable from valid attributes' do
+
+  it 'is creatable from valid attributes' do
     period = BudgetItemPeriod.new(attributes)
-    period.should be_valid
+    expect(period).to be_valid
   end
-  
+
   describe 'budget_item_id' do
-    it 'should be required' do
+    it 'is required' do
       period = BudgetItemPeriod.new(attributes.without(:budget_item_id))
-      period.should_not be_valid
+      expect(period).not_to be_valid
     end
-  end  
- 
+  end
+
   describe 'start_date' do
-    it 'should be required' do
+    it 'is required' do
       period = BudgetItemPeriod.new(attributes.without(:start_date))
-      period.should_not be_valid
+      expect(period).not_to be_valid
     end
-  end  
- 
+  end
+
   describe 'budget_amount' do
-    it 'should be required' do
+    it 'is required' do
       period = BudgetItemPeriod.new(attributes.without(:budget_amount))
-      period.should_not be_valid
+      expect(period).not_to be_valid
     end
-  end  
+  end
 
   describe 'actual_amount' do
     let!(:t1) { FactoryGirl.create(:transaction, transaction_date: '2013-12-31', entity: entity,
@@ -61,9 +61,9 @@ describe BudgetItemPeriod do
 						  { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
 						  { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
 						])}
-    it 'should return the actual amount for the specified account in the specified time' do
+    it 'returns the actual amount for the specified account in the specified time' do
       period = BudgetItemPeriod.create!(attributes)
-      period.actual_amount.should == 100
+      expect(period.actual_amount).to eq(100)
     end
   end
 end
