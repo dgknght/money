@@ -28,7 +28,7 @@ describe CommoditySplitter do
     }
   end
 
-  it 'should be creatable from valid attributes' do
+  it 'is creatable from valid attributes' do
     splitter = CommoditySplitter.new(attributes)
     expect(splitter).to be_valid
   end
