@@ -1,9 +1,10 @@
 .row
-  .col-md-12
+  .col-md-6
     .panel.panel-primary{ 'ng-controller' => 'AccountsController as accountsCtrl' }
       .panel-heading Accounts
 
       %table.table.table-striped
         %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords', 'ng-class' => '{"header-row": record.isHeader}' }
-          %td {{ record.caption }}
-          %td {{ record.balance }}
+          %td
+            %div{ 'ng-class' => 'record.cssClass'} {{ record.caption }}
+          %td.text-right {{ record.balance | number:2 }}

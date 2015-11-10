@@ -18,7 +18,8 @@ app.controller 'AccountsController', ['$http', ($http) ->
       list.push {
         caption: type,
         balance: typeTotal,
-        isHeader: true
+        isHeader: true,
+        cssClass: null
       }
 
       # transform the accounts into display records
@@ -26,7 +27,8 @@ app.controller 'AccountsController', ['$http', ($http) ->
         list.push {
           caption: account.name,
           balance: account.value + account.children_value,
-          isHeader: false
+          isHeader: false,
+          cssClass: "account_depth_#{account.depth}"
         }
 
       list
