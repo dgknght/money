@@ -1,10 +1,38 @@
-.row
-  .col-md-6
-    .panel.panel-primary{ 'ng-controller' => 'AccountsController as accountsCtrl' }
-      .panel-heading Accounts
+.accountContent{ 'ng-controller' => 'AccountsController as accountsCtrl' }
+  #accountFormContainer.modal.fade{ :role => 'dialog', 'aria-hidden' => 'true' }
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %button.close{ 'data-dismiss' => 'modal', 'aria-hidden' => 'true' } &times;
+          %h3.modal-title New account
+        .modal-body
+          %form
+            .form-group
+              %label{ :for => 'account_name' } Name
+              %input{ :type => 'text', :id => 'account_name', :name => 'account_name', 'ng-model' => 'accountsCtrl.formAccount.name' }
+            .form-group
+              %label{ :for => 'account_type' } Type
+              %select{ :id => 'account_type', :name => 'account_type', 'ng-model' => 'accountsCtrl.formAccount.type' }
+                %option{ 'ng-repeat' => 'type in accountsCtrl.types', :value => '{{ type.toLowerCase() }}' } {{ type }}
+            .form-group
+              %label{ :for => 'account_parent' } Parent
+              %select{ :id => 'account_parent', :name => 'account_parent' }
+                %option{ :value => ''} None
+                %option{ 'ng-repeat' => 'account in accountsCtrl.formTypes()', :value => '{{ account.id }}' } {{ account.path }}
+        .modal-footer
+          %button.btn.btn-primary Save
+          %button.btn.btn-default{ 'data-dismiss' => 'modal' } Cancel
+  .row
+    .col-md-6
+      .panel.panel-primary
+        .panel-heading
+          .pull-right
+            %a.btn.btn-default.btn-xs{ 'ng-click' => 'accountsCtrl.new()', :href => '#', :data => { :toggle => 'modal', :target => '#accountFormContainer' } }
+              %span.glyphicon.glyphicon-plus{ 'aria-hidden' => 'true' }
+          Accounts
 
-      %table.table.table-striped
-        %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords', 'ng-class' => '{"header-row": record.isHeader}' }
-          %td
-            %div{ 'ng-class' => 'record.cssClass'} {{ record.caption }}
-          %td.text-right {{ record.balance | number:2 }}
+        %table.table.table-striped
+          %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords', 'ng-class' => '{"header-row": record.isHeader}' }
+            %td
+              %div{ 'ng-class' => 'record.cssClass'} {{ record.caption }}
+            %td.text-right {{ record.balance | number:2 }}

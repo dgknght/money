@@ -2,14 +2,25 @@ app = angular.module 'accounts', []
 
 app.controller 'AccountsController', ['$http', ($http) ->
   _self = this
+  @types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
   @accounts = []
   @displayRecords = []
+  @byType = (type) ->
+    return [] unless type
+    type = type.toLowerCase()
+    _.chain(_self.accounts).filter((a) ->
+      a.account_type == type).sortBy('path').value()
+  @formTypes = ->
+    return [] unless _self.formAccount
+    _self.byType(_self.formAccount.type)
+
+  @new = ->
+    _self.formAccount = {}
 
   $http.get("/entities/14/accounts.json").success (data) ->
     _self.accounts = data
-    types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
     groupedAccounts = _.groupBy data, 'account_type'
-    _self.displayRecords = _.chain(types).reduce( (list, type) ->
+    _self.displayRecords = _.chain(_self.types).reduce( (list, type) ->
       # Calculate the summary header
       typedAccounts = _.sortBy groupedAccounts[type.toLowerCase()], 'path'
       typeTotal = _.reduce(typedAccounts, (sum, account) ->
