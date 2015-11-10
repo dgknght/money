@@ -4,6 +4,6 @@
       .panel-heading Accounts
 
       %table.table.table-striped
-        %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords' }
+        %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords', 'ng-class' => '{"header-row": record.isHeader}' }
           %td {{ record.caption }}
           %td {{ record.balance }}

@@ -113,7 +113,7 @@ class Account < ActiveRecord::Base
   end
 
   def as_json(options)
-    super({ methods: :depth })
+    super({ methods: [:depth, :path] })
   end
   
   def balance_as_of(date)
