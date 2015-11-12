@@ -16,3 +16,16 @@ app.directive 'confirmationNeeded', ->
       element.bind 'click', ->
         scope.$eval clickAction if window.confirm(msg)
   }
+
+app.directive 'focusOn', ($timeout) ->
+  {
+    restrict: 'A',
+    link: ($scope, $element, $attr) ->
+      $scope.$watch $attr.focusOn, (_focusVal) ->
+        $timeout ->
+          if _focusVal
+            $element.focus()
+          else
+            $element.blur()
+        , 500
+  }

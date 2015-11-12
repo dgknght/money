@@ -9,18 +9,18 @@
           %form
             .form-group
               %label{ :for => 'account_name' } Name
-              %input{ :type => 'text', :id => 'account_name', :name => 'account_name', 'ng-model' => 'accountsCtrl.formAccount.name' }
+              %input.form-control{ :type => 'text', :id => 'account_name', :name => 'account_name', 'ng-model' => 'accountsCtrl.formAccount.name', 'focus-on' => '!!accountsCtrl.formAccount' }
             .form-group
               %label{ :for => 'account_type' } Type
-              %select{ :id => 'account_type', :name => 'account_type', 'ng-model' => 'accountsCtrl.formAccount.type' }
+              %select.form-control{ :id => 'account_type', :name => 'account_type', 'ng-model' => 'accountsCtrl.formAccount.account_type' }
                 %option{ 'ng-repeat' => 'type in accountsCtrl.types', :value => '{{ type.toLowerCase() }}' } {{ type }}
             .form-group
               %label{ :for => 'account_parent' } Parent
-              %select{ :id => 'account_parent', :name => 'account_parent' }
+              %select.form-control{ :id => 'account_parent', :name => 'account_parent', 'ng-model' => 'accountsCtrl.formAccount.parent_id' }
                 %option{ :value => ''} None
                 %option{ 'ng-repeat' => 'account in accountsCtrl.formTypes()', :value => '{{ account.id }}' } {{ account.path }}
         .modal-footer
-          %button.btn.btn-primary Save
+          %button.btn.btn-primary{ 'ng-click' => 'accountsCtrl.save' } Save
           %button.btn.btn-default{ 'data-dismiss' => 'modal' } Cancel
   .row
     .col-md-6

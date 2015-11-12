@@ -12,7 +12,7 @@ app.controller 'AccountsController', ['$http', ($http) ->
       a.account_type == type).sortBy('path').value()
   @formTypes = ->
     return [] unless _self.formAccount
-    _self.byType(_self.formAccount.type)
+    _self.byType(_self.formAccount.account_type)
 
   @new = ->
     _self.formAccount = {}
