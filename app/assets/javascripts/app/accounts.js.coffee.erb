@@ -24,34 +24,25 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
     }
 
   $scope.save = ->
-
-    console.log "save"
-
-    if _self.formAccount.id then _self.update() else _self.create()
+    if !!_self.formAccount.id then _self.update() else _self.create()
 
   @update = -> false
 
   @create = ->
-
-    console.log "create"
-
     # TODO Use the correct entity ID
     $http.post("entities/14/accounts.json", _self.formAccount).then (result) ->
-
-      console.log "save succeeded"
-
-      _self.accounts.push result
+      _self.accounts.push result.data
+      _self.createDisplayRecords()
       true
     , (error) ->
+      #TODO show an error to the user
       console.log "unable to save the new account"
       console.log error
       false
 
-  # TODO Use the correct entity ID
-  $http.get("/entities/14/accounts.json").success (data) ->
-    _self.accounts = data
-    groupedAccounts = _.groupBy data, 'account_type'
+  @createDisplayRecords = (accounts) ->
     _self.displayRecords = _.chain(_self.types).reduce( (list, type) ->
+      groupedAccounts = _.groupBy _self.accounts, 'account_type'
       # Calculate the summary header
       typedAccounts = _.sortBy groupedAccounts[type.toLowerCase()], 'path'
       typeTotal = _.reduce(typedAccounts, (sum, account) ->
@@ -75,15 +66,18 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
 
       list
     , []).value()
+
+  # TODO Use the correct entity ID
+  $http.get("/entities/14/accounts.json").success (data) ->
+    _self.accounts = data
+    _self.createDisplayRecords()
   return
 ]
 
 app.controller 'AccountFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
   $scope.ok = ->
-
-    console.log "ok"
-
-    $scope.save -> $uibModelInstance.close()
+    $scope.save().then (result) ->
+      $uibModalInstance.close() if result
   $scope.cancel = ->
     $uibModalInstance.dismiss('cancel')
 ]
