@@ -34,9 +34,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def verified_request?
-    super || form_authenticity_token == request.headers[CSRF_HEADER_NAME]
-    # Rails 4.2 and above
-    #super || valid_authenticity_token?(session, request.headers[CSRF_TOKEN_NAME])
+    super || valid_authenticity_token?(session, request.headers[CSRF_HEADER_NAME])
   end
 
   private
