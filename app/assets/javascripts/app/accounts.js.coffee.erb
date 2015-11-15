@@ -40,6 +40,16 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       console.log error
       false
 
+  @delete = (id) ->
+    $http.delete("accounts/#{id}.json").then ->
+      _self.accounts = _.reject _self.accounts, (a) ->
+        a.id == id
+      _self.createDisplayRecords()
+    , (error) ->
+      #TODO Show this error as an alert
+      console.log "Unable to delete the account"
+      console.log error
+
   @createDisplayRecords = (accounts) ->
     _self.displayRecords = _.chain(_self.types).reduce( (list, type) ->
       groupedAccounts = _.groupBy _self.accounts, 'account_type'
@@ -58,6 +68,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       # transform the accounts into display records
       _.each typedAccounts, (account) ->
         list.push {
+          id: account.id,
           caption: account.name,
           balance: account.value + account.children_value,
           isHeader: false,

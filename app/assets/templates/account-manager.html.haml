@@ -34,3 +34,6 @@
             %td
               %div{ 'ng-class' => 'record.cssClass'} {{ record.caption }}
             %td.text-right {{ record.balance | number:2 }}
+            %td
+              %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id', 'ng-click' => 'accountsCtrl.delete(record.id)', 'confirmation-needed' => 'Are you sure you want to delete this account?' }
+                %span.glyphicon.glyphicon-remove{ 'arial-hidden' => 'true' }
