@@ -34,17 +34,23 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
 
   @loadAccounts = ->
     if $scope.currentEntity
-      $http.get("/entities/#{$scope.currentEntity.id}/accounts.json").success (data) ->
-        _self.accounts = data
+      url = "/entities/#{$scope.currentEntity.id}/accounts.json"
+      $http.get(url).then (response) ->
+        _self.accounts = response.data
+        _self.createDisplayRecords()
+      , (error) ->
+        # TODO show the error to the user
+        console.log "Unable to get the accounts from the service."
+        console.log error
     else
       _self.accounts = []
-    _self.createDisplayRecords()
+      _self.createDisplayRecords()
 
   @update = -> false
 
   @create = ->
-    # TODO Use the correct entity ID
-    $http.post("entities/14/accounts.json", _self.formAccount).then (result) ->
+    url = "entities/#{$scope.currentEntity.id}/accounts.json"
+    $http.post(url, _self.formAccount).then (result) ->
       _self.accounts.push result.data
       _self.createDisplayRecords()
       true
@@ -64,7 +70,7 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
       console.log "Unable to delete the account"
       console.log error
 
-  @createDisplayRecords = (accounts) ->
+  @createDisplayRecords = ->
     _self.displayRecords = _.chain(_self.types).reduce( (list, type) ->
       groupedAccounts = _.groupBy _self.accounts, 'account_type'
       # Calculate the summary header
@@ -92,9 +98,6 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
       list
     , []).value()
 
-  # TODO Use the correct entity ID
-
-  _self.loadAccounts()
   return
 ]
 
