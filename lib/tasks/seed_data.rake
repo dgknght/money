@@ -149,7 +149,9 @@ namespace :seed_data do
       i[:account_id] = entity.accounts.find_by_name(i[:account]).id
       i.delete :account
     end
-    transaction = entity.transactions.create!(transaction_date: Date.parse(transaction_def.date), description: transaction_def.description, items_attributes: transaction_def.items)
+    transaction = TransactionManager.create(entity, transaction_date: Date.parse(transaction_def.date),
+                                                    description: transaction_def.description,
+                                                    items_attributes: transaction_def.items)
     LOGGER.info "created transaction #{transaction.transaction_date} #{transaction.description}"
   end
   
