@@ -1,7 +1,6 @@
 app = angular.module 'search', []
 
-app.controller 'SearchController',
-  ->
+app.controller 'SearchController', ['$rootScope', ($rootScope) ->
     _self = this
     @input = ""
     @matches = []
@@ -19,17 +18,18 @@ app.controller 'SearchController',
         _self.matches = []
     @select = (index) ->
       match = _self.matches[index]
-      _self.selected = match.key
+      $rootScope.selectedSearchHandler = match.key
       _self.matches = []
       _self.input = ""
       return
     @isSelected = (key) ->
-      _self.selected == key
+      $rootScope.selectedSearchHandler == key
     @selectFirst = (e) ->
       return unless e.keyCode == 13
       _self.select(0)
       return
     return
+]
 
 class SimpleMatchingHandler
   constructor: (elementKey, description, matchingTerms) ->

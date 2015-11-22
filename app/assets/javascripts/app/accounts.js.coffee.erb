@@ -1,6 +1,6 @@
 app = angular.module 'accounts', ['ui.bootstrap']
 
-app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $http, $uibModal) ->
+app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModal', ($scope, $rootScope, $http, $uibModal) ->
   _self = this
   @types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
   @accounts = []
@@ -23,8 +23,22 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       scope: $scope
     }
 
+  # Load the account list when the account manager is displayed
+  $rootScope.$watch ->
+    $rootScope.selectedSearchHandler == 'account-manager'
+  , (selected) ->
+    _self.loadAccounts()
+
   $scope.save = ->
     if !!_self.formAccount.id then _self.update() else _self.create()
+
+  @loadAccounts = ->
+    if $scope.currentEntity
+      $http.get("/entities/#{$scope.currentEntity.id}/accounts.json").success (data) ->
+        _self.accounts = data
+    else
+      _self.accounts = []
+    _self.createDisplayRecords()
 
   @update = -> false
 
@@ -79,9 +93,8 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
     , []).value()
 
   # TODO Use the correct entity ID
-  $http.get("/entities/14/accounts.json").success (data) ->
-    _self.accounts = data
-    _self.createDisplayRecords()
+
+  _self.loadAccounts()
   return
 ]
 

@@ -2,7 +2,7 @@
 
 app = angular.module 'entities', []
 
-app.controller 'EntitiesController', ['$http', ($http) ->
+app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
   _self = this
   @entities = []
   @currentEntity = null
@@ -11,12 +11,12 @@ app.controller 'EntitiesController', ['$http', ($http) ->
     selectedId = parseInt(_self.currentEntityId)
     filteredList = _self.entities.filter (e) ->
       e.id == selectedId
-    _self.currentEntity = filteredList[0]
+    $scope.currentEntity = filteredList[0]
   $http.get('/entities.json').success (data) ->
     _self.entities = data
     unless data.length == 0
-      _self.currentEntity = data[0]
-      _self.currentEntityId = _self.currentEntity.id.toString()
+      $scope.currentEntity = data[0]
+      _self.currentEntityId = $scope.currentEntity.id.toString()
 
   @newEntityName = ""
   @add = ->
