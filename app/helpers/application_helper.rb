@@ -8,7 +8,9 @@ module ApplicationHelper
   end
   
   def flash_key_to_bootstrap_class(key)
-    level = {notice: 'success', error: 'danger'}.fetch(key, key)
+    level = {'notice' => 'success',
+             'error'  => 'danger',
+             'alert'  => 'warning'}.fetch(key, key)
     "alert-#{level}"
   end
 
