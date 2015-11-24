@@ -5,17 +5,31 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
   @types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
   @accounts = []
   @displayRecords = []
-  @byType = (type) ->
+  @byType = (type, options) ->
     return [] unless type
     type = type.toLowerCase()
-    _.chain(_self.accounts).filter((a) ->
-      a.account_type == type).sortBy('path').value()
-  @formTypes = ->
+    c = _.chain _self.accounts
+    c = c.filter (a) ->
+      a.account_type == type
+    if options && options.except
+      c = c.reject (a) ->
+        a.id == options.except
+    c = c.sortBy 'path'
+    c.value()
+  @formTypes = (options) ->
     return [] unless _self.formAccount
-    _self.byType(_self.formAccount.account_type)
+    _self.byType(_self.formAccount.account_type, options)
 
   @new = ->
     _self.formAccount = {}
+    modalInstance = $uibModal.open {
+      animation: true,
+      templateUrl: 'account-form.html',
+      controller: 'AccountFormController',
+      scope: $scope
+    }
+  @edit = (id) ->
+    _self.formAccount = _.chain(_self.accounts).filter((a) -> a.id == id).first().value()
     modalInstance = $uibModal.open {
       animation: true,
       templateUrl: 'account-form.html',
@@ -36,23 +50,29 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
     if $scope.currentEntity
       url = "/entities/#{$scope.currentEntity.id}/accounts.json"
       $http.get(url).then (response) ->
-        _self.accounts = response.data
-        _self.createDisplayRecords()
+        _self.setAccounts response.data
       , (error) ->
         # TODO show the error to the user
         console.log "Unable to get the accounts from the service."
         console.log error
     else
-      _self.accounts = []
-      _self.createDisplayRecords()
+      _self.setAccounts []
 
-  @update = -> false
+  @update = ->
+    url = "accounts/#{_self.formAccount.id}.json"
+    $http.put(url, _self.formAccount).then (result) ->
+      updated = _.map _self.accounts, (a) ->
+        if a.id == result.id then result else a
+      _self.setAccounts updated
+    , (error) ->
+      #TODO Show the error to the user
+      console.log "Unable to save the updated account"
+      console.log error
 
   @create = ->
     url = "entities/#{$scope.currentEntity.id}/accounts.json"
     $http.post(url, _self.formAccount).then (result) ->
-      _self.accounts.push result.data
-      _self.createDisplayRecords()
+      _self.setAccounts result.data
       true
     , (error) ->
       #TODO show an error to the user
@@ -62,13 +82,17 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
 
   @delete = (id) ->
     $http.delete("accounts/#{id}.json").then ->
-      _self.accounts = _.reject _self.accounts, (a) ->
+      updated = _.reject _self.accounts, (a) ->
         a.id == id
-      _self.createDisplayRecords()
+      _self.setAccounts updated
     , (error) ->
       #TODO Show this error as an alert
       console.log "Unable to delete the account"
       console.log error
+
+  @setAccounts = (accounts) ->
+    _self.accounts = accounts
+    _self.createDisplayRecords()
 
   @createDisplayRecords = ->
     _self.displayRecords = _.chain(_self.types).reduce( (list, type) ->

@@ -15,8 +15,8 @@
         .form-group
           %label{ :for => 'account_parent' } Parent
           %select.form-control{ :id => 'account_parent', :name => 'account_parent', 'ng-model' => 'accountsCtrl.formAccount.parent_id' }
-            %option{ :value => ''} None
-            %option{ 'ng-repeat' => 'account in accountsCtrl.formTypes()', :value => '{{ account.id }}' } {{ account.path }}
+            %option{ :value => '' } None
+            %option{ 'ng-repeat' => 'account in accountsCtrl.formTypes({ except: accountsCtrl.formAccount.id })', :value => '{{ account.id }}' } {{ account.name }}
     .modal-footer
       %button.btn.btn-primary{ 'ng-click' => 'ok()' } Save
       %button.btn.btn-default{ 'ng-click' => 'cancel()' } Cancel
@@ -31,9 +31,12 @@
 
         %table.table.table-striped
           %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords', 'ng-class' => '{"header-row": record.isHeader}' }
-            %td
+            %td.col-md-8
               %div{ 'ng-class' => 'record.cssClass'} {{ record.caption }}
-            %td.text-right {{ record.balance | number:2 }}
-            %td
-              %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id', 'ng-click' => 'accountsCtrl.delete(record.id)', 'confirmation-needed' => 'Are you sure you want to delete this account?' }
-                %span.glyphicon.glyphicon-remove{ 'arial-hidden' => 'true' }
+            %td.col-md-2.text-right {{ record.balance | number:2 }}
+            %td.col-md-2
+              .btn-group
+                %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id', 'ng-click' => 'accountsCtrl.edit(record.id)' }
+                  %span.glyphicon.glyphicon-edit{ 'arial-hidden' => 'true' }
+                %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id', 'ng-click' => 'accountsCtrl.delete(record.id)', 'confirmation-needed' => 'Are you sure you want to delete this account?' }
+                  %span.glyphicon.glyphicon-remove{ 'arial-hidden' => 'true' }
