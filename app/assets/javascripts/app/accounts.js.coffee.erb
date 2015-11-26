@@ -99,9 +99,11 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
       groupedAccounts = _.groupBy _self.accounts, 'account_type'
       # Calculate the summary header
       typedAccounts = _.sortBy groupedAccounts[type.toLowerCase()], 'path'
-      typeTotal = _.reduce(typedAccounts, (sum, account) ->
+      typeTotal = _.chain(typedAccounts).filter( (a) ->
+        a.parent_id == null
+      ).reduce((sum, account) ->
         sum + account.value + account.children_value
-      , 0)
+      , 0).value()
       list.push {
         caption: type,
         balance: typeTotal,
