@@ -1,13 +1,13 @@
 app = angular.module 'search', []
 
-app.controller 'SearchController', ['$rootScope', '$http', ($rootScope, $http) ->
+app.controller 'SearchController', ['$scope', '$http', ($scope, $http) ->
     _self = this
     @input = ""
     @matches = []
     @handlers = [
       new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
       new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts']),
-      new AccountMatchingHandler('account-register', 'Account register', $rootScope, $http)
+      new AccountMatchingHandler('account-register', 'Account register', $scope, $http)
     ]
     @selected = null
     @execute = ->
@@ -19,12 +19,12 @@ app.controller 'SearchController', ['$rootScope', '$http', ($rootScope, $http) -
         _self.matches = []
     @select = (index) ->
       match = _self.matches[index]
-      $rootScope.selectedSearchHandler = match.key
+      $scope.selectedSearchHandler = match.key
       _self.matches = []
       _self.input = ""
       return
     @isSelected = (key) ->
-      $rootScope.selectedSearchHandler == key
+      $scope.selectedSearchHandler == key
     @selectFirst = (e) ->
       return unless e.keyCode == 13
       _self.select(0)
@@ -47,17 +47,32 @@ class SimpleMatchingHandler
     else
       []
 
-class AccountMatchingHandler
-  constructor: (elementKey, descriptionTemplate, $rootScope, $http) ->
-    @elementKey = elementKey
-    @descriptionTemplate = descriptionTemplate
-    @http = $http
-  loadAccounts: (entityId) ->
-    return unless entityId
-    @http.get("/entities/#{entityId}/accounts.json").then( (response) ->
-      console.log "got accounts for the account matching handler"
-      console.log response
-    , (error) ->
-      console.log "Unable to get the list of accounts for the matching handler"
-      console.log error
-    )
+AccountMatchingHandler = (elementKey, descriptionTemplate, $scope, $http) ->
+  _self = this
+  @elementKey = elementKey
+  @descriptionTemplate = descriptionTemplate
+  @http = $http
+  @accounts = []
+  @entityId = null
+  $scope.$watch 'currentEntity', (e) ->
+    _self.loadAccounts(if e then e.id else null)
+
+  @loadAccounts = (entityId) ->
+    if entityId
+      @http.get("/entities/#{entityId}/accounts.json").then( (response) ->
+        _self.accounts= _.map(response.data, (a) -> { name: a.name, id: a.id })
+      , (error) ->
+        console.log "Unable to get the list of accounts for the matching handler"
+        console.log error
+      )
+    else
+      _self.accounts = []
+
+  @handle = (input) ->
+    re = new RegExp input, "i"
+    _.reduce(@accounts, (result, a) ->
+      result.push {description: a.name, key: @elementKey} if re.test(a.name)
+      return result
+    , [])
+
+  return
