@@ -10,8 +10,10 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require jquery
+//= require jquery-2.0.3.min
 //= require jquery_ujs
 //= require jquery-ui
 //= require turbolinks
 //= require common
+//= require bootstrap.min
+//= require ui-bootstrap-tpls-0.14.3.min
