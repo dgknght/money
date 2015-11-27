@@ -19,12 +19,12 @@ app.controller 'SearchController', ['$scope', '$http', ($scope, $http) ->
         _self.matches = []
     @select = (index) ->
       match = _self.matches[index]
-      $scope.selectedSearchHandler = match.key
+      $scope.selectedSearchHandler = match.info
       _self.matches = []
       _self.input = ""
       return
     @isSelected = (key) ->
-      $scope.selectedSearchHandler == key
+      $scope.selectedSearchHandler && $scope.selectedSearchHandler.key == key
     @selectFirst = (e) ->
       return unless e.keyCode == 13
       _self.select(0)
@@ -43,7 +43,7 @@ class SimpleMatchingHandler
       result || re.test(term)
     ,false
     if isMatch
-      [{description: @description, key: @elementKey}]
+      [{description: @description, info: {key: @elementKey}}]
     else
       []
 
@@ -70,7 +70,7 @@ AccountMatchingHandler = (elementKey, descriptionTemplate, $scope, $http) ->
   @handle = (input) ->
     re = new RegExp input, "i"
     _.reduce(@accounts, (result, a) ->
-      result.push {description: a.name, key: @elementKey} if re.test(a.name)
+      result.push {description: a.name, info: {key: @elementKey, accountId: a.id}} if re.test(a.name)
       return result
     , [])
 
