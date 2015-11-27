@@ -1,6 +1,6 @@
 app = angular.module 'accounts', ['ui.bootstrap']
 
-app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModal', ($scope, $rootScope, $http, $uibModal) ->
+app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $http, $uibModal) ->
   _self = this
   @types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
   @accounts = []
@@ -38,9 +38,12 @@ app.controller 'AccountsController', ['$scope', '$rootScope', '$http', '$uibModa
     }
 
   # Load the account list when the account manager is displayed
-  $rootScope.$watch ->
-    $rootScope.selectedSearchHandler == 'account-manager'
-  , (selected) ->
+  $scope.$watch 'selectedSearchHandler', (handler) ->
+    return unless handler && handler.key == 'account-manager'
+    _self.loadAccounts()
+
+  $scope.$watch 'currentEntity', (entity) ->
+    return unless entity
     _self.loadAccounts()
 
   $scope.save = ->
