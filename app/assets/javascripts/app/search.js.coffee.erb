@@ -11,9 +11,9 @@ app.controller 'SearchController', ['$rootScope', ($rootScope) ->
     @selected = null
     @execute = ->
       if @input && @input.length > 2
-        matches = for handler in @handlers
-          handler.handle(@input)
-        _self.matches = matches.filter (m) -> !!m
+        _self.matches = _.reduce(@handlers, (result, handler) ->
+          result.concat handler.handle(_self.input)
+        , [])
       else
         _self.matches = []
     @select = (index) ->
@@ -42,4 +42,6 @@ class SimpleMatchingHandler
       result || re.test(term)
     ,false
     if isMatch
-      return {description: @description, key: @elementKey}
+      [{description: @description, key: @elementKey}]
+    else
+      []
