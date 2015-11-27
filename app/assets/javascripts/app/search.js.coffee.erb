@@ -1,12 +1,13 @@
 app = angular.module 'search', []
 
-app.controller 'SearchController', ['$rootScope', ($rootScope) ->
+app.controller 'SearchController', ['$rootScope', '$http', ($rootScope, $http) ->
     _self = this
     @input = ""
     @matches = []
     @handlers = [
       new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
       new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts']),
+      new AccountMatchingHandler('account-register', 'Account register', $rootScope, $http)
     ]
     @selected = null
     @execute = ->
@@ -45,3 +46,18 @@ class SimpleMatchingHandler
       [{description: @description, key: @elementKey}]
     else
       []
+
+class AccountMatchingHandler
+  constructor: (elementKey, descriptionTemplate, $rootScope, $http) ->
+    @elementKey = elementKey
+    @descriptionTemplate = descriptionTemplate
+    @http = $http
+  loadAccounts: (entityId) ->
+    return unless entityId
+    @http.get("/entities/#{entityId}/accounts.json").then( (response) ->
+      console.log "got accounts for the account matching handler"
+      console.log response
+    , (error) ->
+      console.log "Unable to get the list of accounts for the matching handler"
+      console.log error
+    )
