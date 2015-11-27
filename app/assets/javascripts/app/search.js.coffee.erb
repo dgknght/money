@@ -51,7 +51,6 @@ AccountMatchingHandler = (elementKey, descriptionTemplate, $scope, $http) ->
   _self = this
   @elementKey = elementKey
   @descriptionTemplate = descriptionTemplate
-  @http = $http
   @accounts = []
   @entityId = null
   $scope.$watch 'currentEntity', (e) ->
@@ -59,7 +58,7 @@ AccountMatchingHandler = (elementKey, descriptionTemplate, $scope, $http) ->
 
   @loadAccounts = (entityId) ->
     if entityId
-      @http.get("/entities/#{entityId}/accounts.json").then( (response) ->
+      $http.get("/entities/#{entityId}/accounts.json").then( (response) ->
         _self.accounts= _.map(response.data, (a) -> { name: a.name, id: a.id })
       , (error) ->
         console.log "Unable to get the list of accounts for the matching handler"
