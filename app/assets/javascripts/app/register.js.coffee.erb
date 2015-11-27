@@ -1,0 +1,22 @@
+app = angular.module 'register'
+
+app.controller 'AccountRegisterController', [$scope, $http, ($scope, $http) ->
+  _self = this
+  @transactionItems = []
+  @loadTransactionItems = ->
+    $http.get("/accounts/#{_self.accountId}/transaction_items/.json").then( (response) ->
+      console.log "response"
+      console.log response
+    , (error) ->
+      console.log "Unable to get the transaction items from the service"
+      console.log error
+    )
+  $scope.$watch 'selectedSearchHandler', (handler) ->
+
+    console.log "watch"
+    console.log handler
+
+    return unless handler.key == 'account-register'
+    _self.accountId = handler.accountId
+    _self.loadTransactionItems
+
