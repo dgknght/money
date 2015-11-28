@@ -1,6 +1,6 @@
-app = angular.module 'register'
+app = angular.module 'register', []
 
-app.controller 'AccountRegisterController', [$scope, $http, ($scope, $http) ->
+app.controller 'AccountRegisterController', ['$scope', '$http', ($scope, $http) ->
   _self = this
   @transactionItems = []
   @loadTransactionItems = ->
@@ -12,11 +12,12 @@ app.controller 'AccountRegisterController', [$scope, $http, ($scope, $http) ->
       console.log error
     )
   $scope.$watch 'selectedSearchHandler', (handler) ->
-
-    console.log "watch"
-    console.log handler
-
-    return unless handler.key == 'account-register'
+    return unless handler && handler.key == 'account-register'
     _self.accountId = handler.accountId
     _self.loadTransactionItems
-
+]
+app.directive 'accountRegister', ->
+  {
+    restrict: 'E',
+    templateUrl: '<%= asset_path('account-register.html') %>'
+  }
