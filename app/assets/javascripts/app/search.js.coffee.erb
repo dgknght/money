@@ -70,7 +70,7 @@ AccountMatchingHandler = (elementKey, descriptionTemplate, $scope, $http) ->
   @handle = (input) ->
     re = new RegExp input, "i"
     _.reduce(@accounts, (result, a) ->
-      result.push {description: a.name, info: {key: @elementKey, accountId: a.id}} if re.test(a.name)
+      result.push {description: a.name, info: {key: _self.elementKey, accountId: a.id}} if re.test(a.name)
       return result
     , [])
 
