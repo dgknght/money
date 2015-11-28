@@ -52,6 +52,14 @@ class TransactionItem < ActiveRecord::Base
   
   delegate :entity, :transaction_date, to: :owning_transaction, allow_nil: true
 
+  def as_json(options)
+    super({ methods: [:transaction_date, :description, :polarized_amount] })
+  end
+
+  def description
+    owning_transaction.description
+  end
+
   def polarized_amount
     amount * polarity
   end
