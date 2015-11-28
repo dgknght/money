@@ -1,13 +1,16 @@
-.accountRegister{ 'ng-controller' => 'AccountRegisterController as registerCtrl' }
-  %table.table.table-striped
-    %tr
-      %th Date
-      %th Description
-      %th Amount
-      %th Balance
-    %tr{ 'ng-repeat' => 'item in registerCtrl.transactionItems' }
-      %td {{ item.transaction_date | date:shortDate }}
-      %td {{ item.description }}
-      %td {{ item.polarized_amount | number:2 }}
-      %td {{ item.balance | number:2 }}
-      
+.row
+  .col-md-12
+    .panel.panel-primary{ 'ng-controller' => 'AccountRegisterController as register' }
+      .panel-heading {{ register.accountName }}
+
+      %table.table.table-striped
+        %tr
+          %th.col-md-2 Date
+          %th.col-md-6 Description
+          %th.col-md-2.text-right Amount
+          %th.col-md-2.text-right Balance
+        %tr{ 'ng-repeat' => 'item in register.transactionItems' }
+          %td {{ item.transaction_date | date:shortDate }}
+          %td {{ item.description }}
+          %td.text-right {{ item.polarized_amount | number:2 }}
+          %td.text-right {{ item.balance | number:2 }}

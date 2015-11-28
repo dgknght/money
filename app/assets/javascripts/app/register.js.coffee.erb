@@ -3,19 +3,27 @@ app = angular.module 'register', []
 app.controller 'AccountRegisterController', ['$scope', '$http', ($scope, $http) ->
   _self = this
   @transactionItems = []
+  @accountId = null
+  @accountName = null
   @loadTransactionItems = ->
-    $http.get("/accounts/#{_self.accountId}/transaction_items/.json").then( (response) ->
-      console.log "response"
-      console.log response
+    $http.get("/accounts/#{_self.accountId}/transaction_items.json").then( (response) ->
+      _self.transactionItems = response.data
     , (error) ->
       console.log "Unable to get the transaction items from the service"
       console.log error
     )
   $scope.$watch 'selectedSearchHandler', (handler) ->
-    return unless handler && handler.key == 'account-register'
-    _self.accountId = handler.accountId
-    _self.loadTransactionItems
+    if handler && handler.key == 'account-register'
+      _self.accountId = handler.accountId
+      _self.accountName = handler.accountName
+      _self.loadTransactionItems()
+    else
+      _self.transactionItems = []
+      _self.accountId = null
+      _self.accountName = null
+  return
 ]
+
 app.directive 'accountRegister', ->
   {
     restrict: 'E',
