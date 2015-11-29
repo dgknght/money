@@ -6,11 +6,15 @@
       %table.table.table-striped
         %tr
           %th.col-md-2 Date
-          %th.col-md-6 Description
+          %th.col-md-5 Description
           %th.col-md-2.text-right Amount
           %th.col-md-2.text-right Balance
+          %th.col-md-1 &nbsp;
         %tr{ 'ng-repeat' => 'item in register.transactionItems' }
           %td {{ item.transaction_date | date:shortDate }}
           %td {{ item.description }}
           %td.text-right {{ item.polarized_amount | number:2 }}
           %td.text-right {{ item.balance | number:2 }}
+          %td.text-center
+            %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.edit(item)' }
+              %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }

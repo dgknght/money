@@ -1,0 +1,33 @@
+.modal-header
+  %button.close{ type: 'button', 'ng-click' => 'cancel()', 'aria-label' => 'Close' }
+    %span{ 'aria-hidden' => 'true' } &times;
+  %h3.model-title Transaction
+.modal-body
+  %form
+    .form-group
+      %label{ for: 'transaction_date' } Date
+      %input.form-control{ type: 'text', id: 'transaction_date', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'focus-on' => '!!formTransaction' }
+    .form-group
+      %label{ for: 'description' } Description
+      %input.form-control{ type: 'text', id: 'description', name: 'description', 'ng-model' => 'formTransaction.description' }
+    %table.table.table-striped
+      %tr
+        %th Action
+        %th Account
+        %th Amount
+      %tr{ 'ng-repeat' => 'item in formTransaction.items' }
+        %td
+          %select.form-control{ 'ng-model' => 'item.action' }
+            %option debit
+            %option credit
+        %td
+          %select.form-control{ 'ng-model' => 'item.account_id' }
+            %optgroup{ 'ng-repeat' => 'accountType in accountTypes', :label => '{{ accountType.type }}' }
+              %option{ 'ng-repeat' => 'account in accountType.accounts', :value => '{{ account.id }}' }
+                {{ account.path }}
+        %td
+          %input.form-control{ :type => 'number', 'ng-model' => 'item.amount' }
+
+.modal-footer
+  %button.btn.btn-primary{ 'ng-click' => 'save()' } Save
+  %button.btn.btn-default{ 'ng-click' => 'cancel()' } Cancel

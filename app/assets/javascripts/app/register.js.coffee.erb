@@ -1,10 +1,38 @@
-app = angular.module 'register', []
+app = angular.module 'register', ['ui.bootstrap', 'transactions']
 
-app.controller 'AccountRegisterController', ['$scope', '$http', ($scope, $http) ->
+app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($scope, $http, $uibModal) ->
   _self = this
   @transactionItems = []
   @accountId = null
   @accountName = null
+  @edit = (item) ->
+    $http.get("/transactions/#{item.transaction_id}.json").then (response) ->
+      $scope.formTransaction = response.data
+      $uibModal.open {
+        animation: true,
+        templateUrl: '<%= asset_path('transaction-form.html') %>',
+        controller: 'TransactionFormController',
+        size: 'lg',
+        scope: $scope
+      }
+    , (error) ->
+      console.log "Unable to get the transaction from the server."
+      console.log error
+  @loadAccounts = ->
+    return unless $scope.currentEntity
+    $http.get("/entities/#{$scope.currentEntity.id}/accounts.json").then (response) ->
+      types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
+      $scope.accountTypes = _.chain(types).map( (type) ->
+        t = type.toLowerCase()
+        {
+          type: type,
+          accounts: _.chain(response.data).filter( (a) -> a.account_type == t).sortBy( (a) -> a.path).value()
+        }
+      ).value()
+      return
+    , (error) ->
+      console.log "Unable to get the accounts from the server to populate the transaction item form."
+      console.log error
   @loadTransactionItems = ->
     $http.get("/accounts/#{_self.accountId}/transaction_items.json").then( (response) ->
       _self.transactionItems = response.data
@@ -21,6 +49,8 @@ app.controller 'AccountRegisterController', ['$scope', '$http', ($scope, $http) 
       _self.transactionItems = []
       _self.accountId = null
       _self.accountName = null
+
+  _self.loadAccounts()
   return
 ]
 

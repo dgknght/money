@@ -7,8 +7,9 @@
 #= require app/entities
 #= require app/accounts
 #= require app/register
+#= require app/transactions
 
-app = angular.module 'moneyApp', ['search', 'entities', 'accounts', 'register']
+app = angular.module 'moneyApp', ['search', 'entities', 'accounts', 'register', 'transactions']
 
 app.directive 'confirmationNeeded', ->
   return {
