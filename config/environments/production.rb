@@ -46,7 +46,7 @@ Money::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-  config.assets.precompile += %w( accounts.css accounts.js attachments.css attachments.js budget_items.css budget_items.js budget_monitors.css budget_monitors.js budget_monitor.js commodities.css commodities.js entities.css entities.js holdings.css holdings.js lots.css lots.js pages.css pages.js prices.css prices.js reconciliations.css reconcilications.js reports.css reports.js transaction_items.css transaction_items.js transactions.css transactions.js )
+  config.assets.precompile += %w( app.js accounts.css accounts.js attachments.css attachments.js budget_items.css budget_items.js budget_monitors.css budget_monitors.js budget_monitor.js commodities.css commodities.js entities.css entities.js holdings.css holdings.js lots.css lots.js pages.css pages.js prices.css prices.js reconciliations.css reconcilications.js reports.css reports.js transaction_items.css transaction_items.js transactions.css transactions.js )
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
