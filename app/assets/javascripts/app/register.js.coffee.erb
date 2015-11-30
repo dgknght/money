@@ -18,21 +18,6 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
     , (error) ->
       console.log "Unable to get the transaction from the server."
       console.log error
-  @loadAccounts = ->
-    return unless $scope.currentEntity
-    $http.get("/entities/#{$scope.currentEntity.id}/accounts.json").then (response) ->
-      types = ['Asset', 'Liability', 'Equity', 'Income', 'Expense']
-      $scope.accountTypes = _.chain(types).map( (type) ->
-        t = type.toLowerCase()
-        {
-          type: type,
-          accounts: _.chain(response.data).filter( (a) -> a.account_type == t).sortBy( (a) -> a.path).value()
-        }
-      ).value()
-      return
-    , (error) ->
-      console.log "Unable to get the accounts from the server to populate the transaction item form."
-      console.log error
   @loadTransactionItems = ->
     $http.get("/accounts/#{_self.accountId}/transaction_items.json").then( (response) ->
       _self.transactionItems = response.data
@@ -50,7 +35,6 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
       _self.accountId = null
       _self.accountName = null
 
-  _self.loadAccounts()
   return
 ]
 

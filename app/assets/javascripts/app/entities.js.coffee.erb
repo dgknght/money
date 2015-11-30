@@ -4,6 +4,7 @@ app = angular.module 'entities', []
 
 app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
   _self = this
+  $scope.accounts = []
   @entities = []
   @currentEntity = null
   @currentEntityId = null
@@ -12,10 +13,12 @@ app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
     filteredList = _self.entities.filter (e) ->
       e.id == selectedId
     $scope.currentEntity = filteredList[0]
+    _self.loadAccounts()
   $http.get('/entities.json').success (data) ->
     _self.entities = data
     unless data.length == 0
       $scope.currentEntity = data[0]
+      _self.loadAccounts()
       _self.currentEntityId = $scope.currentEntity.id.toString()
 
   @newEntityName = ""
@@ -30,9 +33,21 @@ app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
       index = _.map(_self.entities, (e) -> e.id).indexOf(id)
       _self.entities.splice(index, 1)
 
-
   @save = (entity) ->
     $http.put "/entities/#{entity.id}.json", { entity: entity }
+
+  @loadAccounts = ->
+    if $scope.currentEntity
+      url = "/entities/#{$scope.currentEntity.id}/accounts.json"
+      $http.get(url).then (response) ->
+        $scope.accounts = _.sortBy(response.data, (a) -> a.path)
+      , (error) ->
+        # TODO show the error to the user
+        console.log "Unable to get the accounts from the service."
+        console.log error
+    else
+      $scope.accounts = []
+
   return
 ]
 

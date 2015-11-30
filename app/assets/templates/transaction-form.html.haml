@@ -22,9 +22,8 @@
             %option credit
         %td
           %select.form-control{ 'ng-model' => 'item.account_id' }
-            %optgroup{ 'ng-repeat' => 'accountType in accountTypes', :label => '{{ accountType.type }}' }
-              %option{ 'ng-repeat' => 'account in accountType.accounts', :value => '{{ account.id }}' }
-                {{ account.path }}
+            %option{ 'ng-repeat' => 'account in accounts', :value => '{{ account.id }}' }
+              {{ account.path }}
         %td
           %input.form-control{ :type => 'number', 'ng-model' => 'item.amount' }
 
