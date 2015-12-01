@@ -14,9 +14,9 @@
             %option{ 'ng-repeat' => 'type in accountsCtrl.types', :value => '{{ type.toLowerCase() }}' } {{ type }}
         .form-group
           %label{ :for => 'account_parent' } Parent
-          %select.form-control{ :id => 'account_parent', :name => 'account_parent', 'ng-model' => 'accountsCtrl.formAccount.parent_id' }
+          %select.form-control{ :id => 'account_parent', :name => 'account_parent', 'ng-model' => 'accountsCtrl.formAccount.parent_id', 'convert-to-number' => 'true' }
             %option{ :value => '' } None
-            %option{ 'ng-repeat' => 'account in accountsCtrl.formTypes({ except: accountsCtrl.formAccount.id })', :value => '{{ account.id }}' } {{ account.name }}
+            %option{ 'ng-repeat' => 'account in accountsCtrl.formTypes({ except: accountsCtrl.formAccount.id })', :value => '{{ account.id }}' } {{ account.path }}
     .modal-footer
       %button.btn.btn-primary{ 'ng-click' => 'ok()' } Save
       %button.btn.btn-default{ 'ng-click' => 'cancel()' } Cancel

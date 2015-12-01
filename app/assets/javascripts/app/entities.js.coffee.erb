@@ -15,7 +15,7 @@ app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
   $http.get('/entities.json').success (data) ->
     _self.entities = data
     unless data.length == 0
-      $scope.currentEntityId = data[0].id.toString()
+      $scope.currentEntityId = data[0].id
 
   @newEntityName = ""
   @add = ->

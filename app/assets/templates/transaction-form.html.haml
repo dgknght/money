@@ -21,7 +21,7 @@
             %option debit
             %option credit
         %td
-          %select.form-control{ 'ng-model' => 'item.account_id' }
+          %select.form-control{ 'ng-model' => 'item.account_id', 'convert-to-number' => 'true' }
             %option{ 'ng-repeat' => 'account in accounts', :value => '{{ account.id }}' }
               {{ account.path }}
         %td
