@@ -48,6 +48,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       updated = _.map $scope.accounts, (a) ->
         if a.id == result.id then result else a
       $scope.accounts = updated
+      _self.createDisplayRecords $scope.accounts
     , (error) ->
       #TODO Show the error to the user
       console.log "Unable to save the updated account"
