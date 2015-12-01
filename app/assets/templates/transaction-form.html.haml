@@ -3,13 +3,15 @@
     %span{ 'aria-hidden' => 'true' } &times;
   %h3.model-title Transaction
 .modal-body
-  %form
-    .form-group
-      %label{ for: 'transaction_date' } Date
-      %input.form-control{ type: 'text', id: 'transaction_date', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'convert-to-date' => 'true', 'focus-on' => '!!formTransaction' }
-    .form-group
-      %label{ for: 'description' } Description
-      %input.form-control{ type: 'text', id: 'description', name: 'description', 'ng-model' => 'formTransaction.description' }
+  %form.css-form{ :name => 'transactionForm', :novalidate => true }
+    .form-group{ 'ng-class' => '{"has-error": transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$invalid}' }
+      %label.control-label{ for: 'transaction_date' } Date
+      %input.form-control{ type: 'text', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'convert-to-date' => 'true', 'focus-on' => '!!formTransaction', :required => true, :placeholder => 'Today, maybe?' }
+      %span.help-block{ 'ng-show' => 'transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$error.required' } You must specify a transaction date.
+    .form-group{ 'ng-class' => '{"has-error": transactionForm.description.$dirty && transactionForm.description.$invalid}' }
+      %label.control-label{ for: 'description' } Description
+      %input.form-control{ type: 'text', name: 'description', 'ng-model' => 'formTransaction.description', :required => true, :placeholder => 'Paycheck, Grocery store, etc.' }
+      %span.help-block{ 'ng-show' => 'transactionForm.description.$dirty && transactionForm.description.$error.required' } You must specify a description.
     %table.table.table-striped
       %tr
         %th Action
@@ -17,16 +19,16 @@
         %th Amount
       %tr{ 'ng-repeat' => 'item in formTransaction.items' }
         %td
-          %select.form-control{ 'ng-model' => 'item.action' }
+          %select.form-control{ 'ng-model' => 'item.action', :name => 'item_action' }
             %option debit
             %option credit
         %td
-          %select.form-control{ 'ng-model' => 'item.account_id', 'convert-to-number' => 'true' }
+          %select.form-control{ 'ng-model' => 'item.account_id', 'convert-to-number' => 'true', :name => 'item_account' }
             %option{ 'ng-repeat' => 'account in accounts', :value => '{{ account.id }}' }
               {{ account.path }}
         %td
-          %input.form-control{ :type => 'number', 'ng-model' => 'item.amount' }
+          %input.form-control{ :type => 'number', 'ng-model' => 'item.amount', :name => 'item_amount' }
 
 .modal-footer
-  %button.btn.btn-primary{ 'ng-click' => 'save()' } Save
+  %button.btn.btn-primary{ 'ng-click' => 'save()', 'ng-disabled' => 'transactionForm.$invalid' } Save
   %button.btn.btn-default{ 'ng-click' => 'cancel()' } Cancel
