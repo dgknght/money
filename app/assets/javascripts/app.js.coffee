@@ -44,3 +44,13 @@ app.directive 'convertToNumber', ->
       ngModel.$formatters.push (val) ->
         '' + val
   }
+
+app.directive 'convertToDate', ($filter) ->
+  {
+    require: 'ngModel',
+    link: (scope, element, attrs, ngModel) ->
+      ngModel.$parsers.push (val) ->
+        new Date(val)
+      ngModel.$formatters.push (val) ->
+        $filter('date') val, 'M/d/yyyy'
+  }
