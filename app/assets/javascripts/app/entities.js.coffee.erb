@@ -4,22 +4,18 @@ app = angular.module 'entities', []
 
 app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
   _self = this
+
   $scope.accounts = []
-  @entities = []
-  @currentEntity = null
-  @currentEntityId = null
-  @setCurrentEntity = ->
-    selectedId = parseInt(_self.currentEntityId)
-    filteredList = _self.entities.filter (e) ->
-      e.id == selectedId
-    $scope.currentEntity = filteredList[0]
+  $scope.currentEntityId = null
+  $scope.$watch 'currentEntityId', (id) ->
     _self.loadAccounts()
+
+  @entities = []
+
   $http.get('/entities.json').success (data) ->
     _self.entities = data
     unless data.length == 0
-      $scope.currentEntity = data[0]
-      _self.loadAccounts()
-      _self.currentEntityId = $scope.currentEntity.id.toString()
+      $scope.currentEntityId = data[0].id.toString()
 
   @newEntityName = ""
   @add = ->
@@ -37,8 +33,8 @@ app.controller 'EntitiesController', ['$http', '$scope', ($http, $scope) ->
     $http.put "/entities/#{entity.id}.json", { entity: entity }
 
   @loadAccounts = ->
-    if $scope.currentEntity
-      url = "/entities/#{$scope.currentEntity.id}/accounts.json"
+    if $scope.currentEntityId
+      url = "/entities/#{$scope.currentEntityId}/accounts.json"
       $http.get(url).then (response) ->
         $scope.accounts = _.sortBy(response.data, (a) -> a.path)
       , (error) ->

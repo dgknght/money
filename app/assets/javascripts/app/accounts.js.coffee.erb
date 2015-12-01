@@ -55,7 +55,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       console.log error
 
   @create = ->
-    url = "entities/#{$scope.currentEntity.id}/accounts.json"
+    url = "entities/#{$scope.currentEntityId}/accounts.json"
     $http.post(url, _self.formAccount).then (result) ->
       $scope.accounts.push(result.data)
       true
