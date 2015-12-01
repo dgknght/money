@@ -1,17 +1,21 @@
 .row
   .col-md-12
     .panel.panel-primary{ 'ng-controller' => 'AccountRegisterController as register' }
-      .panel-heading {{ register.accountName }}
+      .panel-heading
+        .pull-right
+          %button.btn.btn-default.btn-xs{ 'ng-click' => 'register.new()' }
+            %span.glyphicon.glyphicon-plus{ 'aria-hidden' => 'true' }
+        {{ register.accountName }}
 
       %table.table.table-striped
         %tr
-          %th.col-md-2 Date
-          %th.col-md-5 Description
+          %th.col-md-1 Date
+          %th.col-md-6 Description
           %th.col-md-2.text-right Amount
           %th.col-md-2.text-right Balance
           %th.col-md-1 &nbsp;
         %tr{ 'ng-repeat' => 'item in register.transactionItems' }
-          %td {{ item.transaction_date | date:shortDate }}
+          %td.text-right {{ item.transaction_date | date:'M/d/yyyy'}}
           %td {{ item.description }}
           %td.text-right {{ item.polarized_amount | number:2 }}
           %td.text-right {{ item.balance | number:2 }}

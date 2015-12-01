@@ -2,16 +2,17 @@ app = angular.module 'transactions', []
 
 app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$http', ($scope, $uibModalInstance, $http) ->
   _self = this
+  @_prepareData = ->
+    transaction = $scope.formTransaction
+    transaction.items_attributes = transaction.items
+    transaction.items = null
+    { transaction: transaction }
   @create = ->
-    $http.post("/accounts/#{scope.account_id}/transactions.json", $scope.formTransaction).then (response) ->
-      console.log "transaction added, need to reload the form"
-    , (error) ->
+    $http.post("/entities/#{$scope.currentEntityId}/transactions.json", _self._prepareData()).then null, (error) ->
       console.log "Unable to create the transaction."
       console.log error
   @update = ->
-    $http.put("/transactions/#{$scope.formTransaction.id}.json", $scope.formTransaction).then (response) ->
-      console.log "transaction saved, need to reload the form"
-    , (error) ->
+    $http.put("/transactions/#{$scope.formTransaction.id}.json", _self._prepareData()).then null, (error) ->
       console.log "Unable to update the transaction."
       console.log error
   $scope.save = ->
@@ -19,7 +20,8 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
       _self.update().then (_) ->
         $uibModalInstance.close()
     else
-      _self.create()
+      _self.create().then (_) ->
+        $uibModalInstance.close()
   $scope.cancel = ->
     $uibModalInstance.dismiss('cancel')
 ]

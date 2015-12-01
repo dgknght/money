@@ -6,7 +6,7 @@
   %form
     .form-group
       %label{ for: 'transaction_date' } Date
-      %input.form-control{ type: 'text', id: 'transaction_date', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'focus-on' => '!!formTransaction' }
+      %input.form-control{ type: 'text', id: 'transaction_date', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'convert-to-date' => 'true', 'focus-on' => '!!formTransaction' }
     .form-group
       %label{ for: 'description' } Description
       %input.form-control{ type: 'text', id: 'description', name: 'description', 'ng-model' => 'formTransaction.description' }
