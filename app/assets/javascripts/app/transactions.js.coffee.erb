@@ -24,4 +24,12 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
         $uibModalInstance.close()
   $scope.cancel = ->
     $uibModalInstance.dismiss('cancel')
+
+  $scope.$watch ->
+    return true unless $scope.formTransaction
+    last = _.last($scope.formTransaction.items)
+    if last then _.chain(last).pick('amount', 'account_id', 'action').isEmpty().value() else false
+  , (isEmpty) ->
+    return unless $scope.formTransaction && $scope.formTransaction.items
+    $scope.formTransaction.items.push({}) unless isEmpty
 ]
