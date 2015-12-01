@@ -20,5 +20,8 @@
           %td.text-right {{ item.polarized_amount | number:2 }}
           %td.text-right {{ item.balance | number:2 }}
           %td.text-center
-            %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.edit(item)' }
-              %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
+            .btn-group
+              %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.edit(item)', :title => 'Click here to edit this transaction.' }
+                %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
+              %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.delete(item)', 'confirmation-needed' => 'Are you sure you want to delete this transaction?', :title => 'Click here to remove this transaction.' }
+                %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }

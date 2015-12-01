@@ -14,6 +14,12 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
       ]
     }
     _self.openModal()
+  @delete = (item) ->
+    $http.delete("/transactions/#{item.transaction_id}.json").then (response) ->
+      _self.loadTransactionItems()
+    , (error) ->
+      console.log "Unable to remove the transaction."
+      console.log error
   @edit = (item) ->
     $http.get("/transactions/#{item.transaction_id}.json").then (response) ->
       $scope.formTransaction = response.data
