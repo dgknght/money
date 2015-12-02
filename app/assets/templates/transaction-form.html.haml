@@ -4,14 +4,27 @@
   %h3.model-title Transaction
 .modal-body
   %form.css-form{ :name => 'transactionForm', :novalidate => true }
-    .form-group{ 'ng-class' => '{"has-error": transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$invalid}' }
-      %label.control-label{ for: 'transaction_date' } Date
-      %input.form-control{ type: 'text', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'convert-to-date' => 'true', 'focus-on' => '!!formTransaction', :required => true, :placeholder => 'Today, maybe?' }
-      %span.help-block{ 'ng-show' => 'transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$error.required' } You must specify a transaction date.
-    .form-group{ 'ng-class' => '{"has-error": transactionForm.description.$dirty && transactionForm.description.$invalid}' }
-      %label.control-label{ for: 'description' } Description
-      %input.form-control{ type: 'text', name: 'description', 'ng-model' => 'formTransaction.description', :required => true, :placeholder => 'Paycheck, Grocery store, etc.' }
-      %span.help-block{ 'ng-show' => 'transactionForm.description.$dirty && transactionForm.description.$error.required' } You must specify a description.
+    .row
+      .col-md-6
+        .form-group{ 'ng-class' => '{"has-error": transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$invalid}' }
+          %label.control-label{ for: 'transaction_date' } Date
+          %input.form-control{ type: 'text', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'convert-to-date' => 'true', 'focus-on' => '!!formTransaction', :required => true, :placeholder => 'Today, maybe?' }
+          %span.help-block{ 'ng-show' => 'transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$error.required' } You must specify a transaction date.
+        .form-group{ 'ng-class' => '{"has-error": transactionForm.description.$dirty && transactionForm.description.$invalid}' }
+          %label.control-label{ for: 'description' } Description
+          %input.form-control{ type: 'text', name: 'description', 'ng-model' => 'formTransaction.description', :required => true, :placeholder => 'Paycheck, Grocery store, etc.' }
+          %span.help-block{ 'ng-show' => 'transactionForm.description.$dirty && transactionForm.description.$error.required' } You must specify a description.
+      .col-md-6
+        .form-group
+          %label.control-label{ for: 'total_debits' } Total debits
+          %input.form-control{ :readonly => true, :tabindex => -1, :type => 'number', :name => 'totalDebits', 'ng-model' => 'transactionTotals.debits' }
+        .form-group
+          %label.control-label{ for: 'total_credits' } Total credits
+          %input.form-control{ :readonly => true, :tabindex => -1, :type => 'number', :name => 'totalCredits', 'ng-model' => 'transactionTotals.credits' }
+        .form-group{ 'ng-class' => '{"has-error": transactionForm.difference.$invalid && transactionForm.$submitted}' }
+          %label.control-label{ for: 'difference' } Difference
+          %input.form-control{ :readonly => true, :tabindex => -1, :type => 'number', :min => 0, :max => 0, :name => 'difference', 'ng-model' => 'transactionTotals.difference' }
+          %span.help-block{ 'ng-show' => 'transactionForm.difference.$invalid' } Totals debits must equal total credits.
     %table.table.table-striped
       %tr
         %th Action

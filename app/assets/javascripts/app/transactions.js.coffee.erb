@@ -2,6 +2,7 @@ app = angular.module 'transactions', []
 
 app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$http', ($scope, $uibModalInstance, $http) ->
   _self = this
+  $scope.transactionTotals = {debits: 0, credits: 0}
   @_prepareData = ->
     transaction = $scope.formTransaction
     transaction.items_attributes = transaction.items
@@ -25,6 +26,22 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
   $scope.cancel = ->
     $uibModalInstance.dismiss('cancel')
 
+  # Recalculate total debits and total credits
+  $scope.$watchCollection ->
+    _.map(['debit', 'credit'], (a) -> _self._totalByAction(a))
+  , (totals) ->
+    $scope.transactionTotals.debits = totals[0]
+    $scope.transactionTotals.credits = totals[1]
+    $scope.transactionTotals.difference = totals[0] - totals[1]
+
+  @_totalByAction = (action) ->
+    _.chain($scope.formTransaction.items).filter( (i) ->
+      i.action == action
+    ).reduce( (sum, i) ->
+      sum + i.amount
+    , 0).value()
+
+  # Ensure there is always an empty line item at the bottom of the list
   $scope.$watch ->
     return true unless $scope.formTransaction
     last = _.last($scope.formTransaction.items)
