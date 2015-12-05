@@ -350,8 +350,12 @@ class Account < ActiveRecord::Base
     ids = transaction_items.
       joins(:owning_transaction).
       order('transactions.transaction_date asc, transaction_items."index" asc').
-      map(&:id)
-    TransactionItem.find(ids)
+      reduce({}){|result, item| result[item.id] = result.count; result}
+    # The above joins to the transaction table for sorting purposes, 
+    # but returns a list of frozen records.
+    # The below returns editable records, but ignores the order.
+    # The hash map is used to preserve the order with the editable items
+    TransactionItem.find(ids.keys).sort_by{|item| ids[item.id]}
   end
 
     def sum_of_credit_transaction_items(start_date, end_date)

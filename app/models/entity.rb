@@ -66,7 +66,15 @@ class Entity < ActiveRecord::Base
   def recalculate_all_account_balances
     Rails.logger.info "recalculating balances for entity #{name}"
     child_first_account_list.each do |a|
-      a.recalculate_balances!(suppress_bubbling: true)
+      a.recalculate_balance!(rebuild_item_indexes: true)
+      a.recalculate_value
+      a.recalculate_cost
+      a.recalculate_gains
+      a.recalculate_children_balance
+      a.recalculate_children_value
+      a.recalculate_children_cost
+      a.recalculate_children_gains
+      a.save!
       Rails.logger.info "recalculated balances for #{a.path} value=#{a.value} children_value=#{a.children_value}"
     end
     Rails.logger.info "recalculation complete"
