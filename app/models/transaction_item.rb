@@ -49,6 +49,8 @@ class TransactionItem < ActiveRecord::Base
   scope :occurring_before, -> (date) { joins(:owning_transaction).where('transactions.transaction_date < ?', date).order('transaction_items."index"').reverse_order }
   scope :occurring_between, -> (start_date, end_date) { joins(:owning_transaction).where('? < transactions.transaction_date and transactions.transaction_date < ?', start_date, end_date).order('transaction_items."index"').reverse_order }
   scope :occurring_on_or_after, -> (date) { joins(:owning_transaction).where('transactions.transaction_date >= ?', date).order('transactions.transaction_date', 'transaction_items."index"') }
+
+  scope :by_index, -> { order('transaction_items."index" desc') }
   
   delegate :entity, :transaction_date, to: :owning_transaction, allow_nil: true
 

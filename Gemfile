@@ -22,6 +22,8 @@ gem 'pg'
 gem 'chronic'
 gem 'nokogiri'
 gem 'activesupport-json_encoder'
+gem 'will_paginate'
+gem 'will_paginate-bootstrap'
 
 group :test, :development do
   gem 'rspec-rails'
