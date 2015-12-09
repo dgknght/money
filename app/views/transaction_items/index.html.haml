@@ -10,30 +10,33 @@
 
     %table#transaction_items_table.table.table-striped
       %tr
-        %th.col-md-1.transaction_date_cell Date
-        %th.col-md-3.description_cell Description
-        %th.col-md-3.account_cell Account
-        %th.col-md-1.reconciled_cell Rec.
-        %th.col-md-1.amount_cell.number_column Amount
-        %th.col-md-1.balance_cell.number_column Balance
+        %th.col-md-1 Index
+        %th.col-md-1 Date
+        %th.col-md-3 Description
+        %th.col-md-3 Account
+        %th.col-md-1.text-center Rec.
+        %th.col-md-1.text-right Amount
+        %th.col-md-1.text-right Balance
         %th.col-md-1.actions &nbsp;
       -@transaction_items.each_with_index do |item, index|
         %tr
-          %td.transaction_date_cell= format_date(item.transaction_date)
-          %td.description_cell= item.owning_transaction.description
-          %td.account_cell= other_account(item)
-          %td.reconciled_cell.check_column= item.reconciled? ? 'X' : ''
-          %td.amount_cell.number_column= format_currency(item.polarized_amount)
-          %td.balance_cell.number_column= format_currency(item.balance)
+          %td= item.index
+          %td= format_date(item.transaction_date)
+          %td= item.owning_transaction.description
+          %td= other_account(item)
+          %td.text-center= item.reconciled? ? 'X' : ''
+          %td.text-right= format_currency(item.polarized_amount)
+          %td.text-right= format_currency(item.balance)
           %td.actions
             .btn-group
               =edit_link edit_transaction_item_path(item), 'this transaction'
               =delete_link transaction_item_path(item), 'this transaction'
 
 .row
-  .col-md-6
-    =link_to 'Add', new_account_transaction_item_path(@account), class: 'btn btn-primary', title: 'Click here to add a transaction.'
-    =link_to 'Back', entity_accounts_path(@account.entity), class: 'btn btn-default', title: 'Click here to return to the account list.'
-    =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'btn btn-default', title: 'Click here to reconcile this account against a statement.'
-  .col-md-6.text-right
+  .col-md-4
+    .btn-group
+      =link_to 'Add', new_account_transaction_item_path(@account), class: 'btn btn-primary', title: 'Click here to add a transaction.'
+      =link_to 'Back', entity_accounts_path(@account.entity), class: 'btn btn-default', title: 'Click here to return to the account list.'
+      =link_to 'Reconcile', new_account_reconciliation_path(@account), class: 'btn btn-default', title: 'Click here to reconcile this account against a statement.'
+  .col-md-8.text-right
     =will_paginate @transaction_items, renderer: BootstrapPagination::Rails

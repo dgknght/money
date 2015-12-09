@@ -2,12 +2,12 @@
   Transactions
 
 .row
-  .col-md-9
+  .col-md-12
     %table#transactions_table.table.table-striped
       %tr
         %th.col-md-2 Date
         %th.col-md-6 Description
-        %th.col-md-2 Amount
+        %th.col-md-2.text-right Amount
         %th.col-md-2.action_cell &nbsp;
       -@transactions.each do |transaction|
         %tr
@@ -21,8 +21,8 @@
                 %span.glyphicon.glyphicon-paperclip{ aria: {hidden: true}}
               =delete_link transaction_path(transaction), 'this transaction'
 .row
-  .col-md-5
+  .col-md-4
     .btn-group
       =link_to 'Add', new_entity_transaction_path(@entity), class: 'btn btn-primary'
-  .col-md-4
+  .col-md-8.text-right
     =will_paginate @transactions, renderer: BootstrapPagination::Rails
