@@ -20,5 +20,9 @@
               =link_to transaction_attachments_path(transaction), class: 'btn btn-xs btn-default attachments_button', title: 'Click here to see the attachments for this transaction.' do
                 %span.glyphicon.glyphicon-paperclip{ aria: {hidden: true}}
               =delete_link transaction_path(transaction), 'this transaction'
+.row
+  .col-md-5
     .btn-group
       =link_to 'Add', new_entity_transaction_path(@entity), class: 'btn btn-primary'
+  .col-md-4
+    =will_paginate @transactions, renderer: BootstrapPagination::Rails
