@@ -7,21 +7,23 @@
             %span.glyphicon.glyphicon-plus{ 'aria-hidden' => 'true' }
         {{ register.accountName }}
 
-      %table.table.table-striped
+      %table.table.table-striped.register
         %tr
-          %th.col-md-1 Date
-          %th.col-md-6 Description
-          %th.col-md-2.text-right Amount
-          %th.col-md-2.text-right Balance
-          %th.col-md-1 &nbsp;
-        %tr{ 'ng-repeat' => 'item in register.transactionItems' }
-          %td.text-right {{ item.transaction_date | date:'M/d/yyyy'}}
-          %td {{ item.description }}
-          %td.text-right {{ item.polarized_amount | number:2 }}
-          %td.text-right {{ item.balance | number:2 }}
-          %td.text-center
-            .btn-group
-              %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.edit(item)', :title => 'Click here to edit this transaction.' }
-                %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
-              %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.delete(item)', 'confirmation-needed' => 'Are you sure you want to delete this transaction?', :title => 'Click here to remove this transaction.' }
-                %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }
+          %th.register-date Date
+          %th.register-description Description
+          %th.register-amount Amount
+          %th.register-balance Balance
+          %th.register-actions &nbsp;
+      .register-container{ 'infinite-scroll' => 'loadMoreTransactionItems()' }
+        %table.table.table-striped
+          %tr{ 'ng-repeat' => 'item in transactionItems' }
+            %td.register-date {{ item.transaction_date | date:'M/d/yyyy'}}
+            %td.register-description {{ item.description }}
+            %td.register-amount {{ item.polarized_amount | number:2 }}
+            %td.register-balance {{ item.balance | number:2 }}
+            %td.register-actions
+              .btn-group
+                %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.edit(item)', :title => 'Click here to edit this transaction.' }
+                  %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
+                %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.delete(item)', 'confirmation-needed' => 'Are you sure you want to delete this transaction?', :title => 'Click here to remove this transaction.' }
+                  %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }

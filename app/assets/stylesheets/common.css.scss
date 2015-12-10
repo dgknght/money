@@ -17,3 +17,30 @@
 .account_depth_3 {
   padding-left: 8em;
 }
+
+.register-container {
+  height: 396px;
+  overflow-y: auto;
+}
+.register {
+  width: 640px;
+}
+.register-date {
+  width: 64px;
+  text-align: right;
+}
+.register-description {
+  width: 256px;
+}
+.register-amount {
+  width: 128px;
+  text-align: right;
+}
+.register-balance {
+  width: 128px;
+  text-align: right;
+}
+.register-actions {
+  width: 64px;
+  text-align: center;
+}

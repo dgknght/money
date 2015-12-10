@@ -2,7 +2,9 @@ app = angular.module 'register', ['ui.bootstrap', 'transactions']
 
 app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($scope, $http, $uibModal) ->
   _self = this
-  @transactionItems = []
+  $scope.transactionItems = []
+  $scope.loadedAllTransactionItems = false
+  $scope.lastPage = 0
   @accountId = null
   @accountName = null
   @new = ->
@@ -36,20 +38,37 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
       scope: $scope
     }).result.then ->
       _self.loadTransactionItems()
+  $scope.transactionItemsUrl = ->
+    nextPage = ($scope.lastPage || 0) + 1
+    result = "/accounts/#{_self.accountId}/transaction_items.json?per_page=15&page=#{nextPage}"
+    console.log "url=#{result}"
+    result
   @loadTransactionItems = ->
-    $http.get("/accounts/#{_self.accountId}/transaction_items.json").then( (response) ->
-      _self.transactionItems = response.data
+    $http.get($scope.transactionItemsUrl()).then( (response) ->
+      $scope.transactionItems = response.data
+      $scope.lastPage = 1
     , (error) ->
       console.log "Unable to get the transaction items from the service"
       console.log error
     )
+  $scope.loadMoreTransactionItems = ->
+    return if $scope.loadingTransactionItems || $scope.allTransactionItemsLoaded
+    $scope.loadingTransactionItems = true
+    $http.get($scope.transactionItemsUrl()).then (response) ->
+      $scope.transactionItems = $scope.transactionItems.concat(response.data)
+      $scope.lastPage++
+      $scope.allTransactionItemsLoaded = response.data.length == 0
+      $scope.loadingTransactionItems = false
+      console.log "loaded page #{$scope.lastPage} with #{response.data.length} item(s)"
   $scope.$watch 'selectedSearchHandler', (handler) ->
+    $scope.allTransactionItemsLoaded = false
+    $scope.lastPage = 0
     if handler && handler.key == 'account-register'
       _self.accountId = handler.accountId
       _self.accountName = handler.accountName
       _self.loadTransactionItems()
     else
-      _self.transactionItems = []
+      $scope.transactionItems = []
       _self.accountId = null
       _self.accountName = null
 
