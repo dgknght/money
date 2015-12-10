@@ -9,6 +9,7 @@
 
       %table.table.table-striped.register
         %tr
+          %th.register-index Index
           %th.register-date Date
           %th.register-description Description
           %th.register-amount Amount
@@ -17,6 +18,7 @@
       .register-container{ 'infinite-scroll' => 'loadMoreTransactionItems()' }
         %table.table.table-striped
           %tr{ 'ng-repeat' => 'item in transactionItems' }
+            %td.register-index {{ item.index | number:0 }}
             %td.register-date {{ item.transaction_date | date:'M/d/yyyy'}}
             %td.register-description {{ item.description }}
             %td.register-amount {{ item.polarized_amount | number:2 }}
