@@ -42,7 +42,7 @@ class TransactionItemsController < ApplicationController
   
   def index
     authorize! :show, @account
-    @transaction_items = @account.transaction_items.by_index.paginate(page: params[:page], per_page: 8)
+    @transaction_items = @account.transaction_items.by_index.paginate(page: params[:page], per_page: params[:per_page] || 8)
     respond_with @transaction_items
   end
   
