@@ -31,13 +31,19 @@
           Accounts
 
         %table.table.table-striped
-          %tr{ 'ng-repeat' => 'record in accountsCtrl.displayRecords', 'ng-class' => '{"header-row": record.isHeader}' }
-            %td.col-md-8
-              %div{ 'ng-class' => 'record.cssClass'} {{ record.caption }}
-            %td.col-md-2.text-right {{ record.balance | number:2 }}
+          %tr{ 'ng-repeat' => 'record in displayRecords', 'ng-class' => '{"header-row": record.isHeader()}', 'ng-hide' => 'record.isHidden' }
+            %td.col-md-1
+              %div{ 'ng-hide' => 'record.isHeader() || record.isLeaf()' }
+                %button.btn.btn-default.btn-xs{ 'ng-hide' => 'record.isExpanded', 'ng-click' => 'record.expand()' }
+                  %span.glyphicon.glyphicon-chevron-right{ 'arial-hidden' => true }
+                %button.btn.btn-default.btn-xs{ 'ng-show' => 'record.isExpanded', 'ng-click' => 'record.collapse()' }
+                  %span.glyphicon.glyphicon-chevron-down{ 'arial-hidden' => true }
+            %td.col-md-7
+              %div{ 'ng-class' => 'record.cssClass()'} {{ record.caption() }}
+            %td.col-md-2.text-right {{ record.balance() | number:2 }}
             %td.col-md-2
               .btn-group
-                %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id', 'ng-click' => 'accountsCtrl.edit(record.id)' }
+                %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id()', 'ng-click' => 'accountsCtrl.edit(record.id())' }
                   %span.glyphicon.glyphicon-edit{ 'arial-hidden' => 'true' }
-                %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id', 'ng-click' => 'accountsCtrl.delete(record.id)', 'confirmation-needed' => 'Are you sure you want to delete this account?' }
+                %button.btn.btn-xs.btn-default{ 'ng-if' => 'record.id()', 'ng-click' => 'accountsCtrl.delete(record.id())', 'confirmation-needed' => 'Are you sure you want to delete this account?' }
                   %span.glyphicon.glyphicon-remove{ 'arial-hidden' => 'true' }
