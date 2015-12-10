@@ -12,7 +12,7 @@
 app = angular.module 'moneyApp', ['search', 'entities', 'accounts', 'register', 'transactions']
 
 app.directive 'confirmationNeeded', ->
-  return {
+  {
     priority: 1,
     terminal: true,
     link: (scope, element, attr) ->
@@ -53,4 +53,16 @@ app.directive 'convertToDate', ($filter) ->
         new Date(val)
       ngModel.$formatters.push (val) ->
         $filter('date') val, 'M/d/yyyy'
+  }
+
+app.directive 'infiniteScroll', ->
+  {
+    restrict: 'A',
+    link: (scope, element, attrs) ->
+      elem = element[0]
+      element.on 'scroll', _.throttle ->
+        availableHeight = elem.scrollHeight - (elem.scrollTop + elem.offsetHeight)
+        scope.$apply(attrs.infiniteScroll) if availableHeight < elem.offsetHeight
+        return
+      , 200
   }
