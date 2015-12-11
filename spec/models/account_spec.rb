@@ -113,22 +113,36 @@ describe Account do
   
   describe '#balance_as_of' do
     let!(:t1) do
-      FactoryGirl.create(:transaction,  entity: entity,
-                                        transaction_date: '2013-01-02', 
+      TransactionManager.create entity, transaction_date: '2013-01-02', 
                                         description: 'Paycheck', 
-                                        credit_account: salary,
-                                        debit_account: checking,
-                                        amount: 3000
-                                        )
+                                        items_attributes: [
+                                          {
+                                            action: TransactionItem.credit,
+                                            account: salary,
+                                            amount: 3000
+                                          },
+                                          {
+                                            action: TransactionItem.debit,
+                                            account: checking,
+                                            amount: 3000
+                                          }
+                                        ]
     end
     let!(:t2) do
-      FactoryGirl.create(:transaction,  entity: entity,
-                                        transaction_date: '2013-01-03', 
+      TransactionManager.create entity, transaction_date: '2013-01-03', 
                                         description: 'Kroger',
-                                        credit_account: checking,
-                                        debit_account: groceries,
-                                        amount: 50
-                                        )
+                                        items_attributes: [
+                                          {
+                                            action: TransactionItem.credit,
+                                            account: checking,
+                                            amount: 50
+                                          },
+                                          {
+                                            action: TransactionItem.debit,
+                                            account: groceries,
+                                            amount: 50
+                                          }
+                                        ]
     end
     
     it 'calculates the balance as the the specified date' do
@@ -140,22 +154,22 @@ describe Account do
   
   describe '#balance_between' do
     let!(:t1) do
-      entity.transactions.create!(transaction_date: '2013-01-02', 
-                                  description: 'Paycheck', 
-                                  items_attributes: [
-                                    {account_id: salary.id, action: 'credit', amount: 3000}, 
-                                    {account_id: checking.id, action: 'debit', amount: 3000}
-                                  ]
-                                  )
+      TransactionManager.create(entity, transaction_date: '2013-01-02',
+                                description: 'Paycheck',
+                                items_attributes: [
+                                  {account_id: salary.id, action: 'credit', amount: 3000},
+                                  {account_id: checking.id, action: 'debit', amount: 3000}
+                                ]
+                               )
     end
     let!(:t2) do
-      entity.transactions.create!(transaction_date: '2013-01-03', 
-                                  description: 'Kroger', 
-                                  items_attributes: [
-                                    {account_id: checking.id, action: 'credit', amount: 50}, 
-                                    {account_id: groceries.id, action: 'debit', amount: 50}
-                                  ]
-                                  )
+      TransactionManager.create(entity, transaction_date: '2013-01-03',
+                                description: 'Kroger',
+                                items_attributes: [
+                                  {account_id: checking.id, action: 'credit', amount: 50},
+                                  {account_id: groceries.id, action: 'debit', amount: 50}
+                                ]
+                               )
     end
     
     it 'calculates the balance between the specified dates' do
