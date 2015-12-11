@@ -27,21 +27,30 @@ describe BudgetReport do
     result
   end
 
-  let!(:t1) { FactoryGirl.create(:transaction, transaction_date: '2013-01-01', entity: entity,
-					       items_attributes: [
-						 { action: TransactionItem.credit, account_id: salary.id, amount: 5_000 },
-						 { action: TransactionItem.debit, account_id: checking.id, amount: 5_000 }
-					       ])}
-  let!(:t2) { FactoryGirl.create(:transaction, transaction_date: '2013-01-15', entity: entity,
-					       items_attributes: [
-						 { action: TransactionItem.credit, account_id: salary.id, amount: 4_900 },
-						 { action: TransactionItem.debit, account_id: checking.id, amount: 4_900 }
-					       ])}
-  let!(:t3) { FactoryGirl.create(:transaction, transaction_date: '2013-01-5', entity: entity,
-					       items_attributes: [
-						 { action: TransactionItem.credit, account_id: checking.id, amount: 1_200 },
-						 { action: TransactionItem.debit, account_id: rent.id, amount: 1_200 }
-					       ])}
+  let!(:t1) do
+    TransactionManager.create entity, transaction_date: '2013-01-01',
+                                      description: 'Paycheck',
+                                      items_attributes: [
+                                        { action: TransactionItem.credit, account_id: salary.id, amount: 5_000 },
+                                        { action: TransactionItem.debit, account_id: checking.id, amount: 5_000 }
+                                      ]
+  end
+  let!(:t2) do
+    TransactionManager.create entity, transaction_date: '2013-01-15',
+                                      description: 'Paycheck',
+                                      items_attributes: [
+                                        { action: TransactionItem.credit, account_id: salary.id, amount: 4_900 },
+                                        { action: TransactionItem.debit, account_id: checking.id, amount: 4_900 }
+					                            ]
+  end
+  let!(:t3) do
+    TransactionManager.create entity, transaction_date: '2013-01-5',
+                                      description: 'Landlord',
+                                      items_attributes: [
+                                        { action: TransactionItem.credit, account_id: checking.id, amount: 1_200 },
+                                        { action: TransactionItem.debit, account_id: rent.id, amount: 1_200 }
+                                      ]
+  end
 
   it 'is creatable given a budget and a filter' do
     report = BudgetReport.new(budget, filter)
