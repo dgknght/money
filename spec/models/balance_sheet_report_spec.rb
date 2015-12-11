@@ -7,74 +7,74 @@ describe BalanceSheetReport do
   let (:savings) { FactoryGirl.create(:asset_account, entity_id: entity.id, name: 'Savings') }
   let (:car) { FactoryGirl.create(:asset_account, entity_id: entity.id, name: 'Car', parent_id: savings.id) }
   let (:reserve) { FactoryGirl.create(:asset_account, entity_id: entity.id, name: 'Reserve', parent_id: savings.id) }
-  
+
   let (:credit_card) { FactoryGirl.create(:liability_account, entity_id: entity.id, name: 'Credit Card', balance: 2000) }
   let (:home_loan) { FactoryGirl.create(:liability_account, entity_id: entity.id, name: 'Home Loan', balance: 175000) }
-  
+
   let (:opening_balances) { FactoryGirl.create(:equity_account, entity_id: entity.id, name: 'Opening Balances', balance: 10000) }
-  
+
   let!(:checking_opening) do
-    entity.transactions.create!(transaction_date: '2012-12-31', 
-                                description: 'opening balances', 
-                                items_attributes: [
-                                  {action: TransactionItem.credit, account_id: opening_balances.id, amount: 2000}, 
-                                  {action: TransactionItem.debit, account_id: checking.id, amount: 2000}
-                                ]
-                                )
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                              description: 'opening balances',
+                              items_attributes: [
+                                {action: TransactionItem.credit, account_id: opening_balances.id, amount: 2000},
+                                {action: TransactionItem.debit, account_id: checking.id, amount: 2000}
+                              ]
+                             )
   end
   let!(:home_opening) do
-    entity.transactions.create!(transaction_date: '2012-12-31', 
-                                description: 'opening balances', 
-                                items_attributes: [
-                                  {action: TransactionItem.credit, account_id: opening_balances.id, amount: 200000}, 
-                                  {action: TransactionItem.debit, account_id: home.id, amount: 200000}
-                                ]
-                                )
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                              description: 'opening balances',
+                              items_attributes: [
+                                {action: TransactionItem.credit, account_id: opening_balances.id, amount: 200000},
+                                {action: TransactionItem.debit, account_id: home.id, amount: 200000}
+                              ]
+                             )
   end
   let!(:car_opening) do
-    entity.transactions.create!(transaction_date: '2012-12-31', 
-                                description: 'opening balances', 
-                                items_attributes: [
-                                  {action: TransactionItem.credit, account_id: opening_balances.id, amount: 10000}, 
-                                  {action: TransactionItem.debit, account_id: car.id, amount: 10000}
-                                ]
-                                )
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                              description: 'opening balances',
+                              items_attributes: [
+                                {action: TransactionItem.credit, account_id: opening_balances.id, amount: 10000},
+                                {action: TransactionItem.debit, account_id: car.id, amount: 10000}
+                              ]
+                             )
   end
   let!(:reserve_opening) do
-    entity.transactions.create!(transaction_date: '2012-12-31', 
-                                description: 'opening balances', 
-                                items_attributes: [
-                                  {action: TransactionItem.credit, account_id: opening_balances.id, amount: 30000}, 
-                                  {action: TransactionItem.debit, account_id: reserve.id, amount: 30000}
-                                ]
-                                )
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                              description: 'opening balances',
+                              items_attributes: [
+                                {action: TransactionItem.credit, account_id: opening_balances.id, amount: 30000},
+                                {action: TransactionItem.debit, account_id: reserve.id, amount: 30000}
+                              ]
+                             )
   end
   let!(:credit_card_opening) do
-    entity.transactions.create!(transaction_date: '2012-12-31', 
-                                description: 'opening balances', 
-                                items_attributes: [
-                                  {action: TransactionItem.credit, account_id: credit_card.id, amount: 2000}, 
-                                  {action: TransactionItem.debit, account_id: opening_balances.id, amount: 2000}
-                                ]
-                                )
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                              description: 'opening balances',
+                              items_attributes: [
+                                {action: TransactionItem.credit, account_id: credit_card.id, amount: 2000},
+                                {action: TransactionItem.debit, account_id: opening_balances.id, amount: 2000}
+                              ]
+                             )
   end
   let!(:home_loan_opening) do
-    entity.transactions.create!(transaction_date: '2012-12-31', 
-                                description: 'opening balances', 
-                                items_attributes: [
-                                  {action: TransactionItem.credit, account_id: home_loan.id, amount: 175000}, 
-                                  {action: TransactionItem.debit, account_id: opening_balances.id, amount: 175000}
-                                ]
-                                )
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                              description: 'opening balances',
+                              items_attributes: [
+                                {action: TransactionItem.credit, account_id: home_loan.id, amount: 175000},
+                                {action: TransactionItem.debit, account_id: opening_balances.id, amount: 175000}
+                              ]
+                             )
   end
-  
+
   let(:filter) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: true) }
-    
+
   it 'is creatable with a valid filter' do
     report = BalanceSheetReport.new(entity, filter)
     expect(report).to_not be_nil
   end
-  
+
   it 'renders a list of report rows' do
     report = BalanceSheetReport.new(entity, filter)
     expect(report.content).to eq([
