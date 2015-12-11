@@ -121,14 +121,9 @@ class Account < ActiveRecord::Base
   end
   
   def balance_between(start_date, end_date)
-    sum_of_credits = sum_of_credit_transaction_items(start_date, end_date)
-    sum_of_debits = sum_of_debit_transaction_items(start_date, end_date)
-
-    if left_side?
-      sum_of_debits - sum_of_credits
-    else
-      sum_of_credits - sum_of_debits
-    end
+    basis_item = transaction_items.joins(:owning_transaction).where('transactions.transaction_date < ?', start_date).order('transaction_items."index" DESC').first
+    last_item = transaction_items.joins(:owning_transaction).where('transactions.transaction_date <= ?', end_date).order('transaction_items."index" DESC').first
+    return (last_item.try(:balance) || 0) - (basis_item.try(:balance) || 0)
   end
   
   def balance_with_children

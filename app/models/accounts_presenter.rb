@@ -39,6 +39,7 @@ class AccountsPresenter
     raise 'Must specify an entity' unless entity && entity.respond_to?(:accounts)
     @entity = entity
     @hide_zero_balances = options.fetch(:hide_zero_balances, false)
+    @hide_commodity_accounts = options.fetch(:hide_commodity_accounts, true)
   end
 
   private
@@ -67,7 +68,10 @@ class AccountsPresenter
   end
 
   def include_record?(record)
-    !(@hide_zero_balances && record.depth > 0 && record.balance.zero?)
+    filters = []
+    filters << ->(r) {r.balance.zero?} if @hide_zero_balances
+    filters << ->(r) {r.account.try(:commodity?) || false} if @hide_commodity_accounts
+    filters.none?{|f| f(record)}
   end
 
   def retained_earnings(total_income, total_expense)
