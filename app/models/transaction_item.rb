@@ -112,4 +112,8 @@ class TransactionItem < ActiveRecord::Base
     def polarity
       account.polarity(action)
     end
+
+    def to_s
+      "#{action} #{account.name} #{amount} (#{balance}) on #{owning_transaction.transaction_date}"
+    end
 end
