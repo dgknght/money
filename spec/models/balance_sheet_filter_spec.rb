@@ -17,4 +17,11 @@ describe BalanceSheetFilter do
       expect(filter.as_of).to eq(Date.today)
     end
   end
+
+  describe 'hide_zero_balances' do
+    it 'defaults to true' do
+      filter = BalanceSheetFilter.new
+      expect(filter.hide_zero_balances).to be true
+    end
+  end
 end
