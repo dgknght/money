@@ -69,9 +69,9 @@ class AccountsPresenter
 
   def include_record?(record)
     filters = []
-    filters << ->(r) {r.balance.zero?} if @hide_zero_balances
+    filters << ->(r) {r.depth > 0 && r.balance.zero?} if @hide_zero_balances
     filters << ->(r) {r.account.try(:commodity?) || false} if @hide_commodity_accounts
-    filters.none?{|f| f(record)}
+    filters.none?{|f| f.call(record)}
   end
 
   def retained_earnings(total_income, total_expense)
