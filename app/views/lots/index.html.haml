@@ -3,6 +3,11 @@
 
 .row
   .col-md-8
+    %ul#account_menu.nav.nav-tabs
+      %li.active{ role: "presentation" }
+        =link_to 'Lots', account_lots_path(@account), title: 'Click here to view lots for this commodity.'
+      %li{ role: "presentation" }
+        =link_to 'Transactions', account_transaction_items_path(@account), title: 'Click here to view transaction items for this account.'
     %table#lots_table.table.table-striped
       %tr
         %th.text-right Purchase date

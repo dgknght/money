@@ -1,4 +1,3 @@
-@wip
 Feature: Reverse a commodity purchase
   As a user,
   In order to correct a mistake,
@@ -65,7 +64,13 @@ Feature: Reverse a commodity purchase
 
     # Also need to confirm the lot exists, and then is destroyed later
 
+    When I click on "401k"
+    Then I should see "401k Holdings" within the page title
+
     When I click on "KSS"
+    Then I should see "KSS Lots in 401k" within the page title
+
+    When I click "Transactions" within the account menu
     Then I should see "KSS Transaction items" within the page title
     And I should see the following transaction items table
       |     Date | Description                               | Account | Rec. |   Amount |  Balance |

@@ -3,7 +3,7 @@
 
 .row
   .col-md-6
-    %ul.nav.nav-tabs
+    %ul#account_menu.nav.nav-tabs
       %li.active{role: 'presentation'}= link_to 'Holdings', holdings_account_path(@account), title: 'Click here to view holdings for this account.'
       %li{role: 'presentation'}= link_to 'Transactions', account_transaction_items_path(@account), title: 'Click here to view transaction items for this account.'
 

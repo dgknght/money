@@ -10,6 +10,7 @@ module NavigationHelpers
       when /the page subtitle/ then "#page_subtitle"
       when /the main content/ then "#main-content"
       when /the navigation/ then "nav"
+      when /the account menu/ then "#account_menu"
       when /the (.*) table/ then "##{$1}_table"
       when /the account row for "([^"]+)"/ then "#account_#{account_id($1)}"
       when /the commodity row for "([^"]+)"/ then "#commodity_#{commodity_id($1)}"
