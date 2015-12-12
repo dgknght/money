@@ -115,7 +115,7 @@ describe GnucashImporter do
 
     it 'results in a balance sheet report with correct balances' do
       GnucashImporter.new(attributes).import!
-      report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2015-02-28'))
+      report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2015-02-28', hide_zero_balances: false))
       expected = [{account: "Assets"              , balance: "249,711.00", depth: 0},
                   {account: "Current Assets"      , balance:   "2,688.00", depth: 1},
                   {account: "Checking"            , balance:   "2,688.00", depth: 2},
