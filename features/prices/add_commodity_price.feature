@@ -69,7 +69,6 @@ Feature: Add a commodity price
       | Name             |  Balance |
       | Assets           | 2,000.00 |
       | 401k             | 2,000.00 |
-      | KSS              | 1,067.00 |
       | Liabilities      |     0.00 |
       | Equity           | 2,000.00 |
       | Opening Balances | 2,000.00 |
@@ -105,7 +104,6 @@ Feature: Add a commodity price
       | Name             |  Balance |
       | Assets           | 2,067.00 |
       | 401k             | 2,067.00 |
-      | KSS              | 1,134.00 |
       | Liabilities      |     0.00 |
       | Equity           | 2,067.00 |
       | Opening Balances | 2,000.00 |

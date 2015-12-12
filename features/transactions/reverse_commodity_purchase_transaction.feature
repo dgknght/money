@@ -1,3 +1,4 @@
+@wip
 Feature: Reverse a commodity purchase
   As a user,
   In order to correct a mistake,
@@ -54,7 +55,6 @@ Feature: Reverse a commodity purchase
       | Name                     |   Balance |
       | Assets                   | 10,000.00 |
       | 401k                     | 10,000.00 |
-      | KSS                      |  1,000.00 |
       | Liabilities              |      0.00 |
       | Equity                   | 10,000.00 |
       | Opening balances         | 10,000.00 |

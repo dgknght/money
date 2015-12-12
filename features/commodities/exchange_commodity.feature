@@ -34,7 +34,6 @@ Feature: Exchange commodity shares
       | Name             |  Balance |
       | Assets           | 2,000.00 |
       | IRA              | 2,000.00 |
-      | KSS              | 1,000.00 |
       | Liabilities      |     0.00 |
       | Equity           | 2,000.00 |
       | Opening balances | 2,000.00 |
@@ -69,8 +68,6 @@ Feature: Exchange commodity shares
       | Name             |  Balance |
       | Assets           | 2,000.00 |
       | IRA              | 2,000.00 |
-      | KSE              | 1,000.00 |
-      | KSS              |     0.00 |
       | Liabilities      |     0.00 |
       | Equity           | 2,000.00 |
       | Opening balances | 2,000.00 |

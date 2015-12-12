@@ -32,7 +32,6 @@ Feature: Record a stock split
     | Name             |   Balance |
     | Assets           | 10,000.00 |
     | IRA              | 10,000.00 |
-    | KSS              |  2,000.00 |
     | Liabilities      |      0.00 |
     | Equity           | 10,000.00 |
     | Opening balances | 10,000.00 |

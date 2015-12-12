@@ -69,7 +69,6 @@ Feature: Enter a commodity purchase transaction As a user,
       | Name                |  Balance |
       | Assets              | 4,990.00 |
       | 401k                | 4,990.00 |
-      | KSS                 | 1,100.00 |
       | Liabilities         |     0.00 |
       | Equity              | 4,990.00 |
       | Opening Balances    | 5,000.00 |

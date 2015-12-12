@@ -34,7 +34,6 @@ Feature: Transfer an equity lot
       | Name             |  Balance |
       | Assets           | 2,000.00 |
       | 401k             | 2,000.00 |
-      | KSS              | 1,000.00 |
       | IRA              |     0.00 |
       | Liabilities      |     0.00 |
       | Equity           | 2,000.00 |
@@ -70,9 +69,7 @@ Feature: Transfer an equity lot
       | Name             |  Balance |
       | Assets           | 2,000.00 |
       | 401k             | 1,000.00 |
-      | KSS              |     0.00 |
       | IRA              | 1,000.00 |
-      | KSS              | 1,000.00 |
       | Liabilities      |     0.00 |
       | Equity           | 2,000.00 |
       | Opening balances | 2,000.00 |

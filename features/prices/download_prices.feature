@@ -47,8 +47,6 @@ Feature: Download prices
       | Name             |  Balance |
       | Assets           | 5,000.00 |
       | 401k             | 5,000.00 |
-      | AAPL             | 3,000.00 |
-      | KSS              | 1,000.00 |
       | Liabilities      |     0.00 |
       | Equity           | 5,000.00 |
       | Opening balances | 5,000.00 |
@@ -72,8 +70,6 @@ Feature: Download prices
       | Name             |  Balance |
       | Assets           | 4,920.00 |
       | 401k             | 4,920.00 |
-      | AAPL             | 2,845.00 |
-      | KSS              | 1,075.00 |
       | Liabilities      |     0.00 |
       | Equity           | 4,920.00 |
       | Opening balances | 5,000.00 |
