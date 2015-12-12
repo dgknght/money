@@ -16,4 +16,3 @@
 //= require turbolinks
 //= require common
 //= require bootstrap.min
-//= require ui-bootstrap-tpls-0.14.3.min
