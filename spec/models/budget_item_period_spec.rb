@@ -41,26 +41,38 @@ describe BudgetItemPeriod do
   end
 
   describe 'actual_amount' do
-    let!(:t1) { FactoryGirl.create(:transaction, transaction_date: '2013-12-31', entity: entity,
-						items_attributes: [
-						  { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
-						  { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
-						])}
-    let!(:t2) { FactoryGirl.create(:transaction, transaction_date: '2014-01-05', entity: entity,
-						items_attributes: [
-						  { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
-						  { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
-						])}
-    let!(:t3) { FactoryGirl.create(:transaction, transaction_date: '2014-01-25', entity: entity,
-						items_attributes: [
-						  { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
-						  { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
-						])}
-    let!(:t4) { FactoryGirl.create(:transaction, transaction_date: '2014-02-01', entity: entity,
-						items_attributes: [
-						  { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
-						  { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
-						])}
+    let!(:t1) do
+      TransactionManager.create(entity, transaction_date: '2013-12-31',
+                                        description: 'On the Border',
+                                        items_attributes: [
+                                          { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
+                                          { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
+                                        ])
+    end
+    let!(:t2) do
+      TransactionManager.create(entity, transaction_date: '2014-01-05',
+                                        description: 'Fuddruckers',
+                                        items_attributes: [
+                                          { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
+                                          { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
+                                        ])
+    end
+    let!(:t3) do
+      TransactionManager.create(entity, transaction_date: '2014-01-25',
+                                        description: 'On the Border',
+                                        items_attributes: [
+                                          { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
+                                          { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
+                                        ])
+    end
+    let!(:t4) do
+      TransactionManager.create(entity, transaction_date: '2014-02-01',
+                                        description: 'On the Border',
+                                        items_attributes: [
+                                          { account_id: checking.id, action: TransactionItem.credit, amount: 50 },
+                                          { account_id: dining.id,   action: TransactionItem.debit,  amount: 50 },
+                                        ])
+    end
     it 'returns the actual amount for the specified account in the specified time' do
       period = BudgetItemPeriod.create!(attributes)
       expect(period.actual_amount).to eq(100)
