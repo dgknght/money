@@ -7,7 +7,7 @@
 
       .panel-body
         =form_tag(balance_sheet_entity_path(@entity), method: :get, class: 'form-inline') do
-          =text_field_tag :as_of, @filter.as_of, class: 'date_field form-control', placeholder: 'As of'
+          =text_field_tag :as_of, format_date(@filter.as_of), class: 'date_field form-control', placeholder: 'As of'
           .checkbox
             %label
               =check_box_tag :hide_zero_balances, 1, @filter.hide_zero_balances
