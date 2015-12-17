@@ -307,6 +307,7 @@ class Account < ActiveRecord::Base
   end
 
   def nearest_price(date)
+    date = ensure_date(date)
     commodity = entity.commodities.find_by_symbol(name)
     commodity.prices.
       sort{|p1, p2| p2.trade_date <=> p1.trade_date}.
