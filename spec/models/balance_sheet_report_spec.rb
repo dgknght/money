@@ -15,7 +15,7 @@ describe BalanceSheetReport do
 
   let (:opening_balances) { FactoryGirl.create(:equity_account, entity_id: entity.id, name: 'Opening Balances', balance: 10000) }
 
-  let (:kss) { FactoryGirl.create(:commodity, name: 'Knight Software Services', symbol: 'KSS') }
+  let!(:kss) { FactoryGirl.create(:commodity, entity: entity, name: 'Knight Software Services', symbol: 'KSS') }
 
   let!(:checking_opening) do
     TransactionManager.create(entity, transaction_date: '2012-12-31',
@@ -81,6 +81,21 @@ describe BalanceSheetReport do
                                     )
   end
 
+  let!(:purchase_kss) do
+    CommodityTransactionCreator.new(entity: entity,
+                                    transaction_date: '2013-01-02',
+                                    account: ira,
+                                    action: CommodityTransactionCreator.buy,
+                                    symbol: kss.symbol,
+                                    shares: 100,
+                                    value: 1_000).create!
+  end
+
+  let!(:kss_price_update) do
+    kss.prices.create!(trade_date: '2013-02-01',
+                       price: 11)
+  end
+
   let(:filter) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: true) }
   let(:filter_with_zeros) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: false) }
 
@@ -108,6 +123,53 @@ describe BalanceSheetReport do
       { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
       { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
       { account: 'Liabilities + Equity',  balance: '252,000.00', depth: 0 }
+    ])
+  end
+
+  it 'accounts for commodity purchases' do
+    report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2013-01-31', hide_zero_balances: false))
+    # no change in value because the commodity is worth exactly what we paid
+    # for it on the day we bought it
+    expect(report.content).to eq([
+      { account: 'Assets',                balance: '252,000.00', depth: 0 },
+      { account: 'Cash',                  balance:       '0.00', depth: 1 },
+      { account: 'Checking',              balance:   '2,000.00', depth: 1 },
+      { account: 'Home',                  balance: '200,000.00', depth: 1 },
+      { account: 'IRA',                   balance:  '10,000.00', depth: 1 },
+      { account: 'Savings',               balance:  '40,000.00', depth: 1 },
+      { account: 'Car',                   balance:  '10,000.00', depth: 2 },
+      { account: 'Reserve',               balance:  '30,000.00', depth: 2 },
+      { account: 'Liabilities',           balance: '177,000.00', depth: 0 },
+      { account: 'Credit Card',           balance:   '2,000.00', depth: 1 },
+      { account: 'Home Loan',             balance: '175,000.00', depth: 1 },
+      { account: 'Equity',                balance:  '75,000.00', depth: 0 },
+      { account: 'Opening Balances',      balance:  '75,000.00', depth: 1 },
+      { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
+      { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
+      { account: 'Liabilities + Equity',  balance: '252,000.00', depth: 0 }
+    ])
+  end
+
+  it 'accounts for commodity price updates' do
+    report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2013-02-28', hide_zero_balances: false))
+    # increased price causes the value of the asset account to rise and an increase in unrealized gains
+    expect(report.content).to eq([
+      { account: 'Assets',                balance: '252,100.00', depth: 0 },
+      { account: 'Cash',                  balance:       '0.00', depth: 1 },
+      { account: 'Checking',              balance:   '2,000.00', depth: 1 },
+      { account: 'Home',                  balance: '200,000.00', depth: 1 },
+      { account: 'IRA',                   balance:  '10,100.00', depth: 1 },
+      { account: 'Savings',               balance:  '40,000.00', depth: 1 },
+      { account: 'Car',                   balance:  '10,000.00', depth: 2 },
+      { account: 'Reserve',               balance:  '30,000.00', depth: 2 },
+      { account: 'Liabilities',           balance: '177,000.00', depth: 0 },
+      { account: 'Credit Card',           balance:   '2,000.00', depth: 1 },
+      { account: 'Home Loan',             balance: '175,000.00', depth: 1 },
+      { account: 'Equity',                balance:  '75,100.00', depth: 0 },
+      { account: 'Opening Balances',      balance:  '75,000.00', depth: 1 },
+      { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
+      { account: 'Unrealized Gains',      balance:     '100.00', depth: 1 },
+      { account: 'Liabilities + Equity',  balance: '252,100.00', depth: 0 }
     ])
   end
 
