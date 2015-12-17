@@ -8,11 +8,14 @@ describe BalanceSheetReport do
   let (:savings) { FactoryGirl.create(:asset_account, entity_id: entity.id, name: 'Savings') }
   let (:car) { FactoryGirl.create(:asset_account, entity_id: entity.id, name: 'Car', parent_id: savings.id) }
   let (:reserve) { FactoryGirl.create(:asset_account, entity_id: entity.id, name: 'Reserve', parent_id: savings.id) }
+  let (:ira) { FactoryGirl.create(:commodities_account, entity_id: entity.id, name: 'IRA') }
 
   let (:credit_card) { FactoryGirl.create(:liability_account, entity_id: entity.id, name: 'Credit Card', balance: 2000) }
   let (:home_loan) { FactoryGirl.create(:liability_account, entity_id: entity.id, name: 'Home Loan', balance: 175000) }
 
   let (:opening_balances) { FactoryGirl.create(:equity_account, entity_id: entity.id, name: 'Opening Balances', balance: 10000) }
+
+  let (:kss) { FactoryGirl.create(:commodity, name: 'Knight Software Services', symbol: 'KSS') }
 
   let!(:checking_opening) do
     TransactionManager.create(entity, transaction_date: '2012-12-31',
@@ -68,6 +71,15 @@ describe BalanceSheetReport do
                               ]
                              )
   end
+  let!(:ira_opening) do
+    TransactionManager.create(entity, transaction_date: '2012-12-31',
+                                      description: 'opening balances',
+                                      items_attributes: [
+                                        {action: TransactionItem.debit, account_id: ira.id, amount: 10_000},
+                                        {action: TransactionItem.credit, account_id: opening_balances.id, amount: 10_000}
+                                      ]
+                                    )
+  end
 
   let(:filter) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: true) }
   let(:filter_with_zeros) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: false) }
@@ -80,21 +92,22 @@ describe BalanceSheetReport do
   it 'renders a list of report rows' do
     report = BalanceSheetReport.new(entity, filter_with_zeros)
     expect(report.content).to eq([
-      { account: 'Assets',                balance: '242,000.00', depth: 0 },
+      { account: 'Assets',                balance: '252,000.00', depth: 0 },
       { account: 'Cash',                  balance:       '0.00', depth: 1 },
       { account: 'Checking',              balance:   '2,000.00', depth: 1 },
       { account: 'Home',                  balance: '200,000.00', depth: 1 },
+      { account: 'IRA',                   balance:  '10,000.00', depth: 1 },
       { account: 'Savings',               balance:  '40,000.00', depth: 1 },
       { account: 'Car',                   balance:  '10,000.00', depth: 2 },
       { account: 'Reserve',               balance:  '30,000.00', depth: 2 },
       { account: 'Liabilities',           balance: '177,000.00', depth: 0 },
       { account: 'Credit Card',           balance:   '2,000.00', depth: 1 },
       { account: 'Home Loan',             balance: '175,000.00', depth: 1 },
-      { account: 'Equity',                balance:  '65,000.00', depth: 0 },
-      { account: 'Opening Balances',      balance:  '65,000.00', depth: 1 },
+      { account: 'Equity',                balance:  '75,000.00', depth: 0 },
+      { account: 'Opening Balances',      balance:  '75,000.00', depth: 1 },
       { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
       { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
-      { account: 'Liabilities + Equity',  balance: '242,000.00', depth: 0 }
+      { account: 'Liabilities + Equity',  balance: '252,000.00', depth: 0 }
     ])
   end
 
@@ -102,20 +115,21 @@ describe BalanceSheetReport do
     it 'omits records with a balance of zero' do
       report = BalanceSheetReport.new(entity, filter)
       expect(report.content).to eq([
-        { account: 'Assets',                balance: '242,000.00', depth: 0 },
+        { account: 'Assets',                balance: '252,000.00', depth: 0 },
         { account: 'Checking',              balance:   '2,000.00', depth: 1 },
         { account: 'Home',                  balance: '200,000.00', depth: 1 },
+        { account: 'IRA',                   balance:  '10,000.00', depth: 1 },
         { account: 'Savings',               balance:  '40,000.00', depth: 1 },
         { account: 'Car',                   balance:  '10,000.00', depth: 2 },
         { account: 'Reserve',               balance:  '30,000.00', depth: 2 },
         { account: 'Liabilities',           balance: '177,000.00', depth: 0 },
         { account: 'Credit Card',           balance:   '2,000.00', depth: 1 },
         { account: 'Home Loan',             balance: '175,000.00', depth: 1 },
-        { account: 'Equity',                balance:  '65,000.00', depth: 0 },
-        { account: 'Opening Balances',      balance:  '65,000.00', depth: 1 },
+        { account: 'Equity',                balance:  '75,000.00', depth: 0 },
+        { account: 'Opening Balances',      balance:  '75,000.00', depth: 1 },
         { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
         { account: 'Unrealized Gains',      balance:       '0.00', depth: 1 },
-        { account: 'Liabilities + Equity',  balance: '242,000.00', depth: 0 }
+        { account: 'Liabilities + Equity',  balance: '252,000.00', depth: 0 }
       ])
     end
   end
