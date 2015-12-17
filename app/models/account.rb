@@ -115,7 +115,6 @@ class Account < ActiveRecord::Base
   def as_json(options)
     super({ methods: [:depth, :path] })
   end
-  
   def balance_as_of(date)
     balance_between START_OF_TIME, date
   end
@@ -148,7 +147,7 @@ class Account < ActiveRecord::Base
   end
 
   def cost_with_children_as_of(date)
-    return children.reduce(cost_as_of(date)) { |sum, child| sum + child.cost_with_children_as_of(date) }
+    children.reduce(cost_as_of(date)) { |sum, child| sum + child.cost_with_children_as_of(date) }
   end
 
   # Adjusts the balance of the account by the specified amount
@@ -276,13 +275,13 @@ class Account < ActiveRecord::Base
     self.parent_id.nil?
   end
 
-  def shares(force_reload = false)
-    shares_as_of(Time.now.utc, force_reload)
+  def shares
+    shares_as_of(Time.now.utc)
   end
 
-  def shares_as_of(date, force_reload = false)
+  def shares_as_of(date)
     date = ensure_date(date)
-    lots(force_reload).
+    lots.
       select{|l| l.purchase_date <= date}.
       reduce(0){|sum, lot| sum + lot.shares_as_of(date)}
   end
