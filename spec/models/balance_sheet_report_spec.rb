@@ -95,6 +95,10 @@ describe BalanceSheetReport do
     kss.prices.create!(trade_date: '2013-02-01',
                        price: 11)
   end
+  let!(:kss_price_update_2) do
+    kss.prices.create!(trade_date: '2013-03-01',
+                       price: 9)
+  end
 
   let(:filter) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: true) }
   let(:filter_with_zeros) { BalanceSheetFilter.new(as_of: Date.civil(2012, 12, 31), hide_zero_balances: false) }
@@ -150,7 +154,7 @@ describe BalanceSheetReport do
     ])
   end
 
-  it 'accounts for commodity price updates' do
+  it 'accounts for commodity price increases' do
     report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2013-02-28', hide_zero_balances: false))
     # increased price causes the value of the asset account to rise and an increase in unrealized gains
     expect(report.content).to eq([
@@ -170,6 +174,29 @@ describe BalanceSheetReport do
       { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
       { account: 'Unrealized Gains',      balance:     '100.00', depth: 1 },
       { account: 'Liabilities + Equity',  balance: '252,100.00', depth: 0 }
+    ])
+  end
+
+  it 'accounts for commodity price decreases' do
+    report = BalanceSheetReport.new(entity, BalanceSheetFilter.new(as_of: '2013-03-31', hide_zero_balances: false))
+    # increased price causes the value of the asset account to rise and an increase in unrealized gains
+    expect(report.content).to eq([
+      { account: 'Assets',                balance: '251,900.00', depth: 0 },
+      { account: 'Cash',                  balance:       '0.00', depth: 1 },
+      { account: 'Checking',              balance:   '2,000.00', depth: 1 },
+      { account: 'Home',                  balance: '200,000.00', depth: 1 },
+      { account: 'IRA',                   balance:   '9,900.00', depth: 1 },
+      { account: 'Savings',               balance:  '40,000.00', depth: 1 },
+      { account: 'Car',                   balance:  '10,000.00', depth: 2 },
+      { account: 'Reserve',               balance:  '30,000.00', depth: 2 },
+      { account: 'Liabilities',           balance: '177,000.00', depth: 0 },
+      { account: 'Credit Card',           balance:   '2,000.00', depth: 1 },
+      { account: 'Home Loan',             balance: '175,000.00', depth: 1 },
+      { account: 'Equity',                balance:  '74,900.00', depth: 0 },
+      { account: 'Opening Balances',      balance:  '75,000.00', depth: 1 },
+      { account: 'Retained Earnings',     balance:       '0.00', depth: 1 },
+      { account: 'Unrealized Gains',      balance:    '-100.00', depth: 1 },
+      { account: 'Liabilities + Equity',  balance: '251,900.00', depth: 0 }
     ])
   end
 
