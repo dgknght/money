@@ -337,6 +337,19 @@ class Account < ActiveRecord::Base
     TransactionItem.find(ids)
   end
 
+  memoize [
+    :balance_as_of,
+    :balance_with_children_as_of,
+    :cost_as_of,
+    :cost_with_children_as_of,
+    :gains_as_of,
+    :gains_with_children_as_of,
+    :shares_as_of,
+    :value_as_of,
+    :value_with_children_as_of,
+    :nearest_price
+  ], ttl: 5.minutes
+
   private
 
   def all_items_sorted_by_date
