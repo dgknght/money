@@ -42,6 +42,7 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
     nextPage = ($scope.lastPage || 0) + 1
     "/accounts/#{_self.accountId}/transaction_items.json?per_page=15&page=#{nextPage}"
   @loadTransactionItems = ->
+    $scope.lastPage = null
     $http.get($scope.transactionItemsUrl()).then( (response) ->
       $scope.transactionItems = response.data
       $scope.lastPage = 1
