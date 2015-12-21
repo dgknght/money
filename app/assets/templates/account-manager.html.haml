@@ -2,7 +2,7 @@
   %script{ :type => 'text/ng-template', :id => 'account-form.html' }
     .modal-header
       %button.close{ 'ng-click' => 'cancel()', 'aria-hidden' => 'true' } &times;
-      %h3.modal-title New account
+      %h3.modal-title {{ formTitle }}
     .modal-body
       %form.css-form{ :name => 'accountForm', :novalidate => true }
         .form-group{ 'ng-class' => '{"has-error": accountForm.name.$dirty && accountForm.name.$invalid}' }

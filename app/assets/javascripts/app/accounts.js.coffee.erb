@@ -21,6 +21,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
 
   @new = ->
     _self.formAccount = {}
+    $scope.formTitle = "New account"
     modalInstance = $uibModal.open {
       animation: true,
       templateUrl: 'account-form.html',
@@ -29,6 +30,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
     }
   @edit = (id) ->
     _self.formAccount = _.chain($scope.accounts).filter((a) -> a.id == id).first().value()
+    $scope.formTitle = "Edit account"
     modalInstance = $uibModal.open {
       animation: true,
       templateUrl: 'account-form.html',
