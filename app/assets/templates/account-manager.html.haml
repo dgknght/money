@@ -1,7 +1,7 @@
 .accountContent{ 'ng-controller' => 'AccountsController as accountsCtrl' }
   %script{ :type => 'text/ng-template', :id => 'account-form.html' }
     .modal-header
-      %button.close{ 'data-dismiss' => 'modal', 'aria-hidden' => 'true' } &times;
+      %button.close{ 'ng-click' => 'cancel()', 'aria-hidden' => 'true' } &times;
       %h3.modal-title New account
     .modal-body
       %form.css-form{ :name => 'accountForm', :novalidate => true }
