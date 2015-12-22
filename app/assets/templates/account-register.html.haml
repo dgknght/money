@@ -23,7 +23,7 @@
         %td.register-balance {{ item.balance | number:2 }}
         %td.register-actions
           .btn-group
-            %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.edit(item)', :title => 'Click here to edit this transaction.' }
+            %button.btn.btn-xs.btn-info{ 'ng-click' => 'register.edit(item)', :title => 'Click here to edit this transaction.' }
               %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
-            %button.btn.btn-xs.btn-default{ 'ng-click' => 'register.delete(item)', 'confirmation-needed' => 'Are you sure you want to delete this transaction?', :title => 'Click here to remove this transaction.' }
+            %button.btn.btn-xs.btn-danger{ 'ng-click' => 'register.delete(item)', 'confirmation-needed' => 'Are you sure you want to delete this transaction?', :title => 'Click here to remove this transaction.' }
               %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }
