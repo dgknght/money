@@ -37,7 +37,7 @@
             %button.btn.btn-default.btn-xs{ 'ng-show' => 'record.isExpanded', 'ng-click' => 'record.collapse()' }
               %span.glyphicon.glyphicon-chevron-down{ 'arial-hidden' => true }
         %td.col-md-7
-          %div{ 'ng-class' => 'record.cssClass()'} {{ record.caption() }}
+          %div{ 'ng-class' => 'record.cssClass()', 'ng-click' => 'showRegister(record.id())'} {{ record.caption() }}
         %td.col-md-2.text-right {{ record.balance() | number:2 }}
         %td.col-md-2
           .btn-group

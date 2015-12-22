@@ -1,18 +1,18 @@
-#searchContainer{'ng-controller' => 'SearchController as search'}
+#searchContainer{'ng-controller' => 'ViewController as viewCtrl'}
   .row
     .col-md-9
       .input-group
-        %input.form-control{type: 'text', 'ng-model' => 'search.input', 'ng-change' => 'search.execute()', 'ng-keypress' => 'search.selectFirst($event)', placeholder: 'Enter search text here', autofocus: true}
+        %input.form-control{type: 'text', 'ng-model' => 'viewCtrl.searchInput', 'ng-change' => 'viewCtrl.search()', 'ng-keypress' => 'viewCtrl.selectFirst($event)', placeholder: 'Enter search text here', autofocus: true}
         %span.input-group-btn
-          %button.btn.btn-default{ 'ng-click' => 'search.execute()' }
+          %button.btn.btn-default{ 'ng-click' => 'viewCtrl.search()' }
             %span.glyphicon.glyphicon-search{ 'aria-hidden' => 'true' }
       #matches.list-group
-        %a.list-group-item{:href => '#', 'ng-click' => 'search.select($index)', 'ng-repeat' => 'match in search.matches'}
+        %a.list-group-item{:href => '#', 'ng-click' => 'viewCtrl.select($index)', 'ng-repeat' => 'match in viewCtrl.matches'}
           {{ match.description }}
 
-      %entity-manager{ 'ng-show' => 'search.isSelected("entity-manager")' }
-      %account-manager{ 'ng-show' => 'search.isSelected("account-manager")' }
-      %account-register{ 'ng-show' => 'search.isSelected("account-register")' }
+      %entity-manager{ 'ng-show' => 'viewCtrl.isActive("entity-manager")' }
+      %account-manager{ 'ng-show' => 'viewCtrl.isActive("account-manager")' }
+      %account-register{ 'ng-show' => 'viewCtrl.isActive("account-register")' }
     .col-md-3
       .panel.panel-default
         .panel-heading Help
