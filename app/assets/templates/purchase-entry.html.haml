@@ -1,0 +1,18 @@
+.panel.panel-primary{ 'ng-controller' => 'PurchasesController as purchases' }
+  .panel-heading Purchases
+
+  .panel-body
+    %form{ 'ng-submit' => 'purchases.add()' }
+      .form-group
+        %label.form-label{ :for => 'transactionDate' } Date
+        %input.form-control.date-field{ :name => 'transactionDate', :type => 'text', 'ng-model' => 'purchases.newPurchase.transactionDate', 'convert-to-date' => 'true' }
+      .form-group
+        %label.form-label{ :for => 'location' } Location
+        %input.form-control{ :name => 'location', :type => 'text', 'ng-model' => 'purchases.newPurchase.location' }
+      .form-group
+        %label.form-label{ :for => 'amount' } Amount
+        %input.form-control{ :name => 'amount', :type => 'number', :step => '0.01', 'ng-model' => 'purchases.newPurchase.amount' }
+      .form-group
+        %label.form-label{ :for => 'category' } Category
+        %select.form-control{ :name => 'category', 'ng-model' => 'purchases.newPurchase.category' }
+          %option Need accounts here

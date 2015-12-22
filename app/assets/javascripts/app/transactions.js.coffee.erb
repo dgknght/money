@@ -50,3 +50,13 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
     return unless $scope.formTransaction && $scope.formTransaction.items
     $scope.formTransaction.items.push({}) unless isEmpty
 ]
+
+app.controller('PurchasesController', ['$scope', ($scope) ->
+  @newPurchase = { transactionDate: new Date() }
+])
+
+app.directive 'purchaseEntry', ->
+  {
+    restrict: 'E',
+    templateUrl: '<%= asset_path('purchase-entry.html.haml') %>'
+  }
