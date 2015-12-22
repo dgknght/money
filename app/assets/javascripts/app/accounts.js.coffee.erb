@@ -115,9 +115,6 @@ AccountDisplayRecord = (account, scope) ->
     _.chain(@scope.accounts).filter((a) ->
       a.parent_id == _self.account.id
     ).map((a) ->
-
-      console.log "account: #{account.name}"
-
       _self.scope.displayRecords.find((r) -> r.id() == a.id)
     ).value()
   @expand = ->
