@@ -29,6 +29,9 @@ app.controller 'ViewController', ['$scope', '$http', ($scope, $http) ->
       return unless e.keyCode == 13
       _self.select(0)
       return
+    $scope.showRegister = (id) ->
+      account = _.find($scope.accounts, (a) -> a.id == id)
+      $scope.activeView = {key: "account-register", accountId: account.id, accountName: account.name}
     return
 ]
 

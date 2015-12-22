@@ -110,7 +110,7 @@ AccountDisplayRecord = (account, scope) ->
   @balance = -> @account.value + @account.children_value
   @isHeader = -> false
   @isLeaf = -> _.every(@scope.accounts, (a) -> a.parent_id != _self.account.id)
-  @cssClass = ->"account_depth_#{@account.depth}"
+  @cssClass = -> "account_depth_#{@account.depth} clickable"
   @_childRecords = ->
     _.chain(@scope.accounts).filter((a) ->
       a.parent_id == _self.account.id
