@@ -7,7 +7,7 @@ app.controller 'ViewController', ['$scope', '$http', ($scope, $http) ->
     @handlers = [
       new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
       new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts']),
-      new AccountMatchingHandler('account-register', 'Account register', $scope, $http)
+      new AccountMatchingHandler('account-register', 'Register', $scope, $http)
     ]
     @selected = null
     @search = ->
@@ -50,17 +50,25 @@ class SimpleMatchingHandler
     else
       []
 
-AccountMatchingHandler = (elementKey, descriptionTemplate, $scope, $http) ->
+AccountMatchingHandler = (elementKey, description, $scope, $http) ->
   _self = this
   @elementKey = elementKey
-  @descriptionTemplate = descriptionTemplate
+  @description = description
   @accounts = []
   @entityId = null
+  @info = (a) -> {
+    description: "#{@description}: #{a.name}",
+    info: {
+      key: _self.elementKey,
+      accountId: a.id,
+      accountName: a.name
+    }
+  }
 
   @handle = (input) ->
     re = new RegExp input, "i"
     _.reduce($scope.accounts, (result, a) ->
-      result.push {description: a.name, info: {key: _self.elementKey, accountId: a.id, accountName: a.name}} if re.test(a.name)
+      result.push _self.info(a) if re.test(a.name)
       return result
     , [])
 
