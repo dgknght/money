@@ -59,7 +59,7 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
       $scope.allTransactionItemsLoaded = response.data.length == 0
       $scope.loadingTransactionItems = false
       console.log "loaded page #{$scope.lastPage} with #{response.data.length} item(s)"
-  $scope.$watch 'selectedSearchHandler', (handler) ->
+  $scope.$watch 'activeView', (handler) ->
     $scope.allTransactionItemsLoaded = false
     $scope.lastPage = 0
     if handler && handler.key == 'account-register'

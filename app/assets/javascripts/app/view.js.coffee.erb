@@ -1,8 +1,8 @@
-app = angular.module 'search', []
+app = angular.module 'view', []
 
-app.controller 'SearchController', ['$scope', '$http', ($scope, $http) ->
+app.controller 'ViewController', ['$scope', '$http', ($scope, $http) ->
     _self = this
-    @input = ""
+    @searchInput = ""
     @matches = []
     @handlers = [
       new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
@@ -10,21 +10,21 @@ app.controller 'SearchController', ['$scope', '$http', ($scope, $http) ->
       new AccountMatchingHandler('account-register', 'Account register', $scope, $http)
     ]
     @selected = null
-    @execute = ->
-      if @input && @input.length > 2
+    @search = ->
+      if @searchInput && @searchInput.length > 2
         _self.matches = _.reduce(@handlers, (result, handler) ->
-          result.concat handler.handle(_self.input)
+          result.concat handler.handle(_self.searchInput)
         , [])
       else
         _self.matches = []
     @select = (index) ->
       match = _self.matches[index]
-      $scope.selectedSearchHandler = match.info
+      $scope.activeView = match.info
       _self.matches = []
-      _self.input = ""
+      _self.searchInput = ""
       return
-    @isSelected = (key) ->
-      $scope.selectedSearchHandler && $scope.selectedSearchHandler.key == key
+    @isActive = (key) ->
+      $scope.activeView && $scope.activeView.key == key
     @selectFirst = (e) ->
       return unless e.keyCode == 13
       _self.select(0)

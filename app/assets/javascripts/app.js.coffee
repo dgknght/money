@@ -3,13 +3,13 @@
 #= require angular.min
 #= require ui-bootstrap-tpls-0.14.3.min
 #= require underscore
-#= require app/search
+#= require app/view
 #= require app/entities
 #= require app/accounts
 #= require app/register
 #= require app/transactions
 
-app = angular.module 'moneyApp', ['search', 'entities', 'accounts', 'register', 'transactions']
+app = angular.module 'moneyApp', ['view', 'entities', 'accounts', 'register', 'transactions']
 
 app.directive 'confirmationNeeded', ->
   {
