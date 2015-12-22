@@ -1,13 +1,28 @@
 #searchContainer{'ng-controller' => 'SearchController as search'}
-  .input-group
-    %input.form-control{type: 'text', 'ng-model' => 'search.input', 'ng-change' => 'search.execute()', 'ng-keypress' => 'search.selectFirst($event)', placeholder: 'Enter search text here', autofocus: true}
-    %span.input-group-btn
-      %button.btn.btn-default{ 'ng-click' => 'search.execute()' }
-        %span.glyphicon.glyphicon-search{ 'aria-hidden' => 'true' }
-  #matches.list-group
-    %a.list-group-item{:href => '#', 'ng-click' => 'search.select($index)', 'ng-repeat' => 'match in search.matches'}
-      {{ match.description }}
+  .row
+    .col-md-9
+      .input-group
+        %input.form-control{type: 'text', 'ng-model' => 'search.input', 'ng-change' => 'search.execute()', 'ng-keypress' => 'search.selectFirst($event)', placeholder: 'Enter search text here', autofocus: true}
+        %span.input-group-btn
+          %button.btn.btn-default{ 'ng-click' => 'search.execute()' }
+            %span.glyphicon.glyphicon-search{ 'aria-hidden' => 'true' }
+      #matches.list-group
+        %a.list-group-item{:href => '#', 'ng-click' => 'search.select($index)', 'ng-repeat' => 'match in search.matches'}
+          {{ match.description }}
 
-  %entity-manager{ 'ng-show' => 'search.isSelected("entity-manager")' }
-  %account-manager{ 'ng-show' => 'search.isSelected("account-manager")' }
-  %account-register{ 'ng-show' => 'search.isSelected("account-register")' }
+      %entity-manager{ 'ng-show' => 'search.isSelected("entity-manager")' }
+      %account-manager{ 'ng-show' => 'search.isSelected("account-manager")' }
+      %account-register{ 'ng-show' => 'search.isSelected("account-register")' }
+    .col-md-3
+      .panel.panel-default
+        .panel-heading Help
+        .panel-body
+          %h4 Available commands
+          Start typing in the search bar and matching available actions will present themselves
+          %dl
+            %dt Manage entities
+            %dd Add, edit, and remove entities
+            %dt Manage accounts
+            %dd Add, edit, and remove accounts
+            %dt &lt;Account name&gt;
+            %dd View the register for the specified account, and add, edit, and remove transactions
