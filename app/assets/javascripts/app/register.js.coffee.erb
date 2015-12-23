@@ -58,7 +58,6 @@ app.controller 'AccountRegisterController', ['$scope', '$http', '$uibModal', ($s
       $scope.lastPage++
       $scope.allTransactionItemsLoaded = response.data.length == 0
       $scope.loadingTransactionItems = false
-      console.log "loaded page #{$scope.lastPage} with #{response.data.length} item(s)"
   $scope.$watch 'activeView', (handler) ->
     $scope.allTransactionItemsLoaded = false
     $scope.lastPage = 0

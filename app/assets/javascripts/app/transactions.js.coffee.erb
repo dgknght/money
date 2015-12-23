@@ -49,4 +49,67 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
   , (isEmpty) ->
     return unless $scope.formTransaction && $scope.formTransaction.items
     $scope.formTransaction.items.push({}) unless isEmpty
+
+  $scope.calendarIsOpen = false
+  $scope.openCalendar = -> $scope.calendarIsOpen = true
 ]
+
+app.controller('PurchasesController', ['$scope', '$http', ($scope, $http) ->
+  _self = this
+  @calendarIsOpen = false
+  @openCalendar = ->
+    @calendarIsOpen = true
+  @newPurchase = { transactionDate: today() }
+  @enteredPurchases = []
+  @categoryAccounts = ->
+    _.filter($scope.accounts, (a) -> a.account_type == 'expense')
+  @methodAccounts = ->
+    _.filter($scope.accounts, (a) -> _.contains(['liability', 'asset'], a.account_type)) # TODO Use tags to select appropriate accounts
+  @_prepareData = ->
+    {
+      transaction:
+        {
+          transaction_date: @newPurchase.transactionDate,
+          description: @newPurchase.location,
+          items_attributes:
+            [
+              {
+                action: 'credit',
+                account_id: @newPurchase.method,
+                amount: @newPurchase.amount
+              },
+              {
+                action: 'debit',
+                account_id: @newPurchase.category,
+                amount: @newPurchase.amount
+              }
+            ]
+        }
+    }
+  @save = (form) ->
+    data = @_prepareData()
+    $http.post("/entities/#{$scope.currentEntityId}/transactions.json", data).then (_) ->
+      next = {
+        transactionDate: _self.newPurchase.transactionDate,
+        method: _self.newPurchase.method
+      }
+      _self.enteredPurchases.push _self.newPurchase
+
+      console.log "enteredPurchases"
+      console.log _self.enteredPurchases
+
+      _self.newPurchase = next
+      form.$setPristine()
+      form.$setUntouched()
+      return
+    , (error) ->
+      console.log "Unable to create the transaction."
+      console.log error
+  return
+])
+
+app.directive 'purchaseEntry', ->
+  {
+    restrict: 'E',
+    templateUrl: '<%= asset_path('purchase-entry.html.haml') %>'
+  }

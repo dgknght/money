@@ -13,6 +13,8 @@
       %entity-manager{ 'ng-show' => 'viewCtrl.isActive("entity-manager")' }
       %account-manager{ 'ng-show' => 'viewCtrl.isActive("account-manager")' }
       %account-register{ 'ng-show' => 'viewCtrl.isActive("account-register")' }
+      %purchase-entry{ 'ng-show' => 'viewCtrl.isActive("purchase-entry")' }
+
     .col-md-3
       .panel.panel-default
         .panel-heading Help
@@ -24,5 +26,7 @@
             %dd Add, edit, and remove entities
             %dt Manage accounts
             %dd Add, edit, and remove accounts
+            %dt Enter purchases
+            %dd Enter multiple purchases
             %dt &lt;Account name&gt;
             %dd View the register for the specified account, and add, edit, and remove transactions
