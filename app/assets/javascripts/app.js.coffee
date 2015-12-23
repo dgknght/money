@@ -9,6 +9,11 @@
 #= require app/register
 #= require app/transactions
 
+
+window.today = ->
+  d = new Date()
+  new Date(d.getFullYear(), d.getMonth(), d.getDate())
+
 app = angular.module 'moneyApp', ['view', 'entities', 'accounts', 'register', 'transactions']
 
 app.directive 'confirmationNeeded', ->
