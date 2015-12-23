@@ -1,0 +1,6 @@
+.budgetContent{ 'ng-controller' => 'BudgetsController as budgetsCtrl' }
+  .panel.panel-primary
+    .panel-heading Budgets
+    .panel-body
+      %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget' }
+        %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}', 'convert-to-number' => 'true' } {{ budget.name }}
