@@ -2,17 +2,40 @@
   .panel-heading Purchases
 
   .panel-body
-    %form{ 'ng-submit' => 'purchases.add()' }
-      .form-group
-        %label.form-label{ :for => 'transactionDate' } Date
-        %input.form-control.date-field{ :name => 'transactionDate', :type => 'text', 'ng-model' => 'purchases.newPurchase.transactionDate', 'convert-to-date' => 'true' }
-      .form-group
-        %label.form-label{ :for => 'location' } Location
-        %input.form-control{ :name => 'location', :type => 'text', 'ng-model' => 'purchases.newPurchase.location' }
-      .form-group
-        %label.form-label{ :for => 'amount' } Amount
-        %input.form-control{ :name => 'amount', :type => 'number', :step => '0.01', 'ng-model' => 'purchases.newPurchase.amount' }
-      .form-group
-        %label.form-label{ :for => 'category' } Category
-        %select.form-control{ :name => 'category', 'ng-model' => 'purchases.newPurchase.category' }
-          %option Need accounts here
+    .row
+      .col-md-6
+        %form{ 'ng-submit' => 'purchases.save(purchaseForm)', :name => 'purchaseForm', :novalidate => true }
+          .form-group{ 'ng-class' => '{"has-error": purchaseForm.transactionDate.$dirty && purchaseForm.transactionDate.$invalid}' }
+            %label.control-label{ :for => 'transactionDate' } Date
+            %input.form-control.date_field{ :name => 'transactionDate', :type => 'text', 'ng-model' => 'purchases.newPurchase.transactionDate', 'convert-to-date' => 'true', :autofocus => 'true', :required => true, :placeholder => 'Today, maybe?'}
+            %span.help-block{ 'ng-show' => 'purchaseForm.transactionDate.$dirty && purchaseForm.transactionDate.$invalid' } You must specify a date
+          .form-group{ 'ng-class' => '{"has-error": purchaseForm.location.$dirty && purchaseForm.location.$invalid}' }
+            %label.control-label{ :for => 'location' } Location
+            %input.form-control{ :name => 'location', :type => 'text', 'ng-model' => 'purchases.newPurchase.location', :required => true }
+            %span.help-block{ 'ng-show' => 'purchaseForm.location.$dirty && purchaseForm.location.$invalid' } You must specify a location
+          .form-group{ 'ng-class' => '{"has-error": purchaseForm.amount.$dirty && purchaseForm.amount.$invalid}' }
+            %label.control-label{ :for => 'amount' } Amount
+            %input.form-control{ :name => 'amount', :type => 'number', :step => '0.01', 'ng-model' => 'purchases.newPurchase.amount', :required => true }
+            %span.help-block{ 'ng-show' => 'purchaseForm.amount.$dirty && purchaseForm.amount.$invalid' } You must specify an amount
+          .form-group{ 'ng-class' => '{"has-error": purchaseForm.cateogry.$dirty && purchaseForm.category.$invalid}' }
+            %label.control-label{ :for => 'category' } Category
+            %select.form-control{ :name => 'category', 'ng-model' => 'purchases.newPurchase.category', 'convert-to-number' => 'true', :required => true }
+              %option{ 'ng-repeat' => 'account in purchases.categoryAccounts()', :value => '{{ account.id }}' } {{ account.path }}
+            %span.help-block{ 'ng-show' => 'purchaseForm.category.$dirty && purchaseForm.category.$invalid' } You must specify a category
+          .form-group{ 'ng-class' => '{"has-error": purchaseForm.paymentMethod.$dirty && purchaseForm.paymentMethod.$invalid}' }
+            %label.control-label{ :for => 'paymentMethod' } Payment method
+            %select.form-control{ :name => 'paymentMethod', 'ng-model' => 'purchases.newPurchase.method', 'convert-to-number' => 'true', :required => true }
+              %option{ 'ng-repeat' => 'account in purchases.methodAccounts()', :value => '{{ account.id }}' } {{ account.path }}
+            %span.help-block{ 'ng-show' => 'purchaseForm.paymentMethod.$dirty && purchaseForm.paymentMethod.$invalid' } You must specify a payment method
+          .form-group
+            %button.btn.btn-primary{ :type => 'submit', 'ng-disabled' => 'purchaseForm.transactionDate.$invalid || purchaseForm.location.$invalid || purchaseForm.amount.$invalid || purchaseForm.category.$invalid || purchaseForm.paymentMethod.$invalid' } Save
+      .col-md-6
+        %table.table.table-striped
+          %tr
+            %th Date
+            %th Location
+            %th.text-right Amount
+          %tr{ 'ng-repeat' => 'purchase in purchases.enteredPurchases' }
+            %td {{ purchase.transactionDate | date:'M/d/yyyy' }}
+            %td {{ purchase.location }}
+            %td.text-right {{ purchase.amount | number:2 }}
