@@ -7,7 +7,11 @@
         %form{ 'ng-submit' => 'purchases.save(purchaseForm)', :name => 'purchaseForm', :novalidate => true }
           .form-group{ 'ng-class' => '{"has-error": purchaseForm.transactionDate.$dirty && purchaseForm.transactionDate.$invalid}' }
             %label.control-label{ :for => 'transactionDate' } Date
-            %input.form-control.date_field{ :name => 'transactionDate', :type => 'text', 'ng-model' => 'purchases.newPurchase.transactionDate', 'convert-to-date' => 'true', :autofocus => 'true', :required => true, :placeholder => 'Today, maybe?'}
+            %p.input-group
+              %input.form-control{ :name => 'transactionDate', :type => 'text', 'ng-model' => 'purchases.newPurchase.transactionDate', 'convert-to-date' => 'true', :autofocus => 'true', :required => true, :placeholder => 'Today, maybe?', 'uib-datepicker-popup' => 'M/d/yyyy', 'is-open' => 'purchases.calendarIsOpen'}
+              %span.input-group-btn
+                %button.btn.btn-default{ :type => 'button', 'ng-click' => 'purchases.openCalendar()' }
+                  %i.glyphicon.glyphicon-calendar
             %span.help-block{ 'ng-show' => 'purchaseForm.transactionDate.$dirty && purchaseForm.transactionDate.$invalid' } You must specify a date
           .form-group{ 'ng-class' => '{"has-error": purchaseForm.location.$dirty && purchaseForm.location.$invalid}' }
             %label.control-label{ :for => 'location' } Location

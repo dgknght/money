@@ -49,10 +49,16 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
   , (isEmpty) ->
     return unless $scope.formTransaction && $scope.formTransaction.items
     $scope.formTransaction.items.push({}) unless isEmpty
+
+  $scope.calendarIsOpen = false
+  $scope.openCalendar = -> $scope.calendarIsOpen = true
 ]
 
 app.controller('PurchasesController', ['$scope', '$http', ($scope, $http) ->
   _self = this
+  @calendarIsOpen = false
+  @openCalendar = ->
+    @calendarIsOpen = true
   @newPurchase = { transactionDate: today() }
   @enteredPurchases = []
   @categoryAccounts = ->
