@@ -1,6 +1,29 @@
 .budgetContent{ 'ng-controller' => 'BudgetsController as budgetsCtrl' }
+  %script{ :type => 'text/ng-template', :id => 'budget-form.html' }
+    .modal-header
+      %button.close{ 'ng-click' => 'cancelBudgetForm()', 'aria-hidden' => 'true' } &times;
+      %h3.modal-title {{ budgetFormTitle }}
+    .modal-body
+      %form.css-form{ :name => 'budgetForm', :novalidate => true }
+        .form-group{ 'ng-class' => '{"has-error": budgetForm.name.$touched && budgetForm.name.$invalid}' }
+          %label.control-label{ :for => 'name' } Name
+          %input.form-control{ :type => 'text', :name => 'name', 'ng-model' => 'budgetsCtrl.selectedBudget.name', :required => true }
+          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$invalid' } You must specify a name
+    .modal-footer
+      %button.btn.btn-primary{ 'ng-click' => 'saveBudgetForm()', 'ng-disabled' => 'budgetForm.$invalid' } Save
+      %button.btn.btn-default{ 'ng-click' => 'cancelBudgetForm()' } Cancel
   .panel.panel-primary
     .panel-heading Budgets
     .panel-body
-      %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget' }
-        %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}', 'convert-to-number' => 'true' } {{ budget.name }}
+      .row
+        .col-md-10
+          %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget' }
+            %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}', 'convert-to-number' => 'true' } {{ budget.name }}
+        .col-md-2
+          .btn-group
+            %button.btn.btn-sm.btn-primary{ :type => 'button', 'ng-click' => 'budgetsCtrl.newBudget()' }
+              %span.glyphicon.glyphicon-plus{ 'arial-hidden' => true }
+            %button.btn.btn-sm.btn-info{ :type => 'button', 'ng-click' => 'budgetsCtrl.edit()', 'ng-disabled' => '!budgetsCtrl.selectedBudget' }
+              %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
+            %button.btn.btn-sm.btn-danger{ :type => 'button', 'ng-click' => 'budgetsCtrl.delete()', 'ng-disabled' => '!budgetsCtrl.selectedBudget' }
+              %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }

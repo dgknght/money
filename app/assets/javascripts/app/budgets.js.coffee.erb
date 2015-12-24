@@ -3,6 +3,29 @@ app = angular.module 'budgets', ['ui.bootstrap']
 app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $http, $uibModal) ->
   _self = this
   @budgets = []
+
+  @newBudget = ->
+    _self.selectedBudget = {}
+    $scope.budgetFormTitle = "New budget"
+    modalInstance = $uibModal.open {
+      animation: true,
+      templateUrl: 'budget-form.html',
+      controller: 'BudgetFormController',
+      scope: $scope
+    }
+
+  @createBudget = ->
+    console.log "createBudget"
+
+  @updateSelectedBudget = ->
+    console.log "updateSelectedBudget"
+
+  $scope.saveSelectedBudget = ->
+    if _self.selectedBudget.id
+      _self.updateSelectedBudget()
+    else
+      _self.createBudget()
+
   @loadEntities = ->
     return unless $scope.currentEntityId
     $http.get("/entities/#{$scope.currentEntityId}/budgets.json").then (response) ->
@@ -10,6 +33,15 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
     , (error) ->
       console.log "Unable to get the budgets from the service."
   $scope.$watch 'currentEntityId', (_) -> _self.loadEntities()
+  return
+]
+
+app.controller 'BudgetFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
+  $scope.saveBudgetForm = ->
+    $scope.saveSelectedBudget().then (succeeded) ->
+      $uibModalInstance.close() if succeeded
+  $scope.cancelBudgetForm = ->
+    $uibModalInstance.dismiss('cancel')
   return
 ]
 
