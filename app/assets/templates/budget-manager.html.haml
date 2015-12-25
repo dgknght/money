@@ -9,7 +9,15 @@
           %label.control-label{ :for => 'name' } Name
           %input.form-control{ :type => 'text', :name => 'name', 'ng-model' => 'budgetsCtrl.selectedBudget.name', 'unique-value' => '{"collection": budgetsCtrl.budgets, "attribute": "name"}', :required => true }
           %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.required' } You must specify a name
-          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.uniqueValue' } The name is already in use
+          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.uniqueValue' } There is already a budget with this name
+        .form-group{ 'ng-class' => '{"has-error": budgetForm.startDate.$touched && budgetForm.startDate.$invalid}' }
+          %label.control-label{ :for => 'startDate' } Start date
+          .input-group
+            %input.form-control{ :type => 'text', :name => 'startDate', 'ng-model' => 'budgetsCtrl.selectedBudget.startDate', :required => true, 'convert-to-date' => true, 'is-open' => 'budgetsCtrl.calendarIsOpen', 'uib-datepicker-popup' => 'M/d/yyyy' }
+            %span.input-group-btn
+              %button.btn.btn-default{ :type => 'button', 'ng-click' => 'budgetsCtrl.openCalendar()' }
+                %span.glyphicon.glyphicon-calendar{ 'arial-hidden' => true }
+          %span.help-block{ 'ng-show' => 'budgetForm.startDate.$touched && budgetForm.startDate.$error.required' } You must specify a start date
     .modal-footer
       %button.btn.btn-primary{ 'ng-click' => 'saveBudgetForm()', 'ng-disabled' => 'budgetForm.$invalid' } Save
       %button.btn.btn-default{ 'ng-click' => 'cancelBudgetForm()' } Cancel
@@ -18,7 +26,7 @@
     .panel-body
       .row
         .col-md-10
-          %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget', 'convert-to-number' => 'true' }
+          %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget.id', 'convert-to-number' => 'true' }
             %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}' } {{ budget.name }}
         .col-md-2
           .btn-group

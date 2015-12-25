@@ -14,8 +14,23 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       scope: $scope
     }
 
+  @prepareData = ->
+    {
+      budget:
+        name: _self.selectedBudget.name
+        start_date: _self.selectedBudget.startDate
+        period: "month"
+        period_count: 12
+
+    }
   @createBudget = ->
-    console.log "createBudget"
+    data = _self.prepareData()
+    $http.post("/entities/#{$scope.currentEntityId}/budgets.json", data).then (response) ->
+      _self.budgets.push response.data
+      _self.selectedBudget = response.data
+    , (error) ->
+      console.log "Unable to create the new budget"
+      console.log error
 
   @updateSelectedBudget = ->
     console.log "updateSelectedBudget"
@@ -26,13 +41,18 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
     else
       _self.createBudget()
 
-  @loadEntities = ->
+  @calendarIsOpen = false
+  @openCalendar = -> @calendarIsOpen = true
+
+  @loadBudgets = ->
     return unless $scope.currentEntityId
     $http.get("/entities/#{$scope.currentEntityId}/budgets.json").then (response) ->
       _self.budgets = response.data
+      _self.selectedBudget = _self.budgets[0] if _self.budgets.length != 0
     , (error) ->
       console.log "Unable to get the budgets from the service."
-  $scope.$watch 'currentEntityId', (_) -> _self.loadEntities()
+      console.log error
+  $scope.$watch 'currentEntityId', (_) -> _self.loadBudgets()
   return
 ]
 
