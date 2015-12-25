@@ -72,3 +72,14 @@ app.directive 'infiniteScroll', ->
         return
       , 200
   }
+
+app.directive 'uniqueValue', ->
+  {
+    restrict: 'A',
+    require: 'ngModel',
+    link: (scope, elem, attrs, ctrl) ->
+      opts = scope.$eval attrs.uniqueValue
+      existing = _.map(opts.collection, (obj) -> obj['name'])
+      ctrl.$validators.uniqueValue = (modelValue, viewValue) ->
+        !_.find(existing, (v) -> v == viewValue)
+  }

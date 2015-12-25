@@ -7,8 +7,9 @@
       %form.css-form{ :name => 'budgetForm', :novalidate => true }
         .form-group{ 'ng-class' => '{"has-error": budgetForm.name.$touched && budgetForm.name.$invalid}' }
           %label.control-label{ :for => 'name' } Name
-          %input.form-control{ :type => 'text', :name => 'name', 'ng-model' => 'budgetsCtrl.selectedBudget.name', :required => true }
-          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$invalid' } You must specify a name
+          %input.form-control{ :type => 'text', :name => 'name', 'ng-model' => 'budgetsCtrl.selectedBudget.name', 'unique-value' => '{"collection": budgetsCtrl.budgets, "attribute": "name"}', :required => true }
+          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.required' } You must specify a name
+          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.uniqueValue' } The name is already in use
     .modal-footer
       %button.btn.btn-primary{ 'ng-click' => 'saveBudgetForm()', 'ng-disabled' => 'budgetForm.$invalid' } Save
       %button.btn.btn-default{ 'ng-click' => 'cancelBudgetForm()' } Cancel
