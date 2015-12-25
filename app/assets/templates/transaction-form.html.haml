@@ -8,11 +8,11 @@
       .col-md-6
         .form-group{ 'ng-class' => '{"has-error": transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$invalid}' }
           %label.control-label{ for: 'transaction_date' } Date
-          %p.input-group
+          .input-group
             %input.form-control{ type: 'text', name: 'transaction_date', 'ng-model' => 'formTransaction.transaction_date', 'convert-to-date' => 'true', 'focus-on' => '!!formTransaction', :required => true, :placeholder => 'Today, maybe?', 'is-open' => 'calendarIsOpen', 'uib-datepicker-popup' => 'M/d/yyyy' }
             %span.input-group-btn
               %button.btn.btn-default{ :type => 'button', 'ng-click' => 'openCalendar()' }
-                %i.glyphicon.glyphicon-calendar
+                %span.glyphicon.glyphicon-calendar{ 'arial-hidden' => true }
           %span.help-block{ 'ng-show' => 'transactionForm.transaction_date.$dirty && transactionForm.transaction_date.$error.required' } You must specify a transaction date.
         .form-group{ 'ng-class' => '{"has-error": transactionForm.description.$dirty && transactionForm.description.$invalid}' }
           %label.control-label{ for: 'description' } Description
