@@ -17,8 +17,8 @@
     .panel-body
       .row
         .col-md-10
-          %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget' }
-            %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}', 'convert-to-number' => 'true' } {{ budget.name }}
+          %select.form-control{ 'ng-model' => 'budgetsCtrl.selectedBudget', 'convert-to-number' => 'true' }
+            %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}' } {{ budget.name }}
         .col-md-2
           .btn-group
             %button.btn.btn-sm.btn-primary{ :type => 'button', 'ng-click' => 'budgetsCtrl.newBudget()' }
