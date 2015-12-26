@@ -1,0 +1,39 @@
+.budgetContent{ 'ng-controller' => 'BudgetsController as budgetsCtrl' }
+  %script{ :type => 'text/ng-template', :id => 'budget-form.html' }
+    .modal-header
+      %button.close{ 'ng-click' => 'cancelBudgetForm()', 'aria-hidden' => 'true' } &times;
+      %h3.modal-title {{ budgetFormTitle }}
+    .modal-body
+      %form.css-form{ :name => 'budgetForm', :novalidate => true }
+        .form-group{ 'ng-class' => '{"has-error": budgetForm.name.$touched && budgetForm.name.$invalid}' }
+          %label.control-label{ :for => 'name' } Name
+          %input.form-control{ :type => 'text', :name => 'name', 'ng-model' => 'budgetsCtrl.formBudget.name', 'unique-value' => '{"collection": budgetsCtrl.budgets, "attribute": "name", except: budgetsCtrl.formBudget.id}', :required => true }
+          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.required' } You must specify a name
+          %span.help-block{ 'ng-show' => 'budgetForm.name.$touched && budgetForm.name.$error.uniqueValue' } There is already a budget with this name
+        .form-group{ 'ng-class' => '{"has-error": budgetForm.startDate.$touched && budgetForm.startDate.$invalid}' }
+          %label.control-label{ :for => 'startDate' } Start date
+          .input-group
+            %input.form-control{ :type => 'text', :name => 'startDate', 'ng-model' => 'budgetsCtrl.formBudget.start_date', :required => true, 'convert-to-date' => true, 'is-open' => 'budgetsCtrl.calendarIsOpen', 'uib-datepicker-popup' => 'M/d/yyyy' }
+            %span.input-group-btn
+              %button.btn.btn-default{ :type => 'button', 'ng-click' => 'budgetsCtrl.openCalendar()' }
+                %span.glyphicon.glyphicon-calendar{ 'arial-hidden' => true }
+          %span.help-block{ 'ng-show' => 'budgetForm.startDate.$touched && budgetForm.startDate.$error.required' } You must specify a start date
+          %span.help-block{ 'ng-show' => 'budgetForm.startDate.$touched && budgetForm.startDate.$error.date' } The date is not valid
+    .modal-footer
+      %button.btn.btn-primary{ 'ng-click' => 'saveBudgetForm()', 'ng-disabled' => 'budgetForm.$invalid' } Save
+      %button.btn.btn-default{ 'ng-click' => 'cancelBudgetForm()' } Cancel
+  .panel.panel-primary
+    .panel-heading Budgets
+    .panel-body
+      .row
+        .col-md-10
+          %select.form-control{ 'ng-model' => 'selectedBudgetId', 'convert-to-number' => 'true' }
+            %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}' } {{ budget.name }}
+        .col-md-2
+          .btn-group
+            %button.btn.btn-sm.btn-primary{ :type => 'button', 'ng-click' => 'budgetsCtrl.new()' }
+              %span.glyphicon.glyphicon-plus{ 'arial-hidden' => true }
+            %button.btn.btn-sm.btn-info{ :type => 'button', 'ng-click' => 'budgetsCtrl.edit()', 'ng-disabled' => '!budgetsCtrl.selectedBudget' }
+              %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
+            %button.btn.btn-sm.btn-danger{ :type => 'button', 'ng-click' => 'budgetsCtrl.delete()', 'ng-disabled' => '!budgetsCtrl.selectedBudget', 'confirmation-needed' => 'Are you sure you want to delete this budget?' }
+              %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }

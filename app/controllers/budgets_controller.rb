@@ -10,7 +10,7 @@ class BudgetsController < ApplicationController
   
   def index
     authorize! :show, @entity
-    @budgets = @entity.budgets
+    @budgets = @entity.budgets.order(:start_date)
     respond_with @budgets
   end
 

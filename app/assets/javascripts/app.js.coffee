@@ -8,13 +8,14 @@
 #= require app/accounts
 #= require app/register
 #= require app/transactions
+#= require app/budgets
 
 
 window.today = ->
   d = new Date()
   new Date(d.getFullYear(), d.getMonth(), d.getDate())
 
-app = angular.module 'moneyApp', ['view', 'entities', 'accounts', 'register', 'transactions']
+app = angular.module 'moneyApp', ['view', 'entities', 'accounts', 'register', 'transactions', 'budgets']
 
 app.directive 'confirmationNeeded', ->
   {
@@ -70,4 +71,17 @@ app.directive 'infiniteScroll', ->
         scope.$apply(attrs.infiniteScroll) if availableHeight < elem.offsetHeight
         return
       , 200
+  }
+
+app.directive 'uniqueValue', ->
+  {
+    restrict: 'A',
+    require: 'ngModel',
+    link: (scope, elem, attrs, ctrl) ->
+      opts = scope.$eval attrs.uniqueValue
+      existing = opts.collection
+      existing = _.reject(existing, (obj) -> obj.id == opts.except) if opts.except
+      existing = _.map(existing, (obj) -> obj['name'])
+      ctrl.$validators.uniqueValue = (modelValue, viewValue) ->
+        !_.find(existing, (v) -> v == viewValue)
   }
