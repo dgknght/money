@@ -35,5 +35,5 @@
               %span.glyphicon.glyphicon-plus{ 'arial-hidden' => true }
             %button.btn.btn-sm.btn-info{ :type => 'button', 'ng-click' => 'budgetsCtrl.edit()', 'ng-disabled' => '!budgetsCtrl.selectedBudget' }
               %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
-            %button.btn.btn-sm.btn-danger{ :type => 'button', 'ng-click' => 'budgetsCtrl.delete()', 'ng-disabled' => '!budgetsCtrl.selectedBudget' }
+            %button.btn.btn-sm.btn-danger{ :type => 'button', 'ng-click' => 'budgetsCtrl.delete()', 'ng-disabled' => '!budgetsCtrl.selectedBudget', 'confirmation-needed' => 'Are you sure you want to delete this budget?' }
               %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }

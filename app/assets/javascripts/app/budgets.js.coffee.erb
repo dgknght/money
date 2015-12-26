@@ -28,6 +28,17 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       scope: $scope
     }
 
+  @delete = ->
+    $http.delete("/budgets/#{$scope.selectedBudgetId}.json").then (response) ->
+      _self.budgets = _.reject(_self.budgets, (b) -> b.id == $scope.selectedBudgetId)
+      if _self.budgets.length == 0
+        $scope.selectedBudgetId = null
+      else
+        $scope.selectedBudgetId = _self.budgets[0].id
+    , (error) ->
+      console.log "Unable to delete the budget"
+      console.log error
+
   @prepareData = ->
     {
       budget: _self.formBudget
