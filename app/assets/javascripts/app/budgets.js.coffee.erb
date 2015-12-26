@@ -4,6 +4,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   _self = this
   @budgets = []
   @selectedBuget = null
+  @periods = []
   $scope.selectedBudgetId = null
 
   @new = ->
@@ -81,6 +82,18 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @calendarIsOpen = false
   @openCalendar = -> @calendarIsOpen = true
 
+  @generatePeriods = ->
+    return [] unless _self.selectedBudget
+    parsed = /^(\d{4})-(\d{2})-(\d{2})$/.exec(_self.selectedBudget.start_date)
+    year  = parseInt(parsed[1])
+    month = parseInt(parsed[2])
+    date  = parseInt(parsed[3])
+    d = new Date(year, month - 1, date)
+    _.map [0..11], (index) ->
+      {
+        start_date: new Date(d.getFullYear(), d.getMonth() + index, 1)
+      }
+
   @loadBudgets = ->
     return unless $scope.currentEntityId
     $http.get("/entities/#{$scope.currentEntityId}/budgets.json").then (response) ->
@@ -94,6 +107,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
     _self.selectedBudget = null unless budgetId
     id = parseInt(budgetId)
     _self.selectedBudget = _.find(_self.budgets, (b) -> b.id == id)
+    _self.periods = _self.generatePeriods()
   return
 ]
 
