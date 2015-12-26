@@ -79,7 +79,9 @@ app.directive 'uniqueValue', ->
     require: 'ngModel',
     link: (scope, elem, attrs, ctrl) ->
       opts = scope.$eval attrs.uniqueValue
-      existing = _.map(opts.collection, (obj) -> obj['name'])
+      existing = opts.collection
+      existing = _.reject(existing, (obj) -> obj.id == opts.except) if opts.except
+      existing = _.map(existing, (obj) -> obj['name'])
       ctrl.$validators.uniqueValue = (modelValue, viewValue) ->
         !_.find(existing, (v) -> v == viewValue)
   }
