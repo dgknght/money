@@ -6,7 +6,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @selectedBuget = null
   $scope.selectedBudgetId = null
 
-  @newBudget = ->
+  @new = ->
     _self.formBudget =
       period: "month"
       period_count: 12

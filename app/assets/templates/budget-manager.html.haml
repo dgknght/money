@@ -31,7 +31,7 @@
             %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}' } {{ budget.name }}
         .col-md-2
           .btn-group
-            %button.btn.btn-sm.btn-primary{ :type => 'button', 'ng-click' => 'budgetsCtrl.newBudget()' }
+            %button.btn.btn-sm.btn-primary{ :type => 'button', 'ng-click' => 'budgetsCtrl.new()' }
               %span.glyphicon.glyphicon-plus{ 'arial-hidden' => true }
             %button.btn.btn-sm.btn-info{ :type => 'button', 'ng-click' => 'budgetsCtrl.edit()', 'ng-disabled' => '!budgetsCtrl.selectedBudget' }
               %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
