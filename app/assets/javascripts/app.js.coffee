@@ -15,6 +15,16 @@
 window.today = ->
   d = new Date()
   new Date(d.getFullYear(), d.getMonth(), d.getDate())
+window.parseDate = (dateString) ->
+  parsed = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString)
+  year  = parseInt(parsed[1])
+  month = parseInt(parsed[2])
+  date  = parseInt(parsed[3])
+  new Date(year, month - 1, date)
+window.addMonths = (date, monthCount) ->
+  new Date(date.getFullYear(), date.getMonth() + monthCount, date.getDate())
+window.consecutiveMonths = (date, count) ->
+  _.map([0..(count-1)], (index) -> addMonths(date, index))
 
 app = angular.module 'moneyApp', ['view', 'entities', 'accounts', 'register', 'transactions', 'budgets']
 
