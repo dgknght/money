@@ -42,13 +42,20 @@
           %table.table.table-striped{ 'ng-show' => 'budgetsCtrl.selectedBudget' }
             %tr
               %th.right-border Account
-              %th Total
-              %th.right-border{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } Average
-              %th{ 'ng-repeat' => 'period in budgetsCtrl.periods', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period.start_date | date:'MMM yyyy' }}
+              %th.text-right Total
+              %th.text-right.right-border{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } Average
+              %th.text-right{ 'ng-repeat' => 'period in budgetsCtrl.periods', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period.start_date | date:'MMM yyyy' }}
               %th{ :class => 'button-column' }
                 %button.btn.btn-xs.btn-default{ 'ng-click' => 'budgetsCtrl.showPeriods()', 'ng-hide' => 'budgetsCtrl.periodsAreVisible', :title => 'Click here to show period details.' }
                   %span.glyphicon.glyphicon-eye-open{ 'arial-hidden' => true }
                 %button.btn.btn-xs.btn-default{ 'ng-click' => 'budgetsCtrl.hidePeriods()', 'ng-show' => 'budgetsCtrl.periodsAreVisible', :title => 'Click here to hide period details.' }
                   %span.glyphicon.glyphicon-eye-close{ 'arial-hidden' => true }
+            %tr{ 'ng-repeat' => 'item in budgetsCtrl.items', 'ng-class' => '{"header-row": item.isHeader}' }
+              %th.right-border {{ item.caption() }}
+              %td.text-right 0.00
+              %td.text-right 0.00
+              %td.text-right{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } 0.00
+              %td.text-right{ 'ng-repeat' => 'period in item.periods() track by $index', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period | number:2 }}
+              %td &nbsp;
           %p
             %button.btn.btn-primary{ 'ng-click' => 'budgetsCtrl.newItem()' } Add

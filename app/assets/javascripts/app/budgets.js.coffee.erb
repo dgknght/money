@@ -5,6 +5,8 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @budgets = []
   @selectedBuget = null
   @periods = []
+  @incomeItems = []
+  @expenseItems = []
   @periodsAreVisible = false
   @showPeriods = -> @periodsAreVisible = true
   @hidePeriods = -> @periodsAreVisible = false
@@ -96,6 +98,24 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       {
         start_date: new Date(d.getFullYear(), d.getMonth() + index, 1)
       }
+  @generateBudgetItems = (accountType) ->
+    _.chain($scope.accounts).filter( (a) ->
+      a.account_type == accountType
+    ).map( (a) ->
+      new BudgetItem(a, [0,0,0,0,0,0,0,0,0,0,0,0])
+    ).value()
+
+  @generateItems = () ->
+    return [] unless _self.selectedBudget
+    incomeItems = @generateBudgetItems 'income'
+    expenseItems = @generateBudgetItems 'expense'
+    [new HeaderItem('Income', incomeItems)].concat(
+      incomeItems
+    ).concat(
+      [new HeaderItem('Expense', expenseItems)]
+    ).concat(
+      expenseItems
+    )
 
   @loadBudgets = ->
     return unless $scope.currentEntityId
@@ -111,8 +131,22 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
     id = parseInt(budgetId)
     _self.selectedBudget = _.find(_self.budgets, (b) -> b.id == id)
     _self.periods = _self.generatePeriods()
+    _self.items = _self.generateItems()
+    return
   return
 ]
+
+class BudgetItem
+  constructor: (@account, @rawPeriods) ->
+  caption: -> @account.name
+  periods: -> @rawPeriods
+  isHeader: false
+
+class HeaderItem
+  constructor: (@accountType, @items) ->
+  caption: -> @accountType
+  periods: -> [0,0,0,0,0,0,0,0,0,0,0,0]
+  isHeader: true
 
 app.controller 'BudgetFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
   $scope.saveBudgetForm = ->
