@@ -5,6 +5,9 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @budgets = []
   @selectedBuget = null
   @periods = []
+  @periodsAreVisible = false
+  @showPeriods = -> @periodsAreVisible = true
+  @hidePeriods = -> @periodsAreVisible = false
   $scope.selectedBudgetId = null
 
   @new = ->
