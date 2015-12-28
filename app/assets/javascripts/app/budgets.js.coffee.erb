@@ -87,23 +87,33 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @calendarIsOpen = false
   @openCalendar = -> @calendarIsOpen = true
 
-  @generateBudgetItems = (accountType) ->
-    _.chain($scope.accounts).filter( (a) ->
-      a.account_type == accountType
-    ).map( (a) ->
-      new BudgetItem(a, [0,0,0,0,0,0,0,0,0,0,0,0])
+  @emptyPeriods = (startDate, account_id) ->
+    _.chain(
+      [0..11]
+    ).map( (index) ->
+      addMonths startDate, index
+    ).map( (d) ->
+      start_date: d
+      budget_amount: 0
     ).value()
 
   @generateItems = () ->
-    return [] unless _self.selectedBudget
-    incomeItems = @generateBudgetItems 'income'
-    expenseItems = @generateBudgetItems 'expense'
-    [new HeaderItem('Income', incomeItems)].concat(
-      incomeItems
-    ).concat(
-      [new HeaderItem('Expense', expenseItems)]
-    ).concat(
-      expenseItems
+    items = _.chain(
+      $scope.accounts
+    ).map( (a) ->
+      new BudgetItem(a, {
+        periods: _self.emptyPeriods(parseDate(_self.selectedBudget.start_date), a.id)
+      })
+    ).groupBy( (item) ->
+      item.account.account_type
+    ).value()
+    _.reduce(
+      ['Asset', 'Liability', 'Equity', 'Income', 'Expense'],
+      (list, type) ->
+        typedItems = items[type.toLowerCase()] || []
+        list.push new HeaderItem(type, typedItems)
+        list.concat typedItems
+      , []
     )
 
   @loadBudgets = ->
@@ -126,15 +136,9 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
 
 BudgetItem = (account, budgetItem) ->
   _self = this
+  @budgetItem = budgetItem
   @account = account
-  if @budgetItem
-    @period = @budgetItem.periods
-  else
-    @periods = _.map [0..11], (_) ->
-      {
-        budget_amount: 0,
-        start_date: new Date(2015, 0, 1)
-      }
+  @periods = budgetItem.periods
   @caption = -> @account.name
   @isHeader = false
 
