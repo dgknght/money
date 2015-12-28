@@ -87,6 +87,14 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @calendarIsOpen = false
   @openCalendar = -> @calendarIsOpen = true
 
+  @editItem = (item) ->
+    _self.formBudgetItem = item
+    $uibModal.open {
+      animation: true,
+      templateUrl: 'budget-item-form.html',
+      controller: 'BudgetItemFormController',
+      scope: $scope
+    }
   @emptyPeriods = (startDate, account_id) ->
     _.chain(
       [0..11]
@@ -136,10 +144,14 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
 
 BudgetItem = (account, budgetItem) ->
   _self = this
+  @total = ->
+    _.reduce(_self.periods, (sum, p) ->
+      sum + p.budget_amount
+    , 0)
   @budgetItem = budgetItem
   @account = account
   @periods = budgetItem.periods
-  @caption = -> @account.name
+  @caption = -> @account.path
   @isHeader = false
 
 class HeaderItem
@@ -159,6 +171,13 @@ app.controller 'BudgetFormController', ['$scope', '$uibModalInstance', ($scope, 
   $scope.cancelBudgetForm = ->
     $uibModalInstance.dismiss('cancel')
   return
+]
+
+app.controller 'BudgetItemFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
+  $scope.saveBudgetItemForm = ->
+    console.log "save budget item"
+  $scope.cancelBudgetItemForm = ->
+    $uibModalInstance.dismiss('cancel')
 ]
 
 app.directive 'budgetManager', ->
