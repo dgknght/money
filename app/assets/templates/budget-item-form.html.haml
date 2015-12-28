@@ -1,0 +1,26 @@
+.modal-header
+  %button.close{ 'ng-click' => 'cancelBudgetItemForm()', 'aria-hidden' => true } &times;
+  %h3.model-title Edit budget item
+.modal-body
+  .row
+    .col-sm-6
+      .form-group
+        %select.form-control{ 'ng-model' => 'selectedMethod' }
+          %option annual
+          %option{ :value => 'monthlyAverage' } monthly
+          %option weekly
+      %form.css-form{ :name => 'budgetItemMonthlyForm', :novalidate => true, 'ng-show' => 'selectedMethod == "monthlyAverage"' }
+        .form-group
+          %label.control-label{ :for => 'monthlyAverage' } Monthly Average
+          %input.form-control{ :type => 'number', :name => 'monthlyAverage', 'ng-model' => 'monthlyAverage', 'ng-blur' => 'applyMonthlyAverage()' }
+    .col-sm-6
+      %table.table.table-striped
+        %tr{ 'ng-repeat' => 'period in selectedBudgetItem.periods' }
+          %th.text-right {{ period.start_date | date:'MMM yyyy' }}
+          %td.text-right {{ period.budget_amount | number:2 }}
+        %tr
+          %th.text-right Total
+          %td.text-right {{ selectedBudgetItem.total() | number:2 }}
+.modal-footer
+  %button.btn.btn-primary{ 'ng-click' => 'saveBudgetItemForm()' } Save
+  %button.btn.btn-default{ 'ng-click' => 'cancelBudgetItemForm()' } Cancel

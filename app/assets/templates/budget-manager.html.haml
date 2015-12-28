@@ -22,35 +22,6 @@
     .modal-footer
       %button.btn.btn-primary{ 'ng-click' => 'saveBudgetForm()', 'ng-disabled' => 'budgetForm.$invalid' } Save
       %button.btn.btn-default{ 'ng-click' => 'cancelBudgetForm()' } Cancel
-  %script{ :type => 'text/ng-template', :id => 'budget-item-form.html' }
-    .modal-header
-      %button.close{ 'ng-click' => 'cancelBudgetItemForm()', 'aria-hidden' => true } &times;
-      %h3.model-title Edit budget item
-    .modal-body
-      .row
-        .col-sm-6
-          .form-group
-            %select.form-control{ 'ng-model' => 'selectedMethod' }
-              %option annual
-              %option monthly
-              %option weekly
-          %form.css-form{ :name => 'budgetItemMonthlyForm', :novalidate => true, 'ng-show' => 'selectedMethod == "monthly"' }
-            .form-group
-              %label.control-label{ :for => 'monthlyAmount' } Monthly Average
-              %input.form-control{ :type => 'number', 'ng-model' => 'monthlyAverage' }
-            .form-group
-              %button.btn.btn-primary{ :type => 'button', } Apply
-        .col-sm-6
-          %table.table.table-striped
-            %tr{ 'ng-repeat' => 'period in budgetsCtrl.formBudgetItem.periods' }
-              %th.text-right {{ period.start_date | date:'MMM yyyy' }}
-              %td.text-right {{ period.budget_amount | number:2 }}
-            %tr
-              %th.text-right Total
-              %td.text-right {{ budgetsCtrl.formBudgetItem.total() | number:2 }}
-    .modal-footer
-      %button.btn.btn-default{ 'ng-click' => 'saveBudgetItemForm()', 'ng-disabled' => 'budgetItemForm.$invalid' } Save
-      %button.btn.btn-default{ 'ng-click' => 'cancelBudgetItemForm()' } Cancel
   .panel.panel-primary
     .panel-heading Budgets
     .panel-body
