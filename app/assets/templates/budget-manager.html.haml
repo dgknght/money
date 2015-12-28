@@ -26,10 +26,10 @@
     .panel-heading Budgets
     .panel-body
       .row
-        .col-md-10
+        .col-sm-9
           %select.form-control{ 'ng-model' => 'selectedBudgetId', 'convert-to-number' => 'true' }
             %option{ 'ng-repeat' => 'budget in budgetsCtrl.budgets', :value => '{{ budget.id }}' } {{ budget.name }}
-        .col-md-2
+        .col-sm-3
           .btn-group
             %button.btn.btn-sm.btn-primary{ :type => 'button', 'ng-click' => 'budgetsCtrl.new()' }
               %span.glyphicon.glyphicon-plus{ 'arial-hidden' => true }
@@ -39,26 +39,27 @@
               %span.glyphicon.glyphicon-remove{ 'arial-hidden' => true }
       .row
         .col-md-12
-          %table.table.table-striped{ 'ng-show' => 'budgetsCtrl.selectedBudget' }
-            %tr
-              %th Account
-              %th.right-border &nbsp;
-              %th.text-right Total
-              %th.text-right{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } Average
-              %th.text-right{ 'ng-repeat' => 'period in budgetsCtrl.items[0].periods', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period.start_date | date:'MMM yyyy' }}
-              %th{ :class => 'button-column' }
-                %button.btn.btn-xs.btn-default{ 'ng-click' => 'budgetsCtrl.showPeriods()', 'ng-hide' => 'budgetsCtrl.periodsAreVisible', :title => 'Click here to show period details.' }
-                  %span.glyphicon.glyphicon-eye-open{ 'arial-hidden' => true }
-                %button.btn.btn-xs.btn-default{ 'ng-click' => 'budgetsCtrl.hidePeriods()', 'ng-show' => 'budgetsCtrl.periodsAreVisible', :title => 'Click here to hide period details.' }
-                  %span.glyphicon.glyphicon-eye-close{ 'arial-hidden' => true }
-            %tr{ 'ng-repeat' => 'item in budgetsCtrl.items', 'ng-class' => '{"header-row": item.isHeader}' }
-              %td {{ item.caption() }}
-              %td.right-border
-                %button.btn.btn-xs.btn-info{ 'ng-click' => 'budgetsCtrl.editItem(item)', 'ng-hide' => 'item.isHeader' }
-                  %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
-              %td.text-right 0.00
-              %td.text-right{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } 0.00
-              %td.text-right{ 'ng-repeat' => 'period in item.periods', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period.budget_amount | number:2 }}
-              %td &nbsp;
+          %p
+            %table.table.table-striped{ 'ng-show' => 'budgetsCtrl.selectedBudget' }
+              %tr
+                %th Account
+                %th.right-border &nbsp;
+                %th.text-right Total
+                %th.text-right{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } Average
+                %th.text-right{ 'ng-repeat' => 'period in budgetsCtrl.items[0].periods', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period.start_date | date:'MMM yyyy' }}
+                %th{ :class => 'button-column' }
+                  %button.btn.btn-xs.btn-default{ 'ng-click' => 'budgetsCtrl.showPeriods()', 'ng-hide' => 'budgetsCtrl.periodsAreVisible', :title => 'Click here to show period details.' }
+                    %span.glyphicon.glyphicon-eye-open{ 'arial-hidden' => true }
+                  %button.btn.btn-xs.btn-default{ 'ng-click' => 'budgetsCtrl.hidePeriods()', 'ng-show' => 'budgetsCtrl.periodsAreVisible', :title => 'Click here to hide period details.' }
+                    %span.glyphicon.glyphicon-eye-close{ 'arial-hidden' => true }
+              %tr{ 'ng-repeat' => 'item in budgetsCtrl.items', 'ng-class' => '{"header-row": item.isHeader}' }
+                %td {{ item.caption() }}
+                %td.right-border
+                  %button.btn.btn-xs.btn-info{ 'ng-click' => 'budgetsCtrl.editItem(item)', 'ng-hide' => 'item.isHeader' }
+                    %span.glyphicon.glyphicon-pencil{ 'arial-hidden' => true }
+                %td.text-right 0.00
+                %td.text-right{ 'ng-hide' => 'budgetsCtrl.periodsAreVisible' } 0.00
+                %td.text-right{ 'ng-repeat' => 'period in item.periods', 'ng-show' => 'budgetsCtrl.periodsAreVisible' } {{ period.budget_amount | number:2 }}
+                %td &nbsp;
           %p
             %button.btn.btn-primary{ 'ng-click' => 'budgetsCtrl.newItem()' } Add
