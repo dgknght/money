@@ -115,7 +115,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       controller: 'BudgetItemFormController',
       scope: $scope
     }
-  @emptyPeriods = (startDate, account_id) ->
+  @emptyPeriods = (startDate) ->
     _.chain(
       [0..11]
     ).map( (index) ->
@@ -125,25 +125,35 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       budget_amount: 0
     ).value()
 
-  @generateItems = () ->
-    items = _.chain(
+  @mapItems = (items) ->
+    mappedItems = _.chain(
       $scope.accounts
     ).map( (a) ->
-      new BudgetItem(a, {
+      existingItem = _.find(items, (i) -> i.account_id == a.id)
+      workingItem = existingItem || {
         account_id: a.id
         periods: _self.emptyPeriods(parseDate(_self.selectedBudget.start_date), a.id)
-      })
+      }
+      new BudgetItem(a, workingItem)
     ).groupBy( (item) ->
       item.account.account_type
     ).value()
-    _.reduce(
+
+    _self.items = _.reduce(
       ['Asset', 'Liability', 'Equity', 'Income', 'Expense'],
       (list, type) ->
-        typedItems = items[type.toLowerCase()] || []
-        list.push new HeaderItem(type, typedItems)
+        typedItems = mappedItems[type.toLowerCase()] || []
+        list.push new HeaderItem(type, typedItems, $scope.periods)
         list.concat typedItems
       , []
     )
+
+  @generateItems = () ->
+    $http.get("/budgets/#{$scope.selectedBudgetId}/items.json").then (response) ->
+      _self.mapItems(response.data)
+    , (error) ->
+      console.log "Unable to get the budget items from the service."
+      console.log error
 
   @loadBudgets = ->
     return unless $scope.currentEntityId
@@ -155,10 +165,13 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       console.log error
   $scope.$watch 'currentEntityId', (_) -> _self.loadBudgets()
   $scope.$watch 'selectedBudgetId', (budgetId) ->
-    _self.selectedBudget = null unless budgetId
-    id = parseInt(budgetId)
-    _self.selectedBudget = _.find(_self.budgets, (b) -> b.id == id)
-    _self.items = _self.generateItems()
+    if budgetId
+      id = parseInt(budgetId)
+      _self.selectedBudget = _.find(_self.budgets, (b) -> b.id == id)
+      _self.generateItems()
+      $scope.periods = _self.emptyPeriods(parseDate(_self.selectedBudget.start_date))
+    else
+      _self.selectedBudget = null
     return
   return
 ]
@@ -172,18 +185,35 @@ BudgetItem = (account, budgetItem) ->
   @budgetItem = budgetItem
   @account = account
   @periods = budgetItem.periods
-  @caption = -> @account.path
+  @caption = @account.path
   @isHeader = false
+  return
 
-class HeaderItem
-  constructor: (@accountType, @items) ->
-    @periods = _.map [0..11], (_) ->
-      {
-        budget_amount: 0,
-        start_date: new Date(2015, 0, 1)
-      }
-  caption: -> @accountType
-  isHeader: true
+HeaderItem = (accountType, items, periods) ->
+  _self = this
+  @accountType = accountType
+  @items = items
+  @periods = _.map periods, (period, index) ->
+    budgetAmount = _.chain(
+      _self.items
+    ).map( (i) ->
+      i.periods[index]
+    ).map( (p) ->
+      p.budget_amount
+    ).reduce( (sum, a) ->
+      sum + a
+    , 0).value()
+    {
+      budget_amount: budgetAmount
+      start_date: period.start_date
+    }
+  @caption = @accountType
+  @total = ->
+    _.reduce(_self.periods, (sum, p) ->
+      sum + p.budget_amount
+    , 0)
+  @isHeader = true
+  return
 
 app.controller 'BudgetFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
   $scope.saveBudgetForm = ->
