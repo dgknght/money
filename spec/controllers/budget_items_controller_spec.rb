@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BudgetItemsController do
 
-  let (:budget) { FactoryGirl.create(:budget) }
+  let (:budget) { FactoryGirl.create(:budget, start_date: Date.parse('2015-01-01')) }
   let (:account) { FactoryGirl.create(:account, entity: budget.entity) }
   let!(:budget_item) { FactoryGirl.create(:budget_item, budget: budget) }
   let (:attributes) do
@@ -88,20 +88,78 @@ describe BudgetItemsController do
         end
         
         context 'in json' do
+          let (:attributes) do
+            {
+              budget_id: budget.id,
+              account_id: account.id,
+              periods_attributes: [
+                {
+                  start_date: '2015-01-01',
+                  budget_amount: 101
+                },
+                {
+                  start_date: '2015-02-01',
+                  budget_amount: 102
+                },
+                {
+                  start_date: '2015-03-01',
+                  budget_amount: 103
+                },
+                {
+                  start_date: '2015-04-01',
+                  budget_amount: 104
+                },
+                {
+                  start_date: '2015-05-01',
+                  budget_amount: 105
+                },
+                {
+                  start_date: '2015-06-01',
+                  budget_amount: 106
+                },
+                {
+                  start_date: '2015-07-01',
+                  budget_amount: 107
+                },
+                {
+                  start_date: '2015-08-01',
+                  budget_amount: 108
+                },
+                {
+                  start_date: '2015-09-01',
+                  budget_amount: 109
+                },
+                {
+                  start_date: '2015-10-01',
+                  budget_amount: 110
+                },
+                {
+                  start_date: '2015-11-01',
+                  budget_amount: 111
+                },
+                {
+                  start_date: '2015-12-01',
+                  budget_amount: 112
+                }
+              ]
+            }
+          end
           it 'is successful' do
-            post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
+            post :create, budget_id: budget, budget_item: attributes, format: :json
             expect(response).to be_success
           end
           
           it 'creates a new budget item' do
             expect do
-              post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
+              post :create, budget_id: budget, budget_item: attributes, format: :json
             end.to change(BudgetItem, :count).by(1)
           end
           
           it 'returns the new budget item' do
-            post :create, budget_id: budget, budget_item: attributes, distributor: distributor, format: :json
+            post :create, budget_id: budget, budget_item: attributes, format: :json
             expect(response.body).to json_match attributes
+            actual_periods = JSON.parse(response.body)['periods'].map{|p| p['budget_amount']}
+            expect(actual_periods).to eq([101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112])
           end
         end
       end

@@ -55,17 +55,21 @@ class BudgetItemsController < ApplicationController
   
   private
     def budget_item_params
-      params.require(:budget_item).permit(:account_id)
+      params.require(:budget_item).permit(:account_id, { periods_attributes: [:budget_amount, :start_date]})
     end
     
     def distribute
+      params = distributor_params
+      return unless params
+
       @distributor = BudgetItemDistributor.new(@budget_item)
-      @distributor.apply_attributes(distributor_params)
+      @distributor.apply_attributes(params)
       @distributor.distribute
     end
     
     def distributor_params
-      result = params.require(:distributor).permit(:method).tap do |allowed|
+      return nil unless params[:distributor]
+      params.require(:distributor).permit(:method).tap do |allowed|
         allowed[:options] = params[:distributor][:options]
       end
     end

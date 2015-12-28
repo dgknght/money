@@ -14,6 +14,8 @@ class BudgetItem < ActiveRecord::Base
   belongs_to :account, inverse_of: :budget_items
   has_many :periods, class_name: BudgetItemPeriod, inverse_of: :budget_item, validate: false, autosave: true, dependent: :destroy
   
+  accepts_nested_attributes_for :periods, allow_destroy: true
+
   validates_presence_of :budget_id, :account_id
   validates_uniqueness_of :account_id, scope: :budget_id
   
@@ -21,6 +23,10 @@ class BudgetItem < ActiveRecord::Base
   
   scope :income, -> { joins(:account).where('accounts.account_type=?', Account.income_type) }
   scope :expense, -> { joins(:account).where('accounts.account_type=?', Account.expense_type) }
+
+  def as_json(options = nil)
+    super({include: :periods}.merge(options))
+  end
 
   def current_period
     @current_period ||= get_current_period
