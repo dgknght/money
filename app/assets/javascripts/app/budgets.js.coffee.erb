@@ -84,14 +84,34 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
     else
       _self.createBudget()
 
+  @selectedBudgetItemData = ->
+    budget_item: $scope.selectedBudgetItem.budgetItem
+
+  @createBudgetItem = ->
+    $http.post("/budgets/#{$scope.selectedBudgetId}/items.json", _self.selectedBudgetItemData()).then (response) ->
+      bi = _.find(_self.selectedBudget.items, (i) -> i.account.id == response.data.account_id)
+      bi.budgetItem = response.data
+      true
+    , (error) ->
+      console.log "Unable to create the budget item"
+      console.log error
+      false
+
+  $scope.saveSelectedBudgetItem = ->
+    if $scope.selectedBudgetItem.id
+      _self.updateSelectedBudgetItem()
+    else
+      _self.createBudgetItem()
+
   @calendarIsOpen = false
   @openCalendar = -> @calendarIsOpen = true
 
   @editItem = (item) ->
-    _self.formBudgetItem = item
+    $scope.selectedBudgetItem = item
+    $scope.selectedMethod = 'annual'
     $uibModal.open {
       animation: true,
-      templateUrl: 'budget-item-form.html',
+      templateUrl: '<%= asset_path('budget-item-form.html') %>',
       controller: 'BudgetItemFormController',
       scope: $scope
     }
@@ -110,6 +130,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       $scope.accounts
     ).map( (a) ->
       new BudgetItem(a, {
+        account_id: a.id
         periods: _self.emptyPeriods(parseDate(_self.selectedBudget.start_date), a.id)
       })
     ).groupBy( (item) ->
@@ -174,10 +195,18 @@ app.controller 'BudgetFormController', ['$scope', '$uibModalInstance', ($scope, 
 ]
 
 app.controller 'BudgetItemFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
+  $scope.monthlyAverage = 0
+
   $scope.saveBudgetItemForm = ->
-    console.log "save budget item"
+    $scope.saveSelectedBudgetItem().then (succeeded) ->
+      $uibModalInstance.close() if succeeded
   $scope.cancelBudgetItemForm = ->
     $uibModalInstance.dismiss('cancel')
+  $scope.$watch 'selectedMethod', (method) ->
+    if method == 'monthlyAverage'
+      $scope.monthlyAverage = $scope.selectedBudgetItem.total() / $scope.selectedBudgetItem.periods.length
+  $scope.applyMonthlyAverage = ->
+    _.each($scope.selectedBudgetItem.periods, (p) -> p.budget_amount = $scope.monthlyAverage)
 ]
 
 app.directive 'budgetManager', ->
