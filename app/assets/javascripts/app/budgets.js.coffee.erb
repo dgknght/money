@@ -139,14 +139,19 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       item.account.account_type
     ).value()
 
-    _self.items = _.reduce(
+    parts = _.reduce(
       ['Asset', 'Liability', 'Equity', 'Income', 'Expense'],
-      (list, type) ->
+      (result, type) ->
         typedItems = mappedItems[type.toLowerCase()] || []
-        list.push new HeaderItem(type, typedItems, $scope.periods)
-        list.concat typedItems
-      , []
+        header = new HeaderItem(type, typedItems, $scope.periods)
+        result.headers[header.caption.toLowerCase()] = header
+        result.list.push header
+        result.list = result.list.concat typedItems
+        result
+      , { list: [], headers: {} }
     )
+    parts.list.push new TotalItem(parts.headers)
+    _self.items = parts.list
 
   @generateItems = () ->
     $http.get("/budgets/#{$scope.selectedBudgetId}/items.json").then (response) ->
@@ -212,6 +217,19 @@ HeaderItem = (accountType, items, periods) ->
     _.reduce(_self.periods, (sum, p) ->
       sum + p.budget_amount
     , 0)
+  @isHeader = true
+  return
+
+TotalItem = (headers, periods) ->
+  @caption = 'Total'
+  @periods = _.map periods, (period, index) ->
+    budgetAmount = headers['income'].periods[index].budget_amount - headers['expense'].periods[index].budget_amount
+    {
+      budget_amount: budgetAmount
+      start_date: period.start_date
+    }
+  @total = ->
+    headers['income'].total() - headers['expense'].total()
   @isHeader = true
   return
 
