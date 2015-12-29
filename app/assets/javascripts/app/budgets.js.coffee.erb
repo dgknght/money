@@ -108,7 +108,6 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
 
   @updateSelectedBudgetItem = ->
     $http.put("/budget_items/#{$scope.selectedBudgetItem.budgetItem.id}.json", _self.selectedBudgetItemData()).then (response) ->
-      console.log "update succeeded"
       true
     , (error) ->
       console.log "Unable to update the budget item"
