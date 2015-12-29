@@ -6,13 +6,17 @@
     .col-sm-6
       .form-group
         %select.form-control{ 'ng-model' => 'selectedMethod' }
-          %option annual
-          %option{ :value => 'monthlyAverage' } monthly
-          %option weekly
+          %option{ :value => 'annualTotal' } Annual total
+          %option{ :value => 'monthlyAverage' } Monthly average
+          %option{ :value => 'detail' } Monthly detail
       %form.css-form{ :name => 'budgetItemMonthlyForm', :novalidate => true, 'ng-show' => 'selectedMethod == "monthlyAverage"' }
         .form-group
-          %label.control-label{ :for => 'monthlyAverage' } Monthly Average
+          %label.control-label{ :for => 'monthlyAverage' } Monthly average
           %input.form-control{ :type => 'number', :name => 'monthlyAverage', 'ng-model' => 'monthlyAverage', 'ng-blur' => 'applyMonthlyAverage()' }
+      %form.css-form{ :name => 'budgetItemAnnualForm', :novalidate => true, 'ng-show' => 'selectedMethod == "annualTotal"' }
+        .form-group
+          %label.control-label{ :for => 'annualTotal' } Annual total
+          %input.form-control{ :type => 'number', :name => 'annualTotal', 'ng-model' => 'annualTotal', 'ng-blur' => 'applyAnnualTotal()' }
     .col-sm-6
       %table.table.table-striped
         %tr{ 'ng-repeat' => 'period in selectedBudgetItem.periods' }

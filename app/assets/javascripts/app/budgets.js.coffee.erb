@@ -126,7 +126,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
 
   @editItem = (item) ->
     $scope.selectedBudgetItem = item
-    $scope.selectedMethod = 'annual'
+    $scope.selectedMethod = 'annualTotal'
     $uibModal.open {
       animation: true,
       templateUrl: '<%= asset_path('budget-item-form.html') %>',
@@ -271,8 +271,13 @@ app.controller 'BudgetItemFormController', ['$scope', '$uibModalInstance', ($sco
   $scope.$watch 'selectedMethod', (method) ->
     if method == 'monthlyAverage'
       $scope.monthlyAverage = $scope.selectedBudgetItem.total() / $scope.selectedBudgetItem.periods.length
+    else if method == 'annualTotal'
+      $scope.annualTotal = $scope.selectedBudgetItem.total()
   $scope.applyMonthlyAverage = ->
     _.each($scope.selectedBudgetItem.periods, (p) -> p.budget_amount = $scope.monthlyAverage)
+  $scope.applyAnnualTotal = ->
+    monthlyAverage = $scope.annualTotal / $scope.selectedBudgetItem.periods.length
+    _.each($scope.selectedBudgetItem.periods, (p) -> p.budget_amount = monthlyAverage)
 ]
 
 app.directive 'budgetManager', ->
