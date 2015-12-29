@@ -16,16 +16,30 @@ window.today = ->
   d = new Date()
   new Date(d.getFullYear(), d.getMonth(), d.getDate())
 window.parseDate = (dateString) ->
+  return dateString if _.isDate(dateString)
   parsed = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString)
+  return null unless parsed
   year  = parseInt(parsed[1])
   month = parseInt(parsed[2])
   date  = parseInt(parsed[3])
   new Date(year, month - 1, date)
+window.addDays = (date, dayCount) ->
+  new Date(date.getFullYear(), date.getMonth(), date.getDate() + dayCount)
 window.addMonths = (date, monthCount) ->
-  new Date(date.getFullYear(), date.getMonth() + monthCount, date.getDate())
+  safeDate = parseDate(date)
+  throw "#{date} is not a date" unless _.isDate(safeDate)
+  new Date(safeDate.getFullYear(), safeDate.getMonth() + monthCount, safeDate.getDate())
 window.consecutiveMonths = (date, count) ->
   _.map([0..(count-1)], (index) -> addMonths(date, index))
-
+window.consecutiveDays = (date, count) ->
+  _.map([0..(count-1)], (index) -> addDays(date, index))
+window.periodicDays = (startDate, endDate, dayStep) ->
+  list = []
+  d = startDate
+  while d <= endDate
+    list.push d
+    d = addDays(d, dayStep)
+  list
 app = angular.module 'moneyApp', ['view', 'entities', 'accounts', 'register', 'transactions', 'budgets']
 
 app.directive 'confirmationNeeded', ->
