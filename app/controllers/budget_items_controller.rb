@@ -55,7 +55,7 @@ class BudgetItemsController < ApplicationController
   
   private
     def budget_item_params
-      params.require(:budget_item).permit(:account_id, { periods_attributes: [:budget_amount, :start_date]})
+      params.require(:budget_item).permit(:account_id, { periods_attributes: [:id, :budget_amount, :start_date]})
     end
     
     def distribute

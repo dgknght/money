@@ -86,6 +86,7 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
 
   @selectedBudgetItemData = ->
     budget_item:
+      id: $scope.selectedBudgetItem.budgetItem.id
       account_id: $scope.selectedBudgetItem.budgetItem.account_id
       periods_attributes: $scope.selectedBudgetItem.budgetItem.periods
 
@@ -105,8 +106,17 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       console.log error
       false
 
+  @updateSelectedBudgetItem = ->
+    $http.put("/budget_items/#{$scope.selectedBudgetItem.budgetItem.id}.json", _self.selectedBudgetItemData()).then (response) ->
+      console.log "update succeeded"
+      true
+    , (error) ->
+      console.log "Unable to update the budget item"
+      console.log error
+      false
+
   $scope.saveSelectedBudgetItem = ->
-    if $scope.selectedBudgetItem.id
+    if $scope.selectedBudgetItem.budgetItem.id
       _self.updateSelectedBudgetItem()
     else
       _self.createBudgetItem()
