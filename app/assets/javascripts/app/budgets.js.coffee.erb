@@ -264,6 +264,8 @@ app.controller 'BudgetFormController', ['$scope', '$uibModalInstance', ($scope, 
 
 app.controller 'BudgetItemFormController', ['$scope', '$uibModalInstance', ($scope, $uibModalInstance) ->
   $scope.monthlyAverage = 0
+  $scope.weekCount = 2
+  $scope.weeklyAmount = 0
 
   $scope.saveBudgetItemForm = ->
     $scope.saveSelectedBudgetItem().then (succeeded) ->
@@ -280,6 +282,20 @@ app.controller 'BudgetItemFormController', ['$scope', '$uibModalInstance', ($sco
   $scope.applyAnnualTotal = ->
     monthlyAverage = $scope.annualTotal / $scope.selectedBudgetItem.periods.length
     _.each($scope.selectedBudgetItem.periods, (p) -> p.budget_amount = monthlyAverage)
+  $scope.applyWeeklyAmount = ->
+    return unless $scope.weeklyAmount && $scope.weekCount && $scope.weeklyStartDate
+
+    endDate = addDays(addMonths(_.last($scope.selectedBudgetItem.periods).start_date, 1), -1)
+    dates = _.chain(
+      periodicDays($scope.weeklyStartDate, endDate, $scope.weekCount * 7)
+    ).groupBy( (d) ->
+      d.getUTCMonth()
+    ).value()
+    _.each $scope.selectedBudgetItem.periods, (p, index) ->
+      p.budget_amount = dates[index].length * $scope.weeklyAmount
+  $scope.$watch 'weekCount', (count) ->
+    startDate = parseDate($scope.selectedBudgetItem.periods[0].start_date)
+    $scope.availableStartDates = consecutiveDays(startDate, count * 7)
 ]
 
 app.directive 'budgetManager', ->

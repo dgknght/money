@@ -9,6 +9,7 @@
           %option{ :value => 'annualTotal' } Annual total
           %option{ :value => 'monthlyAverage' } Monthly average
           %option{ :value => 'detail' } Monthly detail
+          %option{ :value => 'weekly' } Weekly
       %form.css-form{ :name => 'budgetItemMonthlyForm', :novalidate => true, 'ng-show' => 'selectedMethod == "monthlyAverage"' }
         .form-group
           %label.control-label{ :for => 'monthlyAverage' } Monthly average
@@ -21,6 +22,17 @@
         .form-group{ 'ng-repeat' => 'period in selectedBudgetItem.periods' }
           %label.control-label{ :for => 'annualTotal' } {{ period.start_date | date:'MMM yyyy' }}
           %input.form-control{ :type => 'number', :name => 'annualTotal', 'ng-model' => 'period.budget_amount' }
+      %form.css-form{ :name => 'budgetItemWeeklyForm', :novalidate => true, 'ng-show' => 'selectedMethod == "weekly"' }
+        .form-group
+          %label.control-label{ :for => 'weeklyAmount' } Amount
+          %input.form-control{ :type => 'number', :name => 'weeklyAmount', 'ng-model' => 'weeklyAmount', 'ng-blur' => 'applyWeeklyAmount()' }
+        .form-group
+          %label.control-label{ :for => 'weekCount' } Number of weeks
+          %input.form-control{ :type => 'number', :name => 'weekCount', 'ng-model' => 'weekCount', :min => 1, :max => 26, 'ng-blur' => 'applyWeeklyAmount()' }
+        .form-group
+          %label.control-label{ :for => 'startDate' } Start date
+          %select.form-control{ :name => 'startDate', 'ng-model' => 'weeklyStartDate', 'ng-change' => 'applyWeeklyAmount()', 'convert-to-date' => true }
+            %option{ 'ng-repeat' => 'date in availableStartDates', :value => '{{ date | date:"yyyy-MM-dd" }}' } {{ date | date:'d - EEE' }}
     .col-sm-6
       %table.table.table-striped
         %tr{ 'ng-repeat' => 'period in selectedBudgetItem.periods' }
