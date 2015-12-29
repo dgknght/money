@@ -17,6 +17,10 @@
         .form-group
           %label.control-label{ :for => 'annualTotal' } Annual total
           %input.form-control{ :type => 'number', :name => 'annualTotal', 'ng-model' => 'annualTotal', 'ng-blur' => 'applyAnnualTotal()' }
+      %form.css-form{ :name => 'budgetItemDetailForm', :novalidate => true, 'ng-show' => 'selectedMethod == "detail"' }
+        .form-group{ 'ng-repeat' => 'period in selectedBudgetItem.periods' }
+          %label.control-label{ :for => 'annualTotal' } {{ period.start_date | date:'MMM yyyy' }}
+          %input.form-control{ :type => 'number', :name => 'annualTotal', 'ng-model' => 'period.budget_amount' }
     .col-sm-6
       %table.table.table-striped
         %tr{ 'ng-repeat' => 'period in selectedBudgetItem.periods' }

@@ -88,7 +88,10 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
     budget_item:
       id: $scope.selectedBudgetItem.budgetItem.id
       account_id: $scope.selectedBudgetItem.budgetItem.account_id
-      periods_attributes: $scope.selectedBudgetItem.budgetItem.periods
+      periods_attributes: _.map $scope.selectedBudgetItem.budgetItem.periods, (p) ->
+        p.budget_amount = 0 unless p.budget_amount
+        p
+
 
   @createBudgetItem = ->
     $http.post("/budgets/#{$scope.selectedBudgetId}/items.json", _self.selectedBudgetItemData()).then (response) ->
