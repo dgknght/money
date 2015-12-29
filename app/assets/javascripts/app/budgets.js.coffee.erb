@@ -85,11 +85,19 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       _self.createBudget()
 
   @selectedBudgetItemData = ->
-    budget_item: $scope.selectedBudgetItem.budgetItem
+    budget_item:
+      account_id: $scope.selectedBudgetItem.budgetItem.account_id
+      periods_attributes: $scope.selectedBudgetItem.budgetItem.periods
 
   @createBudgetItem = ->
     $http.post("/budgets/#{$scope.selectedBudgetId}/items.json", _self.selectedBudgetItemData()).then (response) ->
-      bi = _.find(_self.selectedBudget.items, (i) -> i.account.id == response.data.account_id)
+      bi = _.chain(
+        _self.items
+      ).reject( (i) ->
+        i.isHeader
+      ).find(
+        (i) -> i.account.id == response.data.account_id
+      ).value()
       bi.budgetItem = response.data
       true
     , (error) ->
