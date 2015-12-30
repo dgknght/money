@@ -36,6 +36,7 @@ group :test, :development do
   gem 'timecop'
   gem 'lunchy'
   gem 'rake'
+  gem 'jasmine-rails'
 end
 
 group :test do
