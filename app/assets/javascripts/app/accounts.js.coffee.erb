@@ -29,7 +29,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       scope: $scope
     }
   @edit = (id) ->
-    _self.formAccount = _.chain($scope.accounts).filter((a) -> a.id == id).first().value()
+    _self.formAccount = _.find $scope.accounts, (a) => a.id == id
     $scope.formTitle = "Edit account"
     modalInstance = $uibModal.open {
       animation: true,
