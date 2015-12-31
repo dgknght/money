@@ -86,7 +86,7 @@ describe 'AccountsController', ->
       controller.formAccount.name = "Rent"
       controller.formAccount.account_type = 'expense'
 
-      $httpBackend.expectPOST('entities/1/accounts.json', (data) ->
+      $httpBackend.expectPOST('/entities/1/accounts.json', (data) ->
         obj = JSON.parse(data)
         obj.name == 'Rent' && obj.account_type == 'expense'
       ).respond(
@@ -104,7 +104,7 @@ describe 'AccountsController', ->
       controller.formAccount.name = "Rent"
       controller.formAccount.account_type = 'expense'
 
-      $httpBackend.whenPOST('entities/1/accounts.json').respond(
+      $httpBackend.whenPOST('/entities/1/accounts.json').respond(
         accountFactory(
           id: 6
           name: 'Rent'
