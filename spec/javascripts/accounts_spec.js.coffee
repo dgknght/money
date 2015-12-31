@@ -129,10 +129,37 @@ describe 'AccountsController', ->
       ]
 
   describe 'update', ->
-    it 'sends a PUT request to the service with the updated data'
-    it 'Updates the display record from the updated account'
+    it 'sends a PUT request to the service with the updated data', ->
+      $httpBackend.expectPUT('/accounts/2.json', (data) ->
+        obj = JSON.parse(data)
+        obj.name == 'Mastercard'
+      ).respond("")
+      controller.edit(2)
+      controller.formAccount.name = 'Mastercard'
+      controller.update()
+      expect($httpBackend.flush).not.toThrow()
+
+    it 'Updates the display record from the updated account', ->
+      $httpBackend.whenPUT('/accounts/2.json', (data) ->
+        obj = JSON.parse(data)
+        obj.name == 'Mastercard'
+      ).respond("")
+      controller.edit(2)
+      controller.formAccount.name = 'Mastercard'
+      controller.update()
+      $httpBackend.flush()
+      account = _.find($scope.accounts, (a) -> a.id == 2)
+      expect(account.name).toEqual 'Mastercard'
 
   describe 'delete', ->
-    it 'sends a DELETE request to the service with the account ID'
-    it 'Removes the display record for the deleted account'
+    it 'sends a DELETE request to the service with the account ID', ->
+      $httpBackend.expectDELETE('/accounts/2.json').respond("")
+      controller.delete(2)
+      expect($httpBackend.flush).not.toThrow()
+
+    it 'Removes the display record for the deleted account', ->
+      $httpBackend.whenDELETE('/accounts/2.json').respond("")
+      controller.delete(2)
+      $httpBackend.flush()
+      expect(_.map($scope.accounts, (a) -> a.id)).not.toContain(2)
   return
