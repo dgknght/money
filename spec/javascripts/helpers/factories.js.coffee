@@ -9,6 +9,5 @@ DEFAULT_ACCOUNT_ATTRIBUTES =
   children_cost: 0
   gains: 0
   children_gains: 0
-accountFactory = (attributes) ->
-  _.extend(DEFAULT_ACCOUNT_ATTRIBUTES, attributes)
-
+window.accountFactory = (attributes) ->
+  _.defaults attributes, DEFAULT_ACCOUNT_ATTRIBUTES
