@@ -11,3 +11,26 @@ DEFAULT_ACCOUNT_ATTRIBUTES =
   children_gains: 0
 window.accountFactory = (attributes) ->
   _.defaults attributes, DEFAULT_ACCOUNT_ATTRIBUTES
+
+window._lastIds = {}
+window.nextId = (modelName) ->
+  last = _lastIds[modelName] || 0
+  result = last + 1
+  _lastIds[modelName] = result
+  result
+
+window.transactionFactory = (attributes) ->
+  result = _.pick(attributes, 'transaction_date', 'description')
+  result.id = nextId('transaction')
+  result.items = [
+    id: nextId('transactionItem')
+    action: 'debit'
+    account_id: attributes['debitAccountId']
+    amount: attributes['amount']
+  ,
+    id: nextId('transactionItem')
+    action: 'credit'
+    account_id: attributes['creditAccountId']
+    amount: attributes['amount']
+  ]
+  result
