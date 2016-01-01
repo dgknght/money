@@ -29,15 +29,29 @@ describe 'ViewController', ->
       controller.search()
       matches = _.map controller.matches, (m) -> m.description
       expect(matches).toContain "Manage budgets"
+    it 'finds entity, account, and budget managers with "man"', ->
+      controller.searchInput = 'man'
+      controller.search()
+      matches = _.map controller.matches, (m) -> m.description
+      expect(matches).toEqual ["Manage entities", "Manage accounts", "Manage budgets"]
     it 'finds the purchase entry form with the input "pur"', ->
       controller.searchInput = 'pur'
       controller.search()
       matches = _.map controller.matches, (m) -> m.description
       expect(matches).toContain "Enter purchases"
-    it 'finds the an account register with the name of an account'#, ->
-      #controller.searchInput = 'Check'
-      #controller.search()
-      #matches = _.map controller.matches, (m) -> m.description
-      #expect(matches).toContain "Register: Checking"
+    it 'finds the an account register with the name of an account', ->
+      $scope.accounts = [
+        accountFactory
+          id: 1
+          name: 'Checking'
+        ,
+        accountFactory
+          id: 2
+          name: 'Cash'
+      ]
+      controller.searchInput = 'Check'
+      controller.search()
+      matches = _.map controller.matches, (m) -> m.description
+      expect(matches).toContain "Register: Checking"
 
   return

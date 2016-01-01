@@ -5,9 +5,9 @@ app.controller 'ViewController', ['$scope', ($scope, $http) ->
     @searchInput = ""
     @matches = []
     @handlers = [
-      new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
-      new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts']),
-      new SimpleMatchingHandler('budget-manager', 'Manage budgets', ['budgets']),
+      new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities', 'manage']),
+      new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts', 'manage']),
+      new SimpleMatchingHandler('budget-manager', 'Manage budgets', ['budgets', 'manage']),
       new SimpleMatchingHandler('purchase-entry', 'Enter purchases', ['purchases']),
       new AccountMatchingHandler('account-register', 'Register', $scope)
     ]
