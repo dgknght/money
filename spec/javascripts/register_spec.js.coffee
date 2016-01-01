@@ -17,6 +17,7 @@ describe 'AccountRegisterController', ->
             _.map t.items, (i) ->
               i.description = t.description
               i.transaction_date = t.transaction_date
+              i.transaction_id = t.id
               i
           )
           .flatten()
@@ -26,6 +27,8 @@ describe 'AccountRegisterController', ->
           .value()
         [200, items]
         
+    $httpBackend.whenGET('/assets/transaction-form.html').respond("")
+
     $scope = $rootScope.$new()
     $scope.accounts = [
       accountFactory
@@ -46,7 +49,7 @@ describe 'AccountRegisterController', ->
       expect($scope.transactionItems).toEqual []
       return
     it 'contains transaction items for the specified account after the view is displayed', ->
-      $scope.activeView = {key: 'account-register', accountId: 1, accountName: 'Checking'}
+      $scope.activeView = {key: 'account-register', accountId: CHECKING_ID, accountName: 'Checking'}
       $httpBackend.flush()
       actual= _.map($scope.transactionItems, (i) -> [i.transaction_date, i.amount])
       expected = [
@@ -60,3 +63,33 @@ describe 'AccountRegisterController', ->
       ]
       expect(actual).toEqual expected
 
+  describe 'new', ->
+    it "sets $scope.formTransaction to an object with today's date the first time and two items, one for the current account", ->
+      $scope.activeView = {key: 'account-register', accountId: CHECKING_ID, accountName: 'Checking'}
+      $httpBackend.flush()
+      jasmine.clock().mockDate(new Date(2015, 1, 27))
+
+      controller.new()
+      expect($scope.formTransaction.transaction_date).toEqual new Date(2015, 1, 27)
+      expect($scope.formTransaction.items[0].account_id).toBe CHECKING_ID
+      return
+
+  describe 'edit', ->
+    it 'sets formTransaction to the specified item', ->
+      $scope.activeView = {key: 'account-register', accountId: CHECKING_ID, accountName: 'Checking'}
+      $httpBackend.flush()
+
+      $httpBackend.expectGET(/^\/transactions\/\d+\.json$/).respond( (method, url) ->
+        match = /\/transactions\/(\d+)/.exec(url)
+        id = parseInt match[1]
+        transaction = _.find(TRANSACTIONS, (t) -> t.id == id)
+        [200, transaction]
+      )
+
+      item = $scope.transactionItems[0]
+      controller.edit item
+      $httpBackend.flush()
+
+      expect($scope.formTransaction.id).toBe item.transaction_id
+      expect($scope.formTransaction.transaction_date).toEqual item.transaction_date
+      return
