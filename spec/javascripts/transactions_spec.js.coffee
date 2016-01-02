@@ -19,13 +19,7 @@ describe 'TransactionFormController', ->
   describe 'create', ->
     it 'sends a POST message to the service to create the transaction', ->
       $httpBackend.expectPOST('/entities/1/transactions.json', (data) ->
-
-        console.log data
-
         obj = JSON.parse data
-
-        console.log obj
-
         trans = obj.transaction
         trans.transaction_date == '2015-02-27' &&
           trans.items_attributes.length == 2
@@ -45,7 +39,8 @@ describe 'TransactionFormController', ->
             action: 'debit'
             account_id: GROCERIES_ID
             amount: 88
-          }
+          },
+          {}
         ]
       )
       $scope.formTransaction =
