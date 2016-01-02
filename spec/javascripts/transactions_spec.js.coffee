@@ -77,7 +77,15 @@ describe 'TransactionFormController', ->
       expect($httpBackend.flush).not.toThrow()
 
   describe '$scope.transactionTotals', ->
-    it 'contains the credit total for the transaction'
-    it 'contains the debit total for the transaction'
-    it 'contains the difference between the credit and debit totals'
+    beforeEach ->
+      $scope.formTransaction = TRANSACTIONS[0]
+      item = _.find($scope.formTransaction.items, (i) -> i.action == 'credit')
+      item.amount = 1100
+      $scope.$digest()
+    it 'contains the credit total for the transaction', ->
+      expect($scope.transactionTotals.credits).toBe 1100
+    it 'contains the debit total for the transaction', ->
+      expect($scope.transactionTotals.debits).toBe 1000
+    it 'contains the difference between the credit and debit totals', ->
+      expect($scope.transactionTotals.difference).toBe -100
   return
