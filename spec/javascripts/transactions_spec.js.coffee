@@ -62,7 +62,19 @@ describe 'TransactionFormController', ->
       expect($httpBackend.flush).not.toThrow()
 
   describe 'update', ->
-    it 'sends a PUT message to the service to update the transaction'
+    it 'sends a PUT message to the service to update the transaction', ->
+      $httpBackend.expectPUT('/transactions/1.json', (data) ->
+        obj = JSON.parse(data)
+        trans = obj.transaction
+        trans.transaction_date = '2015-01-02' &&
+          trans.items_attributes[0].amount == 1001
+      ).respond("")
+
+      $scope.formTransaction = TRANSACTIONS[0]
+      $scope.formTransaction.transaction_date = '2015-01-02'
+      _.each($scope.formTransaction.items, (i) -> i.amount = 1001)
+      controller.update()
+      expect($httpBackend.flush).not.toThrow()
 
   describe '$scope.transactionTotals', ->
     it 'contains the credit total for the transaction'
