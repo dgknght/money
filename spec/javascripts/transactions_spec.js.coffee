@@ -70,7 +70,22 @@ describe 'TransactionFormController', ->
           trans.items_attributes[0].amount == 1001
       ).respond("")
 
-      $scope.formTransaction = TRANSACTIONS[0]
+      $scope.formTransaction =
+        id: _.uniqueInt()
+        description: 'Payckeck'
+        transaction_date: '2015-01-01'
+        items: [
+          id: _.uniqueInt()
+          action: 'debit'
+          account_id: CHECKING_ID
+          amount: 1000
+        ,
+          id: _.uniqueInt()
+          action: 'credit'
+          account_ID: SALARY_ID
+          amount: 1100
+        ]
+
       $scope.formTransaction.transaction_date = '2015-01-02'
       _.each($scope.formTransaction.items, (i) -> i.amount = 1001)
       controller.update()
@@ -78,9 +93,18 @@ describe 'TransactionFormController', ->
 
   describe '$scope.transactionTotals', ->
     beforeEach ->
-      $scope.formTransaction = TRANSACTIONS[0]
-      item = _.find($scope.formTransaction.items, (i) -> i.action == 'credit')
-      item.amount = 1100
+      $scope.formTransaction =
+        description: 'Payckeck'
+        transaction_date: '2015-01-01'
+        items: [
+          action: 'debit'
+          account_id: CHECKING_ID
+          amount: 1000
+        ,
+          action: 'credit'
+          account_ID: SALARY_ID
+          amount: 1100
+        ]
       $scope.$digest()
     it 'contains the credit total for the transaction', ->
       expect($scope.transactionTotals.credits).toBe 1100

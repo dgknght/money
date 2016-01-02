@@ -3,6 +3,7 @@
 #= require angular.min
 #= require ui-bootstrap-tpls-0.14.3.min
 #= require underscore
+#= require underscore_extensions
 #= require app/view
 #= require app/entities
 #= require app/accounts

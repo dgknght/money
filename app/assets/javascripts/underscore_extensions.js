@@ -63,6 +63,9 @@ _.mixin({
   findById: function(list, id) {
     return _.findByMethod(list, 'id', id);
   },
+  uniqueInt: function() {
+    return parseInt(_.uniqueId())
+  },
   getFromLazyLoadedArray: function(array, id, callback) {
     if (array.state() == 'loaded') {
       var result = _.findById(array(), id);
