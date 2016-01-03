@@ -8,14 +8,17 @@ describe 'BudgetsController', ->
     inject ($controller, $rootScope, _$httpBackend_) ->
       $scope = $rootScope.$new()
       $httpBackend = _$httpBackend_
+      BUDGET_ID = _.uniqueInt()
       $httpBackend.whenGET('/entities/1/budgets.json').respond [
-        id: _.uniqueInt()
+        id: BUDGET_ID
         name: '2016'
         start_date: '2016-01-01'
       ,
         id: _.uniqueInt()
         name: '2015'
         start_date: '2015-01-01'
+      ]
+      $httpBackend.whenGET("/budgets/#{BUDGET_ID}/items.json").respond [
       ]
       $httpBackend.whenGET('budget-form.html').respond ''
       controller = $controller 'BudgetsController', { $scope: $scope }
@@ -41,14 +44,16 @@ describe 'BudgetsController', ->
     return
   describe 'createBudget', ->
     beforeEach ->
+      NEW_BUDGET_ID = _.uniqueInt()
       $httpBackend.expectPOST('/entities/1/budgets.json', (data) ->
         obj = JSON.parse(data)
         budget = obj.budget
         budget.name == '2017' && budget.start_date = '1/1/2017'
       ).respond
-        id: _.uniqueInt()
+        id: NEW_BUDGET_ID
         name: '2017'
         start_date: '2017-01-01'
+      $httpBackend.expectGET("/budgets/#{NEW_BUDGET_ID}/items.json").respond []
       controller.new()
       controller.formBudget.name = '2017'
       controller.formBudget.start_date = '1/1/2017'
