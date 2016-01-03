@@ -104,3 +104,32 @@ describe 'BudgetsController', ->
       $httpBackend.flush()
       expect(controller.formBudget).toBeNull()
     return
+  describe 'items', ->
+    it 'contains an entry for every account in the entity'
+    it 'contains header items for each account type' #TODO Eventually change this to tags for Mandatory, Discretionary, etc.
+    it 'contains zero values for accounts without budget items'
+    it 'contains the budgeted amounts for accounts with items'
+  describe 'createBudgetItem', ->
+    #beforeEach ->
+    #  $httpBackend.expectPOST("/budgets/#{BUDGET_ID}/items.json", (data) ->
+    #    obj = JSON.parse(data)
+    #    item = obj.budget_item
+    #    budget_item.account_id == RENT_ID
+    #  ).respond
+    #    id: _.uniqueInt()
+    #    account_id: RENT_ID
+    #    periods: _.map [0..12], (month) ->
+    #      id: _.uniqueInt()
+    #      amount: 800
+    #      start_date: $filter('date')(new Date(2016, month 1), 'yyyy-MM-dd')
+    #  controller.editItem() # How to get the item?
+    it 'sends a POST request to the service to create the item'
+    it 'adds the budget item to the list of budget items'
+    return
+  describe 'updateSelectedBudgetItem', ->
+    it 'sends a PUT request to the service to update the item'
+    it 'updates the item in the list of budget items'
+  describe 'openCalendar', ->
+    it 'sets calendarIsOpen to true', ->
+      controller.openCalendar()
+      expect(controller.calendarIsOpen).toBe true
