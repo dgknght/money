@@ -46,7 +46,11 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @createBudget = ->
     data = _self.prepareData()
     $http.post("/entities/#{$scope.currentEntityId}/budgets.json", data).then (response) ->
-      _self.budgets.push response.data
+      # insert at the correct position
+      dates = _.map(_self.budgets, (b) -> b.start_date).reverse()
+      index = _.sortedIndex(dates, response.data.start_date)
+      index = dates.length - index
+      _self.budgets.splice index, 0, response.data
       _self.formBudget = null
       $scope.selectedBudgetId = response.data.id
       true
