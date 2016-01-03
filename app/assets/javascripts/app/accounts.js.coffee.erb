@@ -29,7 +29,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       scope: $scope
     }
   @edit = (id) ->
-    _self.formAccount = _.chain($scope.accounts).filter((a) -> a.id == id).first().value()
+    _self.formAccount = _.find $scope.accounts, (a) => a.id == id
     $scope.formTitle = "Edit account"
     modalInstance = $uibModal.open {
       animation: true,
@@ -45,7 +45,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
     if !!_self.formAccount.id then _self.update() else _self.create()
 
   @update = ->
-    url = "accounts/#{_self.formAccount.id}.json"
+    url = "/accounts/#{_self.formAccount.id}.json"
     $http.put(url, _self.formAccount).then (result) ->
       updated = _.map $scope.accounts, (a) ->
         if a.id == result.id then result else a
@@ -57,7 +57,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       console.log error
 
   @create = ->
-    url = "entities/#{$scope.currentEntityId}/accounts.json"
+    url = "/entities/#{$scope.currentEntityId}/accounts.json"
     $http.post(url, _self.formAccount).then (result) ->
       $scope.accounts.push(result.data)
       true
@@ -68,7 +68,7 @@ app.controller 'AccountsController', ['$scope', '$http', '$uibModal', ($scope, $
       false
 
   @delete = (id) ->
-    $http.delete("accounts/#{id}.json").then ->
+    $http.delete("/accounts/#{id}.json").then ->
       updated = _.reject $scope.accounts, (a) ->
         a.id == id
       $scope.accounts = updated

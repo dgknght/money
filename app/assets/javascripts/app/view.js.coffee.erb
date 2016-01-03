@@ -1,15 +1,15 @@
 app = angular.module 'view', []
 
-app.controller 'ViewController', ['$scope', '$http', ($scope, $http) ->
+app.controller 'ViewController', ['$scope', ($scope, $http) ->
     _self = this
     @searchInput = ""
     @matches = []
     @handlers = [
-      new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities']),
-      new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts']),
-      new SimpleMatchingHandler('budget-manager', 'Manage budgets', ['budgets']),
+      new SimpleMatchingHandler('entity-manager', 'Manage entities', ['entity', 'entities', 'manage']),
+      new SimpleMatchingHandler('account-manager', 'Manage accounts', ['accounts', 'manage']),
+      new SimpleMatchingHandler('budget-manager', 'Manage budgets', ['budgets', 'manage']),
       new SimpleMatchingHandler('purchase-entry', 'Enter purchases', ['purchases']),
-      new AccountMatchingHandler('account-register', 'Register', $scope, $http)
+      new AccountMatchingHandler('account-register', 'Register', $scope)
     ]
     @selected = null
     @search = ->
@@ -52,7 +52,7 @@ class SimpleMatchingHandler
     else
       []
 
-AccountMatchingHandler = (elementKey, description, $scope, $http) ->
+AccountMatchingHandler = (elementKey, description, $scope) ->
   _self = this
   @elementKey = elementKey
   @description = description

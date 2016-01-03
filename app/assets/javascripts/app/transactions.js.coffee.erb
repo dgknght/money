@@ -4,10 +4,9 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
   _self = this
   $scope.transactionTotals = {debits: 0, credits: 0}
   @_prepareData = ->
-    transaction = $scope.formTransaction
-    transaction.items_attributes = transaction.items
-    transaction.items = null
-    { transaction: transaction }
+    transaction = _.pick $scope.formTransaction, 'id', 'description', 'transaction_date'
+    transaction.items_attributes = _.reject($scope.formTransaction.items, (i) -> _.isEmpty(i))
+    { transaction: transaction}
   @create = ->
     $http.post("/entities/#{$scope.currentEntityId}/transactions.json", _self._prepareData()).then null, (error) ->
       console.log "Unable to create the transaction."
@@ -52,6 +51,7 @@ app.controller 'TransactionFormController', ['$scope', '$uibModalInstance', '$ht
 
   $scope.calendarIsOpen = false
   $scope.openCalendar = -> $scope.calendarIsOpen = true
+  return
 ]
 
 app.controller('PurchasesController', ['$scope', '$http', ($scope, $http) ->
@@ -94,10 +94,6 @@ app.controller('PurchasesController', ['$scope', '$http', ($scope, $http) ->
         method: _self.newPurchase.method
       }
       _self.enteredPurchases.push _self.newPurchase
-
-      console.log "enteredPurchases"
-      console.log _self.enteredPurchases
-
       _self.newPurchase = next
       form.$setPristine()
       form.$setUntouched()

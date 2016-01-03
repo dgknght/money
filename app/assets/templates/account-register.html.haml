@@ -1,7 +1,7 @@
 .panel.panel-primary{ 'ng-controller' => 'AccountRegisterController as register' }
   .panel-heading
     .pull-right
-      %button.btn.btn-default.btn-xs{ 'ng-click' => 'register.new()' }
+      %button.btn.btn-default.btn-xs{ 'ng-click' => 'register.new()', :title => 'Click here to create a new transaction.' }
         %span.glyphicon.glyphicon-plus{ 'aria-hidden' => 'true' }
     {{ register.accountName }}
 
