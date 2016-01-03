@@ -5,8 +5,6 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
   @budgets = []
   @selectedBuget = null
   @periods = []
-  @incomeItems = []
-  @expenseItems = []
   @periodsAreVisible = false
   @showPeriods = -> @periodsAreVisible = true
   @hidePeriods = -> @periodsAreVisible = false
@@ -91,7 +89,6 @@ app.controller 'BudgetsController', ['$scope', '$http', '$uibModal', ($scope, $h
       periods_attributes: _.map $scope.selectedBudgetItem.budgetItem.periods, (p) ->
         p.budget_amount = 0 unless p.budget_amount
         p
-
 
   @createBudgetItem = ->
     $http.post("/budgets/#{$scope.selectedBudgetId}/items.json", _self.selectedBudgetItemData()).then (response) ->
