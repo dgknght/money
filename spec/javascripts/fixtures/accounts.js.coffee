@@ -2,6 +2,7 @@ window.CHECKING_ID = 1
 window.SALARY_ID = 2
 window.GROCERIES_ID = 3
 window.RENT_ID = 4
+window.DINING_ID = 5
 
 window.ACCOUNTS = [
   accountFactory
@@ -16,6 +17,11 @@ window.ACCOUNTS = [
   accountFactory
     id: GROCERIES_ID
     name: 'Groceries'
+    account_type: 'expense'
+,
+  accountFactory
+    id: DINING_ID
+    name: 'Dining'
     account_type: 'expense'
 ,
   accountFactory
