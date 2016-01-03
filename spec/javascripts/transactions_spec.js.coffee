@@ -63,7 +63,8 @@ describe 'TransactionFormController', ->
 
   describe 'update', ->
     it 'sends a PUT message to the service to update the transaction', ->
-      $httpBackend.expectPUT('/transactions/1.json', (data) ->
+      id = _.uniqueInt()
+      $httpBackend.expectPUT("/transactions/#{id}.json", (data) ->
         obj = JSON.parse(data)
         trans = obj.transaction
         trans.transaction_date = '2015-01-02' &&
@@ -71,7 +72,7 @@ describe 'TransactionFormController', ->
       ).respond("")
 
       $scope.formTransaction =
-        id: _.uniqueInt()
+        id: id
         description: 'Payckeck'
         transaction_date: '2015-01-01'
         items: [
